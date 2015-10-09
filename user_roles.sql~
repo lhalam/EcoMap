@@ -3,7 +3,7 @@
 	*/
 CREATE TABLE User_roles (
  id INT NOT NULL AUTO_INCREMENT,
- user_id INT NOT NULL,
+ user_id BIGINT NOT NULL,
  roles_id INT NOT NULL,
  PRIMARY KEY (id),
  FOREIGN KEY (user_id) REFERENCES User(id),

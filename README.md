@@ -1,16 +1,19 @@
 
-<h1>FOR TESTING DB SCRIPTS:</h1>
+<h1>Ecomap project (by LV-164.UI)</h1>
+<h2>About this project</h2>
+<h2>Dependencies</h2>
+<p>We're assumming that yuo're using bash & you already have installed such packages: </p>
+<ul>
+    <li>python 2.7.6</li>
+    <li>mysql 5.6</li>
+</ul>
+<h2>Setupping database</h2>
 <ol>
-    <li>clone this branch</li>
-    <li>run in terminal msql -u root -p and create database ecomap;</li>
-    <li>open populate_db.py and set your msql password:</li>
-    db = MySQLdb.connect("localhost", 'root', password, 'ecomap')<br>
-    * if necessary change host, db_user, database_name 
+    <li>Clone this repository to your local machine</li>
+    <li>Go to ecomap/DB/ecomap/ directory</li>
+    <li>Run following command - <code>mysql -u -p < CREATE_DB.sql</code>. This command will create DB - 'ecomap_db'. <br>
+            To change Database name go to CREATE_DB.sql, and change 'ecomap_db' to any name you want</li>
     <br>
-    <li>open populate_db.py and change PATH to your working directory:</li>
-      (ex) PATH = '/home/padalko/ss_projects/Lv-164.UI'</li>
-    <li>run python populate_db.py</li>  
+    <li>Run following command - <code>mysql -u -p < INSERT_DATA>sql</code> to insert basic data into table(such as admin account and etc.).</li>
+    <li>Now you have working Database!</li>
 </ol>
-
-populate_db path: Lv-164.UI/ecomap/DB/ecomap/populate_db.py
-

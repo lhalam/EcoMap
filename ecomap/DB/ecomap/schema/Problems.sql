@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Problems;
 CREATE TABLE Problems (
   id INT NOT NULl AUTO_INCREMENT,

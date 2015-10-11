@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Photos;
 CREATE TABLE Photos (
   /*

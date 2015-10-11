@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Detailed_problems;
 CREATE TABLE Detailed_problems (
 id INT NOT NULL AUTO_INCREMENT,

@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Votes;
 CREATE TABLE Votes (
   id INT NOT NULl AUTO_INCREMENT,

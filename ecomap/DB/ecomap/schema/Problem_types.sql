@@ -1,6 +1,3 @@
-# Should We use namespace here? Or we are
-# going to pass it while executing code ?
-use ecomap;
 DROP TABLE IF EXISTS Problem_types;
 CREATE TABLE Problem_types (
     /*

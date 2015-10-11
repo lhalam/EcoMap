@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Role_permissions;
 CREATE TABLE Role_permissions (
   /*

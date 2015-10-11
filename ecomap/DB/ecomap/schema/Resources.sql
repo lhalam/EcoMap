@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Resources;
 CREATE TABLE Resources (
   id INT NOT NULL,

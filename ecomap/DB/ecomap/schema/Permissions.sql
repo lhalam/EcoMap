@@ -1,5 +1,4 @@
 -- Created for gathering and controling permission for different type of users.
-use ecomap;
 DROP TABLE IF EXISTS  Permissions;
 
 CREATE TABLE Permissions (

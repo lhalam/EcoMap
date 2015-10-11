@@ -1,4 +1,3 @@
-use ecomap;
 DROP TABLE IF EXISTS  Comments;
 CREATE TABLE Comments (
   id INT NOT NULl AUTO_INCREMENT,

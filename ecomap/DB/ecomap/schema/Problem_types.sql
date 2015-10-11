@@ -1,7 +1,8 @@
-# Should We use namespace here? Or we are 
+# Should We use namespace here? Or we are
 # going to pass it while executing code ?
-DROP TABLE IF EXISTS Problem_type;
-CREATE TABLE Problem_type (
+use ecomap;
+DROP TABLE IF EXISTS Problem_types;
+CREATE TABLE Problem_types (
     /*
         This table provides description of all problem types
     */

@@ -1,4 +1,4 @@
-use test;
+use ecomap;
 DROP TABLE IF EXISTS  Photos;
 CREATE TABLE Photos (
   /*
@@ -7,14 +7,10 @@ CREATE TABLE Photos (
     :on user_id -> a user, who attached the photo
     :on problem_id -> specific Problem entity which photos belongs to
  */
-  id MEDIUMINT NOT NULL AUTO_INCREMENT, # MEDIUMINT for secure incrementation :) or just regular INT ?
+  id INT NOT NULL AUTO_INCREMENT, # MEDIUMINT for secure incrementation :) or just regular INT ?
   Name VARCHAR(255) NOT NULL UNIQUE, # each photo must have unique name according to it /PATH/name.jpg
   Description LONGTEXT NULL, # this textfield type might be changed
-  problem_id MEDIUMINT,
-  user_id MEDIUMINT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (problem_id) REFERENCES Problems(id),
-  FOREIGN KEY (user_id) REFERENCES Users(id)
+  problem_id INT,
+  user_id INT,
+  PRIMARY KEY (id)
 );
-
-

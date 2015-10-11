@@ -9,11 +9,10 @@
 </ul>
 <h2>Setupping database</h2>
 <ol>
-    <li>Clone this repository to your local machine</li>
-    <li>Go to ecomap/DB/ecomap/ directory</li>
+    <li>Clone this repository to your local machine.</li>
+    <li>Go to 'ecomap/DB/ecomap/' directory.</li>
     <li>Run following command - <code>mysql -u -p < CREATE_DB.sql</code>. This command will create DB - 'ecomap_db'. <br>
-            To change Database name go to CREATE_DB.sql, and change 'ecomap_db' to any name you want</li>
-    <br>
-    <li>Run following command - <code>mysql -u -p < INSERT_DATA>sql</code> to insert basic data into table(such as admin account and etc.).</li>
+            To change Database name go to CREATE_DB.sql, and change 'ecomap_db' to any name you want.</li>
+    <li>Run following command - <code>mysql -u -p < INSERT_DATA.sql</code> to insert basic data into table(such as admin account and etc.).</li>
     <li>Now you have working Database!</li>
 </ol>

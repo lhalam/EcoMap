@@ -13,17 +13,13 @@ def parseConfs():
 
 class Config(object):
     obj = None
-    timeDelta = 60 * 15  # 60 secs * 15 minutes
+    timeDelta = 20  # 60 secs * 15 minutes
     _deathTime = None
 
     def __new__(cls):
-        if cls.obj is None:
+        if cls.obj is None or cls._deathTime < time.time():
             cls.obj = object.__new__(cls)
             cls._deathTime = time.time() + cls.timeDelta
-            cls.obj.conf = parseConfs()
-        if cls._deathTime < time.time():
-            cls.obj = object.__new__(cls)
-            cls._deathTime = time.time()
             cls.obj.conf = parseConfs()
         return cls.obj
 

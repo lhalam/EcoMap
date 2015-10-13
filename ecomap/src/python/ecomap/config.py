@@ -14,11 +14,11 @@ def parseConfs():
     result = {}
     for section in sections:                # for each section
         for (key, value) in config.items(section):  # for each key/value
-            if key != 'password':
+            if key != 'password':           # if key == password skip
                 try:
-                    value = int(value)        # try to convert value into int
+                    value = int(value)      # try to convert value into int
                 except ValueError:
-                    pass                        # if error remove needless ["]
+                    pass                      
             result[section + '.' + key] = value
     return result
 

@@ -3,12 +3,13 @@ import time
 
 
 configFilePath = '../../../etc/ecomap.conf'
+section = 'ecomap'
 
 
 def parseConfs():
     config = ConfigParser.RawConfigParser()
     config.readfp(open(configFilePath))
-    return {key: value for (key, value) in config.items('ecomap')}
+    return {section + '.' + k: v for (k, v) in config.items(section)}
 
 
 class Config(object):

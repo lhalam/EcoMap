@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS resource (
-  id INT(10) UNSIGNED NOT NULL,
-  resource_name VARCHAR(100) NOT NULL,    -- name of resource
-  PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+CREATE TABLE IF NOT EXISTS `resource` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `resource_name` varchar(100) NOT NULL,    # name of resource
+  PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

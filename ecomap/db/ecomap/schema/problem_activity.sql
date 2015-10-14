@@ -1,13 +1,12 @@
-CREATE TABLE IF NOT EXISTS problem_activity (
-    /*
-        This table represents logging of all activities on
-        exact problems.
-    */
-    id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    # Time of activity's occuring
-    create_date INT(11) UNSIGNED NOT NULL,
-    problem_id INT(10) UNSIGNED NOT NULL,
-    user_id INT(10) UNSIGNED NOT NULL,
-    activity_type ENUM('Added', 'Removed', 'Updated', 'Vote') NOT NULL,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+/*
+    This table represents logging of all activities on
+    exact problems.
+*/
+CREATE TABLE IF NOT EXISTS `problem_activity` (
+    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `created_date` int(11) unsigned NOT NULL,     # Time of activity's occuring
+    `problem_id` int(10) unsigned NOT NULL,
+    `user_id` int(10) unsigned NOT NULL,
+    `activity_type` enum('Added', 'Removed', 'Updated', 'Vote') NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

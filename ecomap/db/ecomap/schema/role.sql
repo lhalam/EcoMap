@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS role (
-  id INT(10) UNSIGNED NOT NULL  AUTO_INCREMENT,
-  name INT(10) UNSIGNED NOT NULL,              -- name of role
-  PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+CREATE TABLE IF NOT EXISTS `role` (
+  `id` int(10) unsigned NOT NULL  AUTO_INCREMENT,
+  `name` int(10) unsigned NOT NULL,              # name of role
+  PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

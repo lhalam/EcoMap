@@ -1,9 +1,12 @@
--- Table created for gathering information about user for transfering to another tables
-CREATE TABLE IF NOT EXISTS user (
-  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  first_name VARCHAR(255) NOT NULL,
-  last_name VARCHAR(255) NOT NULL,
-  email VARCHAR(100) NOT NULL,
-  password VARCHAR(100) NOT NULL,
-  PRIMARY KEY(id)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+/*
+    Table created for gathering information about
+    user for transfering to another tables.
+*/
+CREATE TABLE IF NOT EXISTS `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

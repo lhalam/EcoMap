@@ -1,10 +1,9 @@
 -- Table created for gathering information about user for transfering to another tables
-DROP TABLE IF EXISTS  Users;
-CREATE TABLE  if not exists Users (
-  id INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS user (
+  id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(255) NOT NULL,
   last_name VARCHAR(255) NOT NULL,
   email VARCHAR(100) NOT NULL,
   password VARCHAR(100) NOT NULL,
   PRIMARY KEY(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

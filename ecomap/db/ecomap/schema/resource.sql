@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS resource (
+  id INT(10) UNSIGNED NOT NULL,
+  resource_name VARCHAR(100) NOT NULL,    -- name of resource
+  PRIMARY KEY(id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8;

@@ -1,39 +1,44 @@
-import ConfigParser
-import time
+import logging
+from ConfigParser import SafeConfigParser
+from time import time
 
-
-configFilePath = '../../../etc/ecomap.conf'
+logger = logging.getLogger('example')
+logging.basicConfig(level=logging.DEBUG)
 
 
 class Config(object):
-    obj = None              # from start there is not object
-    timeDelta = 15 * 60     # 60 secs * 15 minutes
-    _deathTime = None       # lifetime of our object
+
+    def __init__(self):
+        self.lifeTime = time() + 900            # current time + 15 minutes
+        logger.debug('Created instance with lifeTime: {}'.
+                     format(self.lifeTime))
 
     def __new__(cls):
-        # check if there is object or lifetime is over
-        if cls.obj is None or cls._deathTime < time.time():
-            cls.obj = object.__new__(cls)       # create object
-            cls._deathTime = time.time() + cls.timeDelta    # set lifetime
-            cls.obj.conf = cls.__parseConfs()     # get dictionary with params
-        return cls.obj
+        if not hasattr(cls, '_instance') or cls._instance.lifeTime < time():
+            logger.debug('Create instance if it not exists or lifeTime expired')
+            cls._instance = object.__new__(cls)
+            cls._parseConfs(cls._instance)
+        logger.debug('Returned instance: {}'.format(cls._instance))
+        return cls._instance
 
-    @staticmethod
-    def __parseConfs():
-        config = ConfigParser.SafeConfigParser()    # create config object
+    def _parseConfs(self):
+        logger.debug('Parsed ecomap.conf')
+        config = SafeConfigParser()             # create config object
         config.readfp(open(configFilePath))     # read file
         sections = config.sections()            # get all sections
-        result = {}
+        self.config = {}
         for section in sections:                # for each section
             for (key, value) in config.items(section):  # for each key/value
                 if key != 'password':           # if key == password skip
                     try:
-                        value = int(value)      # try to convert value into int
+                        try:
+                            value = int(value)  # try to convert value into int
+                        except ValueError:
+                            value = float(value)
                     except ValueError:
                         pass
-                result[section + '.' + key] = value
-        return result
-
+                self.config[section + '.' + key] = value
 
 if __name__ == '__main__':
+    configFilePath = '../../../etc/ecomap.conf'
     x = Config()

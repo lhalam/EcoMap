@@ -8,5 +8,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `last_name` varchar(255) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
+  `oauth_provider` varchar(100),    # this atttribute will specify provider name
+  `oauth_uid` text,                 # this attribute will specify open auth id
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

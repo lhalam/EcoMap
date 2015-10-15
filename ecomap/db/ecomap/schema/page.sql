@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS `page` (
   `id` int(10) unsigned NOT NULl AUTO_INCREMENT,
   `alias` varchar(100) NOT NUll,
-  `title` varchar(100) NOT NULL,
-  `description` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
   `content` text NOT NULL,
   `meta_keywords` varchar(255) NULL,
   `meta_desription` varchar(255) NULL,

@@ -7,8 +7,8 @@
 CREATE TABLE IF NOT EXISTS `photo` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,     # each photo must have unique name according to it /PATH/name.jpg
-  `description` varchar(255) NULL,  # this textfield type might be changed
-  `problem_id` int(11) unsigned NOT NULL,
-  `user_id` int(11) unsigned NOT NULL,
+  `description` varchar(255),  # this textfield type might be changed
+  `problem_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

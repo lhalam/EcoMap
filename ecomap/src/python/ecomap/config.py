@@ -7,7 +7,6 @@ it returns new dictionary which contains updated configs.
 from ConfigParser import SafeConfigParser
 import logging
 import time
-import unittest
 
 logging.basicConfig(level=logging.INFO)
 REFRESH_TIME = 900                               # 15 minutes

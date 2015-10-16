@@ -1,6 +1,6 @@
 /*
-    This table represents logging of all activities on
-    exact problems.
+    This table represents logging of all 
+    activities produced on exact problems.
 */
 CREATE TABLE IF NOT EXISTS `problem_activity` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

@@ -1,6 +1,7 @@
 /*
-    User_roles table create relations between users 
-    and their specific roles.
+    User_roles table create relations 
+    between users and their specific 
+    roles.
 */
 CREATE TABLE IF NOT EXISTS `user_role` (
  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

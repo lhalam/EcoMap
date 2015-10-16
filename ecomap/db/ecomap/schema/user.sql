@@ -1,5 +1,5 @@
 /*
-    Table created for gathering information about
+    This table created for gathering information about
     user for transfering to another tables.
 */
 CREATE TABLE IF NOT EXISTS `user` (

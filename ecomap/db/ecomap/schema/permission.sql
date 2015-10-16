@@ -1,6 +1,7 @@
 /* 
-    Created for gathering and controling 
-    permission for different type of users.
+    This table has info that is gathering 
+    and controling permission for different
+    type of users.
 */
 CREATE TABLE IF NOT EXISTS `permission` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

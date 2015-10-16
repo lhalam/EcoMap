@@ -1,3 +1,7 @@
+/*
+    This table holds all particular 
+    information about problem entity.
+*/
 CREATE TABLE IF NOT EXISTS `problem` (
  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
  `title` varchar(255) NOT NULL,

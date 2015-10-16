@@ -1,5 +1,6 @@
 /*
-    This table provides description of all problem types
+    This table provides names of all 
+    problem types.
 */
 CREATE TABLE IF NOT EXISTS `problem_type` (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

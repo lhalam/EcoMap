@@ -1,3 +1,8 @@
+/*
+    This table stands for holding comments 
+    of problems and information about those
+    comments. 
+*/
 CREATE TABLE IF NOT EXISTS `comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `content` varchar(255) NOT NULL,

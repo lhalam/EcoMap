@@ -1,15 +1,18 @@
 import logging
 from ConfigParser import SafeConfigParser
-from time import time
+from time import time, sleep
 
 logger = logging.getLogger('example')
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG) # file = unit.py method = config login
+refreshtime = 900
 
 
 class Config(object):
 
+
     def __init__(self):
-        self.lifeTime = time() + 900            # current time + 15 minutes
+        self.config = {}
+        self.lifeTime = time() + refreshtime           # current time + 15 minutes
         logger.debug('Inited instance with lifeTime: {}'.
                      format(self.lifeTime))
 
@@ -22,10 +25,11 @@ class Config(object):
         return cls._instance
 
     def _parseConfs(self):
+        # insert here time check
+        # parse through eval()
         logger.debug('Parsed ecomap.conf')
         config = SafeConfigParser()             # create config object
         config.readfp(open(configFilePath))     # read file
-        self.config = {}
         for section in config.sections():                # for each section
             for (key, value) in config.items(section):   # for each key/value
                 if value and key != 'password':
@@ -47,5 +51,7 @@ if __name__ == '__main__':
     x = Config()
     print x.config
     print '=' * 80
+    sleep(2)
     y = Config()
     print y.config
+    print x == y

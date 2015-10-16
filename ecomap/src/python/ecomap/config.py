@@ -3,23 +3,28 @@ import logging
 import time
 import unittest
 
-logger = logging.getLogger('example')
 logging.basicConfig(level=logging.DEBUG)
-REFRESH_TIME = 15 * 60                           # 15 minutes
+REFRESH_TIME = 900                               # 15 minutes
+PASSWORD = 'password'
+
+
+class Singleton(type):
+
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(
+                Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance
 
 
 class Config(object):
+    __metaclass__ = Singleton
 
-    def __new__(cls, *args):
-        if not hasattr(cls, '_instance'):        # if there is not instance
-            cls._instance = object.__new__(cls)  # create it
-        return cls._instance                     # else return it
-
-    def __init__(self, path, logger):
+    def __init__(self, path):
         self.config = {}                         # dictionary, contains configs
-        self.update_time = time.time() + REFRESH_TIME  # time of living
+        self.update_time = 0                     # time of living
         self.path = path                         # path to file (temporary)
-        self.logger = logger
+        self.logger = logging.getLogger('exapmle')
         self.logger.debug('Initialized instance at: %s', time.time())
 
     def get_config(self):                        # method which checks if we
@@ -37,7 +42,7 @@ class Config(object):
         sections = config.sections()             # get sections
         for section in sections:                 # for each section
             for (key, value) in config.items(section):   # for each key/value
-                if value and key != 'password':
+                if value and key != PASSWORD:
                     try:
                         value = eval(value)
                     except NameError:
@@ -49,18 +54,18 @@ if __name__ == '__main__':
     class Test(unittest.TestCase):
 
         def test_sameinstances(self):
-            self.a = Config('../../../etc/ecomap.conf', logger)
-            self.b = Config('../../../etc/ecomap.conf', logger)
+            self.a = Config('../../../etc/ecomap.conf')
+            self.b = Config('../../../etc/ecomap.conf')
             self.assertEquals(self.a, self.b)
 
         def test_config(self):
-            self.a = Config('../../../etc/ecomap.conf', logger)
-            self.b = Config('../../../etc/ecomap.conf', logger)
+            self.a = Config('../../../etc/ecomap.conf')
+            self.b = Config('../../../etc/ecomap.conf')
             self.assertEquals(self.a.get_config(), self.b.get_config())
 
         def test_updatetime(self):
-            self.a = Config('../../../etc/ecomap.conf', logger)
-            self.b = Config('../../../etc/ecomap.conf', logger)
+            self.a = Config('../../../etc/ecomap.conf')
+            self.b = Config('../../../etc/ecomap.conf')
             self.assertEquals(self.a.update_time, self.b.update_time)
 
     unittest.main()

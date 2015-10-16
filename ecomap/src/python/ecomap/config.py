@@ -1,6 +1,7 @@
 from ConfigParser import SafeConfigParser
 from time import time
 import logging
+import unittest
 
 password = ['password', 'pass', 'pswd']          # keys which must be string
 logger = logging.getLogger('example')
@@ -15,10 +16,10 @@ class Config(object):
             cls._instance = object.__new__(cls)  # create it
         return cls._instance                     # else return it
 
-    def __init__(self, path, logger):
+    def __init__(self, path, logger, lifetime):
         self.config = {}                         # dictionary, contains configs
-        self.timeUpdate = None                   # time to update dictionary
-        self.timeCreated = time()                # create time of instance
+        self.timeCreated = time()                # generate time of creation
+        self.timeUpdate = self.timeCreated + lifetime  # time of living
         self.path = path                         # path to file (temporary)
         self.logger = logger
         self._parseConfs()                       # get configs at start
@@ -48,15 +49,26 @@ class Config(object):
 
 
 if __name__ == '__main__':
+    class Test(unittest.TestCase):
 
-    x = Config('../../../etc/ecomap.conf', logger)
+        def test_sameinstances(self):
+            self.a = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.b = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.assertEquals(self.a, self.b)
 
-    # getTimer = threading.Timer(11.0, x.get)
-    # getTimer.start()
-    # getTimer2 = threading.Timer(21.0, x.get)
-    # getTimer2.start()
+        def test_createtime(self):
+            self.a = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.b = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.assertEquals(self.a.timeCreated, self.b.timeCreated)
 
-    # print x.config
-    # print '=' * 80
-    # y = Config()
-    # print y.config
+        def test_config(self):
+            self.a = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.b = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.assertEquals(self.a.get(), self.b.get())
+
+        def test_updatetime(self):
+            self.a = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.b = Config('../../../etc/ecomap.conf', logger, timeToUpdate)
+            self.assertEquals(self.a.timeUpdate, self.b.timeUpdate)
+
+    unittest.main()

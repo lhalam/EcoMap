@@ -50,13 +50,3 @@ class Config(object):
 if __name__ == '__main__':
 
     x = Config('../../../etc/ecomap.conf', logger)
-
-    # getTimer = threading.Timer(11.0, x.get)
-    # getTimer.start()
-    # getTimer2 = threading.Timer(21.0, x.get)
-    # getTimer2.start()
-
-    # print x.config
-    # print '=' * 80
-    # y = Config()
-    # print y.config

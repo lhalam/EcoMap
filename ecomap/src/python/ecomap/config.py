@@ -2,10 +2,10 @@ from ConfigParser import SafeConfigParser
 from time import time
 import logging
 
-password = ['password', 'pass', 'pswd']     # keys which must be string
+password = ['password', 'pass', 'pswd']          # keys which must be string
 logger = logging.getLogger('example')
 logging.basicConfig(level=logging.DEBUG)
-timeToUpdate = 900                          # 15 minutes
+timeToUpdate = 15 * 60                           # 15 minutes
 
 
 class Config(object):

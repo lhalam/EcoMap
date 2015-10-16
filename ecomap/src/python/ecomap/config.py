@@ -17,7 +17,7 @@ class Config(object):
 
     def __init__(self, path, logger):
         self.config = {}                         # dictionary, contains configs
-        self.update_time = time.time() + REFRESH_TIME  # time of living
+        self.update_time = 0                     # time of living
         self.path = path                         # path to file (temporary)
         self.logger = logger
         self.logger.debug('Initialized instance at: %s', time.time())

@@ -37,7 +37,7 @@ class Config(object):
         sections = config.sections()             # get sections
         for section in sections:                 # for each section
             for (key, value) in config.items(section):   # for each key/value
-                if value:
+                if value and key != 'password':
                     try:
                         value = eval(value)
                     except NameError:

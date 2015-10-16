@@ -2,6 +2,7 @@ import logging
 from ConfigParser import SafeConfigParser
 from time import time
 
+password = ['password', 'pass', 'pswd']
 logger = logging.getLogger('example')
 logging.basicConfig(level=logging.DEBUG)
 
@@ -28,19 +29,8 @@ class Config(object):
         self.config = {}
         for section in config.sections():                # for each section
             for (key, value) in config.items(section):   # for each key/value
-                if value and key != 'password':
-                    try:
-                        value = config.getboolean(section, key)
-                    except ValueError:
-                        try:
-                            if '.' in value:
-                                value = config.getfloat(section, key)
-                            else:
-                                value = config.getint(section, key)
-                        except ValueError:
-                            value = unicode(config.get(section, key).
-                                            decode('utf-8'))
-                self.config[section + '.' + key] = value
+                if value and key.lower() not in password:
+                    self.config[section + '.' + key] = eval(value)
 
 if __name__ == '__main__':
     configFilePath = '../../../etc/ecomap.conf'

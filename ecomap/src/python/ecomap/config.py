@@ -1,11 +1,11 @@
 from ConfigParser import SafeConfigParser
 from time import time
 import logging
+from utils import logger
 
 password = ['password', 'pass', 'pswd']     # keys which must be string
-logger = logging.getLogger('example')
-logging.basicConfig(level=logging.DEBUG)
-timeToUpdate = 900                          # 15 minutes
+
+  # 15 minutes
 
 
 class Config(object):
@@ -50,6 +50,7 @@ class Config(object):
 if __name__ == '__main__':
 
     x = Config('../../../etc/ecomap.conf', logger)
+    y = Config('../../../etc/ecomap.conf', logger)
 
     # getTimer = threading.Timer(11.0, x.get)
     # getTimer.start()

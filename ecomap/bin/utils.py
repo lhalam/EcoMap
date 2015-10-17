@@ -1,8 +1,9 @@
-
+# charset = utf-8
 """
-logging to local file(ecomap.conf), console and syslog.LOG_LOCAL6 (/var/log/ecomap_log.log)
+logging to project local file(ecomap.conf), console(stdout)
+    and rsyslog.LOG_LOCAL6 (file path: /var/log/ecomap_log.log)
 
-seting-up syslog:
+seting-up your own syslog:
     1. go to /etc/rsyslog.d/
     2. create file ecomap.conf
     3. add to ecomap.conf this line:
@@ -16,15 +17,12 @@ seting-up syslog:
 import logging
 import logging.config
 
-logging.config.fileConfig('logging.cfg')
-logger = logging.getLogger('ecomap')
+logging.config.fileConfig('logging.conf') # reading from logging config file
+logger = logging.getLogger('ecomap') # initialization of our project logging system
 
-# log something
-logger.debug(' NEW NEW debug message')
-logger.info('info message')
-logger.warn('warn message')
-logger.error('error message')
-logger.critical('critical message')
+# test log
+logger.debug('TEST initial log from utils.py')
+
 
 
 

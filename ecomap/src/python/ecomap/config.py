@@ -5,11 +5,11 @@ which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
 from ConfigParser import SafeConfigParser
-from utils import logger
+from bin.utils import logger
 import time
 import os
 
-REFRESH_TIME = 15 * 60                           # 15 minutes
+REFRESH_TIME = 900                               # 15 minutes
 PASSWORD = 'password'
 CONFIG_PATH = os.environ['CONFROOT'] + '/ecomap.conf'
 
@@ -39,7 +39,7 @@ class Config(object):
         self.update_time = 0                     # time of living
         self.path = path                         # path to file (temporary)
         self.logger = logger
-        self.logger.debug('Initialized instance at: %s', time.time())
+        self.logger.info('Initialized instance at: %s', time.time())
 
     def get_config(self):                        # method which checks if we
         """
@@ -48,7 +48,7 @@ class Config(object):
         elapsed 15 minutes after last update.
         returns: dictionary
         """
-        self.logger.debug('Check if need to update at %s', time.time())
+        self.logger.info('Check if need to update at %s', time.time())
         if self.update_time < time.time():       # need to update configs
             self.config = {}                     # nullify configs dictionary
             self.update_time = time.time() + REFRESH_TIME  # set time to update
@@ -59,7 +59,7 @@ class Config(object):
         """
         Parses config file and returns dictionary.
         """
-        self.logger.debug('Parsed ecomap.conf at %s', (time.time()))
+        self.logger.info('Parsed ecomap.conf at %s', (time.time()))
         config = SafeConfigParser()              # create config object
         config.readfp(open(self.path))           # read file
         sections = config.sections()             # get sections
@@ -71,7 +71,3 @@ class Config(object):
                     except NameError:
                         pass
                 self.config[section + '.' + key] = value
-
-
-X = Config(CONFIG_PATH)
-print X.get_config()

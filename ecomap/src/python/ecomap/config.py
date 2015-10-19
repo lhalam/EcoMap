@@ -5,12 +5,13 @@ which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
 from ConfigParser import SafeConfigParser
-import logging
+from utils import logger
 import time
+import os
 
-logging.basicConfig(level=logging.INFO)
 REFRESH_TIME = 15 * 60                           # 15 minutes
 PASSWORD = 'password'
+CONFIG_PATH = os.environ['CONFROOT'] + '/ecomap.conf'
 
 
 class Singleton(type):
@@ -37,7 +38,7 @@ class Config(object):
         self.config = {}                         # dictionary, contains configs
         self.update_time = 0                     # time of living
         self.path = path                         # path to file (temporary)
-        self.logger = logging.getLogger('exapmle')
+        self.logger = logger
         self.logger.debug('Initialized instance at: %s', time.time())
 
     def get_config(self):                        # method which checks if we
@@ -70,3 +71,7 @@ class Config(object):
                     except NameError:
                         pass
                 self.config[section + '.' + key] = value
+
+
+X = Config(CONFIG_PATH)
+print X.get_config()

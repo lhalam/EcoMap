@@ -1,27 +1,59 @@
+"""
+This module contains classes to create database connection pool.
+Class Pool generates new connections if needed, else returns
+connections from Pool.connection_pool. After connection is closed
+it returns to Pool.connection_pool.
+"""
 import threading
 import MySQLdb
 
-CONNECTION_LIFETIME = 10
+CONNECTION_LIFETIME = 5
+HOST = 'localhost'
+PORT = 13333
+USER = 'root'
+PASSWD = 'Phones_13'
+DB_NAME = 'ecomap_db'
 
 
 class Singleton(type):
+    """
+    Metaclass for Pool class
+    """
 
     def __call__(cls, *args, **kwargs):
+        """
+        Checks if there is already instance of Pool class.
+        If true: return instance, else: create instance
+        """
         if not hasattr(cls, '_instance'):
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
 
 
 class Pool(object):
+    """
+    Usage:
+    X = Pool() - inits pool
+    X.get_connection() - generates, or returns a connection
+    X.return_to_pool(self, connection) - connection we want
+                                         return to pool
+    """
 
     __metaclass__ = Singleton
 
     def __init__(self):
+        """
+        Initialize of pool object
+        """
         self.connection_pool = []
         self.max_size = 10
         self.outer_connections = 0
 
     def get_connection(self):
+        """
+        Return new connection if there isn't any connections in
+        pool
+        """
         if len(self.connection_pool) == 0:
             if self.outer_connections < self.max_size:
                 self.outer_connections += 1
@@ -30,39 +62,70 @@ class Pool(object):
                 print 'wait'
         else:
             self.outer_connections += 1
-            return self.connection_pool.pop()
+            connection = self.connection_pool.pop()
+            connection.timer.cancel()
+            return connection
 
     def return_to_pool(self, connection):
+        """
+        Returns choosen connection to pool
+        """
         if connection not in self.connection_pool:
             self.connection_pool.append(connection)
             self.outer_connections -= 1
-            threading.Timer(CONNECTION_LIFETIME, connection.remove).start()
+            connection.timer.start()
 
 
 class Connection(object):
+    """
+    Usage:
+    execute(sql) - execute sql command
+    return_to_pool - return current instance to pool
+    remove - delete current instance from pool
+    """
 
     def __init__(self, pool):
+        """
+        Initialize of connection, added connection to database,
+        added reference to Pool instance
+        """
+        self.connection = MySQLdb.connect(host=HOST, port=PORT,
+                                          user=USER, passwd=PASSWD, db=DB_NAME)
+        self.cursor = self.connection.cursor()
         self._pool = pool
-        self.cursor = None
-        self.connection = MySQLdb.connect(user='root', passwd='Phones_13',
-                                          db='ecomap_db')
+        self.timer = None
 
     def __enter__(self):
+        """
+        Method which automaticaly is called when we use 'with'
+        """
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.connection.close()
+        """
+        Method which automaticaly is called when 'with' is ended
+        """
         self.return_to_pool()
 
     def execute(self, sql):
-        self.cursor = self.connection.cursor()
+        """
+        Method to execute sql command
+        """
         self.cursor.execute(sql)
         return self.cursor.fetchall()
 
     def return_to_pool(self):
+        """
+        Return instance to pool
+        """
+        self.connection.close()
+        self.timer = threading.Timer(CONNECTION_LIFETIME, self.remove)
         self._pool.return_to_pool(self)
 
     def remove(self):
+        """
+        Remove instance from pool
+        """
         try:
             self._pool.connection_pool.remove(self)
         except ValueError:

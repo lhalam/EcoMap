@@ -9,7 +9,7 @@ import logging
 import time
 
 logging.basicConfig(level=logging.INFO)
-REFRESH_TIME = 15 * 60                           # 15 minutes
+REFRESH_TIME = 900                               # 15 minutes
 PASSWORD = 'password'
 
 

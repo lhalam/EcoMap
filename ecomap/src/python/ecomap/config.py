@@ -4,10 +4,11 @@ It exists to parse *.conf files and return dictionary,
 which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
-import time
 import os
+import time
 from ConfigParser import SafeConfigParser
-from ecomap.utils import logger, Singleton
+from ecomap.utils import logger
+from ecomap.utils import Singleton
 
 
 REFRESH_TIME = 900

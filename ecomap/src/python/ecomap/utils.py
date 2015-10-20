@@ -28,7 +28,7 @@ import logging
 import logging.config
 import os
 # reading from logging config file
-logging.config.fileConfig(os.environ['PRODROOT'] + '/bin/logging.conf')
+logging.config.fileConfig(os.environ['PRODROOT'] + '/etc/log.conf')
 # initialization of our project logging system
 logger = logging.getLogger('ecomap')
 

@@ -7,7 +7,7 @@ it returns new dictionary which contains updated configs.
 import time
 import os
 from ConfigParser import SafeConfigParser
-from utils import logger, Singleton
+from ecomap.utils import logger, Singleton
 
 
 REFRESH_TIME = 900
@@ -34,11 +34,11 @@ class Config(object):
         Returns:
             dictionary, containing configs
         """
-        self.log.info('Return configs')
         if self.update_time + REFRESH_TIME < time.time():
             self.log.info('Refresh configs')
             self.update_time = time.time()
             self._parse_confs()
+        self.log.info('Return configs')
         return self.config
 
     def _parse_confs(self):

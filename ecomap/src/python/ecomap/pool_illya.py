@@ -125,9 +125,13 @@ class Connection(object):
         """
         Method to execute sql command
         """
+
         logger.info('Executed some sql code')
-        self.cursor.execute(sql)
-        return self.cursor.fetchall()
+        try:
+            self.cursor.execute(sql)
+            return self.cursor.fetchall()
+        except:
+            return Connection(self._pool)
 
     def return_to_pool(self):
         """
@@ -135,3 +139,9 @@ class Connection(object):
         """
         logger.info('Connection returns to database pool')
         self._pool.return_to_pool(self)
+
+pool = Pool()
+conn = pool.get_connection()
+print conn
+conn.execute('dasdfj;ls')
+print conn

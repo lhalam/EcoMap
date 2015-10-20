@@ -34,3 +34,17 @@ logger = logging.getLogger('ecomap')
 
 # test log
 logger.debug('TEST initial log from utils.py')
+
+
+class Singleton(type):
+    """
+    Metaclass to implement singleton pattern
+    """
+
+    def __call__(cls, *args, **kwargs):
+        """
+        Return new or existed instance
+        """
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance

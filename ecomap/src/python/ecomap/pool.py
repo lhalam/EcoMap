@@ -6,6 +6,7 @@ it returns to Pool.connection_pool.
 """
 import threading
 import MySQLdb
+from ecomap.utils import Singleton
 
 CONNECTION_LIFETIME = 5
 HOST = 'localhost'
@@ -13,21 +14,6 @@ PORT = 13333
 USER = 'root'
 PASSWD = 'Phones_13'
 DB_NAME = 'ecomap_db'
-
-
-class Singleton(type):
-    """
-    Metaclass for Pool class
-    """
-
-    def __call__(cls, *args, **kwargs):
-        """
-        Checks if there is already instance of Pool class.
-        If true: return instance, else: create instance
-        """
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
 
 
 class Pool(object):

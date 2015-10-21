@@ -1,8 +1,5 @@
 # charset = utf-8
 """
-logging to project local file(ecomap.conf), console(stdout)
-    and rsyslog.LOG_LOCAL6 (file path: /var/log/ecomap_log.log)
-
 seting-up your own syslog on Ubuntu:
     1. go to /etc/rsyslog.d/
     2. create file ecomap.conf
@@ -26,16 +23,32 @@ seting-up your own syslog on Ubuntu:
         *in case if environment is setted up properly
          or copy files(utils.py and logging.conf) to your module directory
          and make import
- """
+"""
 import logging
 import logging.config
 
-logging.config.fileConfig('logging.conf') # reading from logging config file
-logger = logging.getLogger('ecomap') # initialization of our project logging system
 
+def get_logger(logger_name):
+    """
+    :param logger_name: your custom name of new created logger object
+    :return: logger object ready to use. just assign it to some variable
+    example logger = get_logger('your_name')
+    """
+    logging.config.fileConfig('logging.conf')
+    return logging.getLogger(logger_name)
+
+# example usage
+logger = get_logger('ecomap')
 # test log
 logger.debug('TEST initial log from utils.py')
 
 
-
+class Singleton(type):
+    """
+    using a singleton pattern to work with only one possible instance of Pool
+    """
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, '_instance'):
+            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instance
 

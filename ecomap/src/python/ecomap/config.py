@@ -7,7 +7,7 @@ it returns new dictionary which contains updated configs.
 import os
 import time
 from ConfigParser import SafeConfigParser
-from ecomap.utils import logger
+from ecomap.utils import get_logger
 from ecomap.utils import Singleton
 
 
@@ -26,7 +26,7 @@ class Config(object):
         self.config = {}
         self.update_time = 0
         self.path = CONFIG_PATH
-        self.log = logger
+        self.log = get_logger('Config parser')
         self.log.info('Create instance of Config parser')
 
     def get_config(self):

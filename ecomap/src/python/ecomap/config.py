@@ -1,62 +1,63 @@
-from ConfigParser import SafeConfigParser
-from time import time
-import logging
+"""
+Module which contains Config class. This class is singleton.
+It exists to parse *.conf files and return dictionary,
+which contains configuration from those files. Every 15 minutes
+it returns new dictionary which contains updated configs.
+"""
+import os
+import time
 
-password = ['password', 'pass', 'pswd']     # keys which must be string
-logger = logging.getLogger('example')
-logging.basicConfig(level=logging.DEBUG)
-timeToUpdate = 900                          # 15 minutes
+from ConfigParser import SafeConfigParser
+
+from ecomap.utils import get_logger
+from ecomap.utils import Singleton
+
+REFRESH_TIME = 900
+PASSWORD = 'password'
+CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
 
 
 class Config(object):
+    """
+    Singleton class to get configs
+    """
+    __metaclass__ = Singleton
 
-    def __new__(cls, *args):
-        if not hasattr(cls, '_instance'):        # if there is not instance
-            cls._instance = object.__new__(cls)  # create it
-        return cls._instance                     # else return it
+    def __init__(self):
+        self.config = {}
+        self.update_time = 0
+        self.path = CONFIG_PATH
+        self.log = get_logger('config_parser')
+        self.log.info('Create instance of Config parser.')
 
-    def __init__(self, path, logger):
-        self.config = {}                         # dictionary, contains configs
-        self.timeUpdate = None                   # time to update dictionary
-        self.timeCreated = time()                # create time of instance
-        self.path = path                         # path to file (temporary)
-        self.logger = logger
-        self._parseConfs()                       # get configs at start
-        self.logger.debug('Initialized instance with time created: {}'.
-                          format(self.timeCreated))
-
-    def get(self):                               # method which checks if we
-        if self.timeUpdate < time():             # need to update configs
-            self.config = {}                     # nullify configs dictionary
-            self.timeUpdate = time() + timeToUpdate  # set time to update
-            self._parseConfs()                   # parse config file
+    def get_config(self):
+        """
+        Call parse method if need.
+        Returns:
+            dictionary, containing configs
+        """
+        if self.update_time + REFRESH_TIME < time.time():
+            self.log.info('Refresh configs')
+            self.update_time = time.time()
+            self._parse_confs()
+        self.log.info('Return configs.')
         return self.config
 
-    def _parseConfs(self):
-        self.logger.debug('Parsed ecomap.conf at {}'.format(time()))
-        config = SafeConfigParser()             # create config object
-        config.readfp(open(self.path))          # read file
-        sections = config.sections()            # get sections
-        for section in sections:                # for each section
-            for (key, value) in config.items(section):   # for each key/value
-                if value and key.lower() not in password:
+    def _parse_confs(self):
+        """
+        Parses config file.
+        """
+        self.log.info('Parse ecomap.conf.')
+        config = SafeConfigParser()
+        config.readfp(open(self.path))
+        sections = config.sections()
+        temp_config = {}
+        for section in sections:
+            for (key, value) in config.items(section):
+                if value and key != PASSWORD:
                     try:
                         value = eval(value)
                     except NameError:
                         pass
-                self.config[section + '.' + key] = value
-
-
-if __name__ == '__main__':
-
-    x = Config('../../../etc/ecomap.conf', logger)
-
-    # getTimer = threading.Timer(11.0, x.get)
-    # getTimer.start()
-    # getTimer2 = threading.Timer(21.0, x.get)
-    # getTimer2.start()
-
-    # print x.config
-    # print '=' * 80
-    # y = Config()
-    # print y.config
+                temp_config[section + '.' + key] = value
+        self.config = temp_config

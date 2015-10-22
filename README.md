@@ -11,12 +11,16 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
         <li><code>sudo apt-get install mysql-server</code></li>
     </ul>
 </ul>
-<h2>Setupping database</h2>
+<h2>Setupping database locally</h2>
 <ol>
-    <li>Clone this repository to your local machine.</li>
-    <li>Go to 'ecomap/DB/ecomap/' directory.</li>
-    <li>Run following command - <code>mysql -u -p < CREATE_DB.sql</code>. This command will create DB - 'ecomap_db'. <br>
-            To change Database name go to CREATE_DB.sql, and change 'ecomap_db' to any name you want.</li>
-    <li>Run following command - <code>mysql -u -p < INSERT_DATA.sql</code> to insert basic data into table(such as admin account and etc.).</li>
+    <li>Clone this repository to your local machine</li>
+    <li>Go to 'ecomap/DB/ecomap/' directory</li>
+    <li>Run mysql shell: <code>mysql -u -p</code></li>
+    <li>Run following command: <code>CREATE DATABASE IF NOT EXISTS ecomap_db;</code> - this command will 
+        create database if it's not created yet. Put the name you want instead of 'ecomap_db'</li>
+    <li>Run following command: <code>USE ecomap_db;</code> - this command will set the database you've created earilier as current. 
+        Instead of ecomap_db put the name you've chosen earlier</li>
+    <li>Run following command: <code>SOURCE CREATE_DB.sql;</code> - this command will create all tables for database</li>
+    <li>Run following command: <code>SOURCE INSERT_DATA.sql;</code> - this command will populate all data you need for the beginning of work</li>
     <li>Now you have working Database!</li>
 </ol>

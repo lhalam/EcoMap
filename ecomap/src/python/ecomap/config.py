@@ -6,6 +6,7 @@ it returns new dictionary which contains updated configs.
 """
 import os
 import time
+
 from ConfigParser import SafeConfigParser
 
 from ecomap.utils import get_logger

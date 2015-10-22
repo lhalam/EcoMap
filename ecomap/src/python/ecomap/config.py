@@ -5,17 +5,18 @@ which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
 import os
+import pprint
 import time
 
 from ConfigParser import SafeConfigParser
 
-from ecomap.utils import get_logger
-from ecomap.utils import Singleton
+from utils import get_logger
+from utils import Singleton
 
 REFRESH_TIME = 900
 PASSWORD = 'password'
-CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
-
+# CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
+CONFIG_PATH = ('/home/padalko/ss_projects/Lv-164.UI/ecomap/etc/ecomap.conf')
 
 class Config(object):
     """

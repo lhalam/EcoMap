@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 This module contains class for creating database connection pool.
 Class DBPool generates new connections if needed, else returns
@@ -18,8 +17,8 @@ from utils import get_logger
 CONFIG = Config().get_config()
 get_logger()
 
-# HOST = CONFIG['db.host']
-# PORT = CONFIG['db.port']
+HOST = CONFIG['db.host']
+PORT = CONFIG['db.port']
 USER = CONFIG['db.user']
 PASSWD = CONFIG['db.password']
 DB_NAME = CONFIG['db.db_name']
@@ -39,27 +38,32 @@ class OutOfConnectionsError(Exception):
         pass
 
 
-def retry_new(CONNETION_RETRIES, RETRY_DELAY):
+def retry_new(retry=CONNETION_RETRIES, delay=RETRY_DELAY):
     """
-    Decorator function
+    Decorator function handling reconnection issues to DB.
+    :param
+    - retry - number of attempts to reconnect.
+    - delay - time of reconnect attempt delay in seconds.
+
     """
     def wrapper(method):
         """
         Simple wrapper function
         """
         def temp(self):
-            for i in range(CONNETION_RETRIES):
+            for i in range(retry):
                 try:
                     return method(self)
                 except OutOfConnectionsError as error:
-                    self._log.warn('OUT of connections right now. Pool will retry to connect in %s sec'
-                                   % RETRY_DELAY)
-                    if i is not CONNETION_RETRIES - 1:
-                        time.sleep(RETRY_DELAY)
+                    self._log.warn('OUT of connections right now. \
+                    Pool will retry to connect in %s sec' % delay)
+                    if i is not retry - 1:
+                        time.sleep(delay)
                         continue
                     raise error
         return temp
     return wrapper
+
 
 class DBPool(object):
     """
@@ -69,13 +73,12 @@ class DBPool(object):
     """
     __metaclass__ = Singleton
 
-    def __init__(self,  user, passwd,
-                 db_name, conn_lifetime, pool_size):
+    def __init__(self, user, passwd, db_name, host, port, conn_lifetime, pool_size):
         self._connection_pool = []
         self.connection_pointer = 0
         self._pool_size = pool_size
-        # self._host = host
-        # self._port = port
+        self._host = host
+        self._port = port
         self._user = user
         self._passwd = passwd
         self._db_name = db_name
@@ -86,48 +89,42 @@ class DBPool(object):
     def __del__(self):
         for conn in self._connection_pool:
             self._close_conn(conn)
-        # [x['connection'].close() for x in self._connection_pool]
 
     def _create_conn(self):
         """
         Method _create_conn creates connection object.
-            :returns opened connection
-            :raises MySQLdb.OperationalError
+            :returns dictionary with connection object's properties.
+
         """
-        # try:
         conn = MySQLdb.connect(user=self._user, passwd=PASSWD,
                                db=self._db_name)
         self._log.info('Created connection object: %s.' % conn)
         return {
             'connection': conn,
-            'is_used': 0, # ???
+            'is_used': 0,
             'TTL': time.time()
         }
-        # except MySQLdb.Error as error:
-        #     self._log.info('Wrong connection parameters. Detailed: %s'
-        #                    % error)
-            # raise error
 
     @retry_new(CONNETION_RETRIES, RETRY_DELAY)
     def _get_conn(self):
         """
-        Method _get_conn gets connection from the pool or from
+        Method _get_conn gets connection from the pool or calls.
         method _create_conn if pool is empty.
-            :returns opened connection
-            :raises Exception if all connectionsare busy
+            :returns opened connection mysql_object.
+            :raises OutOfConnectionsError if all connections are busy.
+
         """
-        if [con for con in self._connection_pool if not con['is_used']]: # ??? is used
+        if [con for con in self._connection_pool if not con['is_used']]:
             connection = self._connection_pool.pop()
             self.connection_pointer += 1
             connection['is_used'] = 1
             self._log.info('Popped connection %s from the pool.'
-                           % connection)
+                           % connection['connection'])
         elif self.connection_pointer < self._pool_size:
             connection = self._create_conn()
             self.connection_pointer += 1
             connection['is_used'] = 1
         else:
-            self._log.info('Out of connections.')
             raise OutOfConnectionsError('Out of connections.')
         return connection
 
@@ -136,6 +133,7 @@ class DBPool(object):
         """
         Generator manager manages work with connections.
             :yeilds opened connection
+
         """
         with self.lock:
             conn = self._get_conn()
@@ -147,52 +145,25 @@ class DBPool(object):
 
     def _close_conn(self, conn):
         """
-        Method _close_conn closes connection.
+        Protected method _close_conn closes connection
+        before returning it to pool.
             params:
-            - conn - connection that has to be closed
+            - conn - specific connection object to be closed
+
         """
-        self._log.info('Closed connection with lifetime %s.' % (time.time() - conn['TTL']))
+        self._log.info('Closed connection %s with lifetime %s.'
+                       % (conn['connection'], (time.time() - conn['TTL'])))
         self.connection_pointer -= 1
         conn['connection'].close()
 
     def _push_conn(self, conn):
         """
-        Method _push_conn pushes connection to pool.
+        Protected method _push_conn pushes connection to pool.
             params:
             - conn - connection that has to be pushed to pool
+
         """
-        self._log.info('Returning connection %s to pool.' % conn)
+        self._log.info('Returning connection %s to pool.' % conn['connection'])
         self.connection_pointer -= 1
         conn['is_used'] = 0
         self._connection_pool.append(conn)
-
-pool_obj = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
-# with pool_obj.manager() as conn:
-#     q1 = conn['connection'].cursor()
-#     q1.execute('show tables;')
-#     print q1.fetchall()
-
-POOL = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
-#
-# def func():
-#     "Simple test of connection"
-#     print '=' * 20
-#     # print POOL.connection_pool
-#     # print POOL.outer_connections
-#     with POOL.manager() as conn:
-#         time.sleep(4.994)
-#         # print POOL.connection_pool
-#         # print POOL.outer_connections
-#         try:
-#             q1 = conn['connection'].cursor()
-#             q1.execute('show tables;')
-#             # print conn.fetchall()
-#         except MySQLdb.ProgrammingError:
-#             pass
-#     # print POOL.connection_pool
-#     # print POOL.outer_connections
-#
-# threading.Thread(target=func).start()
-# threading.Thread(target=func).start()
-# threading.Thread(target=func).start()
-# threading.Thread(target=func).start()

@@ -167,3 +167,5 @@ class DBPool(object):
         self.connection_pointer -= 1
         conn['is_used'] = 0
         self._connection_pool.append(conn)
+
+pool_obj = DBPool(USER, PASSWD, DB_NAME, HOST, PORT, CONNECTION_LIFETIME, POOL_SIZE)

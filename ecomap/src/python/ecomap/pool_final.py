@@ -61,54 +61,6 @@ def retry_new(CONNETION_RETRIES, RETRY_DELAY):
         return temp
     return wrapper
 
-#
-# def retry(retry_quantity, delay):
-#     def inner_deco(method):
-#         def wrap(self):
-#             print 'start %s retries, %s sec' % (retry_quantity, delay)
-#             try:
-#                 return method(self)
-#             except:
-#                 for i in xrange(retry_quantity):
-#                     time.sleep(delay)
-#                     try:
-#                         return method(self)
-#                     except MySQLdb.Error as error:
-#                         self._log.info('Wrong connection parameters.'
-#                                        ' Detailed: %s' % error)
-#                     except OutOfConnectionsError as out:
-#                         self._log.error('log %s' % out)
-#                 else:
-#                     self._log.error('error %s')
-#                     raise
-#         return wrap
-#     return inner_deco
-#
-#
-# def retry2(retry_quantity, delay):
-#     def inner_deco(method):
-#         def wrap(self):
-#             print 'start %s retries, %s sec' % (retry_quantity, delay)
-#             try:
-#                 for i in xrange(retry_quantity):
-#                     try:
-#                         return method(self)
-#                     except MySQLdb.Error as error:
-#                         time.sleep(delay)
-#                         self._log.error('Wrong connection parameters.'
-#                                        ' Detailed: %s' % error)
-#                     except OutOfConnectionsError as error:
-#                         time.sleep(delay)
-#                         self._log.error('log %s', error)
-#                 else:
-#                     self._log.exception('error %s' % error)
-#                     # raise
-#             except:
-#                 raise
-#         return wrap
-#     return inner_deco
-
-
 class DBPool(object):
     """
     DBPool class represents DB pool, which
@@ -132,8 +84,9 @@ class DBPool(object):
         self.lock = threading.RLock()
 
     def __del__(self):
-        [x['connection'].close() for x in self._connection_pool]
-        # [x.self_close() for x in self._connection_pool]
+        for conn in self._connection_pool:
+            self._close_conn(conn)
+        # [x['connection'].close() for x in self._connection_pool]
 
     def _create_conn(self):
         """

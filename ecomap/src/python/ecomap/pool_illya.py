@@ -6,8 +6,8 @@ it returns to Pool.connection_pool.
 """
 import MySQLdb
 from contextlib import contextmanager
-from ecomap.config import Config
-from ecomap.utils import logger
+from ecomap_flask.config import Config
+from ecomap_flask.utils import logger
 
 CONFIG = Config().get_config()
 

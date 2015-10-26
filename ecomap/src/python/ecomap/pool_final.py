@@ -1,18 +1,22 @@
+# coding=utf-8
 """
 This module contains class for creating database connection pool.
 Class DBPool generates new connections if needed, else returns
 connections from Pool._connection_pool. After connection is closed
 it returns to Pool._connection_pool.
 """
-import threading
+import logging
 import MySQLdb
-from contextlib import contextmanager
 import time
+import threading
+
+from contextlib import contextmanager
 
 from config import Config, Singleton
-from utils import logger
+from utils import get_logger
 
 CONFIG = Config().get_config()
+get_logger()
 
 # HOST = CONFIG['db.host']
 # PORT = CONFIG['db.port']
@@ -22,7 +26,8 @@ DB_NAME = CONFIG['db.db_name']
 USING_POOL = CONFIG['db.using_pool']
 POOL_SIZE = CONFIG['db.pool_size']
 CONNECTION_LIFETIME = CONFIG['db.connection_lifetime']
-
+CONNETION_RETRIES = CONFIG['db.connection_retries']
+RETRY_DELAY = CONFIG['db.retry_delay']
 
 
 class OutOfConnectionsError(Exception):
@@ -34,51 +39,73 @@ class OutOfConnectionsError(Exception):
         pass
 
 
-def retry(retry_quantity, delay):
-    def inner_deco(method):
-        def wrap(self):
-            print 'start %s retries, %s sec' % (retry_quantity, delay)
-            try:
-                return method(self)
-            except:
-                for i in xrange(retry_quantity):
-                    time.sleep(delay)
-                    try:
-                        return method(self)
-                    except MySQLdb.Error as error:
-                        self._log.info('Wrong connection parameters.'
-                                       ' Detailed: %s' % error)
-                    except OutOfConnectionsError as out:
-                        self._log.error('log %s' % out)
-                else:
-                    self._log.error('error %s')
-                    raise
-        return wrap
-    return inner_deco
+def retry_new(CONNETION_RETRIES, RETRY_DELAY):
+    """
+    Decorator function
+    """
+    def wrapper(method):
+        """
+        Simple wrapper function
+        """
+        def temp(self):
+            for i in range(CONNETION_RETRIES):
+                try:
+                    return method(self)
+                except OutOfConnectionsError as error:
+                    self._log.warn('OUT of connections right now. Pool will retry to connect in %s sec' % RETRY_DELAY)
+                    if i is not CONNETION_RETRIES - 1:
+                        time.sleep(RETRY_DELAY)
+                        continue
+                    raise error
+        return temp
+    return wrapper
 
-
-def retry2(retry_quantity, delay):
-    def inner_deco(method):
-        def wrap(self):
-            print 'start %s retries, %s sec' % (retry_quantity, delay)
-            try:
-                for i in xrange(retry_quantity):
-                    try:
-                        return method(self)
-                    except MySQLdb.Error as error:
-                        time.sleep(delay)
-                        self._log.error('Wrong connection parameters.'
-                                       ' Detailed: %s' % error)
-                    except OutOfConnectionsError as error:
-                        time.sleep(delay)
-                        self._log.error('log %s' % error)
-                else:
-                    self._log.exception('error %s' % error)
-                    # raise
-            except:
-                raise
-        return wrap
-    return inner_deco
+#
+# def retry(retry_quantity, delay):
+#     def inner_deco(method):
+#         def wrap(self):
+#             print 'start %s retries, %s sec' % (retry_quantity, delay)
+#             try:
+#                 return method(self)
+#             except:
+#                 for i in xrange(retry_quantity):
+#                     time.sleep(delay)
+#                     try:
+#                         return method(self)
+#                     except MySQLdb.Error as error:
+#                         self._log.info('Wrong connection parameters.'
+#                                        ' Detailed: %s' % error)
+#                     except OutOfConnectionsError as out:
+#                         self._log.error('log %s' % out)
+#                 else:
+#                     self._log.error('error %s')
+#                     raise
+#         return wrap
+#     return inner_deco
+#
+#
+# def retry2(retry_quantity, delay):
+#     def inner_deco(method):
+#         def wrap(self):
+#             print 'start %s retries, %s sec' % (retry_quantity, delay)
+#             try:
+#                 for i in xrange(retry_quantity):
+#                     try:
+#                         return method(self)
+#                     except MySQLdb.Error as error:
+#                         time.sleep(delay)
+#                         self._log.error('Wrong connection parameters.'
+#                                        ' Detailed: %s' % error)
+#                     except OutOfConnectionsError as error:
+#                         time.sleep(delay)
+#                         self._log.error('log %s', error)
+#                 else:
+#                     self._log.exception('error %s' % error)
+#                     # raise
+#             except:
+#                 raise
+#         return wrap
+#     return inner_deco
 
 
 class DBPool(object):
@@ -100,13 +127,12 @@ class DBPool(object):
         self._passwd = passwd
         self._db_name = db_name
         self.connection_open_time = conn_lifetime
-        self._log = logger
+        self._log = logging.getLogger('DB_pool')
         self.lock = threading.RLock()
 
     def __del__(self):
-        # for conn in self._connection_pool:
-        #     self._close_conn(conn)
         [x['connection'].close() for x in self._connection_pool]
+        # [x.self_close() for x in self._connection_pool]
 
     def _create_conn(self):
         """
@@ -120,7 +146,7 @@ class DBPool(object):
         self._log.info('Created connection object: %s.' % conn)
         return {
             'connection': conn,
-            'is_used': 0,
+            'is_used': 0, # ???
             'TTL': time.time()
         }
         # except MySQLdb.Error as error:
@@ -128,7 +154,7 @@ class DBPool(object):
         #                    % error)
             # raise error
 
-    @retry2(3, 5)
+    @retry_new(CONNETION_RETRIES, RETRY_DELAY)
     def _get_conn(self):
         """
         Method _get_conn gets connection from the pool or from
@@ -136,7 +162,7 @@ class DBPool(object):
             :returns opened connection
             :raises Exception if all connectionsare busy
         """
-        if [con for con in self._connection_pool if not con['is_used']]:
+        if [con for con in self._connection_pool if not con['is_used']]: # ??? is used
             connection = self._connection_pool.pop()
             self.connection_pointer += 1
             connection['is_used'] = 1
@@ -150,21 +176,6 @@ class DBPool(object):
             self._log.info('Out of connections.')
             raise OutOfConnectionsError('Out of connections.')
         return connection
-
-        # if not self._connection_pool:
-        #     if self.connection_pointer < self._pool_size:
-        #         conn = self._create_conn()
-        #         self.connection_pointer += 1
-        #         return conn
-        #     else:
-        #         self._log.info('Out of connections')
-        #         raise Exception('Out of connections')
-        # else:
-        #     conn = self._connection_pool.pop()
-        #     self.connection_pointer += 1
-        #     self._log.info('Popped connection {0} from the pool'
-        #                    .format(conn))
-        #     return conn
 
     @contextmanager
     def manager(self):
@@ -188,7 +199,6 @@ class DBPool(object):
         """
         self._log.info('Closed connection with lifetime %s.' % (time.time() - conn['TTL']))
         self.connection_pointer -= 1
-        conn['is_used'] = 0
         conn['connection'].close()
 
     def _push_conn(self, conn):
@@ -203,10 +213,10 @@ class DBPool(object):
         self._connection_pool.append(conn)
 
 pool_obj = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
-with pool_obj.manager() as conn:
-    q1 = conn['connection'].cursor()
-    q1.execute('show tables;')
-    print q1.fetchall()
+# with pool_obj.manager() as conn:
+#     q1 = conn['connection'].cursor()
+#     q1.execute('show tables;')
+#     print q1.fetchall()
 
 POOL = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
 
@@ -228,6 +238,7 @@ def func():
     # print POOL.connection_pool
     # print POOL.outer_connections
 
+threading.Thread(target=func).start()
 threading.Thread(target=func).start()
 threading.Thread(target=func).start()
 threading.Thread(target=func).start()

@@ -4,8 +4,8 @@ It exists to parse *.conf files and return dictionary,
 which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
+import logging
 import os
-import pprint
 import time
 
 from ConfigParser import SafeConfigParser
@@ -16,7 +16,8 @@ from utils import Singleton
 REFRESH_TIME = 900
 PASSWORD = 'password'
 # CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
-CONFIG_PATH = ('/home/padalko/ss_projects/Lv-164.UI/ecomap/etc/ecomap.conf')
+CONFIG_PATH = ('/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap/ecomap.conf')
+get_logger()
 
 class Config(object):
     """
@@ -28,7 +29,7 @@ class Config(object):
         self.config = {}
         self.update_time = 0
         self.path = CONFIG_PATH
-        self.log = get_logger('config_parser')
+        self.log = logging.getLogger('config_parser')
         self.log.info('Create instance of Config parser.')
 
     def get_config(self):

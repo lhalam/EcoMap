@@ -70,14 +70,14 @@ def not_found(e):
     return render_template('404.html')
 
 
-@app.route('/db')
-def db(name=None):
-    with pool_obj.manager as conn:
-        q1 = conn.cursor()
-        q1 = q1.execute('show tables;')
-        q2 = q1.fetchall()
+@app.route('/db', methods=['GET', 'POST'])
+def db(sql=None):
 
-    name = str(q2)
-    return render_template('hi.html', name=name)
-
-
+    if request.method == 'POST' and 'sql_query' in request.form:
+        sql = request.form['sql_query']
+        with pool_obj.manager() as conn:
+            q1 = conn['connection'].cursor()
+            q1.execute(sql)
+            sql = q1.fetchall()
+            print sql[1]
+    return render_template('sql.html', sql_query=sql)

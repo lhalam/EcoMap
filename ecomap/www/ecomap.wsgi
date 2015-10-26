@@ -12,6 +12,8 @@ os.environ['PYTHONPATH'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap/src/pytho
 
 
 sys.path.insert (0,'/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
+sys.path.insert (1,'/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/')
+
 os.chdir('/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/')
 
 from utils import get_logger

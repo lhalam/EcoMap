@@ -3,7 +3,6 @@ import os
 
 
 CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
-print CONF_PATH
 
 
 def get_logger():

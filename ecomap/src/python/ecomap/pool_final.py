@@ -52,7 +52,8 @@ def retry_new(CONNETION_RETRIES, RETRY_DELAY):
                 try:
                     return method(self)
                 except OutOfConnectionsError as error:
-                    self._log.warn('OUT of connections right now. Pool will retry to connect in %s sec' % RETRY_DELAY)
+                    self._log.warn('OUT of connections right now. Pool will retry to connect in %s sec'
+                                   % RETRY_DELAY)
                     if i is not CONNETION_RETRIES - 1:
                         time.sleep(RETRY_DELAY)
                         continue
@@ -219,26 +220,26 @@ pool_obj = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
 #     print q1.fetchall()
 
 POOL = DBPool(USER, PASSWD, DB_NAME, CONNECTION_LIFETIME, POOL_SIZE)
-
-def func():
-    "Simple test of connection"
-    print '=' * 20
-    # print POOL.connection_pool
-    # print POOL.outer_connections
-    with POOL.manager() as conn:
-        time.sleep(4.994)
-        # print POOL.connection_pool
-        # print POOL.outer_connections
-        try:
-            q1 = conn['connection'].cursor()
-            q1.execute('show tables;')
-            # print conn.fetchall()
-        except MySQLdb.ProgrammingError:
-            pass
-    # print POOL.connection_pool
-    # print POOL.outer_connections
-
-threading.Thread(target=func).start()
-threading.Thread(target=func).start()
-threading.Thread(target=func).start()
-threading.Thread(target=func).start()
+#
+# def func():
+#     "Simple test of connection"
+#     print '=' * 20
+#     # print POOL.connection_pool
+#     # print POOL.outer_connections
+#     with POOL.manager() as conn:
+#         time.sleep(4.994)
+#         # print POOL.connection_pool
+#         # print POOL.outer_connections
+#         try:
+#             q1 = conn['connection'].cursor()
+#             q1.execute('show tables;')
+#             # print conn.fetchall()
+#         except MySQLdb.ProgrammingError:
+#             pass
+#     # print POOL.connection_pool
+#     # print POOL.outer_connections
+#
+# threading.Thread(target=func).start()
+# threading.Thread(target=func).start()
+# threading.Thread(target=func).start()
+# threading.Thread(target=func).start()

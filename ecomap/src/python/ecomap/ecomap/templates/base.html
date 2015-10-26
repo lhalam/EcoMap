@@ -1,0 +1,28 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}FLask TEste {% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">home</a>
+            <a class="navbar-brand" href="{{ url_for('page1') }}">page1</a>
+
+            <a class="navbar-brand" href="{{ url_for('page2') }}">page2</a>
+            <a class="navbar-brand" href="{{ url_for('form') }}">simpleFORM</a>
+            <a class="navbar-brand" href="{{ url_for('advancedForm') }}">advFORM</a>
+        </div>
+    </nav>
+    <ul class="nav nav-pills">
+      <li role="presentation" class="active"><a href="#">Home</a></li>
+      <li role="presentation"><a href="#">Profile</a></li>
+      <li role="presentation"><a href="#">Messages</a></li>
+    </ul>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        {% block page_content %}{% endblock %}
+    </div>
+{% endblock content %}

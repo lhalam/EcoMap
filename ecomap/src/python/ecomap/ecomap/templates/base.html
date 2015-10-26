@@ -1,8 +1,9 @@
 {% extends 'bootstrap/base.html' %}
 
-{% block title %}FLask TEste {% endblock %}
+{% block title %}FLaskINIT {% endblock %}
 
 {% block navbar %}
+    MODULE _FLASK_INIT_
     <nav class="navbar navbar-inverse" role="navigation">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">home</a>
@@ -13,11 +14,7 @@
             <a class="navbar-brand" href="{{ url_for('advancedForm') }}">advFORM</a>
         </div>
     </nav>
-    <ul class="nav nav-pills">
-      <li role="presentation" class="active"><a href="#">Home</a></li>
-      <li role="presentation"><a href="#">Profile</a></li>
-      <li role="presentation"><a href="#">Messages</a></li>
-    </ul>
+    
 {% endblock %}
 
 

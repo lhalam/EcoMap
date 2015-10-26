@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.wtf import Form
+import sys
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required, Length, DataRequired
 from ecomap import app
 
-# @app.route('/')
-# def index(name='start', name2='def_page'):
-#     return render_template('base.html', name=name, secname=name2
+sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
+from pool_final import pool_obj
 
 
 class NameForm(Form):
@@ -31,7 +31,7 @@ def page1():
 @app.route('/page2')
 def page2(name=None, name2 = "Default"):
     name = '%username'
-    name2 = 'Second_Name'
+    name2 = 'os.environ'
     return render_template('hi.html', name=name, secname=name2)
 
 
@@ -70,13 +70,14 @@ def not_found(e):
     return render_template('404.html')
 
 
-# @app.route('/hello')
-# def hello(name=None):
-#     q1 = pool_obj._get_conn()['connection'].cursor()
-#     q1.execute('show tables;')
-#     q2 = q1.fetchall()
-#     name = str(q2)
-#     print name[1:10]
-#     return render_template('hi.html', name=name)
+@app.route('/db')
+def db(name=None):
+    with pool_obj.manager as conn:
+        q1 = conn.cursor()
+        q1 = q1.execute('show tables;')
+        q2 = q1.fetchall()
+
+    name = str(q2)
+    return render_template('hi.html', name=name)
 
 

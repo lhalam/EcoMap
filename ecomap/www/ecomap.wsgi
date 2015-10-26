@@ -12,12 +12,12 @@ os.environ['PYTHONPATH'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap/src/pytho
 
 
 sys.path.insert (0,'/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
-os.chdir('/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
+os.chdir('/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/')
 
 from utils import get_logger
 get_logger()
 
-from ecomap_flask import app as application
+from ecomap import app as application
 
 application.secret_key = "topsecret!"
 application.template_folder='/home/padalko/ss_projects/Lv-164.UI/ecomap/www/templates'

@@ -5,13 +5,12 @@
 {% block navbar %}
     MODULE _FLASK_INIT_
     <nav class="navbar navbar-inverse" role="navigation">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">home</a>
-            <a class="navbar-brand" href="{{ url_for('page1') }}">page1</a>
-            <a class="navbar-brand" href="{{ url_for('page2') }}">page2</a>
+        <div class="container" >
+            <a class="navbar-brand" href="{{ url_for('page1') }}">CONF</a>
+            <a class="navbar-brand" href="{{ url_for('page2') }}">ENV</a>
             <a class="navbar-brand" href="{{ url_for('form') }}">simpleFORM</a>
-            <a class="navbar-brand" href="{{ url_for('advancedForm') }}">advFORM</a>
-            <a class="navbar-brand" href="{{ url_for('db') }}">INIT_DB</a>
+            <a class="navbar-brand" href="{{ url_for('advancedForm') }}">_csrfFORM</a>
+            <a class="navbar-brand" href="{{ url_for('db') }}">DB_test</a>
         </div>
     </nav>
     
@@ -20,6 +19,6 @@
 
 {% block content %}
     <div class="container">
-        {% block page_content %}{% endblock %}
+        {% block page_content %}HELLO, THERE{% endblock %}
     </div>
 {% endblock content %}

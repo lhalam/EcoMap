@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block title %}POOL TEST{% endblock %}
-
 {% block page_content %}
     <div class="container">
     <h1>DB POOL TEST</h1>
@@ -10,7 +9,14 @@
             <input type="submit" name="submit" value="Submit">
         </form>
         {% if sql_query %}
-            <h1>result: {{ sql_query }}</h1>
+            <h1>result for '{{ basic }}'</h1>
+            <ul>
+                {% for sq in  sql_query %}
+                    {% for single in sq %}
+                        <li>{{ single }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
         {% endif %}
     </div>
 {% endblock %}

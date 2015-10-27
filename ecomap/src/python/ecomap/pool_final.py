@@ -11,8 +11,8 @@ import threading
 
 from contextlib import contextmanager
 
-from config import Config, Singleton
-from utils import get_logger
+from config import Config
+from utils import get_logger, Singleton
 
 CONFIG = Config().get_config()
 get_logger()
@@ -22,14 +22,13 @@ PORT = CONFIG['db.port']
 USER = CONFIG['db.user']
 PASSWD = CONFIG['db.password']
 DB_NAME = CONFIG['db.db_name']
-USING_POOL = CONFIG['db.using_pool']
 POOL_SIZE = CONFIG['db.pool_size']
-CONNECTION_LIFETIME = CONFIG['db.connection_lifetime']
+CONNECTION_TTL = CONFIG['db.connection_lifetime']
 CONNETION_RETRIES = CONFIG['db.connection_retries']
 RETRY_DELAY = CONFIG['db.retry_delay']
 
 
-class OutOfConnectionsError(Exception):
+class PoolSizeError(Exception):
     """
     Exception raised for errors that are related to the
     pool overflow.
@@ -38,30 +37,27 @@ class OutOfConnectionsError(Exception):
         pass
 
 
-def retry_new(retry=CONNETION_RETRIES, delay=RETRY_DELAY):
+def retry(retry_quantity=CONNETION_RETRIES, delay=RETRY_DELAY):
     """
     Decorator function handling reconnection issues to DB.
     :param
-    - retry - number of attempts to reconnect.
+    - retry_quantity - number of attempts to reconnect.
     - delay - time of reconnect attempt delay in seconds.
 
     """
     def wrapper(method):
-        """
-        Simple wrapper function
-        """
-        def temp(self):
-            for i in range(retry):
+        def inner(self):
+            for i in range(retry_quantity):
                 try:
                     return method(self)
-                except OutOfConnectionsError as error:
+                except PoolSizeError as error:
                     self._log.warn('OUT of connections right now. \
-                    Pool will retry to connect in %s sec' % delay)
-                    if i is not retry - 1:
+                    Pool will retry_quantity to connect in %s sec' % delay)
+                    if i is not retry_quantity - 1:
                         time.sleep(delay)
                         continue
                     raise error
-        return temp
+        return inner
     return wrapper
 
 
@@ -73,7 +69,7 @@ class DBPool(object):
     """
     __metaclass__ = Singleton
 
-    def __init__(self, user, passwd, db_name, host, port, conn_lifetime, pool_size):
+    def __init__(self, user, passwd, db_name, host, port, ttl, pool_size):
         self._connection_pool = []
         self.connection_pointer = 0
         self._pool_size = pool_size
@@ -82,7 +78,7 @@ class DBPool(object):
         self._user = user
         self._passwd = passwd
         self._db_name = db_name
-        self.connection_open_time = conn_lifetime
+        self.ttl = ttl
         self._log = logging.getLogger('DB_pool')
         self.lock = threading.RLock()
 
@@ -96,22 +92,22 @@ class DBPool(object):
             :returns dictionary with connection object's properties.
 
         """
-        conn = MySQLdb.connect(user=self._user, passwd=PASSWD,
+        conn = MySQLdb.connect(user=self._user, host=HOST, port=PORT, passwd=PASSWD,
                                db=self._db_name)
         self._log.info('Created connection object: %s.' % conn)
         return {
             'connection': conn,
             'is_used': 0,
-            'TTL': time.time()
+            'creation_date': time.time()
         }
 
-    @retry_new(CONNETION_RETRIES, RETRY_DELAY)
+    @retry(CONNETION_RETRIES, RETRY_DELAY)
     def _get_conn(self):
         """
         Method _get_conn gets connection from the pool or calls.
         method _create_conn if pool is empty.
             :returns opened connection mysql_object.
-            :raises OutOfConnectionsError if all connections are busy.
+            :raises PoolSizeError if all connections are busy.
 
         """
         if [con for con in self._connection_pool if not con['is_used']]:
@@ -125,7 +121,7 @@ class DBPool(object):
             self.connection_pointer += 1
             connection['is_used'] = 1
         else:
-            raise OutOfConnectionsError('Out of connections.')
+            raise PoolSizeError('Out of connections.')
         return connection
 
     @contextmanager
@@ -138,7 +134,7 @@ class DBPool(object):
         with self.lock:
             conn = self._get_conn()
         yield conn
-        if not time.time() - conn['TTL'] > self.connection_open_time:
+        if not time.time() - conn['creation_date'] > self.ttl:
             self._push_conn(conn)
         else:
             self._close_conn(conn)
@@ -152,7 +148,7 @@ class DBPool(object):
 
         """
         self._log.info('Closed connection %s with lifetime %s.'
-                       % (conn['connection'], (time.time() - conn['TTL'])))
+                       % (conn['connection'], (time.time() - conn['creation_date'])))
         self.connection_pointer -= 1
         conn['connection'].close()
 
@@ -168,4 +164,4 @@ class DBPool(object):
         conn['is_used'] = 0
         self._connection_pool.append(conn)
 
-pool_obj = DBPool(USER, PASSWD, DB_NAME, HOST, PORT, CONNECTION_LIFETIME, POOL_SIZE)
+pool_obj = DBPool(USER, PASSWD, DB_NAME, HOST, PORT, CONNECTION_TTL, POOL_SIZE)

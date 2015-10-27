@@ -12,14 +12,14 @@ import threading
 from contextlib import contextmanager
 from functools import wraps
 
+import ecomap.utils
+
 from ecomap.config import Config
-from ecomap.utils import Singleton
 
 CONFIG = Config().get_config()
 
 
 class MySQLPoolSizeError(MySQLdb.DatabaseError):
-
     """
     Out of connections error.
     """
@@ -32,7 +32,6 @@ def retry(func):
     :param
     - retry_quantity - number of attempts to reconnect.
     - delay - time of reconnect attempt delay in seconds.
-
     """
     @wraps(func)
     def wrapper(retry, delay):
@@ -52,13 +51,12 @@ def retry(func):
 
 
 class DBPool(object):
-
     """
     DBPool class represents DB pool, which
     handles and manages work with database
     connections.
     """
-    __metaclass__ = Singleton
+    __metaclass__ = ecomap.utils.Singleton
 
     def __init__(self, user, passwd, db_name, host, port, ttl, pool_size):
         self._connection_pool = []
@@ -69,7 +67,7 @@ class DBPool(object):
         self._user = user
         self._passwd = passwd
         self._db_name = db_name
-        self.connection_lifetime = ttl
+        self.ttl = ttl
         self.log = logging.getLogger('db_pool')
         self.lock = threading.RLock()
 
@@ -81,7 +79,6 @@ class DBPool(object):
         """
         Method _create_conn creates connection object.
             :returns dictionary with connection object's properties.
-
         """
         conn = MySQLdb.connect(user=self._user, host=self._host,
                                port=self._port, passwd=self._passwd,
@@ -89,7 +86,7 @@ class DBPool(object):
         self.log.info('Created connection object: %s.', conn)
         return {
             'connection': conn,
-            'last_update': 0,
+            'last_update': None,
             'creation_date': time.time()
         }
 
@@ -99,7 +96,6 @@ class DBPool(object):
         method _create_conn if pool is empty.
             :returns opened connection mysql_object.
             :raises PoolSizeError if all connections are busy.
-
         """
         if self._connection_pool:
             connection = self._connection_pool.pop()
@@ -117,12 +113,14 @@ class DBPool(object):
         """
         Generator manager manages work with connections.
             :yeilds opened connection
-
         """
         with self.lock:
             conn = self._get_conn()
         yield conn['connection']
-        self._push_conn(conn)
+        if conn['creation_date'] + self.ttl < time.time():
+            self._push_conn(conn)
+        else:
+            self._close_conn(conn)
 
     def _close_conn(self, conn):
         """
@@ -130,7 +128,6 @@ class DBPool(object):
         before returning it to pool.
             params:
             - conn - specific connection object to be closed
-
         """
         self.log.info('Closed connection %s with lifetime %s.',
                       (conn['connection'],
@@ -143,7 +140,6 @@ class DBPool(object):
         Protected method _push_conn pushes connection to pool.
             params:
             - conn - connection that has to be pushed to pool
-
         """
         self.log.info('Returning connection %s to pool.', conn['connection'])
         conn['last_update'] = time.time()

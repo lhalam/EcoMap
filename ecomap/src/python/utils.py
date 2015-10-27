@@ -1,4 +1,5 @@
-from logging import config
+import logging
+import logging.config
 import os
 
 
@@ -16,9 +17,8 @@ def get_logger():
             import this method to your
             module and call it.
             then define a new logger object as usual
-
     """
-    return config.fileConfig(CONF_PATH)
+    return logging.config.fileConfig(CONF_PATH)
 
 
 class Singleton(type):

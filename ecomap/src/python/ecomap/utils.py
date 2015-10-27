@@ -33,7 +33,7 @@ logging.config.fileConfig(os.environ['PRODROOT'] + '/etc/log.conf')
 logger = logging.getLogger('ecomap')
 
 # test log
-logger.debug('TEST initial log from utils.py')
+# logger.debug('TEST initial log from utils.py')
 
 
 class Singleton(type):

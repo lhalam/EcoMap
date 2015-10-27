@@ -1,16 +1,26 @@
 import os
-import sys
+import jinja2
+import logging
 
 from flask import Flask, render_template, request, redirect
 from flask.ext.wtf import Form
 from flask_wtf import Form
 from wtforms import StringField, SubmitField
 from wtforms.validators import Required, Length, DataRequired
+from flask.ext.bootstrap import Bootstrap
 
-from ecomap import app
+from ecomap.pool_final import pool_obj
+from ecomap.utils import get_logger
 
-sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
-from pool_final import pool_obj
+
+app = Flask(__name__)
+# app.config['APPLICATION_ROOT'] = '/home/padalko/ss_projects/Lv-164.UI/ecomap'
+app.config['SECRET_KEY'] = 'topsecret!'
+bootstrap = Bootstrap(app)
+
+# sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/www')
+# app.jinja_loader = jinja2.FileSystemLoader('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/templates')
+# sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
 
 
 class MyForm(Form):
@@ -102,3 +112,8 @@ def submit():
         print 'submit'
         return redirect('/success')
     return render_template('submit.html', form=form)
+
+if __name__ == '__main__':
+    get_logger()
+    logger = logging.getLogger('ecomap')
+    app.run()

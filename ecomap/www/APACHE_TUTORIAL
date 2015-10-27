@@ -1,0 +1,37 @@
+to configure Apache:
+
+1. install apache
+    sudo apt-get install -y apache2
+    sudo apt-get install libapache2-mod-wsgi
+    sudo apt-get install libapache2-mod-wsgi python-dev
+
+2. enable wsgi mod
+    sudo a2enmod wsgi
+
+3. sudo gedit /etc/apache2/envvars
+    add this lines:
+        export PRODROOT=${PRODROOT:-/home/padalko/ss_projects/Lv-164.UI/ecomap}
+        export PYSRCROOT=${PYSRCROOT:-${PRODROOT}/src/python}
+        export CONFROOT=${CONFROOT:-${PRODROOT}/etc}
+        export PYTHONPATH=${PRODROOT}/src/python
+4.  sudo gedit /etc/hosts.conf
+    add:
+        127.0.1.2   ecomap.new
+
+5. sudo gedit /etc/apache2/sites-available/ecomap.conf
+    #! ecomap.conf - this is config name of your site. name can be different!
+
+    add  to that file content of apache.conf situated in this dir
+
+6. enable your site:
+    sudo a2ensite ecomap
+
+7. ecomap.wsgi (situated in this dir):
+    read comments in that file!!!
+    this is your main wsgi script what apache uses to run application.
+    it has already configured for our project structure
+    you can set your own path to templates folder and you'll see test site
+
+8. views.py - this is our main flask app. all code will be here. you can change everything right now.
+
+9. PROFIT!!!!

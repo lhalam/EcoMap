@@ -1,27 +1,18 @@
-import logging
 import sys
 import os
 
+# this is configuration for virtual env of your project:
+# if you using some virtualenv interpreter - uncomment next three lines
+# and add your own path to env's 'activate_this.py' file
 activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
 execfile(activate_this, dict(__file__=activate_this))
+sys.path.insert (0, (os.path.join(os.environ['PRODROOT'], 'www')))
 
-os.environ['PRODROOT'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap"
-os.environ['PYSRCROOT'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python"
-os.environ['CONFROOT'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap/etc"
-os.environ['PYTHONPATH'] = "/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python"
-
-
-sys.path.insert (0,'/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/ecomap')
-sys.path.insert (1,'/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/')
-
-os.chdir('/home/padalko/ss_projects/Lv-164.UI/ecomap/src/python/')
-
-from utils import get_logger
-get_logger()
-
-from ecomap import app as application
+from views import app as application
 
 application.secret_key = "topsecret!"
+
+# if using templates for your project, define templates path here:
+# also change the path to your own to see some stuff from views.py
 application.template_folder='/home/padalko/ss_projects/Lv-164.UI/ecomap/www/templates'
-application.config['APPLICATION_ROOT'] = '/home/padalko/ss_projects/Lv-164.UI/ecomap'
 

@@ -1,120 +1,158 @@
+"""
+This module contains class for creating database connection pool.
+Class DBPool generates new connections if needed, else returns
+connections from Pool._connection_pool. After connection is closed
+it returns to Pool._connection_pool.
+"""
 import MySQLdb
-import sys
+import time
 
-# CONNECTION_LIFETIME = 5
-HOST = "localhost"
-PORT = 13306
-USER = 'root'
-PASSWD = 'root'
-DB_NAME = 'ecomap_db'
+from contextlib import contextmanager
+from threading import RLock
 
-# TODO
-# turn on logging
-# docs here
+from config import Config
+from utils import logger
+from utils import Singleton
 
 
-class Singleton(type):
+CONFIG = Config().get_config()
 
+HOST = CONFIG['db.host']
+PORT = CONFIG['db.port']
+USER = CONFIG['db.user']
+PASSWD = CONFIG['db.password']
+DB_NAME = CONFIG['db.db_name']
+POOL_SIZE = CONFIG['db.pool_size']
+TTL = CONFIG['db.ttl']
+
+
+class PoolSizeError(Exception):
+    """Custom error that triggers if db_pool
+    is out of free connections.
     """
-    Metaclass which implements singleton pattern.
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
+def retry(tries=3, delay=5):
     """
-    def __call__(cls, *args, **kwargs):
-        if not hasattr(cls, '_instance'):
-            cls._instance = super(
-                Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
+    Decorator function
+    """
+    def wrapper(method):
+        def innerFunc(self):
+            for i in range(tries):
+                print 'Try #%s' % str(i+1)
+                try:
+                    return method(self)
+                except:
+                    if i is not tries - 1:
+                        time.sleep(delay)
+                        continue
+                    raise
+                else:
+                    break
+        return innerFunc
+    return wrapper
 
 
 class Pool(object):
-    """Class which describes pool of connections.
-    This class organises and controles the work with DB.
-    It takes number max_size as the parameter. This
-    number is limit of connections, which can be created"""
+    """Class which describes pool of connections,
+    which handles and organises work with db connections."""
+
     __metaclass__ = Singleton
 
-    def __init__(self, max_size=10):
-        self.connections = []
-        self.MAX_SIZE = max_size
-        self.active_conn = 0
+    def __init__(self, host, port, user, passwd, db_name, pool_size, TTL):
+        self._conns = []
+        self._pool_size = pool_size
+        self._conn_pointer = 0
+        self._host = host
+        self._port = port
+        self._user = user
+        self._passwd = passwd
+        self._db_name = db_name
+        self._TTL = TTL
+        self._lock = RLock()
+        self._log = logger
 
-    def get_conn(self):
-        """This method returnes PooledConnection instance.
-        If pool is empty and number of active connections is
-        below max_size than it will create and return new connection.
-        If there are connections in pool, it will pop and return
-        connection from the pool."""
-        if not self.connections:  # work on it
-            if self.active_conn < self.MAX_SIZE:
-                self.active_conn += 1
-                return PooledConnection(self)
-            else:
-                raise Exception("There is limited number of connections")
+    def __del__(self):
+        for conn in self._conns:
+            self._close_conn(conn)
+
+    def _create_conn(self):
+        """Method _create_conn opens conncetion to db.
+            :returns dictionary with connection, in_use boolean
+            and creation_time
+        """
+        connection = MySQLdb.connect(user=self._user, passwd=self._passwd,
+                                     db=self._db_name, host=self._host,
+                                     port=self._port)
+        conn = {
+            'conn': connection,
+            'in_use': False,
+            'creation_time': time.time()
+        }
+        self._conn_pointer += 1
+        self._log.info("Created new connection %s." % conn['conn'])
+        return conn
+
+    @retry()
+    def _get_conn(self):
+        """Method _get_conn gets connection from pool
+        or gets it from method _create_conn if pool is empty.
+            :returns dictionary with connection, in_use boolean
+            and creation_time
+            :raises PoolSizeError
+        """
+        conn = None
+        if self._conns:
+            self._log.info("Popped connection from pool")
+            conn = self._conns.pop()
+        elif self._conn_pointer < self._pool_size:
+            conn = self._create_conn()
         else:
-            self.active_conn += 1
-            return self.connections.pop()
+            raise PoolSizeError("Out of free connections.")
+        return conn
 
-    def return_conn(self, conn):
-        """This method accepts used connection back to pool."""
-        self.connections.append(conn)
+    # retry - implement
+    @contextmanager
+    def manager(self):
+        """Generator manager manages and handles
+        all work with connections to db.
+            :yeilds connection dict(conn, in_use,
+             creation_time)
+        """
+        with self._lock:
+            conn = self._get_conn()
+        conn['in_use'] = True
+        yield conn['conn']
+        conn['in_use'] = False
+        if conn['creation_time'] + self._TTL < time.time():
+            self._close_conn(conn)
+        else:
+            self._push_conn(conn)
 
-    def _clean_pool(self):
-        """This method cleans up the pool before the
-        end of the work of pool."""
-        for conn in self.connections:
-            conn.kill_conn()
+    def _close_conn(self, conn):
+        """Method _close_conn closes connection.
+        """
+        self._conn_pointer -= 1
+        self._log.info("Closing connection %s." % conn['conn'])
+        conn['conn'].close()
+        del conn
 
-    def __exit__(self):
-        self._clean_pool()
-
-
-class PooledConnection(object):
-    """This class is wrapper for standart MySQLdb connection.
-    It takes the reference on pool as it's first argument.
-    """
-    def __init__(self, pool):
-        try:
-            self.conn = MySQLdb.connect(host=HOST, port=PORT,
-                                        user=USER, passwd=PASSWD, db=DB_NAME)
-        except:
-            print "Unexpected error: ", sys.exc_info()[0]
-            raise
-        self.pool = pool
-
-    def kill_conn(self):
-        """This method closes the PooledConnection."""
-        try:
-            self.conn.close()
-        except:
-            print "Unexpected error: ", sys.exc_info()[0]
-            raise
-
-    def return_to_pool(self):
-        """This method returns the connection to the pool"""
-        self.pool.return_conn(self)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, type, value, traceback):
-        self.return_to_pool()
-
+    def _push_conn(self, conn):
+        """Method _push_conn pushes connections back
+        to pool.
+        """
+        self._log.info("Pushing connection %s to the pool." % conn['conn'])
+        self._conns.append(conn)
 
 if __name__ == "__main__":
-    # working with connection
-    db_pool = Pool(2)
-    conn1 = db_pool.get_conn()
-    conn2 = db_pool.get_conn()
-    # conn3 = db_pool.get_conn() # raises exception of limit
-
-    # is it okay???
-    # solutions: remap methods or overload them in wrapper class
-    cursor = conn1.conn.cursor()
-    cursor.execute("SELECT * FROM user;")
-    print cursor.fetchall()
-    cursor.close()
-    conn1.return_to_pool()
-
-    with db_pool.get_conn() as conn:
-        print conn
-
-    conn2.return_to_pool()
+    db_pool = Pool(HOST, PORT, USER, PASSWD, "DB_NAME",
+                   POOL_SIZE, TTL)
+    with db_pool.manager() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM user;")
+        print cur.fetchall()

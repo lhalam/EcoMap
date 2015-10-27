@@ -10,6 +10,7 @@ import time
 import threading
 
 from contextlib import contextmanager
+from functools import wraps
 
 from ecomap.config import Config
 from ecomap.utils import Singleton
@@ -17,7 +18,7 @@ from ecomap.utils import Singleton
 CONFIG = Config().get_config()
 
 
-class MySQLPoolSizeError(Exception):
+class MySQLPoolSizeError(MySQLdb.DatabaseError):
 
     """
     Out of connections error.
@@ -25,7 +26,7 @@ class MySQLPoolSizeError(Exception):
     pass
 
 
-def retry(retry_quantity=3, delay=1):
+def retry(func):
     """
     Decorator function handling reconnection issues to DB.
     :param
@@ -33,20 +34,20 @@ def retry(retry_quantity=3, delay=1):
     - delay - time of reconnect attempt delay in seconds.
 
     """
-    def wrapper(method):
-        def inner(self):
-            for i in range(retry_quantity):
-                try:
-                    return method(self)
-                except MySQLPoolSizeError as error:
-                    self.log.warn('Out of connections right now. '
-                                  'Pool will retry_quantity to '
-                                  'connect in %s sec', delay)
-                    if i is not retry_quantity - 1:
-                        time.sleep(delay)
-                        continue
-                    raise error
-        return inner
+    @wraps(func)
+    def wrapper(retry, delay):
+        for i in range(retry):
+            try:
+                return func()
+            except MySQLPoolSizeError as error:
+                if i is not retry - 1:
+                    time.sleep(delay)
+                    continue
+            except MySQLdb.DatabaseError as error:
+                if i is not retry - 1:
+                    time.sleep(delay)
+                    continue
+            raise error
     return wrapper
 
 
@@ -69,7 +70,7 @@ class DBPool(object):
         self._passwd = passwd
         self._db_name = db_name
         self.connection_lifetime = ttl
-        self.log = logging.getLogger('DB_pool')
+        self.log = logging.getLogger('db_pool')
         self.lock = threading.RLock()
 
     def __del__(self):

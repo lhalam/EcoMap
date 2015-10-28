@@ -1,21 +1,14 @@
-import logging
 import sys
 import os
 
-os.environ['PRODROOT'] = "/home/andjey_/lv-164/Lv-164.UI/ecomap"
-os.environ['PYSRCROOT'] = "/home/andjey_/lv-164/Lv-164.UI/ecomap/src/python"
-os.environ['CONFROOT'] = "/home/andjey_/lv-164/Lv-164.UI/ecomap/etc"
-os.environ['PYTHONPATH'] = "/home/andjey_/lv-164/Lv-164.UI/ecomap/src/python"
+# !!this is configuration for virtual env of your project:
+# if you using some virtualenv interpreter - uncomment next three lines
+# and add your own path to env's 'activate_this.py' file
 
+# activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
+# execfile(activate_this, dict(__file__=activate_this))
+# sys.path.insert (0, (os.path.join(os.environ['PRODROOT'], 'www')))
 
-# sys.path.insert (0,'/home/andjey_/lv-164/Lv-164.UI/ecomap/src/python/ecomap')
-# sys.path.insert (1,'/home/andjey_/lv-164/Lv-164.UI/ecomap/src/python/')
-
-# os.chdir('/home/andjey_/lv-164/Lv-164.UI/ecomap/src/python/')
-
-#from ecomap.utils import get_logger
-#get_logger()
-
-from ecomap.app import ecomap as application
+from views import app as application
 
 application.secret_key = "topsecret!"

@@ -13,7 +13,7 @@ from wtforms.validators import Required, Length, DataRequired
 from flask.ext.bootstrap import Bootstrap
 from itsdangerous import URLSafeTimedSerializer
 
-from ecomap.pool_final import pool_obj
+from ecomap.pool_final import pool_obj, retry
 from ecomap.utils import get_logger
 
 app = Flask(__name__)
@@ -128,7 +128,7 @@ class User(UserMixin):
         self.password = password
 
     def __repr__(self):
-        return '<User name:%s latname:%s email:%s>' % (self.first_name, self.last_name, self.email)
+        return '<User name:%s lastname:%s email:%s>' % (self.first_name, self.last_name, self.email)
 
     def set_password(self, password):
         """
@@ -188,7 +188,6 @@ class User(UserMixin):
                 db_userid = q1.fetchone()
                 app.logger.warning('log from get_user by ID')
                 app.logger.warning(User(db_userid[0], db_userid[1], db_userid[2], db_userid[3], db_userid[4]))
-                # return User(db_userid[0], db_userid[1], db_userid[2], db_userid[3], db_userid[4])
                 return User(db_userid[0], db_userid[1], db_userid[2], db_userid[3], db_userid[4])
             except:
                 return None
@@ -294,44 +293,59 @@ def login():
         user = User.get(user_mail)
         if user is None or not user.verify_password(user_pass):
             status = 'no user in db or wrong paswd, cannot login'
-            return jsonify({'check_user': status, 'umail': user_mail})
-            # return redirect(url_for('login', **request.args))
+            return jsonify({'login_status': status, 'email': user_mail})
         login_user(user, remember=True)
-        status = 'checked, log in'
-        # if check_user(user_mail, user_pass):
-        #     app.logger.info('can login')
-        #     status = 'checked, log in'
-        #     # session['user'] = user_mail
-        #     print User.get(user_mail)
-        # else:
-        #     status = 'no user in db or wrong paswd, cannot login'
-        return jsonify({'check_user': status, 'paswd': user.password, 'umail': user_mail})
-        # return redirect(request.args.get('next') or url_for('index_ecomap'))
+        status = 'user checked, logged in'
+        return jsonify({
+            'login_status': status,
+            'password': user.password,
+            'email': user.email,
+            'firstname': user.first_name,
+            'lastname': user.last_name,
+            'id': user.id,
+            'token': user.get_auth_token()
+        })
     return jsonify({'method': 'GET'})
 
 
 @app.route('/logout', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def logout():
     logout_user()
     status = 'logged out'
     return jsonify({'check_user': status})
 
 
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     if request.method == 'POST':
+#         app.logger.info(request.json)
+#         user_firstname = request.json['firstname']
+#         user_lastname = request.json["lastname"]
+#         user_mail = request.json['email']
+#         user_pass = request.json["password"]
+#         if not User.get(user_mail):
+#             register_user(user_firstname, user_lastname, user_mail, user_pass)
+#             status = 'added %s %s' % (user_firstname, user_lastname)
+#         else:
+#             status = 'user with this email is already exists'
+#         return jsonify({'status': status})
+
+
+def create_user(json):
+    with pool_obj.manager() as conn:
+        cur = conn['connection'].cursor()
+        cur.execute('INSERT INTO user (first_name, last_name, email, password)'
+            'VALUES ("%s", "%s", "%s", "%s");' % (json['firstname'], json['lastname'], json['email'], json['password']))
+        conn['connection'].commit()
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        app.logger.info(request.json)
-        user_firstname = request.json['firstname']
-        user_lastname = request.json["lastname"]
-        user_mail = request.json['email']
-        user_pass = request.json["password"]
-        if not User.get(user_mail):
-            register_user(user_firstname, user_lastname, user_mail, user_pass)
-            status = 'added %s %s' % (user_firstname, user_lastname)
-        else:
-            status = 'user with this email is already exists'
-        return jsonify({'status': status})
+    json = request.json
+    app.logger.debug(json)
+    create_user(json)
+    return jsonify(request.json)
 
 
 #FLASK TEMPLATE VERSION!

@@ -5,7 +5,7 @@ from flask_login import UserMixin, LoginManager
 from itsdangerous import URLSafeSerializer
 
 from ecomap.app import app
-from util import get_user_by_username, get_user_by_userid
+from util import get_user_by_email, get_user_by_userid, insert_user
 
 
 login_serializer = URLSafeSerializer('test')
@@ -16,14 +16,34 @@ class User(UserMixin):
 
     """Class which describes User entity"""
 
-    def __init__(self, userid, password):
+    def __init__(self, userid, first_name, last_name, email, password):
         self.userid = userid
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
         self.password = password
 
     def get_auth_token(self):
         """This method encodes a secure token from a cookie."""
         data = [str(self.userid), self.password]
         return login_serializer.dumps(data)
+
+    def set_password(self, password):
+        """
+        method needed for generate unique pasword hash to store in db.
+        uses built-in flask function
+        :param password: clean password
+        :return:
+        """
+        self.password = hash_pass(password)
+
+    def verify_password(self, password):
+        """
+        method for checking and comparing passwords from db and login form
+        :param password:
+        :return:
+        """
+        return self.password == hash_pass(password)      # FIX TRICK
 
     @staticmethod
     def get(userid=None, username=None):
@@ -35,18 +55,24 @@ class User(UserMixin):
         if userid:
             user = get_user_by_userid(userid)
         if username:
-            user = get_user_by_username(username)
+            user = get_user_by_email(username)
         if user:
-            return User(user[0][0], user[0][1])
+            return User(user[0][0], user[0][1], user[0][2],
+                        user[0][3], user[0][4])
         return None
 
-    def is_active(self):
+    @staticmethod
+    def register(first_name, last_name, email, password):
+        salted_pass = hash_pass(password)
+        return insert_user(first_name, last_name, email, salted_pass)
+
+    def is_active(self):    # fix
         return True
 
-    def is_authenticated(self):
+    def is_authenticated(self):     # fix
         return False
 
-    def is_anonymous(self):
+    def is_anonymous(self):     # fix
         return False
 
     def get_id(self):
@@ -81,7 +107,8 @@ login_manager.login_view = "/"
 
 
 if __name__ == "__main__":
-    usr = User.get(username='admin')
+    User.register('test2', 'test2', 'test2@gmail.com', '1111')
+    # usr = User.get(username='admin')
     # print usr
     # print usr.get_auth_token()
     # print usr.get_id()

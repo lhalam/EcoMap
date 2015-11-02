@@ -2,16 +2,16 @@
 from db_pool import db_pool
 
 
-def get_user_by_username(username):
-    """Function which returns user by username.
+def get_user_by_email(email):
+    """Function which returns user by email.
 
         :returns tuple of rows(id, password) from db.
     """
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, password FROM user \
-                        WHERE first_name=%s", username)
+        cursor.execute("SELECT id, first_name, last_name, email, password \
+                        FROM user WHERE email=%s", email)
         user = cursor.fetchall()
     return user
 
@@ -24,13 +24,21 @@ def get_user_by_userid(userid):
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, password FROM user \
-                        WHERE id=%s", userid)
+        cursor.execute("SELECT id, first_name, last_name, email, password \
+                        FROM user WHERE id=%s", userid)
         user = cursor.fetchall()
     return user
 
+
+def insert_user(first_name, last_name, email, password):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO user \
+                        (first_name, last_name, email, password) \
+                        VALUES (%s, %s, %s, %s);',
+                       (first_name, last_name, email, password))
+        conn.commit()
+    return True
+
 if __name__ == "__main__":
-    print get_user_by_username("admin")
-    print get_user_by_username("rand")
-    print get_user_by_userid(1)
-    print get_user_by_userid(12)
+    insert_user('insert_test', 'insert_test', 'insert_test', 'insert_test')

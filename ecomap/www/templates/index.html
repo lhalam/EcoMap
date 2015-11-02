@@ -27,8 +27,9 @@
           </div>
           <button type="submit" class="btn btn-default" >Login</button>
         </fieldset>
+        <h3>Logined:</h3> <span ng-bind="logined"></span>
       </form>
-      <form method="POST" >
+      <form method="POST" ng-controller="LogoutController" ng-submit="Logout()">
         <button type="submit" class="btn btn-default">Log out</button>
       </form>
     </div>

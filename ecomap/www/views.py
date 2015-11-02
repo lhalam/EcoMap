@@ -14,13 +14,6 @@ from ecomap.app import app
 
 @app.route("/")
 def index():
-    # return jsonify(ans="True")
-    try:
-        # logout_user()
-        render_template("index.html")
-        # pass
-    except:
-        return jsonify(e=str(sys.exc_info()[0]))
     return render_template("index.html")
 
 
@@ -33,11 +26,10 @@ def login():
            usr.hash_pass(user.password):
             try:
                 logined = login_user(user, force=True)
-                return jsonify(userid=user.userid, username=user.username,
-                               logined=logined)
+                return jsonify(userid=user.userid, logined=logined)
             except:
                 return jsonify(e=str(sys.exc_info()[0]))
-    return jsonify(error="Couldn't login with your credenntials!!!")
+    return jsonify(error="Couldn't login with your credenntials!!!", logined=0)
 
 
 @app.route("/api/logout", methods=["GET", "POST"])

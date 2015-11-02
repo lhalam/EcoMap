@@ -12,6 +12,7 @@ angular.module('ecomap')
         }
       }).success(function(result){
         console.log(result);
+        
       }).error(function(error){
         console.log(error);
       });
@@ -30,4 +31,8 @@ angular.module('ecomap')
       });
     }
     
-  }])
+  }]);
+
+    var refresh_login = function(val){
+      $scope.logined = val;
+    }

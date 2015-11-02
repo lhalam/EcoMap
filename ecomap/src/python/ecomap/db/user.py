@@ -2,14 +2,14 @@
 import md5
 
 from flask_login import UserMixin, LoginManager
-# from itsdangerous import URLSafeSerializer
+from itsdangerous import URLSafeSerializer
 
 from ecomap.app import app
 from util import get_user_by_username, get_user_by_userid
 
 
-# login_serializer = URLSafeSerializer('test')
-login_manager = LoginManager()
+login_serializer = URLSafeSerializer('test')
+login_manager = LoginManager(app)
 
 
 class User(UserMixin):
@@ -20,10 +20,10 @@ class User(UserMixin):
         self.userid = userid
         self.password = password
 
-    # def get_auth_token(self):
-    #     """This method encodes a secure token from a cookie."""
-    #     data = [str(self.userid), self.password]
-    #     return login_serializer.dumps(data)
+    def get_auth_token(self):
+        """This method encodes a secure token from a cookie."""
+        data = [str(self.userid), self.password]
+        return login_serializer.dumps(data)
 
     @staticmethod
     def get(userid=None, username=None):
@@ -64,22 +64,21 @@ def load_user(userid):
     return User.get(userid=int(userid))
 
 
-# @login_manager.token_loader
-# def load_token(token):
-#     """"""
-#     # max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
-#     data = login_serializer.loads(token)
+@login_manager.token_loader
+def load_token(token):
+    """"""
+    # max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
+    data = login_serializer.loads(token)
 
-#     user = User.get(userid=data[0])
+    user = User.get(userid=data[0])
 
-#     if user and data[1] == user.password:
-#         return user
-#     return None
+    if user and data[1] == user.password:
+        return user
+    return None
 
 # Tell the login manager where to redirect users to display the login page
 login_manager.login_view = "/"
-# # Setup the login manager
-login_manager.init_app(app)
+
 
 if __name__ == "__main__":
     usr = User.get(username='admin')

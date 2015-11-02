@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+  <title>ecomap</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+  <script type="text/javascript" src="/js/ui-bootstrap-tpls-0.14.3.min.js"></script>
+  <script type="text/javascript" src="/js/script.js"></script>
+   <link rel="stylesheet" type="text/css" href="/css/custom.css">
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      
+      <a class="navbar-brand" href="#"><img src="/image/logo.png"></a>
+    </div>
+    <div class="collapse navbar-collapse" >
+      <ul class="nav navbar-nav">
+        <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">first</a></li>
+            <li><a href="#">second</a></li>
+            <li><a href="#">third</a></li>
+          </ul>
+        </li>
+        <li><a href="#">статистика</a></li>
+        <li><a href="">термінове повідомлення</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">
+           <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> Вхід<span class="caret"></span></a></a>
+          <ul class="dropdown-menu">
+            <li id="user_form">
+              <form   ng-submit="singinUser()" ng-controller="UserController">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" ng-model="user.email" >
+                </div>
+                <div class="form-group">
+                  
+                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="user.password">
+                </div>
+                <div class="sing_in_buttons_block">
+                  <button class="sing_in_button" id="sing_in">Вхід</button>
+                <button class="sing_in_button" id="registration" >Sign in</button>
+                </div>
+              </form>
+            </li>
+          </ul>
+
+         </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="col-md-3" id="filter">
+ <div class="problem_filter">
+  <div ng-controller="DatepickerDemoCtrl">
+   
+    <h4>ФІЛЬТРАЦІЯ ЗА ДАТОЮ</h4>
+   
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <p class="input-group">
+              <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened1" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+
+        <div class="col-md-10 col-md-offset-1">
+            <p class="input-group">
+              <input type="date" class="form-control" uib-datepicker-popup ng-model="dt" is-open="status.opened2" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+
+   
+    </div>
+  
+</div>
+
+<div class="toogle" id="toggle">фільтрація</div>
+  <h4>Тип проблеми</h4>
+  <div class="col-md-12">
+  <ul class="list-group">
+    <li class="list-group-item">First item</li>
+    <li class="list-group-item">Second item</li>
+    <li class="list-group-item">Third item</li>
+  </ul>
+  </div>
+  <div class="col-md-12">
+  <h4>Статус проблеми</h4>
+  <ul class="list-group">
+    <li class="list-group-item">First item</li>
+    <li class="list-group-item">Second item</li>
+    <li class="list-group-item">Third item</li>
+  </ul>
+  </div>
+  </div>
+ </div>
+
+<div class="row">
+  <div class="col-md-6 col-md-offset-6 inform_probl_block">
+  <h2>Повідомити про проблему</h2>
+  
+    <ul class="nav nav-tabs nav-justified">
+        <li class="active"><a href="#">Точка</a></li>
+        <li><a href="#">Опис</a></li>
+        <li><a href="#">Фото</a></li> 
+    </ul> 
+
+  </div>
+</div>
+<div class="registr_block">
+
+  <div id="login">
+    <h1>Registration</h1>
+    <form ng-submit="singupUser()" ng-controller="RegistrCtrl" name="singUpForm">
+      <input type="text" placeholder="First name" ng-model="newUser.firstName"   name="firstName" required/>
+      <span class="warning" ng-show="singUpForm.firstName.$dirty && singUpForm.firstName.$invalid">
+      <span ng-show="singUpForm.firstName.$error.required">first name is required.</span>
+      </span>
+      <input type="text" placeholder="Last name" ng-model="newUser.lastName" name="lastName" required/>
+      <span class="warning" ng-show="singUpForm.lastName.$dirty && singUpForm.lastName.$invalid">
+      <span ng-show="singUpForm.lastName.$error.required">last name is required.</span>
+      </span>
+      <input type="email" placeholder="Email" ng-model="newUser.email" required/>
+      <span class="warning" ng-show="singUpForm.email.$dirty && singUpForm.email.$invalid">
+      <span ng-show="singUpForm.email.$error.required">email is required.</span>
+      <span ng-show="singUpForm.email.$error.email">invalid email address.</span>
+      </span>
+      <input  type="password" placeholder="Password" ng-model="newUser.password" name="email" required/>
+      <input type="password" placeholder="Confirm password" ng-model="newUser.confPassword" required/>
+      <span class="warning" ng-show="newUser.confPassword != newUser.password">
+      passords don`t match
+      </span>
+      <input type="submit" value="Sing up"  class="registr_btn" ng-disabled="newUser.confPassword != newUser.password || singUpForm.firstName.$dirty && singUpForm.firstName.$invalid || singUpForm.lastName.$dirty && singUpForm.lastName.$invalid || singUpForm.email.$dirty && singUpForm.email.$invalid"/>
+    </form>
+  </div>
+  </div>
+</body>
+<script type="text/javascript">
+  var toogle=document.getElementById("toggle");
+  var filter=document.getElementById("filter");
+  console.log(toogle);
+  toogle.addEventListener("click" , function () {
+   filter.classList.toggle("toggle_hide")
+  });
+
+  var inform_probl_block=document.getElementsByClassName("inform_probl_block")[0];
+  var inform_probl_btn=document.getElementById("inform_probl_btn");
+  inform_probl_btn.addEventListener("click", function (ev){
+    inform_probl_block.classList.toggle("hide_probl_block")
+  });
+
+  var registr_block=document.getElementsByClassName("registr_block")[0];
+
+  var registration_btn=document.getElementById("registration");
+  registration.addEventListener("click", function (){
+    console.log("click");
+    registr_block.classList.toggle("visibible")
+  })
+
+</script>
+</html>

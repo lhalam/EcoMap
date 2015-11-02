@@ -293,6 +293,7 @@ def login():
         user = User.get(user_mail)
         if user is None or not user.verify_password(user_pass):
             status = 'no user in db or wrong paswd, cannot login'
+            return (401)
             return jsonify({'login_status': status, 'email': user_mail})
         login_user(user, remember=True)
         status = 'user checked, logged in'

@@ -1,0 +1,217 @@
+/* Nav bar*/
+body{
+	overflow-x:hidden;
+	overflow-y:hidden;
+}
+.navbar.navbar-default{
+	height: 3.7em;
+	text-transform:uppercase;
+}
+.navbar img{
+	height: 70px;
+}
+
+.nav.navbar-nav li{
+	height: 100%;
+	line-height: 4.5em;
+	vertical-align: center;
+	cursor: pointer;
+	
+}
+.nav.navbar-nav.navbar-right{
+	margin-top: -2.2em;
+}
+
+/*problems filter */
+.problem_filter{
+}
+.toogle{
+	cursor: pointer;
+	position: absolute;
+	background-color: #ccc;
+	right: -3.6em;
+	bottom:1.6em;
+	-webkit-transform: rotate(-90deg);
+	border:1px solid transparent;
+	border-radius: 0 0 5px 5px;
+	padding: 0.1em;
+	z-index: 99999999;
+
+}
+.list-group-item{
+
+}
+#filter{
+	position: absolute;
+	top:6.4em;
+	left: -25%;
+	border:2px solid #ccc;
+	-webkit-transition:1s;
+	transition:1s;
+
+
+}
+.toggle_hide{
+	left: 0% !important;
+
+}
+
+#filter h4{
+	text-align: center;
+	margin-bottom: 1.2em
+}
+
+/*inform about problem block*/
+#inform_probl_btn{
+	transition:0.1s;
+}
+#inform_probl_btn:hover{
+	background-color: #aaa;
+}
+.inform_probl_block{
+	margin-left: 100%;
+}
+.hide_probl_block{
+	margin-left: 50%;
+}
+
+/*Create User Form*/
+.form-group input {
+	width: 90%
+}
+.form-group label{
+	text-align: center;
+}
+
+#user_form{
+	width: 200px;
+}
+#user_form input{
+	margin-top: 20px;
+}
+#user_form .form-group,.checkbox{
+	margin-left: 15px;
+}
+.checkbox {
+	font-size: 0.8em
+}
+#user_form button{
+	margin-left:25% 
+}
+#user_form .btn.btn-primary {
+	width: 100px;
+}
+.sing_in_buttons_block{
+	margin-top:1em;
+	margin-left: 5%;
+}
+.sing_in_button{
+	display: inline-block;
+	background-color: #fff;
+	color: #777;
+	border:1px solid #ccc;
+	border-radius: 5px;
+	height: 2.2em;
+	width: 44%;
+	position: relative;
+	margin: 0 !important;
+	margin-left: 2% !important;
+	margin-bottom: -100% !important;
+	vertical-align: center;
+	line-height: 2.2em;
+	text-align: center;
+}
+.sing_in_button:active{
+	border :2px solid #ccc ;
+	background-color: #ddd
+
+}
+.sing_in_button:focus{
+	border: none;
+}
+.hidden{
+	display: none;
+}
+/*registration form*/
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+.registr_block{
+	position: absolute;
+	top:12%;
+	opacity: 0;
+	left: auto;
+	height: 100%;
+	width: 100%;
+	font-family:'Open Sans',sans-serif;
+	margin-top: -3em;
+	transition :1s;
+	
+}
+
+#login{
+  width:35%;
+  margin:0 auto;
+  margin-top:8px;
+  margin-bottom:2%;
+  transition:opacity 1s;
+  -webkit-transition:opacity 1s;
+}
+
+
+
+#login h1{
+  background:#3399cc;
+  padding:20px 0;
+  font-size:140%;
+  font-weight:300;
+  text-align:center;
+  color:#fff;
+  letter-spacing: 2px;
+}
+
+form{
+  background:#f0f0f0;
+  padding:6% 4%;
+}
+
+.registr_block input:not([type='submit']){
+  width:90%;
+  background:#fff;
+  margin-bottom:3%;
+  margin-left: 5%;
+  border:1px solid #ccc;
+  padding:4%;
+  font-family:'Open Sans',sans-serif;
+  font-size:95%;
+  color:#555;
+
+}
+.registr_block input[type='submit']{
+	font-size: 1.3em;
+	margin-top: 1em;
+}
+.registr_btn{
+  width:100%;
+  background:#3399cc;
+  border:0;
+  padding:4%;
+  font-family:'Open Sans',sans-serif;
+  font-size:100%;
+  color:#fff;
+  cursor:pointer;
+  transition:background .3s;
+  -webkit-transition:background .3s;
+
+}
+
+.registr_btn:hover{
+  background:#2288bb;
+}
+.visibible{
+	opacity: 1;
+}
+.warning{
+	margin-left: 5%;
+	margin-top: -1%;
+	text-transform: uppercase;
+	color: red;
+}

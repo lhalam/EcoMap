@@ -4,7 +4,7 @@ from flask.ext.login import UserMixin, LoginManager, login_user, logout_user, lo
 import jinja2
 import logging
 
-from flask import Flask, render_template, request, redirect, jsonify, session, url_for
+from flask import Flask, render_template, request, redirect, jsonify, session, url_for, abort
 from flask.ext.wtf import Form
 from flask_wtf import Form
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -285,16 +285,12 @@ def load_token(token):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        app.logger.debug('request %s' % request)  # <Request 'http://ecomap.new:81/login' [POST]>
-        app.logger.debug('req data %s' % request.data)  # {"email":"vadime.padalko@gmail.com","password":"666664"}
-        app.logger.debug('req json %s' % request.json)  # {u'password': u'666664', u'email': u'vadime.padalko@gmail.com'}
-        user_mail = request.json['email']
-        user_pass = request.json["password"]
-        user = User.get(user_mail)
-        if user is None or not user.verify_password(user_pass):
+        app.logger.debug('request json %s' % request.json)  # {u'password': u'666664', u'email': u'vadime.padalko@gmail.com'}
+        user = User.get(request.json['email'])
+        if user is None or not user.verify_password(request.json["password"]):
             status = 'no user in db or wrong paswd, cannot login'
-            return (401)
-            return jsonify({'login_status': status, 'email': user_mail})
+            abort(401)
+            return jsonify({'login_status': status, 'email': request.json['email']}), 401
         login_user(user, remember=True)
         status = 'user checked, logged in'
         return jsonify({
@@ -306,7 +302,7 @@ def login():
             'id': user.id,
             'token': user.get_auth_token()
         })
-    return jsonify({'method': 'GET'})
+    return abort(400)
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -317,20 +313,22 @@ def logout():
     return jsonify({'check_user': status})
 
 
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     if request.method == 'POST':
-#         app.logger.info(request.json)
-#         user_firstname = request.json['firstname']
-#         user_lastname = request.json["lastname"]
-#         user_mail = request.json['email']
-#         user_pass = request.json["password"]
-#         if not User.get(user_mail):
-#             register_user(user_firstname, user_lastname, user_mail, user_pass)
-#             status = 'added %s %s' % (user_firstname, user_lastname)
-#         else:
-#             status = 'user with this email is already exists'
-#         return jsonify({'status': status})
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        app.logger.info(request.json)
+        user_firstname = request.json['first_name']
+        user_lastname = request.json["last_name"]
+        user_mail = request.json['email']
+        user_pass = request.json["password"]
+        if not User.get(user_mail):
+            register_user(user_firstname, user_lastname, user_mail, user_pass)
+            status = 'added %s %s' % (user_firstname, user_lastname)
+            return jsonify({'status': status}), 200
+        else:
+            status = 'user with this email is already exists'
+            # abort(400)
+            return jsonify({'status': status}), 400
 
 
 def create_user(json):
@@ -341,12 +339,12 @@ def create_user(json):
         conn['connection'].commit()
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    json = request.json
-    app.logger.debug(json)
-    create_user(json)
-    return jsonify(request.json)
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     json = request.json
+#     app.logger.debug(json)
+#     create_user(json)
+#     return jsonify(request.json)
 
 
 #FLASK TEMPLATE VERSION!

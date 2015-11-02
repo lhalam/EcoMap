@@ -83,10 +83,20 @@ app.controller("UserController", function ($scope, $http){
             method : 'POST',
             url : '/login',
             data : $scope.user
-        })
+        }).success(function (data, status) {
+        alert(data);
+          alert(status)
+          user = data
+      })
+      // handle error
+      .error(function (data) {
+        alert(data)
+
+      });
+
 }
 })
-app.controller("RegistrCtrl",function ($scope, $http){
+app.controller("RegistrCtrl", function ($scope, $http){
   $scope.newUser = {};
     $scope.singupUser = function() {
       console.log($scope.newUser)

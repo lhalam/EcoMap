@@ -40,11 +40,11 @@
       </ul>
 
 
-      <ul class="nav navbar-nav navbar-right" ng-hide='userObj.firstname'>
+      <ul class="nav navbar-nav navbar-right" ng-hide='userObj.first_name'>
         <li >
           <a href="#" >
            <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> <span ng-hide='userObj.firstname'>Вхід</span><span class="caret"></span></a></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> <span ng-hide='userObj.first_name'>Вхід</span><span class="caret"></span></a></a>
           <ul class="dropdown-menu">
             <li id="user_form">
               <form ng-submit="singinUser()" ng-controller="UserController">
@@ -68,11 +68,11 @@
          </li>
       </ul>
 
-        <ul class="nav navbar-nav navbar-right" ng-show='userObj.firstname'>
+        <ul class="nav navbar-nav navbar-right" ng-show='userObj.first_name'>
           <li>
           <a href="#" >
            <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> <span>Hi, {{userObj.firstname|angular}} </span><span class="caret"></span></a></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> <span>Hi, {{userObj.first_name|angular}} </span><span class="caret"></span></a></a>
 
           <ul class="dropdown-menu">
           <!-- user_form-->
@@ -86,21 +86,6 @@
          </li>
       </ul>
 
-        <ul class="nav navbar-nav navbar-right" ng-show='userObj.firstname'>
-          <li>
-          <a href="#" >
-           <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>
-                <span>Hi, {{userObj.firstname|angular}}</span><span class="caret"></span></a></a>
-
-          <ul class="dropdown-menu">
-          <!-- user_form-->
-            <li id="log_out2">
-              <form   ng-submit="logOut()" ng-controller="logOutUser">
-                  <button type="submit" class="btn btn-danger btn-lg">Log out</button>
-              </form>
-            </li>
-          </ul>
 
          </li>
       </ul>
@@ -169,7 +154,7 @@
 
   </div>
 </div>
-<div class="registr_block" ng-hide="userObj.firstname">
+<div class="registr_block" ng-hide="userObj.first_name">
 
   <div id="login">
     <h1>Registration</h1>

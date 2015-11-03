@@ -124,7 +124,6 @@ app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
 });
 app.controller("logOutUser",function ($scope,$window,$rootScope){
   $scope.logOut=function (){
-
     $rootScope.userObj= undefined;
     $window.location="/logout"
   }

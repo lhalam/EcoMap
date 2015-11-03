@@ -1,6 +1,7 @@
+import logging
 from datetime import timedelta
 from flask.ext.login import UserMixin, LoginManager, login_user, logout_user, login_required
-import logging
+
 
 from itsdangerous import URLSafeTimedSerializer
 from flask import Flask, render_template, request, redirect, jsonify, url_for, abort
@@ -104,6 +105,7 @@ class User(UserMixin):
                 return User(db_userid[0], db_userid[1], db_userid[2], db_userid[3], db_userid[4])
             except:
                 return None
+
 
 def register_user(firstname, lastname, mail, password):
     """

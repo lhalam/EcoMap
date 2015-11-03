@@ -3,13 +3,13 @@ Class DBPool generates new connections if needed, else returns
 connections from Pool._connection_pool. After connection is closed
 it returns to Pool._connection_pool.
 """
+import functools
 import logging
 import MySQLdb
 import time
 import threading
 
 from contextlib import contextmanager
-from functools import wraps
 
 import ecomap.utils
 
@@ -26,8 +26,8 @@ class MySQLPoolSizeError(MySQLdb.DatabaseError):
 def retry(func):
     """Decorator function handling reconnection issues to DB."""
 
-    @wraps(func)
-    def wrapper(retries, delay):
+    @functools.wraps(func)
+    def wrapper(arg, retries=5, delay=1):
         """Wrapped function which tries to connect to DB.
             params:
             - retries - nubmer of attempts.
@@ -36,11 +36,11 @@ def retry(func):
         while True:
             retries -= 1
             try:
-                return func()
+                return func(arg)
             except MySQLPoolSizeError as error:
-                pass
+                logging.getLogger('retry').warn('Out of free connections.')
             except MySQLdb.Error as error:
-                pass
+                logging.getLogger('retry').warn('Error in database.')
             if retries:
                 time.sleep(delay)
             else:
@@ -65,7 +65,7 @@ class DBPool(object):
         self._passwd = passwd
         self._db_name = db_name
         self.connection_ttl = ttl
-        self.log = logging.getLogger('db_pool')
+        self.log = logging.getLogger('dbpool')
         self.lock = threading.RLock()
 
     def __del__(self):
@@ -106,13 +106,17 @@ class DBPool(object):
         """Generator manager manages work with connections.
             yeilds: opened connection
         """
-        with self.lock:
-            conn = self._get_conn()
-        yield conn['connection']
-        if conn['creation_date'] + self.connection_ttl < time.time():
-            self._push_conn(conn)
-        else:
+        try:
+            with self.lock:
+                conn = self._get_conn()
+            yield conn['connection']
+            if conn['creation_date'] + self.connection_ttl < time.time():
+                self._push_conn(conn)
+            else:
+                self._close_conn(conn)
+        except:
             self._close_conn(conn)
+            raise
 
     def _close_conn(self, conn):
         """Protected method _close_conn closes connection
@@ -121,8 +125,7 @@ class DBPool(object):
             - conn - specific connection object to be closed
         """
         self.log.info('Closed connection %s with lifetime %s.',
-                      (conn['connection'],
-                       (time.time() - conn['creation_date'])))
+                      conn['connection'], conn['creation_date'])
         self.connection_pointer -= 1
         conn['connection'].close()
 
@@ -136,8 +139,10 @@ class DBPool(object):
         self._connection_pool.append(conn)
 
 
-db_pool = lambda: DBPool(user=_CONFIG['db.user'], passwd=_CONFIG['db.password'],
-                         db_name=_CONFIG['db.db_name'], host=_CONFIG['db.host'],
+db_pool = lambda: DBPool(user=_CONFIG['db.user'],
+                         passwd=_CONFIG['db.password'],
+                         db_name=_CONFIG['db.db_name'],
+                         host=_CONFIG['db.host'],
                          port=_CONFIG['db.port'],
                          ttl=_CONFIG['db.connection_lifetime'],
                          pool_size=_CONFIG['db.pool_size'])

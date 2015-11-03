@@ -1,50 +1,28 @@
-# charset = utf-8
-"""
-logging to project local file(ecomap.conf), console(stdout)
-    and rsyslog.LOG_LOCAL6 (file path: /var/log/ecomap_log.log)
-seting-up your own syslog on Ubuntu:
-    1. go to /etc/rsyslog.d/
-    2. create file ecomap.conf
-    3. add to newly created file ecomap.conf this line:
-            local6.*        /var/log/ecomap_log.log
-    4. run in terminal: sudo restart rsyslog
-    5. now logs from ecomap project will be sending via UDP \
-    socket to our system
-        and will be stored locally in our system.
-        path to logs = in /var/log/ecomap_log.log
-    6. run this file to test.
-    if everything is OK you'll get:
-        1. log message in console
-        2. local logfile stored in project_directory
-        3. log file in your system rsyslog (file path: /var/log/ecomap_log.log)
-        4. all this logs must have different output format
-    7. to add logger function to your module just make such import:
-            from utils import logger
-        *in case if environment is setted up properly
-         or copy files(utils.py and logging.conf) to your module directory
-         and make import
- """
-import logging
-import logging.config
+from logging import config
 import os
-# reading from logging config file
-logging.config.fileConfig(os.environ['PRODROOT'] + '/etc/log.conf')
-# initialization of our project logging system
-logger = logging.getLogger('ecomap')
 
-# test log
-# logger.debug('TEST initial log from utils.py')
+
+CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
+
+
+def get_logger():
+    """function for configuring default logger object
+    from standard logging library
+        Returns:
+            configured logger object.
+        Usage:
+            import this method to your
+            module and call it.
+            then define a new logger object as usual
+    """
+    return config.fileConfig(CONF_PATH)
 
 
 class Singleton(type):
     """
-    Metaclass to implement singleton pattern
+    using a Singleton pattern to work with only one possible instance of Pool
     """
-
     def __call__(cls, *args, **kwargs):
-        """
-        Return new or existed instance
-        """
         if not hasattr(cls, '_instance'):
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance

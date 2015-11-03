@@ -1,4 +1,4 @@
-var app = angular.module('app',['ui.bootstrap'])
+var app=angular.module('app',['ui.bootstrap'])
 app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.today = function() {
     $scope.dt = new Date();
@@ -75,28 +75,28 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
     return '';
   };
 });
-app.controller("UserController", function ($scope, $http){
+app.controller("UserController",function ($scope, $http,$rootScope,$window){
   $scope.user = {};
     $scope.singinUser = function() {
-      console.log($scope.user)
+
         $http({
             method : 'POST',
             url : '/login',
             data : $scope.user
-        }).success(function (data, status) {
-        alert(data);
-          alert(status)
-          user = data
-      })
-      // handle error
-      .error(function (data) {
-        alert(data)
-
-      });
+        })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          console.log( $rootScope.userObj)
+          
+        },
+        function errorCallback(data) {
+          alert("sorry "+data.data.headers)
+        })
+        
 
 }
 })
-app.controller("RegistrCtrl", function ($scope, $http){
+app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
   $scope.newUser = {};
     $scope.singupUser = function() {
       console.log($scope.newUser)
@@ -105,6 +105,20 @@ app.controller("RegistrCtrl", function ($scope, $http){
             url : '/register',
             data : $scope.newUser
         })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          console.log( $rootScope.userObj)
+          
+        },
+        function errorCallback(data) {
+          alert("sorry "+data.data.headers)
+        })
 }
-})
+});
+app.controller("logOutUser",function ($scope,$window,$rootScope){
+  $scope.logOut=function (){
 
+    $rootScope.userObj= undefined;
+    $window.location="/logout" /*logout*/
+  }
+});

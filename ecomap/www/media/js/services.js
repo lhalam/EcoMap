@@ -27,10 +27,10 @@ angular.module('myApp').factory('AuthService',
     var deferred = $q.defer();
 
     // send a post request to the server
-    $http.post('/api/login', {email: email, password: password})
+    $http.post('/login', {email: email, password: password})
       // handle success
       .success(function (data, status) {
-        if(status === 200 && data.result){
+        if(status === 200 && data.status){
           user = true;
           deferred.resolve();
         } else {
@@ -55,7 +55,7 @@ angular.module('myApp').factory('AuthService',
     var deferred = $q.defer();
 
     // send a get request to the server
-    $http.get('/api/logout')
+    $http.get('/logout')
       // handle success
       .success(function (data) {
         user = false;
@@ -72,16 +72,16 @@ angular.module('myApp').factory('AuthService',
 
   }
 
-  function register(email, password) {
+  function register(email, password, firstname, lastname) {
 
     // create a new instance of deferred
     var deferred = $q.defer();
 
     // send a post request to the server
-    $http.post('/api/register', {email: email, password: password})
+    $http.post('/register', {email: email, password: password, last_name: lastname, first_name: firstname})
       // handle success
       .success(function (data, status) {
-        if(status === 200 && data.result){
+        if(status === 200 && data.status){
           deferred.resolve();
         } else {
           deferred.reject();

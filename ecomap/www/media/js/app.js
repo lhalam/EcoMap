@@ -3,11 +3,9 @@ var myApp = angular.module('myApp', ['ngRoute']);
 myApp.config(function ($routeProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'static/partials/home.html',
       access: {restricted: true}
     })
     .when('/login', {
-      templateUrl: 'static/partials/login.html',
       controller: 'loginController',
       access: {restricted: false}
     })
@@ -16,18 +14,10 @@ myApp.config(function ($routeProvider) {
       access: {restricted: true}
     })
     .when('/register', {
-      templateUrl: 'static/partials/register.html',
       controller: 'registerController',
       access: {restricted: false}
     })
-    .when('/one', {
-      template: '<h1>This is page one!</h1>',
-      access: {restricted: true}
-    })
-    .when('/two', {
-      template: '<h1>This is page two!</h1>',
-      access: {restricted: false}
-    })
+
     .otherwise({redirectTo: '/'});
 });
 
@@ -39,3 +29,13 @@ myApp.run(function ($rootScope, $location, $route, AuthService) {
     }
   });
 });
+
+var app = angular.module("app", []);
+
+app.controller("MyCtrl",function MyCtrl($scope,$http,$location,$window){
+	$scope.name="Vlad"
+	$scope.show=function (){
+		console.log("show")
+	}
+
+})

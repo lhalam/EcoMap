@@ -9,15 +9,8 @@ CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 def get_logger():
     """function for configuring default logger object
     from standard logging library
-<<<<<<< HEAD
         Returns:
             configured logger object.
-=======
-
-        Returns:
-            configured logger object.
-
->>>>>>> 87d9f928825f0298576bf4bf4c3d70b9d6f2f871
         Usage:
             import this method to your
             module and call it.

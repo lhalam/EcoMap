@@ -4,12 +4,13 @@ It exists to parse *.conf files and return dictionary,
 which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
+import logging
 import os
 import time
-from ConfigParser import SafeConfigParser
-from ecomap.utils import logger
-from ecomap.utils import Singleton
 
+from ConfigParser import SafeConfigParser
+
+from utils import Singleton
 
 REFRESH_TIME = 900
 PASSWORD = 'password'
@@ -26,12 +27,12 @@ class Config(object):
         self.config = {}
         self.update_time = 0
         self.path = CONFIG_PATH
-        self.log = logger
-        self.log.info('Create instance of Config parser')
+        self.log = logging.getLogger('config_parser')
+        self.log.info('Create instance of Config parser.')
 
     def get_config(self):
         """
-        Call parse method if need.
+        Call parse method if it needed.
         Returns:
             dictionary, containing configs
         """
@@ -39,14 +40,13 @@ class Config(object):
             self.log.info('Refresh configs')
             self.update_time = time.time()
             self._parse_confs()
-        self.log.info('Return configs')
         return self.config
 
     def _parse_confs(self):
         """
         Parses config file.
         """
-        self.log.info('Parsed ecomap.conf')
+        self.log.info('Parse ecomap.conf.')
         config = SafeConfigParser()
         config.readfp(open(self.path))
         sections = config.sections()

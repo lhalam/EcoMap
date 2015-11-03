@@ -1,9 +1,9 @@
-var myApp = angular.module('myApp', ['ngRoute']);
+var app = angular.module('app', ['ngRoute']);
 
-myApp.config(function ($routeProvider) {
+app.config(function ($routeProvider) {
   $routeProvider
-    .when('/', {
-      access: {restricted: true}
+    .when('/index', {
+      access: {restricted: false}
     })
     .when('/login', {
       controller: 'loginController',
@@ -18,10 +18,10 @@ myApp.config(function ($routeProvider) {
       access: {restricted: false}
     })
 
-    .otherwise({redirectTo: '/'});
+    .otherwise({redirectTo: '/index'});
 });
 
-myApp.run(function ($rootScope, $location, $route, AuthService) {
+app.run(function ($rootScope, $location, $route, AuthService) {
   $rootScope.$on('$routeChangeStart', function (event, next, current) {
     if (next.access.restricted && AuthService.isLoggedIn() === false) {
       $location.path('/login');
@@ -30,12 +30,12 @@ myApp.run(function ($rootScope, $location, $route, AuthService) {
   });
 });
 
-var app = angular.module("app", []);
-
-app.controller("MyCtrl",function MyCtrl($scope,$http,$location,$window){
-	$scope.name="Vlad"
-	$scope.show=function (){
-		console.log("show")
-	}
-
-})
+//var app = angular.module("app", []);
+//
+//app.controller("MyCtrl",function MyCtrl($scope,$http,$location,$window){
+//	$scope.name="Vlad"
+//	$scope.show=function (){
+//		console.log("show")
+//	}
+//
+//})

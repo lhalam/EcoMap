@@ -25,7 +25,7 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.open2 = function($event) {
     $scope.status.opened2 = true;
   };
-  
+
 
   $scope.setDate = function(year, month, day) {
     $scope.dt = new Date(year, month, day);
@@ -86,16 +86,20 @@ app.controller("UserController",function ($scope, $http,$rootScope,$window){
         })
         .then(function successCallback(data) {
           $rootScope.userObj=data.data;
-          console.log( $rootScope.userObj)
-          
+          console.log( $rootScope.userObj);
+          $scope.user = {}
+
         },
         function errorCallback(data) {
-          alert("sorry "+data.data.headers)
+            console.log(data['status']);
+            $rootScope.error = true;
+         //$scope.error = "sorry "+ data['data']['login_status']
+            errorBlock.innerHTML = data['data']['login_status'];
         })
-        
+
 
 }
-})
+});
 app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
   $scope.newUser = {};
     $scope.singupUser = function() {
@@ -106,12 +110,15 @@ app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
             data : $scope.newUser
         })
         .then(function successCallback(data) {
-          $rootScope.userObj=data.data;
+          console.log(data.data)
+          $rootScope.userObj=$scope.newUser;
+
           console.log( $rootScope.userObj)
-          
+
         },
         function errorCallback(data) {
           alert("sorry "+data.data.headers)
+            errorBlockRegister.innerHTML = 'user exist'
         })
 }
 });
@@ -119,6 +126,6 @@ app.controller("logOutUser",function ($scope,$window,$rootScope){
   $scope.logOut=function (){
 
     $rootScope.userObj= undefined;
-    $window.location="/logout" /*logout*/
+    $window.location="/logout"
   }
 });

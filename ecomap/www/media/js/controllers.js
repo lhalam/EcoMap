@@ -1,6 +1,8 @@
-angular.module('myApp').controller('loginController',
+angular.module('app').controller('loginController',
   ['$scope', '$location', 'AuthService',
   function ($scope, $location, AuthService) {
+
+    console.log(AuthService.isLoggedIn());
 
     $scope.login = function () {
 
@@ -28,8 +30,7 @@ angular.module('myApp').controller('loginController',
 
 }]);
 
-
-angular.module('myApp').controller('logoutController',
+angular.module('app').controller('logoutController',
   ['$scope', '$location', 'AuthService',
   function ($scope, $location, AuthService) {
 
@@ -45,7 +46,7 @@ angular.module('myApp').controller('logoutController',
 
 }]);
 
-angular.module('myApp').controller('registerController',
+angular.module('app').controller('registerController',
   ['$scope', '$location', 'AuthService',
   function ($scope, $location, AuthService) {
 

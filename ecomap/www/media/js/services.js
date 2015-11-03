@@ -1,4 +1,4 @@
-angular.module('myApp').factory('AuthService',
+angular.module('app').factory('AuthService',
   ['$q', '$timeout', '$http',
   function ($q, $timeout, $http) {
 

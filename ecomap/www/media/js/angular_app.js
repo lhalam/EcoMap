@@ -182,6 +182,10 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
         // $scope.setUserObj(responce.data);
         // add showing user data 
         console.log(responce.data);
+        $scope.user.email = $scope.newUser.email;
+        $scope.user.password = $scope.newUser.password;
+        $scope.Login();
+        $scope.newUser = {};
       },
         function errorCallback(data){});
     }else{
@@ -199,6 +203,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
       $scope.showLoginModal = false;
       $scope.logined = true;
       $scope.setUserObj(responce.data);
+      $scope.user = {};
       // add showing user data 
     },
       function errorCallback(data){});

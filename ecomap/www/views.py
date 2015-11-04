@@ -21,7 +21,6 @@ def index():
 def login():
     if request.method == "POST":
         data = request.get_json()
-        print data
         user = usr.get_user_by_email(data['email'])
         # add passwor veifiyng !!!!!
         if user :

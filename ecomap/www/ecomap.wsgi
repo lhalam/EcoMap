@@ -1,7 +1,8 @@
 import sys
 import os
 
-os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(__file__))
+os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__)))
 os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
 os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
 

@@ -129,9 +129,8 @@ class DBPool(object):
             params:
             - conn - specific connection object to be closed
         """
-        self.log.info('Closed connection %s with lifetime %s.',
-                      (conn['connection'],
-                       (time.time() - conn['creation_date'])))
+        self.log.info('Closed connection %s with lifetime %s.'
+                      % (conn['connection'], (time.time() - conn['creation_date'])))
         self.connection_pointer -= 1
         conn['connection'].close()
 

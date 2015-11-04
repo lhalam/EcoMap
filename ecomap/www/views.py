@@ -43,7 +43,7 @@ def register():
         data = request.get_json()
         app.logger.info('DATATA views register %s' % data['email'])
         if not usr.get_user_by_email(data['email']):
-            app.logger.info('RGISTERR!!! !!!!!' )
+            app.logger.info('RGISTERR!!! !!!!!')
             usr.register(data['firstName'], data['lastName'],
                          data['email'], data['password'])
             status = 'added %s %s' % (data['firstName'], data['lastName'])

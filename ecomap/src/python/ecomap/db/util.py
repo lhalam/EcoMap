@@ -12,22 +12,14 @@ def get_user_by_email(email):
     """Function which returns user by email.
         :returns tuple of rows(id, password) from db.
     """
-    # user = None
     logger = logging.getLogger('util')
     logger.warning(email)
-    # with db_pool().manager() as conn:
-    #     cursor = conn.cursor()
-    #     cursor.execute("SELECT id, first_name, last_name, email, password \
-    #                     FROM user WHERE email=%s", email)
-    #     user = cursor.fetchall()
-    #     logger.warning('user')
-    # return user
 
     with db_pool().manager() as conn:
         q1 = conn.cursor()
-        sql = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
-                 FROM `user` WHERE `email`="%s";"""
-        q1.execute(sql % email)
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                 FROM `user` WHERE `email`=%s;"""
+        q1.execute(query, (email,))
         db_userid = q1.fetchone()
         if db_userid:
             logger.warning('log from GET USER user by mail')
@@ -47,9 +39,9 @@ def get_user_by_id(uid):
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
-                 FROM `user` WHERE `id`="%s";"""
-        cursor.execute(sql % uid)
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                 FROM `user` WHERE `id`=%s;"""
+        cursor.execute(query, (uid,))
         user = cursor.fetchone()
     return user
 
@@ -58,10 +50,9 @@ def get_user_by_id(uid):
 def insert_user(first_name, last_name, email, password):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO user \
-                        (first_name, last_name, email, password) \
-                        VALUES (%s, %s, %s, %s);',
-                       (first_name, last_name, email, password))
+        query = """INSERT INTO `user` (`first_name`, `last_name`, `email`,
+                   `password`) VALUES (%s, %s, %s, %s);"""
+        cursor.execute(query, (first_name, last_name, email, password))
         conn.commit()
     return True
 

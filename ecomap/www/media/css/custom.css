@@ -1,3 +1,4 @@
+
 /* Nav bar*/
 body{
 	overflow-x:hidden;
@@ -14,12 +15,9 @@ body{
 .nav.navbar-nav li{
 	height: 100%;
 	line-height: 4.5em;
-	vertical-align: center;
+	vertical-align: middle;
 	cursor: pointer;
 	
-}
-.nav.navbar-nav.navbar-right{
-	margin-top: -2.2em;
 }
 
 /*problems filter */
@@ -135,30 +133,16 @@ body{
 /*registration form*/
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 .registr_block{
-	position: absolute;
-	top:12%;
-	opacity: 0;
-	left: auto;
-	height: 100%;
-	width: 100%;
+	width:60%;
+	display: none;
+	margin-top: -20%;
 	font-family:'Open Sans',sans-serif;
-	margin-top: -3em;
 	transition :1s;
+	-webkit-transition:opacity 1s;
 	
 }
 
-#login{
-  width:35%;
-  margin:0 auto;
-  margin-top:8px;
-  margin-bottom:2%;
-  transition:opacity 1s;
-  -webkit-transition:opacity 1s;
-}
-
-
-
-#login h1{
+.registr_block h1{
   background:#3399cc;
   padding:20px 0;
   font-size:140%;
@@ -207,11 +191,70 @@ form{
   background:#2288bb;
 }
 .visibible{
-	opacity: 1;
+	display: block;
 }
 .warning{
 	margin-left: 5%;
 	margin-top: -1%;
 	text-transform: uppercase;
 	color: red;
+}
+#log_out button{
+	margin-left: 20%;
+}
+
+.message {
+  position: absolute;
+  top: calc(50% - 140px);
+  left: calc(50% - 300px);
+  width: 600px;
+  height: 280px;
+  z-index: 1000;
+  background: #ccc;
+  color: button;
+  padding: 60px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  -webkit-transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -webkit-transform: scale(0);
+      -ms-transform: scale(0);
+          transform: scale(0);
+  opacity: 0;
+}
+.message.active {
+  -webkit-transform: scale(1);
+      -ms-transform: scale(1);
+          transform: scale(1);
+  opacity: 1;
+}
+.okay {
+  display: block;
+  height: 4em;
+  width: 10em;
+  margin:10% auto ;
+  background: #e68a6c;
+  border: none;
+  text-transform: uppercase;
+  color: #fff;
+  border-radius: 6px;
+}
+.okay:focus {
+  outline: none;
+}
+.okay:hover {
+  background: #e8967b;
+}
+.okay:active {
+  background: #ca4c22;
+}
+
+#message_head{
+	margin-left: 35%;
+	margin-top: -7%;
+	margin-bottom: 10%;
+}
+#message_text{
+	font-size: 1.8em;
+	text-align: center;
 }

@@ -1,38 +1,27 @@
-angular.module('ecomap', ['ui.bootstrap']);
+  var toogle=document.getElementById("toggle");
+  var filter=document.getElementById("filter");
+  console.log(toogle);
+  toogle.addEventListener("click" , function () {
+   filter.classList.toggle("toggle_hide");
+  });
 
-angular.module('ecomap')
-  .controller('LoginController', ['$scope', '$http', function($scope, $http){
-    $scope.Login = function(){
-      $http({
-        url: "/api/login",
-        method: "POST",
-        data: {
-          username: $scope.username,
-          password: $scope.password
-        }
-      }).success(function(result){
-        console.log(result);
-        
-      }).error(function(error){
-        console.log(error);
-      });
-    }
-  }])
-  .controller('LogoutController', ['$scope','$http', function($scope, $http){
-    $scope.Logout = function(){
-      $http({
-        url: "/api/logout",
-        method: "POST",
-        data: {}
-      }).success(function(result){
-        console.log(result);
-      }).error(function(error){
-        console.log(error);
-      });
-    }
+  var inform_probl_block=document.getElementsByClassName("inform_probl_block")[0];
+  var inform_probl_btn=document.getElementById("inform_probl_btn");
+  inform_probl_btn.addEventListener("click",function (ev){
+    inform_probl_block.classList.toggle("hide_probl_block")
+  })
+
+  var registr_block=document.getElementsByClassName("registr_block")[0]
+
+  var registration_btn=document.getElementById("registration")
+  registration.addEventListener("click",function (){
     
-  }]);
+    registr_block.classList.toggle("visibible")
+  })
 
-    var refresh_login = function(val){
-      $scope.logined = val;
-    }
+
+
+  $(document).add(".okay").click(function() {
+    $(".message").removeClass("active");
+  });
+

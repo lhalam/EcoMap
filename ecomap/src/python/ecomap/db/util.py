@@ -13,6 +13,7 @@ def get_user_by_email(email):
         cursor.execute("SELECT id, first_name, last_name, email, password \
                         FROM user WHERE email=%s", email)
         user = cursor.fetchall()
+        # app.logger.warning('user')
     return user
 
 

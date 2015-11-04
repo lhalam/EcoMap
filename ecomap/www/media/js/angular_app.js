@@ -1,4 +1,5 @@
-var app=angular.module('app',['ui.bootstrap'])
+var app=angular.module('app',['ui.bootstrap']);
+//
 app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.today = function() {
     $scope.dt = new Date();
@@ -76,18 +77,40 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
   };
 });
 
-app.controller("UserController",function ($scope, $http){
+app.controller("UserController",function ($scope, $http, $rootScope, $window){
+
   $scope.user = {};
     $scope.singinUser = function() {
-      console.log($scope.user)
         $http({
             method : 'POST',
             url : '/api/login',
             data : $scope.user
         })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          $(".message").addClass("active");
+          $("#message_head").text("Welcome");
+          $("#message_text").text("sing in was completed")
+          $('[showform]').each(function(num,elem) {
+            if(elem.getAttribute("showform") =="True"){
+              elem.style="diplay:block"
+            }
+            else{
+               elem.style="diplay:none"
+            }
+          });         
+        },
+        function errorCallback(data) {
+          $(".message").addClass("active");
+          $("#message_head").text("Sorry");
+          $("#message_text").text(data.data.status || "Error")
+          
+        })
+        
+
 }
 })
-app.controller("RegistrCtrl",function ($scope, $http){
+app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
   $scope.newUser = {};
     $scope.singupUser = function() {
       console.log($scope.newUser)
@@ -96,6 +119,143 @@ app.controller("RegistrCtrl",function ($scope, $http){
             url : '/api/register',
             data : $scope.newUser
         })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          $(".message").addClass("active");
+          $("#message_head").text("Welcome");
+          $("#message_text").text("registration was completed")
+          
+        },
+        function errorCallback(data) {
+          $(".message").addClass("active");
+          $("#message_head").text("Sorry");
+          $("#message_text").text(data.data.status || "Something was wrong")
+        })
 }
 })
+app.controller("logOutUser",function ($scope,$window,$rootScope){
+  $scope.logOut=function (){
+    $rootScope.userObj= undefined
+    $window.location="/logout"
+     /*logout*/
+  }
+})
 
+app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope){
+
+  $scope.showLoginModal = false;
+  $scope.toggleLoginModal = function(){
+    $scope.showLoginModal = !$scope.showLoginModal;
+  };
+
+  $scope.showRegisterModal = false;
+  $scope.toggleRegisterModal = function(){
+    $scope.showRegisterModal = !$scope.showRegisterModal;
+  };  
+
+  $scope.logined = false;
+  $rootScope.Logined = function(){
+    return $scope.logined;
+  };
+
+  $rootScope.userObj = {};
+  $rootScope.setUserObj = function(data){
+    $rootScope.userObj = data;
+  };
+
+  $scope.newUser = {}
+
+  $scope.registerError = "";
+  $scope.setError = function(error){
+    $scope.registerError = error;
+  }
+
+  $scope.Register = function(){
+    if($scope.newUser.password == $scope.newUser.pass_confirm){
+      $http({
+        method: 'POST',
+        url: '/api/register',
+        data: $scope.newUser
+      }).then(function successCallback(responce){
+        $scope.showRegisterModal = false;
+        // $scope.logined = true;
+        // $scope.setUserObj(responce.data);
+        // add showing user data 
+        console.log(responce.data);
+      },
+        function errorCallback(data){});
+    }else{
+      $scope.setError("Passwords don't match!!!");      
+    }
+  };
+
+  $scope.user = {};
+  $scope.Login = function(){
+    $http({
+      method: 'POST',
+      url: '/api/login',
+      data: $scope.user
+    }).then(function successCallback(responce){
+      $scope.showLoginModal = false;
+      $scope.logined = true;
+      $scope.setUserObj(responce.data);
+      // add showing user data 
+    },
+      function errorCallback(data){});
+  };
+
+  $scope.Logout = function(){
+    $http({
+      method: 'POST',
+      url: '/api/logout',
+      data: $scope.user
+    }).then(function successCallback(responce){
+      $scope.logined = false;
+      $scope.setUserObj({});
+    },
+      function errorCallback(data){});
+  };
+
+}]);
+
+app.directive('modal', function () {
+    return {
+      template: '<div class="modal fade">' + 
+          '<div class="modal-dialog">' + 
+            '<div class="modal-content">' + 
+              '<div class="modal-header">' + 
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
+                '<h4 class="modal-title">{{ title }}</h4>' + 
+              '</div>' + 
+              '<div class="modal-body" ng-transclude></div>' + 
+            '</div>' + 
+          '</div>' + 
+        '</div>',
+      restrict: 'E',
+      transclude: true,
+      replace:true,
+      scope:true,
+      link: function postLink(scope, element, attrs) {
+        scope.title = attrs.title;
+
+        scope.$watch(attrs.visible, function(value){
+          if(value == true)
+            $(element).modal('show');
+          else
+            $(element).modal('hide');
+        });
+
+        $(element).on('shown.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = true;
+          });
+        });
+
+        $(element).on('hidden.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = false;
+          });
+        });
+      }
+    };
+});

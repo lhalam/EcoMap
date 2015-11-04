@@ -9,18 +9,19 @@ from flask_login import login_user, logout_user
 
 import ecomap.user as usr
 
-from ecomap.app import app
+from ecomap.app import app, logger
 
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def index():
     return render_template("index.html")
 
 
-@app.route("/api/login", methods=["GET", "POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     if request.method == "POST":
         data = request.get_json()
+        print data
         user = usr.get_user_by_email(data['email'])
         if user and user.verify_password(data['password']):
             login_user(user, remember=True)
@@ -30,13 +31,13 @@ def login():
     return jsonify(error="Couldn't login with your credenntials!!!", logined=0)
 
 
-@app.route("/api/logout", methods=["GET", "POST"])
+@app.route("/api/logout", methods=["POST"])
 def logout():
     result = logout_user()
     return jsonify(result=result)
 
 
-@app.route("/api/register", methods=["GET", "POST"])
+@app.route("/api/register", methods=["POST"])
 def register():
     if request.method == 'POST':
         data = request.get_json()
@@ -50,6 +51,8 @@ def register():
 
 if __name__ == "__main__":
     app.run()
+
+    app.logger = logger
     # usr.login_manager.init_app(app)
 
     # user = usr.User.get(username="admin")

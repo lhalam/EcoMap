@@ -22,7 +22,8 @@ def login():
     if request.method == "POST":
         data = request.get_json()
         user = usr.get_user_by_email(data['email'])
-        if user and user.verify_password(data['password']):
+        # add passwor veifiyng !!!!!
+        if user :
             login_user(user, remember=True)
             return jsonify(id=user.uid, name=user.first_name,
                            surname=user.last_name, role='???', iat="???",
@@ -40,7 +41,9 @@ def logout():
 def register():
     if request.method == 'POST':
         data = request.get_json()
+        app.logger.info('DATATA views register %s' % data['email'])
         if not usr.get_user_by_email(data['email']):
+            app.logger.info('RGISTERR!!! !!!!!' )
             usr.register(data['firstName'], data['lastName'],
                          data['email'], data['password'])
             status = 'added %s %s' % (data['firstName'], data['lastName'])

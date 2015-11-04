@@ -94,8 +94,8 @@ def get_user_by_id(uid):
     if uid:
         user = util.get_user_by_id(uid)
     if user:
-        return User(user[0][0], user[0][1], user[0][2],
-                    user[0][3], user[0][4])
+        return User(user[0], user[1], user[2],
+                    user[3], user[4])
     return None
 
 

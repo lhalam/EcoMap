@@ -7,7 +7,7 @@ ecomap project.
 from flask import render_template, request, jsonify
 from flask_login import login_user, logout_user
 
-import ecomap.user as usr
+import ecomap.db.user as usr
 
 from ecomap.app import app
 
@@ -21,10 +21,10 @@ def index():
 def login():
     if request.method == "POST":
         data = request.get_json()
-        user = usr.get_user_by_email(data['email'])
+        user = usr.User.get(username=data['email'])
         if user and user.verify_password(data['password']):
-            login_user(user, remember=True)
-            return jsonify(id=user.uid, name=user.first_name,
+            login_user(user, force=True)
+            return jsonify(id=user.userid, name=user.first_name,
                            surname=user.last_name, role='???', iat="???",
                            token=user.get_auth_token(), email=user.email)
     return jsonify(error="Couldn't login with your credenntials!!!", logined=0)
@@ -40,9 +40,9 @@ def logout():
 def register():
     if request.method == 'POST':
         data = request.get_json()
-        if not usr.get_user_by_email(data['email']):
-            usr.register(data['firstName'], data['lastName'],
-                         data['email'], data['password'])
+        if not usr.User.get(data['email']):
+            usr.User.register(data['firstName'], data['lastName'],
+                              data['email'], data['password'])
             status = 'added %s %s' % (data['firstName'], data['lastName'])
         else:
             status = 'user with this email already exists'

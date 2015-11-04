@@ -1,4 +1,6 @@
 var app=angular.module('app',['ui.bootstrap'])
+
+
 app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.today = function() {
     $scope.dt = new Date();
@@ -76,26 +78,69 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
   };
 });
 
-app.controller("UserController",function ($scope, $http){
+app.controller("UserController",function ($scope, $http,$rootScope,$window){
+
   $scope.user = {};
     $scope.singinUser = function() {
-      console.log($scope.user)
         $http({
             method : 'POST',
             url : '/api/login',
             data : $scope.user
         })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          $(".message").addClass("active");
+          $("#message_head").text("Welcome");
+          $("#message_text").text("sing in was completed")
+          $('[showform]').each(function(num,elem) {
+            if(elem.getAttribute("showform") =="True"){
+              elem.style="diplay:block"
+            }
+            else{
+               elem.style="diplay:none"
+            }
+          });
+
+       
+          
+        },
+        function errorCallback(data) {
+          $(".message").addClass("active");
+          $("#message_head").text("Sorry");
+          $("#message_text").text(data.data.status || "Error")
+          
+        })
+        
+
 }
 })
-app.controller("RegistrCtrl",function ($scope, $http){
+app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
   $scope.newUser = {};
     $scope.singupUser = function() {
       console.log($scope.newUser)
         $http({
             method : 'POST',
-            url : '/api/register',
+            url : '/api//registr',
             data : $scope.newUser
+        })
+        .then(function successCallback(data) {
+          $rootScope.userObj=data.data;
+          $(".message").addClass("active");
+          $("#message_head").text("Welcome");
+          $("#message_text").text("registration was completed")
+          
+        },
+        function errorCallback(data) {
+          $(".message").addClass("active");
+          $("#message_head").text("Sorry");
+          $("#message_text").text(data.data.status || "Something was wrong")
         })
 }
 })
-
+app.controller("logOutUser",function ($scope,$window,$rootScope){
+  $scope.logOut=function (){
+    $rootScope.userObj= undefined
+    $window.location="/logout"
+     /*logout*/
+  }
+})

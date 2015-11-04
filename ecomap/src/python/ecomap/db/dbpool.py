@@ -51,7 +51,8 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                     logging.getLogger('retry').error('All attempts finished '
                                                      'with error',
                                                      exc_info=True)
-                    raise DBPoolError('Got error with connection to database')
+                    raise DBPoolError('Error message: Got error with connection '
+                                      'to database')
         return inner
     return retry_wrapper
 

@@ -1,5 +1,4 @@
-import logging
-import logging.config
+from logging import config
 import os
 
 
@@ -9,16 +8,14 @@ CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 def get_logger():
     """function for configuring default logger object
     from standard logging library
-
         Returns:
             configured logger object.
-
         Usage:
             import this method to your
             module and call it.
             then define a new logger object as usual
     """
-    return logging.config.fileConfig(CONF_PATH)
+    return config.fileConfig(CONF_PATH)
 
 
 class Singleton(type):

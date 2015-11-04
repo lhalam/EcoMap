@@ -10,7 +10,7 @@ import time
 
 from ConfigParser import SafeConfigParser
 
-from ecomap.utils import Singleton
+from utils import Singleton
 
 REFRESH_TIME = 900
 PASSWORD = 'password'

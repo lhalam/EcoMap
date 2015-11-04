@@ -16,16 +16,16 @@ def get_user_by_email(email):
     return user
 
 
-def get_user_by_userid(userid):
-    """Function which returns user by userid.
+def get_user_by_id(uid):
+    """Function which returns user by uid.
 
-        :returns tuple of rows(id, password) from db.
+        :returns tuple of rows(uid, password) from db.
     """
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT id, first_name, last_name, email, password \
-                        FROM user WHERE id=%s", userid)
+                        FROM user WHERE id=%s", uid)
         user = cursor.fetchall()
     return user
 

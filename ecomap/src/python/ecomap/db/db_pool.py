@@ -16,6 +16,8 @@ import ecomap.utils
 from ecomap.config import Config
 
 _CONFIG = Config().get_config()
+DEFAULT_DELAY = 1
+DEFAULT_TRIES = 3
 
 
 class MySQLPoolSizeError(MySQLdb.DatabaseError):
@@ -28,32 +30,31 @@ class DBPoolError(Exception):
     pass
 
 
-def retry(func):
+def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
     """Decorator function handling reconnection issues to DB."""
-
-    @functools.wraps(func)
-    def wrapper(arg, retries=5, delay=1):
-        """Wrapped function which tries to connect to DB.
-            params:
-            - retries - nubmer of attempts.
-            - delay - time between attempts.
-        """
-        while True:
-            retries -= 1
-            try:
-                return func(arg)
-            except MySQLPoolSizeError:
-                logging.getLogger('retry').warn('Out of free connections.',
-                                                exc_info=True)
-            except MySQLdb.Error:
-                logging.getLogger('retry').warn('Error', exc_info=True)
-            if retries:
-                time.sleep(delay)
-            else:
-                logging.getLogger('retry').warn('All attempts finished with'
-                                                'error', exc_info=True)
-                raise DBPoolError
-    return wrapper
+    def retry_wrapper(func):
+        @functools.wraps(func)
+        def inner(*args, **kwargs):
+            mtries, mdelay = tries, delay
+            while True:
+                mtries -= 1
+                try:
+                    return func(*args, **kwargs)
+                except MySQLPoolSizeError:
+                    logging.getLogger('retry').warn('Out of free connections.',
+                                                    exc_info=True)
+                except MySQLdb.Error:
+                    logging.getLogger('retry').warn('Error', exc_info=True)
+                if mtries:
+                    time.sleep(mdelay)
+                else:
+                    logging.getLogger('retry').error('All attempts finished '
+                                                     'with error',
+                                                     exc_info=True)
+                    raise DBPoolError('Error message: Got error with '
+                                      'connection to database')
+        return inner
+    return retry_wrapper
 
 
 class DBPool(object):
@@ -116,11 +117,13 @@ class DBPool(object):
         """
         with self.lock:
             conn = self._get_conn()
+
         try:
             yield conn['connection']
         except:
             self._close_conn(conn)
             raise
+
         if conn['creation_date'] + self.connection_ttl < time.time():
             self._push_conn(conn)
         else:
@@ -152,5 +155,5 @@ db_pool = lambda: DBPool(user=_CONFIG['db.user'],
                          db_name=_CONFIG['db.db_name'],
                          host=_CONFIG['db.host'],
                          port=_CONFIG['db.port'],
-                         ttl=_CONFIG['db.connection_lifetime'],
+                         ttl=_CONFIG['db.connection_ttl'],
                          pool_size=_CONFIG['db.pool_size'])

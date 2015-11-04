@@ -80,6 +80,9 @@ def get_user_by_email(email):
             # app.logger.info('USER.PY GET U_BY IF 2 U=%s' % user)
             return User(user[0], user[1], user[2],
                         user[3], user[4])
+        else:
+            # 401
+            pass
     return None
 
 

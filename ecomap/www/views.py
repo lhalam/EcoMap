@@ -23,7 +23,7 @@ def login():
         data = request.get_json()
         user = usr.get_user_by_email(data['email'])
         # add passwor veifiyng !!!!!
-        if user :
+        if user:
             login_user(user, remember=True)
             return jsonify(id=user.uid, name=user.first_name,
                            surname=user.last_name, role='???', iat="???",

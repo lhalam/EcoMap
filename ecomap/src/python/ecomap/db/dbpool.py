@@ -8,7 +8,6 @@ import logging
 import MySQLdb
 import time
 import threading
-import sys
 
 from contextlib import contextmanager
 
@@ -25,6 +24,7 @@ class MySQLPoolSizeError(MySQLdb.DatabaseError):
 
 
 class DBPoolError(Exception):
+    """Custom error for retry decorator. Raises after all tries"""
     pass
 
 
@@ -43,13 +43,15 @@ def retry(func):
             try:
                 return func(arg)
             except MySQLPoolSizeError:
-                logging.getLogger('retry').warn('Out of free connections.')
+                logging.getLogger('retry').warn('Out of free connections.',
+                                                exc_info=True)
             except MySQLdb.Error:
-                logging.getLogger('retry').warn('Error: %s.',
-                                                sys.exc_info()[1])
+                logging.getLogger('retry').warn('Error', exc_info=True)
             if retries:
                 time.sleep(delay)
             else:
+                logging.getLogger('retry').warn('All attempts finished with'
+                                                'error', exc_info=True)
                 raise DBPoolError
     return wrapper
 
@@ -112,17 +114,17 @@ class DBPool(object):
         """Generator manager manages work with connections.
             yeilds: opened connection
         """
+        with self.lock:
+            conn = self._get_conn()
         try:
-            with self.lock:
-                conn = self._get_conn()
             yield conn['connection']
-            if conn['creation_date'] + self.connection_ttl < time.time():
-                self._push_conn(conn)
-            else:
-                self._close_conn(conn)
         except:
             self._close_conn(conn)
             raise
+        if conn['creation_date'] + self.connection_ttl < time.time():
+            self._push_conn(conn)
+        else:
+            self._close_conn(conn)
 
     def _close_conn(self, conn):
         """Protected method _close_conn closes connection

@@ -1,5 +1,6 @@
 """This module contains functions for interacting with Database."""
 from db_pool import db_pool
+import logging
 
 
 def get_user_by_email(email):
@@ -13,7 +14,7 @@ def get_user_by_email(email):
         cursor.execute("SELECT id, first_name, last_name, email, password \
                         FROM user WHERE email=%s", email)
         user = cursor.fetchall()
-        # app.logger.warning('user')
+        logging.getLogger('util.py').info('Got in get_user_by_email.')
     return user
 
 

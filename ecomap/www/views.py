@@ -2,22 +2,28 @@
 This module holds all views controls for
 ecomap project.
 """
-# import sys
+import sys
 
 from flask import render_template, request, jsonify
 from flask_login import login_user, logout_user
+from flask.ext.triangle import Triangle
 
 import ecomap.user as usr
 
 from ecomap.app import app
 
+Triangle(app)
 
-@app.route("/")
+
+@app.route("/", methods=['GET'])
 def index():
-    return render_template("base.html")
+    try:
+        return render_template("index.html")
+    except:
+        return jsonify(error=sys.exc_info()[0], trace=sys.exc_info()[2])
 
 
-@app.route("/api/login", methods=["GET", "POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     if request.method == "POST":
         data = request.get_json()
@@ -30,13 +36,13 @@ def login():
     return jsonify(error="Couldn't login with your credenntials!!!", logined=0)
 
 
-@app.route("/api/logout", methods=["GET", "POST"])
+@app.route("/api/logout", methods=["POST"])
 def logout():
     result = logout_user()
     return jsonify(result=result)
 
 
-@app.route("/api/register", methods=["GET", "POST"])
+@app.route("/api/register", methods=["POST"])
 def register():
     if request.method == 'POST':
         data = request.get_json()

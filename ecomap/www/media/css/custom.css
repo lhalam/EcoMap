@@ -18,9 +18,6 @@ body{
 	cursor: pointer;
 	
 }
-.nav.navbar-nav.navbar-right{
-	margin-top: -2.2em;
-}
 
 /*problems filter */
 .problem_filter{

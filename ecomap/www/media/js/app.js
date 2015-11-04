@@ -1,9 +1,9 @@
   var toogle=document.getElementById("toggle");
   var filter=document.getElementById("filter");
-  console.log(toogle)
+  console.log(toogle);
   toogle.addEventListener("click" , function () {
-   filter.classList.toggle("toggle_hide")
-  })
+   filter.classList.toggle("toggle_hide");
+  });
 
   var inform_probl_block=document.getElementsByClassName("inform_probl_block")[0];
   var inform_probl_btn=document.getElementById("inform_probl_btn");

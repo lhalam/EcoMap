@@ -10,13 +10,13 @@ import os
 activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
 execfile(activate_this, dict(__file__=activate_this))
 
-#os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
-#os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
-
-os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(__file__))
+os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
 os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
+
+#os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(__file__))
+#os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
+#os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
 
 #sys.path.insert(0, (os.path.join(os.environ['PRODROOT'], 'www')))
 

@@ -14,7 +14,7 @@ from ecomap.app import app
 
 @app.route("/")
 def index():
-    return render_template("base.html")
+    return render_template("index.html")
 
 
 @app.route("/api/login", methods=["GET", "POST"])

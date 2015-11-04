@@ -41,9 +41,9 @@ def get_user_by_id(uid):
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, first_name, last_name, email, password \
-                        FROM user WHERE id=%s;", uid)
-        user = cursor.fetchall()
+        cursor.execute('SELECT id, first_name, last_name, email, password \
+                        FROM user WHERE id="%s";' % uid)
+        user = cursor.fetchone()
     return user
 
 

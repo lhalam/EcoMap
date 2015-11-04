@@ -15,7 +15,7 @@ body{
 .nav.navbar-nav li{
 	height: 100%;
 	line-height: 4.5em;
-	vertical-align: center;
+	vertical-align: middle;
 	cursor: pointer;
 	
 }

@@ -4,6 +4,7 @@
   <title>ecomap</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/js/angular.min.js"></script>
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <!--<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"></script>-->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -22,13 +23,13 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#"><img src="image/logo.png"></a>
+      <a class="navbar-brand" href="#"><img src="/image/logo.png"></a>
     </div>
     <div class="collapse navbar-collapse" >
       <ul class="nav navbar-nav">
         <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
         <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
+          <a class="dropdown-toggle"  data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#">first</a></li>
             <li><a href="#">second</a></li>
@@ -96,8 +97,34 @@
             </form>
           </modal>
         </li>
+
+<!--       <ul class="nav navbar-nav navbar-right" ng-hide='userObj.first_name'>
+        <li>
+          <a href="#" >
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span> <span ng-hide='userObj.first_name'>Вхід</span><span class="caret"></span>
+            </a>
+          </a>
+          <ul class="dropdown-menu" showform="True">
+            <li id="user_form">
+              <form ng-submit="singinUser()" ng-controller="UserController" name="singInform">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="inputEmail" placeholder="Email" name="email" ng-model="user.email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="user.password" required name="password">
+                </div>
+                <div class="sing_in_buttons_block">
+                <button type="submit" class="sing_in_button" id="sing_in" ng-disabled="singInform.email.$dirty && singInform.email.$invalid || singInform.password.$dirty && singInform.password.$invalid">Вхід</button>
+                <input type="button" value="Sing in" class="sing_in_button" id="registration">
+                </div>
+              </form>
+            </li>
+          </ul>
+
+         </li>
+ -->
       </ul>
-      <ul class="nav navbar-nav navbar-right" ng-show='userObj.first_name'>
+<!--       <ul class="nav navbar-nav navbar-right" ng-show='userObj.first_name'>
           <li>
           <a href="#" >
            <li class="dropdown">
@@ -106,15 +133,16 @@
           </a>
           <ul class="dropdown-menu" showform="True">
             <li id="log_out"> 
+
               <form   ng-submit="logOut()" ng-controller="logOutUser">
                   <button type="submit" class="btn btn-danger btn-lg">Log out</button>
-                  
+
               </form>
             </li>
           </ul>
-         
+
          </li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 </nav> 
@@ -123,34 +151,33 @@
 
 <div class="row">
   <div class="col-md-3" id="filter" class="problem_filter" showform="True">
-    <div ng-controller="DatepickerDemoCtrl">
-     
-      <h4>ФІЛЬТРАЦІЯ ЗА ДАТОЮ</h4>
-     
-      <div class="row">
-          <div class="col-md-10 col-md-offset-1">
-              <p class="input-group">
-                <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened1" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-              </p>
-          </div>
+  <div ng-controller="DatepickerDemoCtrl">
 
-          <div class="col-md-10 col-md-offset-1">
-              <p class="input-group">
-                <input type="date" class="form-control" uib-datepicker-popup ng-model="dt" is-open="status.opened2" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-              </p>
-          </div>
+    <h4>ФІЛЬТРАЦІЯ ЗА ДАТОЮ</h4>
 
-     
-      </div>
-    
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <p class="input-group">
+              <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened1" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+
+        <div class="col-md-10 col-md-offset-1">
+            <p class="input-group">
+              <input type="date" class="form-control" uib-datepicker-popup ng-model="dt" is-open="status.opened2" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+
+
     </div>
 
+</div>
     <div class="toogle" id="toggle">фільтрація</div>
     <h4>Тип проблеми</h4>
     <div class="col-md-12">
@@ -174,12 +201,12 @@
 <div class="row">
   <div class="col-md-6 col-md-offset-6 inform_probl_block" showform="True">
   <h2>Повідомити про проблему</h2>
-  
+
     <ul class="nav nav-tabs nav-justified">
         <li class="active"><a href="#">Точка</a></li>
         <li><a href="#">Опис</a></li>
-        <li><a href="#">Фото</a></li> 
-    </ul> 
+        <li><a href="#">Фото</a></li>
+    </ul>
 
   </div>
 </div>
@@ -222,5 +249,6 @@
 </div> -->
 
 </body>
-
+ <script src="/js/angular_app.js"></script>
+    <script src="/js/app.js"></script>
 </html>

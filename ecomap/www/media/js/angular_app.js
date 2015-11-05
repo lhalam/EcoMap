@@ -187,7 +187,12 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
         $scope.Login();
         $scope.newUser = {};
       },
-        function errorCallback(data){});
+        function errorCallback(data){
+          $scope.errorMessage = data.data['error'] || data.data['status'];
+          //alert($scope.errorMessage)
+          console.log(data)
+            $scope.setError(data.data['error'] || data.data['status'])
+        });
     }else{
       $scope.setError("Passwords don't match!!!");      
     }
@@ -206,7 +211,12 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
       $scope.user = {};
       // add showing user data 
     },
-      function errorCallback(data){});
+      function errorCallback(data){
+          $scope.errorMessage = data.data['error'];
+          alert($scope.errorMessage)
+          console.log(data)
+          $scope.setError(data.data['error'] || data.data['status'])
+      });
   };
 
   $scope.Logout = function(){

@@ -166,8 +166,12 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
   $scope.newUser = {}
 
   $scope.registerError = "";
+  $scope.loginError = "";
   $scope.setError = function(error){
     $scope.registerError = error;
+  }
+  $scope.setLoginError = function(error){
+    $scope.loginError = error;
   }
 
   $scope.Register = function(){
@@ -188,9 +192,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
         $scope.newUser = {};
       },
         function errorCallback(data){
-          $scope.errorMessage = data.data['error'] || data.data['status'];
-          //alert($scope.errorMessage)
-          console.log(data)
+          $scope.wrongCredentials = true;
             $scope.setError(data.data['error'] || data.data['status'])
         });
     }else{
@@ -212,10 +214,8 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
       // add showing user data 
     },
       function errorCallback(data){
-          $scope.errorMessage = data.data['error'];
-          alert($scope.errorMessage)
-          console.log(data)
-          $scope.setError(data.data['error'] || data.data['status'])
+          $scope.wrongLoginCredentials = true;
+          $scope.setLoginError(data.data['error'] || data.data['status'])
       });
   };
 

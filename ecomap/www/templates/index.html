@@ -45,6 +45,9 @@
 
           <modal title="Login" visible="showLoginModal">
             <form role="form" ng-submit="Login()">
+                <div class="alert alert-danger" ng-bind="loginError" ng-show="wrongLoginCredentials">
+
+                </div>
               <div class="form-group">
                 <label for="email">Email address</label>
                 <input type="email"  ng-model="user.email" class="form-control" id="email" placeholder="Enter email" />
@@ -55,7 +58,7 @@
               </div>
               <button type="submit" class="btn btn-default">Login</button>
             </form>
-          </modal>          
+          </modal>
         </li>
 
         <li ng-show="Logined()">
@@ -92,11 +95,14 @@
                 <input type="password" ng-model="newUser.pass_confirm" class="form-control" id="pass_confirm" placeholder="Confirm password" />
               </div>
               <button type="submit" class="btn btn-default">Register</button>
-              <p ng-bind="registerError"></p>
-            </form>
-              <div class="form-group" ng->
+{#              <p ></p>#}
+            <div class="alert alert-danger" ng-show="wrongCredentials" ng-bind="registerError">
 
-              </div>
+            </div>
+            </form>
+{#              <div class="form-group" ng->#}
+{##}
+{#              </div>#}
           </modal>
         </li>
 

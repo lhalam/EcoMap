@@ -138,4 +138,4 @@ def load_token(token):
 
 
 if __name__ == "__main__":
-    print hashlib.md5("pass").hexdigest()
+    print get_user_by_email("admin@gmail.com")

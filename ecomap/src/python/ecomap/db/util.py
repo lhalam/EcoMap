@@ -13,7 +13,6 @@ def get_user_by_email(email):
         cursor.execute("SELECT id, first_name, last_name, email, password \
                         FROM user WHERE email=%s", email)
         user = cursor.fetchall()
-        app.logger.warning('user')
     return user
 
 
@@ -42,4 +41,4 @@ def insert_user(first_name, last_name, email, password):
     return True
 
 if __name__ == "__main__":
-    insert_user('insert_test', 'insert_test', 'insert_test', 'insert_test')
+    print get_user_by_email("admin@gmail.com")

@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr
 
-from ecomap.app import app, logger
+from ecomap.app import app
 
 
 @app.route("/", methods=['GET'])
@@ -116,10 +116,22 @@ def register():
             return jsonify({'status': status}), 400
         return jsonify({'status': status})
 
+
+@app.route("/api/email_exist", methods=['POST'])
+def email_exist():
+    if request.method == "POST":
+        data = request.get_json()
+        return jsonify(email=data)
+        user = usr.get_user_by_email(data['email'])
+        if user:
+            return jsonify(), 200
+        else:
+            return jsonify(), 401
+
 if __name__ == "__main__":
     app.run()
 
-    app.logger = logger
+    # app.logger = logger
     # usr.login_manager.init_app(app)
 
     # user = usr.User.get(username="admin")

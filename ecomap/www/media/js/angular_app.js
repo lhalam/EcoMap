@@ -139,7 +139,7 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
 //   }
 // })
 
-app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope, auth){
+app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope){
 
   $scope.showLoginModal = false;
   $scope.toggleLoginModal = function(){
@@ -151,38 +151,51 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
     $scope.showRegisterModal = !$scope.showRegisterModal;
   };  
 
-  $scope.logined = false;
-    /**
-     * @return {boolean}
-     */
-    $rootScope.Logined = function(){
-    //if ($cookies.get('token')){
-    //alert(sessionStorage.toString)
-    //    console.log($cookies.get('remember_token'));
-    //    $scope.logined = true;
-    return $scope.logined;
-    //}
+  // $scope.registerError = "";
+  // $scope.loginError = "";
+  // $scope.setError = function(error){
+  //   $scope.registerError = error;
+  // }
+  // $scope.setLoginError = function(error){
+  //   $scope.loginError = error;
+  // }
 
-  };
-
-  $rootScope.userObj = {};
-  $rootScope.setUserObj = function(data){
-    $rootScope.userObj = data;
-      //alert(userObj)
-  };
-
-  $scope.newUser = {}
-
-  $scope.registerError = "";
-  $scope.loginError = "";
-  $scope.setError = function(error){
-    $scope.registerError = error;
+  $scope.checkLogined = function(){
+    if($cookies.get('name') && $cookies.get('surname')){
+      return $cookies.get('name') + " " + $cookies.get('surname');
+    } else{
+      return null;
+    }
   }
-  $scope.setLoginError = function(error){
-    $scope.loginError = error;
-  }
+
+  $scope.newUser = {};
+  $scope.checkIfExists = function(){
+    console.log($scope.newUser);
+    $http({
+      method: 'POST',
+      url: '/api/email_exist',
+      data: $scope.newUser
+    }).then(function successCallback(responce){
+      var form = angular.element("#emailDiv");
+      form.addClass("has-error");
+      var error = angular.element("#existError");
+      error.removeClass("hidden");
+    },
+    function errorCallback(responce){
+      var form = angular.element("#emailDiv");
+      form.removeClass("has-error");
+      var error = angular.element("#existError");
+      error.addClass("hidden");
+      console.log("herer");
+    });
+  };
 
   $scope.Register = function(){
+    if(!$scope.newUser.email || !$scope.newUser.firstName ||
+      !$scope.newUser.lastName || !$scope.newUser.password ||
+      !$scope.newUser.pass_confirm){
+      return null;
+    }
     if($scope.newUser.password == $scope.newUser.pass_confirm){
       $http({
         method: 'POST',
@@ -190,43 +203,42 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
         data: $scope.newUser
       }).then(function successCallback(responce){
         $scope.showRegisterModal = false;
-        // $scope.logined = true;
-        // $scope.setUserObj(responce.data);
-        // add showing user data 
         console.log(responce.data);
         $scope.user.email = $scope.newUser.email;
         $scope.user.password = $scope.newUser.password;
         $scope.Login();
         $scope.newUser = {};
       },
-        function errorCallback(data){
-          $scope.wrongCredentials = true;
-            $scope.setError(data.data['error'] || data.data['status'])
+        function errorCallback(responce){
+          // if(responce.status == 400){
+          //   var form = angular.element("#emailDiv");
+          //   form.addClass("has-error");
+          //   var error = angular.element("#emailError");
+          //   error.text = "Ця електронна пошта вже зареєстрована!";
+          //   $scope.existingEmail = newUser.email;
+          // }
         });
-    }else{
-      $scope.setError("Passwords don't match!!!");      
     }
   };
 
   $scope.user = {};
   $scope.Login = function(){
+    if(!$scope.user.email || !$scope.user.password){
+      return null;
+    }
     $http({
       method: 'POST',
       url: '/api/login',
       data: $scope.user
     }).then(function successCallback(responce){
       $scope.showLoginModal = false;
-      $scope.logined = true;
-      $cookies.put('token', responce.data.token);
       $cookies.put('name', responce.data.name);
+      $cookies.put('surname', responce.data.surname);
       $cookies.put('id', responce.data.id);
-      $scope.setUserObj(responce.data);
       $scope.user = {};
-      // add showing user data 
+      console.log(responce);
     },
       function errorCallback(data){
-          $scope.wrongLoginCredentials = true;
-          $scope.setLoginError(data.data['error'] || data.data['status'])
       });
   };
 
@@ -236,8 +248,9 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
       url: '/api/logout',
       data: $scope.user
     }).then(function successCallback(responce){
-      $scope.logined = false;
-      $scope.setUserObj({});
+      $cookies.remove('name');
+      $cookies.remove('surname');
+      $cookies.remove('id');
     },
       function errorCallback(data){});
   };

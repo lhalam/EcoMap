@@ -8,6 +8,10 @@ body{
 	height: 3.7em;
 	text-transform:uppercase;
 }
+
+.navbar-brand{
+    padding-top:0px;
+}
 .navbar img{
 	height: 70px;
 }
@@ -20,7 +24,11 @@ body{
 }
 
 /*Modal dialog styles*/
+.modal-dialog .help-block.with-errors li{
+    line-height: 1em;
+}
 .modal-dialog{
+    text-transform:none;
     line-height: 1em;
 }
 .modal-dialog form{

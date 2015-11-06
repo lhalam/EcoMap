@@ -1,4 +1,4 @@
-var app=angular.module('app',['ui.bootstrap']);
+var app=angular.module('app',['ui.bootstrap', 'ngCookies']);
 //
 app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.today = function() {
@@ -139,7 +139,7 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
 //   }
 // })
 
-app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope){
+app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope, auth){
 
   $scope.showLoginModal = false;
   $scope.toggleLoginModal = function(){
@@ -152,13 +152,23 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
   };  
 
   $scope.logined = false;
-  $rootScope.Logined = function(){
+    /**
+     * @return {boolean}
+     */
+    $rootScope.Logined = function(){
+    //if ($cookies.get('token')){
+    //alert(sessionStorage.toString)
+    //    console.log($cookies.get('remember_token'));
+    //    $scope.logined = true;
     return $scope.logined;
+    //}
+
   };
 
   $rootScope.userObj = {};
   $rootScope.setUserObj = function(data){
     $rootScope.userObj = data;
+      //alert(userObj)
   };
 
   $scope.newUser = {}
@@ -207,6 +217,9 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
     }).then(function successCallback(responce){
       $scope.showLoginModal = false;
       $scope.logined = true;
+      $cookies.put('token', responce.data.token);
+      $cookies.put('name', responce.data.name);
+      $cookies.put('id', responce.data.id);
       $scope.setUserObj(responce.data);
       $scope.user = {};
       // add showing user data 

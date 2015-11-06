@@ -61,7 +61,7 @@ def login():
                            logined=0), 401
 
 
-@app.route("/api/logout", methods=["POST"])
+@app.route("/api/logout", methods=["POST", 'GET'])
 @login_required
 def logout():
     """Method for user's log out.

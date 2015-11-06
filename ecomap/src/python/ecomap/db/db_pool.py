@@ -25,7 +25,7 @@ class MySQLPoolSizeError(MySQLdb.DatabaseError):
     pass
 
 
-class DBPoolError(MySQLdb.Error):
+class DBPoolError(Exception):
     """Custom error for retry decorator. Raises after all tries"""
     pass
 

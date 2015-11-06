@@ -16,6 +16,3 @@ logger = logging.getLogger('flask_app')
 logger.info('test %s', template_folder)
 app.config['SECRET_KEY'] = 'a7c268ab01141868811c070274413ea3c588733241659fcb'
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)     # user time lib
-
-
-

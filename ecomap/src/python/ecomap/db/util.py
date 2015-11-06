@@ -17,9 +17,9 @@ def get_user_by_email(email):
 
     with db_pool().manager() as conn:
         q1 = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        sql = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
                  FROM `user` WHERE `email`=%s;"""
-        q1.execute(query, (email,))
+        q1.execute(sql, (email,))
         db_userid = q1.fetchone()
         if db_userid:
             logger.warning('log from GET USER user by mail')
@@ -39,9 +39,9 @@ def get_user_by_id(uid):
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        sql = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
                  FROM `user` WHERE `id`=%s;"""
-        cursor.execute(query, (uid,))
+        cursor.execute(sql, (uid,))
         user = cursor.fetchone()
     return user
 

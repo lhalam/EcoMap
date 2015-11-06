@@ -25,7 +25,7 @@ class MySQLPoolSizeError(MySQLdb.DatabaseError):
     pass
 
 
-class DBPoolError(Exception):
+class DBPoolError(MySQLdb.Error):
     """Custom error for retry decorator. Raises after all tries"""
     pass
 
@@ -48,9 +48,6 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                 if mtries:
                     time.sleep(mdelay)
                 else:
-                    logging.getLogger('retry').error('All attempts finished '
-                                                     'with error',
-                                                     exc_info=True)
                     raise DBPoolError('Error message: Got error with '
                                       'connection to database')
         return inner

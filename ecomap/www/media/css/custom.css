@@ -16,8 +16,17 @@ body{
 	height: 100%;
 	line-height: 4.5em;
 	vertical-align: middle;
-	cursor: pointer;
-	
+	cursor: pointer;	
+}
+
+/*Modal dialog styles*/
+.modal-dialog{
+    line-height: 1em;
+}
+.modal-dialog form{
+    background-color: #fff;
+}
+.modal-dialog form{   
 }
 
 /*problems filter */

@@ -77,69 +77,67 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
   };
 });
 
-app.controller("UserController",function ($scope, $http, $rootScope, $window){
+// app.controller("UserController",function ($scope, $http, $rootScope, $window){
 
-  $scope.user = {};
-    $scope.singinUser = function() {
-        $http({
-            method : 'POST',
-            url : '/api/login',
-            data : $scope.user
-        })
-        .then(function successCallback(data) {
-          $rootScope.userObj=data.data;
-          $(".message").addClass("active");
-          $("#message_head").text("Welcome");
-          $("#message_text").text("sing in was completed")
-          $('[showform]').each(function(num,elem) {
-            if(elem.getAttribute("showform") =="True"){
-              elem.style="diplay:block"
-            }
-            else{
-               elem.style="diplay:none"
-            }
-          });         
-        },
-        function errorCallback(data) {
-          $(".message").addClass("active");
-          $("#message_head").text("Sorry");
-          $("#message_text").text(data.data.status || "Error")
+//   $scope.user = {};
+//     $scope.singinUser = function() {
+//         $http({
+//             method : 'POST',
+//             url : '/api/login',
+//             data : $scope.user
+//         })
+//         .then(function successCallback(data) {
+//           $rootScope.userObj=data.data;
+//           $(".message").addClass("active");
+//           $("#message_head").text("Welcome");
+//           $("#message_text").text("sing in was completed")
+//           $('[showform]').each(function(num,elem) {
+//             if(elem.getAttribute("showform") =="True"){
+//               elem.style="diplay:block"
+//             }
+//             else{
+//                elem.style="diplay:none"
+//             }
+//           });         
+//         },
+//         function errorCallback(data) {
+//           $(".message").addClass("active");
+//           $("#message_head").text("Sorry");
+//           $("#message_text").text(data.data.status || "Error")
           
-        })
-        
-
-}
-})
-app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
-  $scope.newUser = {};
-    $scope.singupUser = function() {
-      console.log($scope.newUser)
-        $http({
-            method : 'POST',
-            url : '/api/register',
-            data : $scope.newUser
-        })
-        .then(function successCallback(data) {
-          $rootScope.userObj=data.data;
-          $(".message").addClass("active");
-          $("#message_head").text("Welcome");
-          $("#message_text").text("registration was completed")
+//         })
+// }
+// })
+// app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
+//   $scope.newUser = {};
+//     $scope.singupUser = function() {
+//       console.log($scope.newUser)
+//         $http({
+//             method : 'POST',
+//             url : '/api/register',
+//             data : $scope.newUser
+//         })
+//         .then(function successCallback(data) {
+//           $rootScope.userObj=data.data;
+//           $(".message").addClass("active");
+//           $("#message_head").text("Welcome");
+//           $("#message_text").text("registration was completed")
           
-        },
-        function errorCallback(data) {
-          $(".message").addClass("active");
-          $("#message_head").text("Sorry");
-          $("#message_text").text(data.data.status || "Something was wrong")
-        })
-}
-})
-app.controller("logOutUser",function ($scope,$window,$rootScope){
-  $scope.logOut=function (){
-    $rootScope.userObj= undefined
-    $window.location="/logout"
-     /*logout*/
-  }
-})
+//         },
+//         function errorCallback(data) {
+//           $(".message").addClass("active");
+//           $("#message_head").text("Sorry");
+//           $("#message_text").text(data.data.status || "Something was wrong")
+//         })
+// }
+// })
+// app.controller("logOutUser",function ($scope,$window,$rootScope){
+//   $scope.logOut=function (){
+//     $rootScope.userObj= undefined
+//     $window.location="/logout"
+//      /*logout*/
+//   }
+// })
 
 app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope){
 
@@ -166,8 +164,12 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
   $scope.newUser = {}
 
   $scope.registerError = "";
+  $scope.loginError = "";
   $scope.setError = function(error){
     $scope.registerError = error;
+  }
+  $scope.setLoginError = function(error){
+    $scope.loginError = error;
   }
 
   $scope.Register = function(){
@@ -187,7 +189,10 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
         $scope.Login();
         $scope.newUser = {};
       },
-        function errorCallback(data){});
+        function errorCallback(data){
+          $scope.wrongCredentials = true;
+            $scope.setError(data.data['error'] || data.data['status'])
+        });
     }else{
       $scope.setError("Passwords don't match!!!");      
     }
@@ -206,7 +211,10 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope', function($scope, $
       $scope.user = {};
       // add showing user data 
     },
-      function errorCallback(data){});
+      function errorCallback(data){
+          $scope.wrongLoginCredentials = true;
+          $scope.setLoginError(data.data['error'] || data.data['status'])
+      });
   };
 
   $scope.Logout = function(){

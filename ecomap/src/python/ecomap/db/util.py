@@ -1,11 +1,19 @@
 """This module contains functions for interacting with Database."""
-from db_pool import db_pool
+import logging
+
+from db_pool import db_pool, retry_query
+from ecomap.utils import get_logger
 
 
+get_logger()
+logger = logging.getLogger('util')
+
+
+@retry_query(tries=3, delay=1)
 def get_user_by_email(email):
-    """Function which returns user by email.
+    """Function which returns full user data by unique email.
 
-        :returns tuple of rows(id, password) from db.
+        returns tuple of rows(id, password) from db.
     """
     user = None
     with db_pool().manager() as conn:
@@ -16,27 +24,28 @@ def get_user_by_email(email):
     return user
 
 
+@retry_query(tries=3, delay=1)
 def get_user_by_id(uid):
     """Function which returns user by uid.
 
-        :returns tuple of rows(uid, password) from db.
+        returns tuple of rows(uid, password) from db.
     """
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, first_name, last_name, email, password \
-                        FROM user WHERE id=%s", uid)
-        user = cursor.fetchall()
+        sql = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                        FROM `user` WHERE `id`=%s;"""
+        cursor.execute(sql, (uid, ))
+        user = cursor.fetchone()
     return user
 
 
 def insert_user(first_name, last_name, email, password):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO user \
-                        (first_name, last_name, email, password) \
-                        VALUES (%s, %s, %s, %s);',
-                       (first_name, last_name, email, password))
+        sql = """INSERT INTO `user` (`first_name`, `last_name`, `email`, `password`)
+                        VALUES (%s, %s, %s, %s);"""
+        cursor.execute(sql, (first_name, last_name, email, password))
         conn.commit()
     return True
 

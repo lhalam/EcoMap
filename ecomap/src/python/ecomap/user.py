@@ -2,13 +2,13 @@
 import hashlib
 
 from flask_login import UserMixin, LoginManager
-from itsdangerous import URLSafeSerializer
+from itsdangerous import URLSafeTimedSerializer
 
 import db.util as util
 
 from ecomap.app import app
 
-login_serializer = URLSafeSerializer(app.secret_key)
+login_serializer = URLSafeTimedSerializer(app.secret_key)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
@@ -73,10 +73,13 @@ def get_user_by_email(email):
     """
     user = None
     if email:
+        app.logger.info('USER.PY GET U_BY EMAL initial email %s' % email)
         user = util.get_user_by_email(email)
+        # app.logger.info('USER.PY GET U_BY EMAL if email user =%s' % user)
     if user:
-        return User(user[0][0], user[0][1], user[0][2],
-                    user[0][3], user[0][4])
+        # app.logger.info('USER.PY GET U_BY IF 2 U=%s' % user)
+        return User(user[0], user[1], user[2],
+                    user[3], user[4])
     return None
 
 
@@ -91,8 +94,9 @@ def get_user_by_id(uid):
     if uid:
         user = util.get_user_by_id(uid)
     if user:
-        return User(user[0][0], user[0][1], user[0][2],
-                    user[0][3], user[0][4])
+        return User(user[0], user[1], user[2],
+                    user[3], user[4])
+
     return None
 
 

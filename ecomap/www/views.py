@@ -326,6 +326,9 @@ def get_resource():
     """NEW!
     get list of site resources needed for administration
     and server permission conrtol
+    action PUT:
+    'resourse_name' = changes to name of the resource
+    'resourse_id' = key to search name of the resource in db
 
        :return:
             - list of jsons
@@ -353,7 +356,7 @@ def get_resource():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/roles", methods=['GET', 'POST'])
+@app.route("/api/roles", methods=['GET', 'POST', 'PUT'])
 def roles():
     """NEW!
     get list of roles for server permission control
@@ -361,6 +364,9 @@ def roles():
     'role_name' = name of role in db
     action POST:
     'role_name' = name of the role
+    action PUT:
+    'role_name' = changes to name of the role
+    'role_id' = key to search name of the role in db
        :return:
             - list of jsons(dicts)
             - if no resource in DB
@@ -374,6 +380,14 @@ def roles():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['role_name'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status = "success", edited=edit_data['role_name'])
 
     parsed_data = db.get_roles()
     logger.warning(parsed_data)

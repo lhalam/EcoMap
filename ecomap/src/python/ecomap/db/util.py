@@ -11,7 +11,7 @@ logger = logging.getLogger('util')
 
 @retry_query(tries=3, delay=1)
 def get_user_by_email(email):
-    # todo add roles SQL reference to user model
+    # todo add roles SQL reference to user model???
     """Function which returns full user data by unique email.
 
         returns tuple of rows(id, password) from db.
@@ -64,7 +64,7 @@ def insert_user(first_name, last_name, email, password):
         conn.commit()
     return True
 
-#todo put,delete
+#todo put,delete for resources
 def get_all_resources():
     """
 
@@ -108,7 +108,7 @@ def get_roles():
     return parsed_data
 
 
-# todo PUT, DELETE
+# todo PUT, DELETE for roles
 def add_role(role_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
@@ -132,7 +132,7 @@ def get_permissions():
     return parsed_data
 
 
-# todo PUT, DELETE
+# todo PUT, DELETE for permissions
 def add_permission(action, modifier, resource_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
@@ -146,6 +146,21 @@ def add_permission(action, modifier, resource_name):
         conn.commit()
     return True
 
+# TODO reformat sqls!
+def make_it():
+    parsed_data = {}
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """select res.resource_name,  p.action, p.modifier, r.name
+                from role as r join role_permission
+                as rp on r.id = rp.id join permission
+                as p on rp.id = p.id join resource
+                as res on p.resourse_id = res.id;"""
+        cursor.execute(sql)
+        sql_response = cursor.fetchall()
+        if sql_response:
+            parsed_data = [x for x in sql_response]
+    return parsed_data
 
 #
 # if __name__ == "__main__":

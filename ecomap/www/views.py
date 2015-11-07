@@ -396,6 +396,46 @@ def permissions():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
+def js_js(sql_list):
+    """
+    MOVE THIS SOMEWHERE AND RENAME
+    PARSES DB TUPLE INTO JJSON
+    :param sql_list:
+    :return:
+    """
+    dct = {}
+    for (resource, method, perm, role) in sql_list:
+        if resource not in dct:
+            dct[resource] = {}
+        if method not in dct[resource]:
+            dct[resource][method] = []
+        # dct[resource][method] = {}
+        # if role not in dct[resource][method]:
+        #     # dct[resource][method][perm] = {}
+        #     dct[resource][method][role] = []
+        if role not in dct[resource][method]:
+            dct[resource][method].append({role: perm})
+            # print [{k:v} for k,v in dct[resource][method].items()]
+    return dct
+
+
+@app.route("/api/makeit", methods=['GET', 'POST'])
+def make_it():
+    """NEW!
+        SHOW TABLE
+        makes join
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+
+    parsed_data = db.make_it()
+    res = js_js(parsed_data)
+    return jsonify(res)
+    # return Response(json.dumps(res), mimetype='application/json')
+
 
 
 

@@ -1,4 +1,4 @@
-var app=angular.module('app',['ui.bootstrap', 'ngCookies']);
+var app=angular.module('app',['ui.bootstrap', 'ngCookies', 'ngMessages']);
 //
 app.controller('DatepickerDemoCtrl', function ($scope) {
   $scope.today = function() {
@@ -77,67 +77,6 @@ app.controller('DatepickerDemoCtrl', function ($scope) {
   };
 });
 
-// app.controller("UserController",function ($scope, $http, $rootScope, $window){
-
-//   $scope.user = {};
-//     $scope.singinUser = function() {
-//         $http({
-//             method : 'POST',
-//             url : '/api/login',
-//             data : $scope.user
-//         })
-//         .then(function successCallback(data) {
-//           $rootScope.userObj=data.data;
-//           $(".message").addClass("active");
-//           $("#message_head").text("Welcome");
-//           $("#message_text").text("sing in was completed")
-//           $('[showform]').each(function(num,elem) {
-//             if(elem.getAttribute("showform") =="True"){
-//               elem.style="diplay:block"
-//             }
-//             else{
-//                elem.style="diplay:none"
-//             }
-//           });         
-//         },
-//         function errorCallback(data) {
-//           $(".message").addClass("active");
-//           $("#message_head").text("Sorry");
-//           $("#message_text").text(data.data.status || "Error")
-          
-//         })
-// }
-// })
-// app.controller("RegistrCtrl",function ($scope, $http,$rootScope){
-//   $scope.newUser = {};
-//     $scope.singupUser = function() {
-//       console.log($scope.newUser)
-//         $http({
-//             method : 'POST',
-//             url : '/api/register',
-//             data : $scope.newUser
-//         })
-//         .then(function successCallback(data) {
-//           $rootScope.userObj=data.data;
-//           $(".message").addClass("active");
-//           $("#message_head").text("Welcome");
-//           $("#message_text").text("registration was completed")
-          
-//         },
-//         function errorCallback(data) {
-//           $(".message").addClass("active");
-//           $("#message_head").text("Sorry");
-//           $("#message_text").text(data.data.status || "Something was wrong")
-//         })
-// }
-// })
-// app.controller("logOutUser",function ($scope,$window,$rootScope){
-//   $scope.logOut=function (){
-//     $rootScope.userObj= undefined
-//     $window.location="/logout"
-//      /*logout*/
-//   }
-// })
 
 app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope){
 
@@ -151,15 +90,6 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
     $scope.showRegisterModal = !$scope.showRegisterModal;
   };  
 
-  // $scope.registerError = "";
-  // $scope.loginError = "";
-  // $scope.setError = function(error){
-  //   $scope.registerError = error;
-  // }
-  // $scope.setLoginError = function(error){
-  //   $scope.loginError = error;
-  // }
-
   $scope.checkLogined = function(){
     if($cookies.get('name') && $cookies.get('surname')){
       return $cookies.get('name') + " " + $cookies.get('surname');
@@ -169,27 +99,6 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
   }
 
   $scope.newUser = {};
-  $scope.checkIfExists = function(){
-    console.log($scope.newUser);
-    $http({
-      method: 'POST',
-      url: '/api/email_exist',
-      data: $scope.newUser
-    }).then(function successCallback(responce){
-      var form = angular.element("#emailDiv");
-      form.addClass("has-error");
-      var error = angular.element("#existError");
-      error.removeClass("hidden");
-    },
-    function errorCallback(responce){
-      var form = angular.element("#emailDiv");
-      form.removeClass("has-error");
-      var error = angular.element("#existError");
-      error.addClass("hidden");
-      console.log("herer");
-    });
-  };
-
   $scope.Register = function(){
     if(!$scope.newUser.email || !$scope.newUser.firstName ||
       !$scope.newUser.lastName || !$scope.newUser.password ||
@@ -209,18 +118,11 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
         $scope.Login();
         $scope.newUser = {};
       },
-        function errorCallback(responce){
-          // if(responce.status == 400){
-          //   var form = angular.element("#emailDiv");
-          //   form.addClass("has-error");
-          //   var error = angular.element("#emailError");
-          //   error.text = "Ця електронна пошта вже зареєстрована!";
-          //   $scope.existingEmail = newUser.email;
-          // }
-        });
+        function errorCallback(responce){});
     }
   };
 
+  $scope.emailExists = "";
   $scope.user = {};
   $scope.Login = function(){
     if(!$scope.user.email || !$scope.user.password){
@@ -235,10 +137,13 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
       $cookies.put('name', responce.data.name);
       $cookies.put('surname', responce.data.surname);
       $cookies.put('id', responce.data.id);
-      $scope.user = {};
+      $scope.user = {};      
       console.log(responce);
     },
-      function errorCallback(data){
+      function errorCallback(responce){
+        if(responce.status == 401 && responce.data['reason'] == "password"){
+          $scope.user.email.$setValidity("email", false);
+        }
       });
   };
 
@@ -298,3 +203,75 @@ app.directive('modal', function () {
       }
     };
 });
+
+app.directive('existingEmail', function($http) {
+  var toId;
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, elem, attr, ctrl) { 
+      scope.$watch(attr.ngModel, function(value) {
+        if(toId) clearTimeout(toId);
+        toId = setTimeout(function(){
+          if(scope.user.email){
+            $http({
+              url: "/api/email_exist",
+              method: "POST",
+              data: scope.user
+            })
+            .then(function successCallback(responce){
+              ctrl.$setValidity('existingEmail', responce.data["isValid"]);
+            },
+            function errorCallback(responce){});            
+          }
+        }, 200);
+      })
+    }
+  }
+});
+
+app.directive('availableEmail', function($http) {
+  var toId;
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, elem, attr, ctrl) { 
+      scope.$watch(attr.ngModel, function(value) {
+        if(toId) clearTimeout(toId);
+        toId = setTimeout(function(){
+          if(scope.newUser.email){
+            $http({
+              url: "/api/email_exist",
+              method: "POST",
+              data: scope.newUser
+            })
+            .then(function successCallback(responce){
+              ctrl.$setValidity('availableEmail', !responce.data["isValid"]);
+            },
+            function errorCallback(responce){});            
+          }
+        }, 200);
+      })
+    }
+  }
+});
+
+app.directive("compareTo", function(){
+    return{
+        require: "ngModel",
+        scope: {
+            otherModelValue: "=compareTo"
+        },
+        link: function(scope, element, attributes, ngModel) {
+            ngModel.$validators.compareTo = function(modelValue) {
+                return modelValue == scope.otherModelValue;
+            };
+
+            scope.$watch("otherModelValue", function() {
+                ngModel.$validate();
+            });
+        }
+      
+      }
+});
+

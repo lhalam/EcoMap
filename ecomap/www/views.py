@@ -55,10 +55,10 @@ def login():
                            email=user.email)
         if not user:
             return jsonify(error="There is no user with given email.",
-                           logined=0), 401
+                           logined=0, reason="email"), 401
         if not user.verify_password(data['password']):
             return jsonify(error="Invalid password, try again.",
-                           logined=0), 401
+                           logined=0, reason="password"), 401
 
 
 @app.route("/api/logout", methods=["POST", 'GET'])
@@ -121,12 +121,8 @@ def register():
 def email_exist():
     if request.method == "POST":
         data = request.get_json()
-        return jsonify(email=data)
         user = usr.get_user_by_email(data['email'])
-        if user:
-            return jsonify(), 200
-        else:
-            return jsonify(), 401
+        return jsonify(isValid=bool(user))
 
 if __name__ == "__main__":
     app.run()

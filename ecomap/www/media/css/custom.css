@@ -1,4 +1,25 @@
 
+@font-face {
+    font-family: "LatoRegular";
+    src: url("../fonts/LatoRegular/LatoRegular.eot");
+    src: url("../fonts/LatoRegular/LatoRegular.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/LatoRegular/LatoRegular.woff") format("woff"),
+    url("../fonts/LatoRegular/LatoRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "LatoBold";
+    src: url("../fonts/LatoBold/LatoBold.eot");
+    src: url("../fonts/LatoBold/LatoBold.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/LatoBold/LatoBold.woff") format("woff"),
+    url("../fonts/LatoBold/LatoBold.ttf") format("truetype");
+    font-style: bold;
+    font-weight: bold;
+}
+
+
 /* Nav bar*/
 body{
 	overflow-x:hidden;
@@ -148,12 +169,12 @@ body{
 	display: none;
 }
 /*registration form*/
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
 .registr_block{
 	width:60%;
 	display: none;
 	margin-top: -20%;
-	font-family:'Open Sans',sans-serif;
+	font-family:'LatoRegular',sans-serif;
 	transition :1s;
 	-webkit-transition:opacity 1s;
 	
@@ -181,7 +202,7 @@ form{
   margin-left: 5%;
   border:1px solid #ccc;
   padding:4%;
-  font-family:'Open Sans',sans-serif;
+  font-family:'LatoRegular',sans-serif;
   font-size:95%;
   color:#555;
 
@@ -195,7 +216,7 @@ form{
   background:#3399cc;
   border:0;
   padding:4%;
-  font-family:'Open Sans',sans-serif;
+  font-family:'LatoRegular',sans-serif;
   font-size:100%;
   color:#fff;
   cursor:pointer;

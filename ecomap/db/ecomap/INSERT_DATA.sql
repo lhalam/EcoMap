@@ -1,1 +1,1 @@
-SOURCE data/user.sql
+SOURCE data/user.sql;

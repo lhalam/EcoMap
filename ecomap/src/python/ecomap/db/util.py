@@ -107,7 +107,8 @@ def get_roles():
             parsed_data = [x for x in sql_response]
     return parsed_data
 
-#todo PUT, DELETE
+
+# todo PUT, DELETE
 def add_role(role_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
@@ -115,6 +116,36 @@ def add_role(role_name):
         cursor.execute(sql, (role_name,))
         conn.commit()
     return True
+
+
+def get_permissions():
+    parsed_data = {}
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """SELECT p.id, p.action, p.modifier, r.resource_name
+                  FROM permission as p LEFT JOIN
+                  resource as r ON p.resourse_id=r.id;"""
+        cursor.execute(sql)
+        sql_response = cursor.fetchall()
+        if sql_response:
+            parsed_data = [x for x in sql_response]
+    return parsed_data
+
+
+# todo PUT, DELETE
+def add_permission(action, modifier, resource_name):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """insert into resource (resource_name) values(%s);
+                  """
+        cursor.execute(sql, (resource_name,))
+        conn.commit()
+        sql2 = """insert into permission (resourse_id, action, modifier)
+                  values(LAST_INSERT_ID(), %s, %s);"""
+        cursor.execute(sql2, (action, modifier))
+        conn.commit()
+    return True
+
 
 #
 # if __name__ == "__main__":

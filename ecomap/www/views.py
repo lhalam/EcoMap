@@ -323,7 +323,7 @@ def post_problem():
 
 @app.route("/api/resources", methods=['GET', 'POST'])
 def get_resource():
-    """
+    """NEW!
     get list of site resources needed for administration
     and server permission conrtol
 
@@ -347,16 +347,16 @@ def get_resource():
 
 @app.route("/api/roles", methods=['GET', 'POST'])
 def roles():
-    """
-    get list of roles for  and server permission conrtol
-    GET:
+    """NEW!
+    get list of roles for server permission control
+    action GET:
     'role_name' = name of role in db
-    POST:
-    'role_name' = name of ne role
+    action POST:
+    'role_name' = name of the role
        :return:
-            - list of jsons
+            - list of jsons(dicts)
             - if no resource in DB
-                return empty json
+                return empty dict
     """
 
     if request.method == "POST" and request.get_json():
@@ -370,6 +370,31 @@ def roles():
     parsed_data = db.get_roles()
     logger.warning(parsed_data)
     return Response(json.dumps(parsed_data), mimetype='application/json')
+
+
+@app.route("/api/permissions", methods=['GET', 'POST'])
+def permissions():
+    """NEW!
+    get and modify actions of
+    server permission conrtol
+
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        try:
+            db.add_permission(data['action'], data['modifier'], data['resource_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(added_permission_for=data['resource_name'])
+
+    parsed_data = db.get_permissions()
+    return Response(json.dumps(parsed_data), mimetype='application/json')
+
 
 
 

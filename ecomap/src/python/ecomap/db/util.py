@@ -90,7 +90,13 @@ def add_resource(res_name):
         conn.commit()
     return True
 
-
+def edit_resource(res_name, res_id):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `resource` SET `resource_name` = %s WHERE id = %s;"""
+        cursor.execute(sql, (res_name, res_id)) 
+        conn.commit()
+    return True
 
 def get_roles():
     """

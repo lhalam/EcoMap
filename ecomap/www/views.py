@@ -321,7 +321,7 @@ def post_problem():
         return jsonify(output)
 
 
-@app.route("/api/resources", methods=['GET', 'POST'])
+@app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
 def get_resource():
     """NEW!
     get list of site resources needed for administration
@@ -340,6 +340,14 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['resource_name'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.edit_resource(edit_data['resource_name'], edit_data['resource_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status = "success", edited=edit_data['resource_name'])
 
     parsed_data = db.get_all_resources()
     return Response(json.dumps(parsed_data), mimetype='application/json')

@@ -122,7 +122,14 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
     }
   };
 
-  $scope.emailExists = "";
+  $scope.invalidPassword = false;
+  $scope.getInvalidPassword = function(){
+    return $scope.invalidPassword;
+  };
+  $scope.changeInvalidPassword = function(){
+    $scope.invalidPassword = false;
+  };
+
   $scope.user = {};
   $scope.Login = function(){
     if(!$scope.user.email || !$scope.user.password){
@@ -142,7 +149,7 @@ app.controller('LoginCtrl', ['$scope',  '$cookies', '$http', '$rootScope', funct
     },
       function errorCallback(responce){
         if(responce.status == 401 && responce.data['reason'] == "password"){
-          $scope.user.email.$setValidity("email", false);
+          $scope.invalidPassword = true;
         }
       });
   };

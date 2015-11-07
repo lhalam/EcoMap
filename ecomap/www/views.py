@@ -323,7 +323,7 @@ def post_problem():
 
 @app.route("/api/resources", methods=['GET', 'POST'])
 def get_resource():
-    """
+    """NEW!
     get list of site resources needed for administration
     and server permission conrtol
 
@@ -347,16 +347,16 @@ def get_resource():
 
 @app.route("/api/roles", methods=['GET', 'POST'])
 def roles():
-    """
-    get list of roles for  and server permission conrtol
-    GET:
+    """NEW!
+    get list of roles for server permission control
+    action GET:
     'role_name' = name of role in db
-    POST:
-    'role_name' = name of ne role
+    action POST:
+    'role_name' = name of the role
        :return:
-            - list of jsons
+            - list of jsons(dicts)
             - if no resource in DB
-                return empty json
+                return empty dict
     """
 
     if request.method == "POST" and request.get_json():
@@ -372,10 +372,70 @@ def roles():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
+@app.route("/api/permissions", methods=['GET', 'POST'])
+def permissions():
+    """NEW!
+    get and modify actions of
+    server permission conrtol
+
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        try:
+            db.add_permission(data['action'], data['modifier'],
+                              data['resource_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(added_permission_for=data['resource_name'])
+
+    parsed_data = db.get_permissions()
+    return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
+def js_js(sql_list):
+    """
+    MOVE THIS SOMEWHERE AND RENAME
+    PARSES DB TUPLE INTO JJSON
+    :param sql_list:
+    :return:
+    """
+    dct = {}
+    for (resource, method, perm, role) in sql_list:
+        if resource not in dct:
+            dct[resource] = {}
+        if method not in dct[resource]:
+            dct[resource][method] = []
+        # dct[resource][method] = {}
+        # if role not in dct[resource][method]:
+        #     # dct[resource][method][perm] = {}
+        #     dct[resource][method][role] = []
+        if role not in dct[resource][method]:
+            dct[resource][method].append({role: perm})
+            # print [{k:v} for k,v in dct[resource][method].items()]
+    return dct
 
-#
+
+@app.route("/api/makeit", methods=['GET', 'POST'])
+def make_it():
+    """NEW!
+        SHOW TABLE
+        makes join
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+    parsed_data = db.make_it()
+    res = js_js(parsed_data)
+    return jsonify(res)
+    # return Response(json.dumps(res), mimetype='application/json')
+
+
 # @app.route("/api/roles", methods=["POST", 'GET'])
 # def roles():
 #     return jsonify(items=[dict(a=1, b=2), dict(c=3, d=4)])

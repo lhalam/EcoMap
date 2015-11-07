@@ -4,7 +4,6 @@ import logging
 from db_pool import db_pool, retry_query
 
 
-_USER_ROLE_ID = 3
 logger = logging.getLogger('util')
 
 
@@ -75,10 +74,11 @@ def insert_user(first_name, last_name, email, password):
                  INSERT INTO `user` (`first_name`, `last_name`, `email`,
                  `password`) VALUES (%s, %s, %s, %s);
                  INSERT INTO `user_role` (`user_id`, `role_id`)
-                 VALUES ((SELECT `id` FROM `user` WHERE `email`=%s), %s);
+                 VALUES ((SELECT `id` FROM `user` WHERE `email`=%s),
+                 (SELECT `id` FROM `role` WHERE `name`="user"));
                  COMMIT;"""
         cursor.execute(sql, (first_name, last_name, email, password,
-                             email, _USER_ROLE_ID))
+                             email))
     return True
 
 

@@ -6,7 +6,7 @@ ecomap project.
 # import sys
 import json
 
-from flask import render_template, request, jsonify, abort, Response
+from flask import render_template, request, jsonify, Response
 from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr
@@ -100,7 +100,7 @@ def register():
         data = request.get_json()
         arguments = ['firstName', 'lastName', 'email',
                      'password', 'pass_confirm']
-        #TODO separate user func
+        # TODO separate user func
         try:
             if [v for k, v in request.get_json().iteritems() if
                     not v or k not in arguments]:
@@ -395,7 +395,8 @@ def permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
-            db.add_permission(data['action'], data['modifier'], data['resource_name'])
+            db.add_permission(data['action'], data['modifier'],
+                              data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_permission_for=data['resource_name'])
@@ -437,18 +438,12 @@ def make_it():
             - if no resource in DB
                 return empty json
     """
-
-
     parsed_data = db.make_it()
     res = js_js(parsed_data)
     return jsonify(res)
     # return Response(json.dumps(res), mimetype='application/json')
 
 
-
-
-
-#
 # @app.route("/api/roles", methods=["POST", 'GET'])
 # def roles():
 #     return jsonify(items=[dict(a=1, b=2), dict(c=3, d=4)])

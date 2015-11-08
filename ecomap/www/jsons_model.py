@@ -197,7 +197,7 @@ js3 = {
 #
 print "*******"
 for res_name, resource in js3.items():
-    # pprint ('<' + res_name + '>')
+    pprint ('<' + res_name + '>')
     # pprint(resource)
     for permissions in resource:
         # pprint(permissions)

@@ -64,6 +64,7 @@ def insert_user(first_name, last_name, email, password):
         conn.commit()
     return True
 
+
 #todo put,delete for resources
 def get_all_resources():
     """
@@ -90,6 +91,14 @@ def add_resource(res_name):
         conn.commit()
     return True
 
+
+def edit_resource(res_name, res_id):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `resource` SET `resource_name` = %s where id = %s; """
+        cursor.execute(sql, (res_name, res_id))
+        conn.commit()
+    return True
 
 
 def get_roles():
@@ -151,16 +160,27 @@ def make_it():
     parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """select res.resource_name,  p.action, p.modifier, r.name
-                from role as r join role_permission
-                as rp on r.id = rp.id join permission
-                as p on rp.id = p.id join resource
-                as res on p.resourse_id = res.id;"""
+        sql = """select r.name, p.action, p.modifier, res.resource_name
+                    from role_permission as rp left join role as r on rp.role_id = r.id
+                    left join permission as p on rp.permission_id = p.id
+                    join resource res on p.resourse_id = res.id;"""
+# sql = """select res.resource_name,  p.action, p.modifier, r.name
+#                 from role as r join role_permission
+#                 as rp on r.id = rp.id join permission
+#                 as p on rp.id = p.id join resource
+#                 as res on p.resourse_id = res.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
         if sql_response:
             parsed_data = [x for x in sql_response]
     return parsed_data
+
+# """select r.name, p.action, p.modifier, res.resource_name
+# from role_permission as rp left join role as r on rp.role_id = r.id
+# left join permission as p on rp.permission_id = p.id
+# join resource res on p.resourse_id = res.id;"""
+
+
 
 #
 # if __name__ == "__main__":

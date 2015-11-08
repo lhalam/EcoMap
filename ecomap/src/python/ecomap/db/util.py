@@ -206,6 +206,9 @@ def add_permission(action, modifier, resource_name):
         cursor.execute(sql, (resource_name, action, modifier))
     return True
 
+@retry_query(tries=3, delay=1)
+def edit_permission():
+    pass
 
 @retry_query(tries=3, delay=1)
 def make_it():

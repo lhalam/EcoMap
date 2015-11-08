@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html ng-app="admin">
+<head>
+	<title></title>
+	 <script src="/js/angular.min.js"></script>
+	 <script type="text/javascript" src="/js/admin.js"></script>
+	 <link rel="stylesheet" type="text/css" href="/css/admin.css">
+</head>
+<body>
+	<h3>Table</h3>
+	<div ng-controller="tableCtrl">
+		<button ng-click="show()" >click</button>
+		<button ng-click="printTable()" >print</button>
+	   
+	<table>
+	     	<tr ng-repeat="(resource_name,resource_obj) in TableData">
+	     		<td>
+	     			<table>
+	     				<tr>
+	     					<td class="table_name">{{resource_name |angular}}</td>
+	     					<td>
+	     						<table>
+	     					
+	     						<tr ng-repeat="(method_name,method_obj) in resource_obj">
+	     							<td class="table_nucleaus">{{method_name |angular}}</td>
+	     							<td ng-repeat="(role,permision) in method_obj" class="table_nucleaus" ><input type="text" ng-model="TableData[resource_name][method_name][role]" value="{{permision |angular}}"></td>
+	     						</tr>
+	     						
+	     						</table>
+	     					</td>
+	     				</tr>
+	     				<tr>
+	     					<td>
+	     						<button ng-click="addRole(resource_name,new_role)">add role!</button>
+	     					</td>
+	     					<td>
+	     						<input placeholder="add role" ng-model="new_role"></button>
+	     					</td>
+	     				</tr>
+
+	     			</table>
+	     		</td>
+	     	</tr>
+	     </table>
+
+    </div>
+
+</body>
+</html>

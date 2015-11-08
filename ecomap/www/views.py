@@ -15,6 +15,10 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
+@app.route("/api/admin")
+def admin():
+    return render_template("admin.html")
+
 @app.route("/", methods=['GET'])
 def index():
     """Controller starts main application page.

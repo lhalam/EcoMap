@@ -1,29 +1,29 @@
 import json
 from pprint import pprint
-#
-# json = {
-#
-#     "resource_name": {
-#         [{'admin': {
-#             'permissions':
-#                 [{"put": 'own'},
-#                 {'get': 'any'},
-#                 {'post': 'none'}]
-#
-#                 }
-#         },
-#
-#         {'user': {
-#             'permissions':
-#                 [{"put": 'own'},
-#                 {'get': 'any'},
-#                 {'post': 'none'}]
-#
-#                 }
-#         },
-#         ]
-#     }
-# }
+
+ json = {
+
+     "resource_name": {
+         [{'admin': {
+             'permissions':
+                 [{'put': 'own'},
+                 {'get': 'any'},
+                 {'post': 'none'}]
+
+                 }
+         },
+
+         {'user': {
+             'permissions':
+                 [{'put': 'own'},
+                 {'get': 'any'},
+                 {'post': 'none'}]
+
+                 }
+         },
+         ]
+     }
+ }
 
 sql_tuple = [['resource', 'post', 'any', 'user'],
        ['admin_page', 'del', 'own', 'user'],

@@ -44,13 +44,32 @@ admin.controller("tableCtrl",function ($scope){
  		for (meth in $scope.TableData[resource_name]){
  			if(meth!=="method_roles"){
  				$scope.TableData[resource_name][meth][new_role]="None"
- 				console.log($scope.TableData[resource_name][meth])
+ 				
  			}
  			
  		}
  	
 
  	}
+  $scope.creatResourse=function(res_name){
+    $scope.TableData[res_name]={}
+    $scope.TableData[res_name]["method_roles"]={
+      "admin":"admin"
+    }
+    $scope.TableData[res_name]["get"]={
+      "admin":"None"
+    }
+  }
+  $scope.addMeth=function(resource_name,meth_name){
+    $scope.TableData[resource_name][meth_name]={}
+    for (role in $scope.TableData[resource_name]['method_roles']){
+      $scope.TableData[resource_name][meth_name][role]="None"
+      console.log(role)
+    }
+    console.log($scope.TableData[resource_name]['method_roles'])
+    
+
+  }
 
 
 })

@@ -7,13 +7,8 @@ import os
 # if you using some virtualenv interpreter - uncomment next three lines
 # and add your own path to env's 'activate_this.py' file
 
-<<<<<<< HEAD
 activate_this = "/home/gamolyavlad/myproject/venv/bin/activate_this.py"
 execfile(activate_this, dict(__file__=activate_this))
-=======
-# activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
-# execfile(activate_this, dict(__file__=activate_this))
->>>>>>> 19dd078fd3928f65f3dfa127d8f4cc05d8515500
 
 os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'

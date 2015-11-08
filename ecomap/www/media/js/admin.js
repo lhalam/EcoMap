@@ -51,11 +51,6 @@ admin.controller("tableCtrl",function ($scope){
  	
 
  	}
- 	$scope.send=function(){
-         $http({
-             method : 'POST',
-             url : '/api/login',
-             data : $scope.user
-         }
+
 
 })

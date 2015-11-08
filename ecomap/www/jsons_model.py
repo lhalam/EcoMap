@@ -18,7 +18,6 @@ from pprint import pprint
                  [{'put': 'own'},
                  {'get': 'any'},
                  {'post': 'none'}]
-
                  }
          },
          ]

@@ -372,7 +372,7 @@ def get_resource():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/roles", methods=['GET', 'POST', 'PUT'])
+@app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def roles():
     """NEW!
     get list of roles for server permission control
@@ -383,6 +383,9 @@ def roles():
     action PUT:
     'role_name' = changes to name of the role
     'role_id' = key to search name of the role in db
+    action DELETE:
+    'role_name' = that has to be Deleted
+    'role_id' = key to search name of resource in db to delete
        :return:
             - list of jsons(dicts)
             - if no resource in DB
@@ -405,12 +408,20 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status = "success", edited=edit_data['role_name'])
 
+     if request.method == "DELETE" and request.get_json():
+        del_data = request.get_json()
+        try:
+            db.del_resource(del_data['role_name'], del_data['role_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status = "success", deleted_resource=del_data['role_name'])
+
     parsed_data = db.get_roles()
     logger.warning(parsed_data)
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/permissions", methods=['GET', 'POST', 'PUT'])
+@app.route("/api/permissions", methods=['GET', 'POST'])
 def permissions():
     """NEW!
     get and modify actions of

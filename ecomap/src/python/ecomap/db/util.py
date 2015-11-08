@@ -182,6 +182,19 @@ def edit_role(role_name, role_id):
         conn.commit()
     return True
 
+@retry_query(tries=3, delay=1)
+def del_role(role_name, role_id):
+    """ modify resource name in db.
+    :params: res_name - name of resource that had to be deleted
+             res_id - key for searching resource name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `role` WHERE `name` = %s AND `id` = %s;"""
+        cursor.execute(sql, (role_name, role_id)) 
+        conn.commit()
+    return True
+
 
 @retry_query(tries=3, delay=1)
 def get_permissions():

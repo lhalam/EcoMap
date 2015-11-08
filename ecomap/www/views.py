@@ -2,8 +2,6 @@
 This module holds all views controls for
 ecomap project.
 """
-# import sys
-
 from flask import render_template, request, jsonify
 from flask_login import login_user, logout_user, login_required
 
@@ -126,10 +124,3 @@ def email_exist():
 
 if __name__ == "__main__":
     app.run()
-
-    # app.logger = logger
-    # usr.login_manager.init_app(app)
-
-    # user = usr.User.get(username="admin")
-    # print user
-    # login_user(user, remember=True)

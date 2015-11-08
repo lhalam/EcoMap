@@ -127,7 +127,6 @@ def edit_resource(res_name, res_id):
     return True
 
 
-@retry_query(tries=3, delay=1)
 def get_roles():
     """Gets all roles from db.
     :return: list of tuples
@@ -156,6 +155,7 @@ def add_role(role_name):
         conn.commit()
     return True
 
+
 @retry_query(tries=3, delay=1)
 def edit_role(role_name, role_id):
     """ modify resource name in db.
@@ -170,7 +170,6 @@ def edit_role(role_name, role_id):
     return True
 
 
-
 @retry_query(tries=3, delay=1)
 def get_permissions():
     """Gets all permissions from db.
@@ -180,7 +179,7 @@ def get_permissions():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """SELECT p.id, p.action, p.modifier, r.resource_name
-                  FROM permission AS p LEFT JOIN
+                  FROM permission AS p right JOIN
                   resource AS r ON p.resourse_id=r.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
@@ -211,18 +210,22 @@ def edit_permission():
     pass
 
 @retry_query(tries=3, delay=1)
-def make_it():
+def select_all():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
     """
     parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT res.resource_name,  p.action, p.modifier, r.name
-                 FROM role AS r join role_permission
-                 AS rp ON r.id = rp.id join permission
-                 AS p ON rp.id = p.id join resource
-                 AS res ON p.resourse_id = res.id;"""
+        sql = """select  res.resource_name, p.action, p.modifier, r.name
+                    from role_permission as rp left join role as r on rp.role_id = r.id
+                    left join permission as p on rp.permission_id = p.id
+                    join resource res on p.resourse_id = res.id;"""
+        # sql = """select res.resource_name,  p.action, p.modifier, r.name
+        #                 from role as r join role_permission
+        #                 as rp on r.id = rp.id join permission
+        #                 as p on rp.id = p.id join resource
+        #                  as res on p.resourse_id = res.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
         if sql_response:
@@ -246,3 +249,38 @@ def change_user_password(uid, new_pass):
 
 # if __name__ == "__main__":
 #     # print get_user_by_email("admin@gmail.com")
+
+
+@retry_query(tries=3, delay=1)
+def mega_insert(input):
+    """Generates sql query to insert new resource, it's methods and
+    modifiers, also creates role_permission tables.
+    :input: input - json, which contains data like:
+        'problem': {'get': {'user': 'any', 'admin': 'any'},
+                    'post': {'user': 'any', 'admin': 'any'}}}
+    """
+    sql = 'START TRANSACTION;'
+    for resource in input:
+        sql += """INSERT IGNORE INTO `resource` (`resource_name`)
+                  VALUES ("{0}");""".format(resource)
+        for method in input[resource]:
+            for modifier in ('any', 'own', 'none'):
+                sql += """INSERT IGNORE INTO `permission` (`resourse_id`,
+                          `action`, modifier) VALUES ((SELECT `id` FROM
+                          `resource` WHERE `resource_name`="{0}"), "{1}",
+                          "{2}");""".format(resource, method, modifier)
+            for role in input[resource][method]:
+                sql += """INSERT IGNORE INTO `role_permission` (`role_id`,
+                          `permission_id`) VALUES ((SELECT `id` FROM `role`
+                          WHERE `name`="{0}"), (SELECT `id` FROM `permission`
+                          WHERE `action`="{1}" AND `resourse_id`=(SELECT `id`
+                          FROM `resource` WHERE `resource_name`="{2}") AND
+                          `modifier`="{3}"));
+                       """.format(role, method, resource,
+                                  input[resource][method][role])
+    sql += 'COMMIT;'
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+    return True

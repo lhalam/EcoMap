@@ -1,28 +1,27 @@
 import json
 from pprint import pprint
-#
+
 # json = {
 #
-#     "resource_name": {
-#         [{'admin': {
-#             'permissions':
-#                 [{"put": 'own'},
-#                 {'get': 'any'},
-#                 {'post': 'none'}]
+#  "resource_name": {
+#      [{'admin': {
+#          'permissions':
+#              [{'put': 'own'},
+#              {'get': 'any'},
+#              {'post': 'none'}]
 #
-#                 }
-#         },
+#              }
+#      },
 #
-#         {'user': {
-#             'permissions':
-#                 [{"put": 'own'},
-#                 {'get': 'any'},
-#                 {'post': 'none'}]
-#
-#                 }
-#         },
-#         ]
-#     }
+#      {'user': {
+#          'permissions':
+#              [{'put': 'own'},
+#              {'get': 'any'},
+#              {'post': 'none'}]
+#              }
+#      },
+#      ]
+#  }
 # }
 
 sql_tuple = [['resource', 'post', 'any', 'user'],
@@ -49,7 +48,6 @@ sql_tuple = [['resource', 'post', 'any', 'user'],
 #                 dct[x[0]].append(x[1])
 #         print dct
 # print fj(sql_tuple)
-
 
 
 def js_js2(sql_list):
@@ -82,13 +80,13 @@ def js_js(sql_list):
         if resource not in dct:
             dct[resource] = {}
         if method not in dct[resource]:
-            dct[resource][method] = []
+            dct[resource][method] = {}
         # dct[resource][method] = {}
         # if role not in dct[resource][method]:
         #     # dct[resource][method][perm] = {}
         #     dct[resource][method][role] = []
         if role not in dct[resource][method]:
-            dct[resource][method].append({role: perm})
+            dct[resource][method].update({role: perm})
             # print [{k:v} for k,v in dct[resource][method].items()]
     return dct
 
@@ -197,7 +195,7 @@ js3 = {
 #
 print "*******"
 for res_name, resource in js3.items():
-    # pprint ('<' + res_name + '>')
+    pprint ('<' + res_name + '>')
     # pprint(resource)
     for permissions in resource:
         # pprint(permissions)

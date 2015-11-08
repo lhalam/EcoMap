@@ -15,6 +15,10 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
+@app.route("/api/admin")
+def admin():
+    return render_template("admin.html")
+
 @app.route("/", methods=['GET'])
 def index():
     """Controller starts main application page.
@@ -419,10 +423,10 @@ def permissions():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-def js_js(sql_list):
+def make_json(sql_list):
     """
     MOVE THIS SOMEWHERE AND RENAME
-    PARSES DB TUPLE INTO JJSON
+    PARSES DB TUPLE INTO JSON
     :param sql_list:
     :return:
     """
@@ -452,10 +456,36 @@ def make_it():
             - if no resource in DB
                 return empty json
     """
-    parsed_data = db.make_it()
-    res = js_js(parsed_data)
+    parsed_data = db.select_all()
+    res = make_json(parsed_data)
     return jsonify(res)
     # return Response(json.dumps(res), mimetype='application/json')
+
+
+@app.route("/api/megainsert", methods=['GET'])
+def megainsert():
+    """NEW!
+        SHOW TABLE
+        makes join
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+    # if request.method == "POST" and request.get_json():
+    #         data = request.get_json()
+    data = {'admin_page': {'del': {'admin': 'any', 'user': 'own'},
+                            'post': {'admin': 'any', 'user': 'None'},
+                            'put': {'admin': 'any', 'guest': 'none', 'user': 'own'}},
+        'problems': {'post': {'admin': 'any'},
+                    'put': {'admin': 'any', 'user': 'None'}},
+        'resource': {'post': {'user': 'any'}}}
+    logger.warning(data)
+    try:
+        db.mega_insert(data)
+    except KeyError:
+        return jsonify(error="Bad Request[key_error]"), 400
+    return jsonify(added_succes=data)
 
 
 # @app.route("/api/roles", methods=["POST", 'GET'])

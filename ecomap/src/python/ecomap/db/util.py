@@ -113,6 +113,19 @@ def add_resource(res_name):
         conn.commit()
     return True
 
+@retry_query(tries=3, delay=1)
+def edit_resource(res_name, res_id):
+    """ modify resource name in db.
+    :params: res_name - name of resource that had to be modifed
+             res_id - key for searching resource name in DB
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `resource` SET `resource_name` = %s WHERE id = %s;"""
+        cursor.execute(sql, (res_name, res_id)) 
+        conn.commit()
+    return True
+
 
 @retry_query(tries=3, delay=1)
 def get_roles():
@@ -142,6 +155,20 @@ def add_role(role_name):
         cursor.execute(sql, (role_name,))
         conn.commit()
     return True
+
+@retry_query(tries=3, delay=1)
+def edit_role(role_name, role_id):
+    """ modify resource name in db.
+    :params: role_name - name of role that had to be modifed
+             role_id - key for searching role name in DB
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `role` SET `name` = %s WHERE id = %s;"""
+        cursor.execute(sql, (role_name, role_id))
+        conn.commit()
+    return True
+
 
 
 @retry_query(tries=3, delay=1)

@@ -48,9 +48,6 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                 if mtries:
                     time.sleep(mdelay)
                 else:
-                    logging.getLogger('retry').error('All attempts finished '
-                                                     'with error',
-                                                     exc_info=True)
                     raise DBPoolError('Error message: Got error with '
                                       'connection to database')
         return inner
@@ -135,6 +132,8 @@ class DBPool(object):
             params:
             - conn - specific connection object to be closed
         """
+        self.log.info('Closed connection %s with lifetime %s.',
+                      conn['connection'], conn['creation_date'])
         self.connection_pointer -= 1
         conn['connection'].close()
 

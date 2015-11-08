@@ -179,7 +179,7 @@ def get_permissions():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """SELECT p.id, p.action, p.modifier, r.resource_name
-                  FROM permission AS p LEFT JOIN
+                  FROM permission AS p right JOIN
                   resource AS r ON p.resourse_id=r.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
@@ -214,15 +214,15 @@ def select_all():
     parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """select r.name, p.action, p.modifier, res.resource_name
+        sql = """select  res.resource_name, p.action, p.modifier, r.name
                     from role_permission as rp left join role as r on rp.role_id = r.id
                     left join permission as p on rp.permission_id = p.id
                     join resource res on p.resourse_id = res.id;"""
-# sql = """select res.resource_name,  p.action, p.modifier, r.name
-#                 from role as r join role_permission
-#                 as rp on r.id = rp.id join permission
-#                 as p on rp.id = p.id join resource
-#                 as res on p.resourse_id = res.id;"""
+        # sql = """select res.resource_name,  p.action, p.modifier, r.name
+        #                 from role as r join role_permission
+        #                 as rp on r.id = rp.id join permission
+        #                 as p on rp.id = p.id join resource
+        #                  as res on p.resourse_id = res.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
         if sql_response:

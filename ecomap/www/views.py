@@ -325,7 +325,7 @@ def post_problem():
         return jsonify(output)
 
 
-@app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
+@app.route("/api/resources", methods=['GET', 'POST', 'PUT' , 'DELETE'])
 def get_resource():
     """NEW!
     get list of site resources needed for administration
@@ -333,6 +333,9 @@ def get_resource():
     action PUT:
     'resourse_name' = changes to name of the resource
     'resourse_id' = key to search name of the resource in db
+    action DELETE:
+    'resource_name' = that has to be Deleted
+    'resource_id' = key to search name of resource in db to delete
 
        :return:
             - list of jsons
@@ -355,6 +358,15 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status = "success", edited=edit_data['resource_name'])
+
+    if request.method == "DELETE" and request.get_json():
+        del_data = request.get_json()
+        try:
+            db.del_resource(del_data['resource_name'], del_data['resource_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status = "success", deleted_resource=del_data['resource_name'])
+
 
     parsed_data = db.get_all_resources()
     return Response(json.dumps(parsed_data), mimetype='application/json')
@@ -398,7 +410,7 @@ def roles():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/permissions", methods=['GET', 'POST'])
+@app.route("/api/permissions", methods=['GET', 'POST', 'PUT'])
 def permissions():
     """NEW!
     get and modify actions of
@@ -418,9 +430,6 @@ def permissions():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_permission_for=data['resource_name'])
-
-    parsed_data = db.get_permissions()
-    return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
 def make_json(sql_list):

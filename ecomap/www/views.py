@@ -408,7 +408,7 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status = "success", edited=edit_data['role_name'])
 
-     if request.method == "DELETE" and request.get_json():
+    if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         try:
             db.del_resource(del_data['role_name'], del_data['role_id'])

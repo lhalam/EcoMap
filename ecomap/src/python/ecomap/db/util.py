@@ -246,3 +246,38 @@ def change_user_password(uid, new_pass):
 
 # if __name__ == "__main__":
 #     # print get_user_by_email("admin@gmail.com")
+
+
+@retry_query(tries=3, delay=1)
+def mega_insert(input):
+    """Generates sql query to insert new resource, it's methods and
+    modifiers, also creates role_permission tables.
+    :input: input - json, which contains data like:
+        'problem': {'get': {'user': 'any', 'admin': 'any'},
+                    'post': {'user': 'any', 'admin': 'any'}}}
+    """
+    sql = 'START TRANSACTION;'
+    for resource in input:
+        sql += """INSERT IGNORE INTO `resource` (`resource_name`)
+                  VALUES ("{0}");""".format(resource)
+        for method in input[resource]:
+            for modifier in ('any', 'own', 'none'):
+                sql += """INSERT IGNORE INTO `permission` (`resourse_id`,
+                          `action`, modifier) VALUES ((SELECT `id` FROM
+                          `resource` WHERE `resource_name`="{0}"), "{1}",
+                          "{2}");""".format(resource, method, modifier)
+            for role in input[resource][method]:
+                sql += """INSERT IGNORE INTO `role_permission` (`role_id`,
+                          `permission_id`) VALUES ((SELECT `id` FROM `role`
+                          WHERE `name`="{0}"), (SELECT `id` FROM `permission`
+                          WHERE `action`="{1}" AND `resourse_id`=(SELECT `id`
+                          FROM `resource` WHERE `resource_name`="{2}") AND
+                          `modifier`="{3}"));
+                       """.format(role, method, resource,
+                                  input[resource][method][role])
+    sql += 'COMMIT;'
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.execute(sql)
+    return True

@@ -6,7 +6,7 @@ ecomap project.
 # import sys
 import json
 
-from flask import render_template, request, jsonify, abort, Response
+from flask import render_template, request, jsonify, Response
 from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr
@@ -14,6 +14,10 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 
+
+@app.route("/api/admin")
+def admin():
+    return render_template("admin.html")
 
 @app.route("/", methods=['GET'])
 def index():
@@ -100,7 +104,7 @@ def register():
         data = request.get_json()
         arguments = ['firstName', 'lastName', 'email',
                      'password', 'pass_confirm']
-        #TODO separate user func
+        # TODO separate user func
         try:
             if [v for k, v in request.get_json().iteritems() if
                     not v or k not in arguments]:
@@ -326,6 +330,9 @@ def get_resource():
     """NEW!
     get list of site resources needed for administration
     and server permission conrtol
+    action PUT:
+    'resourse_name' = changes to name of the resource
+    'resourse_id' = key to search name of the resource in db
 
        :return:
             - list of jsons
@@ -340,18 +347,20 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['resource_name'])
+
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
             db.edit_resource(edit_data['resource_name'], edit_data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['resource_name'])
+        return jsonify(status = "success", edited=edit_data['resource_name'])
+
     parsed_data = db.get_all_resources()
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/roles", methods=['GET', 'POST'])
+@app.route("/api/roles", methods=['GET', 'POST', 'PUT'])
 def roles():
     """NEW!
     get list of roles for server permission control
@@ -359,6 +368,9 @@ def roles():
     'role_name' = name of role in db
     action POST:
     'role_name' = name of the role
+    action PUT:
+    'role_name' = changes to name of the role
+    'role_id' = key to search name of the role in db
        :return:
             - list of jsons(dicts)
             - if no resource in DB
@@ -372,6 +384,14 @@ def roles():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['role_name'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status = "success", edited=edit_data['role_name'])
 
     parsed_data = db.get_roles()
     logger.warning(parsed_data)
@@ -393,7 +413,8 @@ def permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
-            db.add_permission(data['action'], data['modifier'], data['resource_name'])
+            db.add_permission(data['action'], data['modifier'],
+                              data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_permission_for=data['resource_name'])
@@ -439,6 +460,11 @@ def make_it():
     res = js_js(parsed_data)
     return jsonify(res)
     # return Response(json.dumps(res), mimetype='application/json')
+
+
+# @app.route("/api/roles", methods=["POST", 'GET'])
+# def roles():
+#     return jsonify(items=[dict(a=1, b=2), dict(c=3, d=4)])
 
 
 if __name__ == "__main__":

@@ -10,13 +10,11 @@ import time
 
 from ConfigParser import SafeConfigParser
 
-# from utils import get_logger
 from utils import Singleton
 
 REFRESH_TIME = 900
 PASSWORD = 'password'
 CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
-# get_logger()
 
 
 class Config(object):

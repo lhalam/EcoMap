@@ -155,6 +155,7 @@ def add_role(role_name):
         conn.commit()
     return True
 
+
 @retry_query(tries=3, delay=1)
 def edit_role(role_name, role_id):
     """ modify resource name in db.
@@ -167,7 +168,6 @@ def edit_role(role_name, role_id):
         cursor.execute(sql, (role_name, role_id))
         conn.commit()
     return True
-
 
 
 @retry_query(tries=3, delay=1)
@@ -207,7 +207,7 @@ def add_permission(action, modifier, resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def make_it():
+def select_all():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
     """
@@ -228,13 +228,6 @@ def make_it():
         if sql_response:
             parsed_data = [x for x in sql_response]
     return parsed_data
-
-# """select r.name, p.action, p.modifier, res.resource_name
-# from role_permission as rp left join role as r on rp.role_id = r.id
-# left join permission as p on rp.permission_id = p.id
-# join resource res on p.resourse_id = res.id;"""
-
-
 
 
 # add controller

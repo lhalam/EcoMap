@@ -81,20 +81,42 @@ admin.controller("tableCtrl",function ($scope,$rootScope){
       console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
       if(!$scope.TableData[resource_name].hasOwnProperty(meth_name)){
           $scope.TableData[resource_name][meth_name]={}
-          for (role in $scope.roles){
+          for (role in $scope.roles) {
           $scope.TableData[resource_name][meth_name][role]="None"
           console.log($scope.TableData)
           }
       }
-      else{
+      else {
         console.log("already has")
       }
     }
-    
-    //console.log($scope.TableData[resource_name]['method_roles'])
-    
+      
 
   }
+  $scope.removeMeth=function(resource_name,remove_meth_name){
+    for (meth in $scope.TableData[resource_name]){
+      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
+      if($scope.TableData[resource_name].hasOwnProperty(remove_meth_name)){
+          delete $scope.TableData[resource_name][remove_meth_name]
+        }
+      else{
+        console.log("does`n exist")
+      }
+      }
+     
+    }
+  $scope.removeRes=function(remove_res){
 
+    for (resour in $scope.TableData){
+      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
+      if($scope.TableData.hasOwnProperty(remove_res)){
+          delete $scope.TableData[remove_res]
+        }
+      else{
+        console.log("does`n exist")
+        }
+      }
+   
+  }
 
 })

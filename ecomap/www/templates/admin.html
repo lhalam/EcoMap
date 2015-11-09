@@ -20,6 +20,9 @@
 			<select ng-model="res_method" ng-options="meth for meth in meth_obj"></select>
 			
 		</form>
+		<hr>
+
+	   	
 	   
 	<table>
 	     	<tr ng-repeat="(resource_name,resource_obj) in TableData">
@@ -53,6 +56,10 @@
 	     					</td>
 	     					<td>
 	     						<select ng-model="meth_name" ng-options="meth for meth in meth_obj"></select>
+	     						<button ng-click="removeMeth(resource_name,remove_meth_name)">remove meth!</button>
+	     						<select ng-model="remove_meth_name" ng-options="meth for meth in meth_obj"></select>
+	     						<button ng-click="removeRes(resource_name)">removeRes</button>
+	   							
 	     					</td>
 	     					
 	     					

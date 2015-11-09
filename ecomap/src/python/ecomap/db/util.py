@@ -1,8 +1,8 @@
 """This module contains functions for interacting with Database."""
 import logging
-import MySQLdb
 
 from db_pool import db_pool, retry_query
+
 
 logger = logging.getLogger('util')
 
@@ -114,7 +114,6 @@ def add_resource(res_name):
         conn.commit()
     return True
 
-
 @retry_query(tries=3, delay=1)
 def edit_resource(res_name, res_id):
     """ modify resource name in db.
@@ -124,6 +123,21 @@ def edit_resource(res_name, res_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """UPDATE `resource` SET `resource_name` = %s WHERE id = %s;"""
+        cursor.execute(sql, (res_name, res_id))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def del_resource(res_name, res_id):
+    """ modify resource name in db.
+    :params: res_name - name of resource that had to be deleted
+             res_id - key for searching resource name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `resource` WHERE `resource_name`=%s AND
+                 `id`=%s;"""
         cursor.execute(sql, (res_name, res_id))
         conn.commit()
     return True
@@ -167,6 +181,20 @@ def edit_role(role_name, role_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """UPDATE `role` SET `name` = %s WHERE id = %s;"""
+        cursor.execute(sql, (role_name, role_id))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def del_role(role_name, role_id):
+    """ modify resource name in db.
+    :params: role_name - name of role that had to be deleted
+             role_id - key for searching role name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `role` WHERE `name` = %s AND `id` = %s;"""
         cursor.execute(sql, (role_name, role_id))
         conn.commit()
     return True
@@ -340,6 +368,9 @@ def change_user_password(uid, new_pass):
         cursor.execute(sql, (new_pass, uid))
 
 
+# if __name__ == "__main__":
+#     # print get_user_by_email("admin@gmail.com")
+
 
 @retry_query(tries=3, delay=1)
 def mega_insert(input):
@@ -360,7 +391,7 @@ def mega_insert(input):
                           `resource` WHERE `resource_name`="{0}"), "{1}",
                           "{2}");""".format(resource, method, modifier)
             for role in input[resource][method]:
-                sql += """INSERT INTO `role_permission` (`role_id`,
+                sql += """INSERT IGNORE INTO `role_permission` (`role_id`,
                           `permission_id`) VALUES ((SELECT `id` FROM `role`
                           WHERE `name`="{0}"), (SELECT `id` FROM `permission`
                           WHERE `action`="{1}" AND `resourse_id`=(SELECT `id`
@@ -369,20 +400,39 @@ def mega_insert(input):
                        """.format(role, method, resource,
                                   input[resource][method][role])
     sql += 'COMMIT;'
+
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         cursor.execute(sql)
     return True
 
-# """INSERT INTO `role_permission`
-#   (`role_id`,`permission_id`)
-# VALUES (
-#   (SELECT `id` FROM `role`
-#     WHERE `name`="{0}"),
-#   (SELECT `id` FROM `permission`
-#     WHERE `action`="{1}"
-#       AND `resourse_id`=
-#                   (SELECT `id` FROM `resource`
-#                     WHERE `resource_name`="{2}") AND
-#                           `modifier`="{3}")
-# );"""
+@retry_query(tries=3, delay=1)
+def add_role_permisson(role_name, res_name, action, modifier):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.connection.autocommit(True)
+        sql = """SET @roleid:=(SELECT `id` FROM `role` WHERE `name`=%s);
+                 SET @permissionid:=(SELECT `id` FROM `permission`
+                 WHERE `resourse_name`=%s AND `action`=%s AND `modifier`=%s);
+                 INSERT INTO `role_permission` (`role_id`, `permission_id`)
+                 VALUES (@roleid, @permissionid);"""
+        cursor.execute(sql, (role_name, res_name, action, modifier))
+
+
+@retry_query(tries=3, delay=1)
+def update_role_permission(res_name, action, old_mod, new_mod, role_name, ):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.connection.autocommit(True)
+        sql = """SET @resourceid:=(SELECT `id` FROM `resource` WHERE
+                 `resource_name`=%s);
+                 SET @rp_oldid:=(SELECT `id` FROM `permission` WHERE
+                 `resourse_id`=@resourceid AND `action`=%s AND `modifier`=%s);
+                 SET @rp_newid:=(SELECT `id` FROM `permission` WHERE
+                 `resourse_id`=@resourceid AND `action`=%s AND `modifier`=%s);
+                 SET @roleid:=(SELECT `id` FROM `role` WHERE `name`=%s);
+                 UPDATE `role_permission` SET `permission_id`=@rp_newid WHERE
+                 `role_id`=@roleid AND `permission_id`=@rp_oldid;"""
+        cursor.execute(sql, (res_name, action, old_mod, new_mod, role_name))
+# if __name__ == "__main__":
+#     # print get_user_by_email("admin@gmail.com")

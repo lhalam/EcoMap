@@ -24,6 +24,28 @@ from ecomap.db import util as db
 #         g.user = anon.username
 #
 
+def make_json(sql_list):
+    """
+    MOVE THIS SOMEWHERE AND RENAME
+    PARSES DB TUPLE INTO JSON
+    :param sql_list:
+    :return:
+    """
+    dct = {}
+    for (resource_id, resource, method, perm, role_id, role) in sql_list:
+        if resource not in dct:
+            dct[resource] = {}
+            dct[resource] = {'resource_id': int(resource_id)}
+        if method not in dct[resource]:
+            dct[resource][method] = {}
+        if role not in dct[resource][method]:
+            dct[resource][method][role] = {}
+            dct[resource][method][role].update({'role_id': int(role_id),
+                                                'perm': perm})
+    return dct
+
+
+
 @app.route("/api/admin")
 def admin():
     return render_template("admin.html")
@@ -178,17 +200,6 @@ def register():
         return jsonify({'status': status})
 
 
-# @app.route("/api/email_exist", methods=['POST'])
-# def email_exist():
-#     if request.method == "POST":
-#         data = request.get_json()
-#         return jsonify(email=data)
-#         user = usr.get_user_by_email(data['email'])
-#         if user:
-#             return jsonify(), 200
-#         else:
-#             return jsonify(), 401
-
 @app.route("/api/email_exist", methods=['POST'])
 def email_exist():
     if request.method == "POST" and request.get_json():
@@ -202,8 +213,6 @@ def email_exist():
 
 
 # API ECOMAP-007 MOCK-Routes
-
-
 @app.route("/api/problems", methods=['GET'])
 def get_problems():
     """
@@ -381,14 +390,14 @@ def post_problem():
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_resource():
     """NEW!
-    get list of site resources needed for administration
-    and server permission conrtol
+    get list of site resources needed for administration.
+    and server permission control.
     action PUT:
-    'resourse_name' = changes to name of the resource
-    'resourse_id' = key to search name of the resource in db
+    'resourse_name' = changes to name of the resource.
+    'resourse_id' = key to search name of the resource in db.
     action DELETE:
-    'resource_name' = that has to be Deleted
-    'resource_id' = key to search name of resource in db to delete
+    'resource_name' = that has to be Deleted.
+    'resource_id' = key to search name of resource in db to delete.
 
        :return:
             - list of jsons
@@ -403,25 +412,26 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['resource_name'])
-    # #edit resource by id
-    # if request.method == "PUT" and request.get_json():
-    #     edit_data = request.get_json()
-    #     try:
-    #         db.edit_resource_by_id(edit_data['resource_name'],
-    #                          edit_data['resource_id'])
-    #     except KeyError:
-    #         return jsonify(error="Bad Request[key_error]"), 400
-    #     return jsonify(status="success", edited=edit_data['resource_name'])
 
+    # edit resource by id
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_resource_value(edit_data['old_resource_value'],
-                                   edit_data['new_resource_value'])
+            db.edit_resource_by_id(edit_data['resource_name'],
+                             edit_data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success",
-                       edited=edit_data['new_resource_value'])
+        return jsonify(status="success", edited=edit_data['resource_name'])
+    # #edit resource by value
+    # if request.method == "PUT" and request.get_json():
+    #     edit_data = request.get_json()
+    #     try:
+    #         db.edit_resource_value(edit_data['old_resource_value'],
+    #                                edit_data['new_resource_value'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success",
+    #                    edited=edit_data['new_resource_value'])
 
     # # delete by id
     # if request.method == "DELETE" and request.get_json():
@@ -437,7 +447,7 @@ def get_resource():
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         try:
-            db.delete_resource_value(del_data['resource_name'])
+            db.delete_resource(del_data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success",
@@ -450,11 +460,11 @@ def get_resource():
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def roles():
     """NEW!
-    get list of roles for server permission control
+    get list of roles for server permission control.
     action GET:
-    'role_name' = name of role in db
+    'role_name' = name of role in db.
     action POST:
-    'role_name' = name of the role
+    'role_name' = name of the role.
     action PUT:
     'role_name' = changes to name of the role
     'role_id' = key to search name of the role in db
@@ -475,23 +485,24 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['role_name'])
 
-    # # edit role by id
-    # if request.method == "PUT" and request.get_json():
-    #     edit_data = request.get_json()
-    #     try:
-    #         db.edit_role_by_id(edit_data['role_name'], edit_data['role_id'])
-    #     except KeyError:
-    #         return jsonify(error="Bad Request[key_error]"), 400
-    #     return jsonify(status="success", edited=edit_data['role_name'])
-
+    # edit role by id
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role_value(edit_data['old_role_value'],
-                               edit_data['new_role_value'])
+            db.edit_role_by_id(edit_data['role_name'], edit_data['role_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['new_role_value'])
+        return jsonify(status="success", edited=edit_data['role_name'])
+
+    # # edit role by value
+    # if request.method == "PUT" and request.get_json():
+    #     edit_data = request.get_json()
+    #     try:
+    #         db.edit_role_value(edit_data['old_role_value'],
+    #                            edit_data['new_role_value'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success", edited=edit_data['new_role_value'])
 
     # delete role by id
     # if request.method == "DELETE" and request.get_json():
@@ -517,11 +528,11 @@ def roles():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-@app.route("/api/permissions", methods=['GET', 'POST'])
+@app.route("/api/permissions", methods=['GET', 'PUT', 'POST'])
 def permissions():
     """NEW!
     get and add actions of
-    server permission conrtol
+    server permission control.
 
        :return:
             - list of lists with permission data
@@ -533,128 +544,123 @@ def permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
-            db.add_permission(data['action'], data['modifier'],
-                              data['resource_name'])
+            db.add_permission(data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_permission_for=data['resource_name'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.update_role_permission(edit_data['resource_name'],
+                                      edit_data['action'],
+                                      edit_data['modifier'],
+                                      edit_data['role_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(status="success", edited=edit_data['role_name'])
 
     parsed_data = db.get_permissions()
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
-def make_json(sql_list):
-    """
-    MOVE THIS SOMEWHERE AND RENAME
-    PARSES DB TUPLE INTO JSON
-    :param sql_list:
-    :return:
-    """
-    dct = {}
-    for (resource_id, resource, method, perm, role_id, role) in sql_list:
-        if resource not in dct:
-            dct[resource] = {}
-            dct[resource] = {'resource_id': int(resource_id)}
-        if method not in dct[resource]:
-            dct[resource][method] = {}
-        if role not in dct[resource][method]:
-            dct[resource][method][role] = {}
-            dct[resource][method][role].update({'role_id': int(role_id),
-                                                'perm': perm})
-    return dct
+
+#
+# @app.route("/api/role_permissions", methods=['GET', 'POST'])
+# def role_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'],
+#                         data['modifier'],
+#                         data['resource_name']))
+#         try:
+#             db.add_role_permission(data['role_name'],
+#                                    data['action'],
+#                                    data['modifier'],
+#                                    data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] + " " +
+#                                              data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#     # parsed_data = db.get_permissions()
+#     # return Response(json.dumps(parsed_data), mimetype='application/json')
+
+#
+# @app.route("/api/new_permissions", methods=['GET', 'POST'])
+# def new_all_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'], data['modifier'],
+#                         data['resource_name']))
+#         try:
+#             db.bulk_insert(data['role_name'], data['action'], data['modifier'],
+#                            data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] + " " +
+#                                              data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#
 
 
-@app.route("/api/role_permissions", methods=['GET', 'POST'])
-def role_permissions():
-    """NEW!
-    get and modify actions of
-    server permission conrtol
-
-       :return:
-            - list of jsons
-            - if no resource in DB
-                return empty json
-    """
-
-    if request.method == "POST" and request.get_json():
-        data = request.get_json()
-        logger.warning((data['role_name'], data['action'], data['modifier'],
-                        data['resource_name']))
-        try:
-            db.add_role_permission(data['role_name'], data['action'],
-                                   data['modifier'], data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name'] + " " +
-                                             data['role_name']))
-
-    parsed_data = db.select_all()
-    res = make_json(parsed_data)
-    return jsonify(res)
-    # parsed_data = db.get_permissions()
-    # return Response(json.dumps(parsed_data), mimetype='application/json')
-
-
-@app.route("/api/new_permissions", methods=['GET', 'POST'])
-def new_all_permissions():
-    """NEW!
-    get and modify actions of
-    server permission conrtol
-
-       :return:
-            - list of jsons
-            - if no resource in DB
-                return empty json
-    """
-
-    if request.method == "POST" and request.get_json():
-        data = request.get_json()
-        logger.warning((data['role_name'], data['action'], data['modifier'],
-                        data['resource_name']))
-        try:
-            db.bulk_insert(data['role_name'], data['action'], data['modifier'],
-                           data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name'] + " " +
-                                             data['role_name']))
-
-    parsed_data = db.select_all()
-    res = make_json(parsed_data)
-    return jsonify(res)
-
-
-# DEF MODIF
-@app.route("/api/new_def_permissions", methods=['GET', 'POST'])
-def new_def_all_permissions():
-    """NEW!
-    get and modify actions of
-    server permission conrtol
-
-       :return:
-            - list of jsons
-            - if no resource in DB
-                return empty json
-    """
-
-    if request.method == "POST" and request.get_json():
-        data = request.get_json()
-        logger.warning((data['role_name'], data['action'],
-                        data['resource_name']))
-
-        try:
-            db.default_insert(data['role_name'], data['action'],
-                              data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name'] +
-                                             " " + data['resource_name'] +
-                                             " " + data['role_name']))
-
-    parsed_data = db.select_all()
-    res = make_json(parsed_data)
-    return jsonify(res)
-
+# # DEF MODIF
+# @app.route("/api/new_def_permissions", methods=['GET', 'POST'])
+# def new_def_all_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'],
+#                         data['resource_name']))
+#
+#         try:
+#             db.default_insert(data['role_name'], data['action'],
+#                               data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] +
+#                                              " " + data['resource_name'] +
+#                                              " " + data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#
 
 @app.route("/api/get_all_permissions", methods=['GET', 'POST'])
 def get_all():
@@ -672,48 +678,16 @@ def get_all():
     # return Response(json.dumps(res), mimetype='application/json')
 
 
-@app.route("/api/megainsert", methods=['GET'])
-def megainsert():
-    """NEW!
-        SHOW TABLE
-        makes join
-       :return:
-            - list of jsons
-            - if no resource in DB
-                return empty json
-    """
-    # if request.method == "POST" and request.get_json():
-    #         data = request.get_json()
-    data = {'admin_page': {'del': {'admin': 'any', 'user': 'own'},
-                           'post': {'admin': 'any', 'user': 'None'},
-                           'put': {'admin': 'any', 'guest': 'none',
-                                   'user': 'own'}},
-            'problems': {'post': {'admin': 'any'},
-                         'put': {'admin': 'any', 'user': 'None'}},
-            'resource': {'post': {'user': 'any'}}}
-    logger.warning(data)
-    try:
-        db.mega_insert(data)
-    except KeyError:
-        return jsonify(error="Bad Request[key_error]"), 400
-    return jsonify(added_succes=data)
-
-
-@app.route("/api/role_permission", methods=['POST', 'PUT'])
-def role_permission():
-    data = request.get_json()
-    if request.method == 'POST':
-        db.add_role_permisson(data['role_name'], data['resource_name'],
-                              data['action'], data['modifier'])
-    if request.method == 'PUT':
-        db.update_role_permission(data['resource_name'], data['action'],
-                                  data['old_modifier'], data['new_modifier'],
-                                  data['role_name'])
-
-
-# @app.route("/api/roles", methods=["POST", 'GET'])
-# def roles():
-#     return jsonify(items=[dict(a=1, b=2), dict(c=3, d=4)])
+# @app.route("/api/role_permission", methods=['POST', 'PUT'])
+# def role_permission():
+#     data = request.get_json()
+#     if request.method == 'POST':
+#         db.add_role_permisson(data['role_name'], data['resource_name'],
+#                               data['action'], data['modifier'])
+#     if request.method == 'PUT':
+#         db.update_role_permission(data['resource_name'], data['action'],
+#                                   data['old_modifier'], data['new_modifier'],
+#                                   data['role_name'])
 
 
 if __name__ == "__main__":

@@ -62,6 +62,10 @@ EDIT ROLE_BY_VALUE:
 curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"old_role_value":"Admin", "new_role_value" : "CurlEdited"}' http://localhost:81/api/roles
 
 <OK>
+UPDATE PERMISSIONS
+ curl -H "Accept application/json" -H "Content-type: application/json" -X PUT -d '{"resource_name":"Problem", "action" : "GET", "role_name": "Admin", "modifier":"Any"}' http://localhost:81/api/permissions
+
+<OK>
 NEW JOIN
 select r.resource_name, p.action, p.modifier, role.name from permission as p left join resource as r on p.resource_id = r.id left join role on p.role_id = role.id;
 

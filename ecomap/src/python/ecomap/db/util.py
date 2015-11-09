@@ -32,7 +32,6 @@ def get_user_by_email(email):
         q1.execute(sql, (email,))
         db_userid = q1.fetchone()
         if db_userid:
-            # logger.warning('log from GET USER user by mail')
             logger.info('DB.UTIL result!! %s %s %s %s %s' % (db_userid[0],
                                                              db_userid[1],
                                                              db_userid[2],
@@ -83,6 +82,19 @@ def insert_user(first_name, last_name, email, password):
     return True
 
 
+@retry_query(tries=3, delay=1)
+def change_user_password(uid, new_pass):
+    """Changes users password
+    :input: uid - id of user
+            new_pass - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        cursor.connection.autocommit(True)
+        sql = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
+        cursor.execute(sql, (new_pass, uid))
+
+
 # todo put,delete for resources
 @retry_query(tries=3, delay=1)
 def get_all_resources():
@@ -100,6 +112,31 @@ def get_all_resources():
             parsed_data = [{"resource_name": name} for name in
                            [res for res in resource_list]]
     return parsed_data
+
+
+@retry_query(tries=3, delay=1)
+def get_all_resource_id():
+    """Return all resources id's.
+    :return: list if id's
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """SELECT `id` FROM `resource`;"""
+        cursor.execute(sql)
+        return [x[0] for x in cursor.fetchall()]
+
+
+@retry_query(tries=3, delay=1)
+def get_resource_id(resource_name):
+    """Gets resource id.
+    :params: resource_name - name of resource
+    :return: id - type int
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        cursor.execute(sql, (resource_name, ))
+        return cursor.fetchone()[0]
 
 
 @retry_query(tries=3, delay=1)
@@ -161,7 +198,7 @@ def delete_resource_by_id(res_name, res_id):
 
 
 @retry_query(tries=3, delay=1)
-def delete_resource_value(res_name):
+def delete_resource(res_name):
     """modify resource name in db.
     :params: res_name - name of resource that had to be deleted
 
@@ -174,6 +211,7 @@ def delete_resource_value(res_name):
     return True
 
 
+@retry_query(tries=3, delay=1)
 def get_roles():
     """Gets all roles from db.
     :return: list of tuples
@@ -190,18 +228,18 @@ def get_roles():
 
 
 @retry_query(tries=3, delay=1)
-def get_all_resource_id():
-    """Return all resources id's.
-    :return: list if id's
+def get_role_id(role_name):
+    """Gets role id.
+    :params: role_name - name of role.
+    :return: id - type int
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource`;"""
-        cursor.execute(sql)
-        return [x[0] for x in cursor.fetchall()]
+        sql = """SELECT `id` FROM `role` WHERE `name`=%s;"""
+        cursor.execute(sql, (role_name, ))
+        return cursor.fetchone()[0]
 
 
-# todo  DELETE for roles
 @retry_query(tries=3, delay=1)
 def add_role(role_name):
     """Adds new role in db.
@@ -220,15 +258,14 @@ def add_role(role_name):
                          `resource_id`, `role_id`) VALUES (%s, %s, %s, %s)"""
                 cursor.execute(sql, (action, 'None', resource_id, role_id))
                 conn.commit()
-
     return True
 
 
 @retry_query(tries=3, delay=1)
 def edit_role_by_id(role_name, role_id):
     """ modify resource name in db.
-    :params: role_name - name of role that had to be modifed
-             role_id - key for searching role name in DB
+    :params: role_name - name of role that had to be modified.
+             role_id - key for searching role name in DB.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
@@ -297,8 +334,6 @@ def get_permissions():
     return parsed_data
 
 
-# todo PUT(?), DELETE for permissions
-
 @retry_query(tries=3, delay=1)
 def add_permission(resource_name):
     # def add_action_for_resource!
@@ -326,52 +361,6 @@ def add_permission(resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def bulk_insert(role_name, action, modifier, res_name):
-    """ALTERNATIVE some big insert
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        cursor.connection.autocommit(False)
-        sql = """START TRANSACTION;
-        BEGIN;
-        INSERT INTO `permission` (`resourse_id`, `action`,
-                 `modifier`) VALUES ((SELECT `id` FROM `resource`
-                 WHERE resource_name="{0}"), "{1}", "{2}");
-        insert into role_permission
-                    (role_id, permission_id)
-                values (
-                    (select id from role where name="{3}"),
-                    (LAST_INSERT_ID()));
-        COMMIT;""".format(res_name, action, modifier, role_name)
-        cursor.execute(sql)
-        # conn.commit()
-    return True
-
-
-@retry_query(tries=3, delay=1)
-def default_insert(role_name, action, res_name):
-    """ADD ACTION TO RESOURCE WITH DEFAULT MODIFIER
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        cursor.connection.autocommit(False)
-        sql = """START TRANSACTION;
-        BEGIN;
-        INSERT INTO `permission` (`resourse_id`, `action`,
-                 `modifier`) VALUES ((SELECT `id` FROM `resource`
-                 WHERE resource_name="{0}"), "{1}", "None");
-        insert into role_permission
-                    (role_id, permission_id)
-                values (
-                    (select id from role where name="{2}"),
-                    (LAST_INSERT_ID()));
-        COMMIT;""".format(res_name, action, role_name)
-        cursor.execute(sql)
-        # conn.commit()
-    return True
-
-
-@retry_query(tries=3, delay=1)
 def select_all():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
@@ -388,46 +377,6 @@ def select_all():
         if sql_response:
             parsed_data = [x for x in sql_response]
     return parsed_data
-
-
-# add controller
-@retry_query(tries=3, delay=1)
-def change_user_password(uid, new_pass):
-    """Changes users password
-    :input: uid - id of user
-            new_pass - new password
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        cursor.connection.autocommit(True)
-        sql = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
-        cursor.execute(sql, (new_pass, uid))
-
-
-@retry_query(tries=3, delay=1)
-def get_resource_id(resource_name):
-    """Gets resource id.
-    :params: resource_name - name of resource
-    :return: id - type int
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        cursor.execute(sql, (resource_name, ))
-        return cursor.fetchone()[0]
-
-
-@retry_query(tries=3, delay=1)
-def get_role_id(role_name):
-    """Gets role id.
-    :params: role_name - name of role
-    :return: id - type int
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        sql = """SELECT `id` FROM `role` WHERE `name`=%s;"""
-        cursor.execute(sql, (role_name, ))
-        return cursor.fetchone()[0]
 
 
 @retry_query(tries=3, delay=1)
@@ -463,5 +412,5 @@ def update_role_permission(resource_name, action, modifier,
         permission_id = get_permission_id(resource_id, role_id, action)
 
         sql = """UPDATE `permission` SET `modifier`=%s WHERE `id`=%s;"""
-        cursor.execute(sql, (action, permission_id))
+        cursor.execute(sql, (modifier, permission_id))
         conn.commit()

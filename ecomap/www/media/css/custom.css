@@ -9,10 +9,10 @@
 }
 
 /* Nav bar*/
-html,body{
+html,body, .wrapper{
     font-family: "LatoRegular", sans serif;
-	overflow-x:hidden;
-	overflow-y:hidden;
+	/*overflow-x:hidden;*/
+	/*overflow-y:hidden;*/
     height: 100%;
 }
 .navbar.navbar-default{
@@ -304,8 +304,16 @@ form{
 
 .user-profile{
     margin-top: 30px;
-    min-height: 500px;
+    /*height: 100%;*/
 }
+
+/*.user-profile .row{
+    height: 100%;
+}
+
+.user-profile .panel.panel-default{
+    height: 85%;
+}*/
 
 .user-profile .user-info-brief{
     text-align: center;
@@ -315,7 +323,8 @@ form{
 
 .user-profile .user-info-brief img{
     padding: 30px 0;
-    border-radius: 100%;  
+    border-radius: 100%;
+    margin: auto;
 }
 
 .user-profile .user-info{

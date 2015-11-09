@@ -122,5 +122,18 @@ def email_exist():
         user = usr.get_user_by_email(data['email'])
         return jsonify(isValid=bool(user))
 
+
+@app.route("/api/user_detailed_info/<user_id>")
+def get_user_info_by_id(uid):
+    return True
+    if request.method == 'GET':
+        user = usr.get_user_by_id(int(uid))
+        if user:
+            return jsonify(name=user.name, surname=user.surname,
+                           email=user.email, role="user")
+        else:
+            return jsonify(status="There is no user with given email"), 401
+    pass
+
 if __name__ == "__main__":
     app.run()

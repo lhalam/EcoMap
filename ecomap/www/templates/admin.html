@@ -9,11 +9,16 @@
 <body>
 	<h3>Table</h3>
 	<div ng-controller="tableCtrl">
+	<button ng-click="addRole(new_role)">add role!</button>
+	<input placeholder="add role" ng-model="new_role"></button>
+	<hr>
 		<button ng-click="show()" >click</button>
 		<button ng-click="printTable()" >print</button>
 		<form>
 			<input type="text" ng-model="res_name">
-			<button ng-click="creatResourse(res_name)" >create Resource</button>
+			<button ng-click="creatResourse(res_name,res_method)" >create Resource</button>
+			<select ng-model="res_method" ng-options="meth for meth in meth_obj"></select>
+			
 		</form>
 	   
 	<table>
@@ -24,23 +29,30 @@
 	     					<td class="table_name">{{resource_name |angular}}</td>
 	     					<td>
 	     						<table>
-	     					
+	     						
+	     						<tr>
+	     						<td>Roles</td>
+	     							<td ng-repeat="role in roles">{{role |angular}}</td>
+	     						</tr>
 	     						<tr ng-repeat="(method_name,method_obj) in resource_obj">
 	     							<td class="table_nucleaus">{{method_name |angular}}</td>
-	     							<td ng-repeat="(role,permision) in method_obj" class="table_nucleaus" ><input type="text" ng-model="TableData[resource_name][method_name][role]" value="{{permision |angular}}"></td>
+	     							<td ng-repeat="(role,permision) in method_obj" class="table_nucleaus" >	
+	     							<!--<input type="text" ng-model="TableData[resource_name][method_name][role]" value="{{permision |angular}}"> -->
+	     							<select ng-model="TableData[resource_name][method_name][role]" data-ng-options="perm as perm for perm in permisions_obj" ></select>
+	     							</td>
+
 	     						</tr>
 	     						
 	     						</table>
 	     					</td>
 	     				</tr>
 	     				<tr>
+	     		
 	     					<td>
-	     						<button ng-click="addRole(resource_name,new_role)">add role!</button>
+	     						<button ng-click="addMeth(resource_name,meth_name)">add new meth!</button>
 	     					</td>
 	     					<td>
-	     						<input placeholder="add role" ng-model="new_role"></button>
-	     						<button ng-click="addMeth(resource_name,meth_name)">add new meth!</button>
-	     						<input placeholder="add role" ng-model="meth_name"></button>
+	     						<select ng-model="meth_name" ng-options="meth for meth in meth_obj"></select>
 	     					</td>
 	     					
 	     					

@@ -18,11 +18,13 @@
   <script src="/js/angular_app.js"></script>
   <script src="/js/controllers/UserManagementCtrl.js"></script>
   <script src="/js/controllers/DatepickerDemoCtrl.js"></script>
+  <script src="/js/controllers/MainCtrl.js"></script>
+  <script src="/js/controllers/UserProfileCtrl.js"></script>
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
    <link rel="stylesheet" type="text/css" href="/css/custom.css">
 </head>
-<body >
+<body ng-controller="MainCtrl">
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
@@ -80,7 +82,7 @@
           </modal>
         </li>
 
-        <li ng-show="checkLogined()">
+        <li ng-show="checkLogined()" ng-click="triggerUserProfile()">
           <a href="" ng-bind="checkLogined()" ></a>
         </li>
 
@@ -153,9 +155,61 @@
   </div>
 </nav> 
 
-<div class="container-fluid map-div">
+<div class="container-fluid map-div" ng-hide="showUserProfile()">
   <div id="map">
       
+  </div>
+</div>
+
+<div class="container user-profile" ng-show="showUserProfile()">
+  <div class="row" ng-controller="UserProfileCtrl">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <a href="" ng-click="closeProfile()" class="close-button">x</a>
+      <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+        <div class="user-info-brief">
+          <img src="http://placehold.it/200x200">
+          <p>Імя та Прізвище</p>
+        </div>
+        <div class="list-group">
+          <a href="#" class="list-group-item active">Відомості про користувача</a>
+          <a href="#" class="list-group-item">Проблеми користувача</a>
+          <a href="#" class="list-group-item">Коментарі користувача</a>
+          <a href="#" class="list-group-item">Редагування прав</a>
+        </div>
+      </div>
+
+      <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <h3>Відомості про аккаунт</h3>
+        <hr>
+        <div class="user-info">
+          <p><strong>Імя:</strong></p>
+          <p><strong>Прізвище:</strong></p>
+          <p><strong>Електронна пошта:</strong></p>
+          <p><strong>Роль користувача:</strong></p>
+          </div>
+        <br>        
+        <h3>Зміна пароля</h3>
+        <hr>
+        <form action="" class="change-password">
+          <div class="form-group">
+            <label for="old_pass" class="control-label">Старий пароль:</label>
+            <input type="password" id="old_pass" name="old_pass" class="form-control">            
+          </div>
+          <div class="form-group">
+            <label for="new_pass" class="control-label">Новий пароль:</label>
+            <input type="password" id="new_pass" name="new_pass" class="form-control">            
+          </div>
+          <div class="form-group">
+            <label for="new_pass_confirm" class="control-label">Підтвердіть новий пароль:</label>
+            <input type="password" id="new_pass_confirm" name="new_pass_confirm" class="form-control">            
+          </div>
+          <button class="btn btn-default">Змінити</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
   </div>
 </div>
 

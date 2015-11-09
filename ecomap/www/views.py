@@ -6,14 +6,22 @@ ecomap project.
 # import sys
 import json
 
-from flask import render_template, request, jsonify, Response
-from flask_login import login_user, logout_user, login_required
+from flask import render_template, request, jsonify, Response, g
+from flask_login import login_user, logout_user, login_required, current_user
 
 import ecomap.user as usr
 
 from ecomap.app import app, logger
 from ecomap.db import util as db
 
+
+@app.before_request
+def load_users():
+    if current_user.is_authenticated:
+        g.user = current_user.first_name
+    else:
+        anon = usr.Anonymous()
+        g.user = anon.username
 
 @app.route("/api/admin")
 def admin():
@@ -66,6 +74,40 @@ def login():
         if not user.verify_password(data['password']):
             return jsonify(error="Invalid password, try again.",
                            logined=0), 401
+
+
+@app.route("/api/change_password", methods=["GET"])
+def change_password():
+    """handler for change password
+    return:
+        - if succeed:
+            Status 200 - OK
+        - if password was invalid:
+            json with error message
+            {'error':'message'}
+            Status 401 - Unauthorized
+        - if data has invalid format:
+            Status 400 - Bad Request
+
+    """
+    logger.warning('CURRENT')
+    logger.warning(current_user)
+    if current_user.is_authenticated:
+        user = current_user
+        logger.warning('AUTHEND')
+        logger.warning(user)
+        logger.warning(user.first_name)
+        return jsonify(authentificated=(user.uid +
+                                             " " + user.first_name))
+    if not current_user.is_authenticated:
+        user = usr.Anonymous()
+        logger.warning('NOT AUTH')
+        logger.warning(user.username)
+        return jsonify(error="you are not logged in - you are anon.",
+                           logined=0), 401
+        # if not user.verify_password(data['password']):
+        #     return jsonify(error="Invalid password, try again.",
+        #                    logined=0), 401
 
 
 @app.route("/api/logout", methods=["POST", 'GET'])
@@ -324,7 +366,7 @@ def post_problem():
         }
         return jsonify(output)
 
-
+# todo HANDLE OLD VALUE TO EDIT
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
 def get_resource():
     """NEW!
@@ -354,7 +396,7 @@ def get_resource():
             db.edit_resource(edit_data['resource_name'], edit_data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status = "success", edited=edit_data['resource_name'])
+        return jsonify(status="success", edited=edit_data['resource_name'])
 
     parsed_data = db.get_all_resources()
     return Response(json.dumps(parsed_data), mimetype='application/json')
@@ -393,6 +435,8 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status = "success", edited=edit_data['role_name'])
 
+
+
     parsed_data = db.get_roles()
     logger.warning(parsed_data)
     return Response(json.dumps(parsed_data), mimetype='application/json')
@@ -401,11 +445,12 @@ def roles():
 @app.route("/api/permissions", methods=['GET', 'POST'])
 def permissions():
     """NEW!
-    get and modify actions of
+    get and add actions of
     server permission conrtol
 
        :return:
-            - list of jsons
+            - list of lists with permission data
+                [id,action,modifier,resource)
             - if no resource in DB
                 return empty json
     """
@@ -444,6 +489,99 @@ def make_json(sql_list):
             dct[resource][method].append({role: perm})
             # print [{k:v} for k,v in dct[resource][method].items()]
     return dct
+
+
+@app.route("/api/role_permissions", methods=['GET', 'POST'])
+def role_permissions():
+    """NEW!
+    get and modify actions of
+    server permission conrtol
+
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        logger.warning((data['role_name'], data['action'], data['modifier'],
+                              data['resource_name']))
+        try:
+            db.add_role_permission(data['role_name'], data['action'], data['modifier'],
+                              data['resource_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
+
+    parsed_data = db.select_all()
+    res = make_json(parsed_data)
+    return jsonify(res)
+    # parsed_data = db.get_permissions()
+    # return Response(json.dumps(parsed_data), mimetype='application/json')
+
+
+@app.route("/api/new_permissions", methods=['GET', 'POST'])
+def new_all_permissions():
+    """NEW!
+    get and modify actions of
+    server permission conrtol
+
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        logger.warning((data['role_name'], data['action'], data['modifier'],
+                              data['resource_name']))
+        try:
+            db.bulk_insert(data['role_name'], data['action'], data['modifier'],
+                              data['resource_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
+
+
+    parsed_data = db.select_all()
+    res = make_json(parsed_data)
+    return jsonify(res)
+
+
+#DEF MODIF
+@app.route("/api/new_def_permissions", methods=['GET', 'POST'])
+def new_def_all_permissions():
+    """NEW!
+    get and modify actions of
+    server permission conrtol
+
+       :return:
+            - list of jsons
+            - if no resource in DB
+                return empty json
+    """
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        logger.warning((data['role_name'], data['action'],
+                              data['resource_name']))
+
+        try:
+            db.default_insert(data['role_name'], data['action'],
+                              data['resource_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+        return jsonify(added_permission_for=(data['resource_name'] +
+                                             " " + data['resource_name'] +
+                                             " " + data['role_name']))
+
+    parsed_data = db.select_all()
+    res = make_json(parsed_data)
+    return jsonify(res)
+
+
 
 
 @app.route("/api/makeit", methods=['GET', 'POST'])

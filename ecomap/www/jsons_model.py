@@ -193,6 +193,8 @@ js3 = {
 # for x in js3['problem']:
 #     print x
 #
+
+
 print "*******"
 for res_name, resource in js3.items():
     pprint ('<' + res_name + '>')
@@ -204,7 +206,7 @@ for res_name, resource in js3.items():
             for role_perm in permissions[methods]:
                 # pprint(role_perm)
                 for role, perm in role_perm.iteritems():
-                    r= role, perm
+                    print role, perm
 
 
 # pprint(js3)

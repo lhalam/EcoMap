@@ -1,7 +1,7 @@
 """This module holds User class"""
 import hashlib
 
-from flask_login import UserMixin, LoginManager
+from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
 import db.util as util
@@ -11,6 +11,14 @@ from ecomap.app import app
 login_serializer = URLSafeTimedSerializer(app.secret_key)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.username = 'ANON'
+
+    def __repr__(self):
+        return self.username
 
 
 class User(UserMixin):
@@ -23,6 +31,9 @@ class User(UserMixin):
         self.last_name = last_name
         self.email = email
         self.password = password
+
+    def __repr__(self):
+        return self.first_name
 
     def get_auth_token(self):
         """This method encodes a secure token from a cookie.

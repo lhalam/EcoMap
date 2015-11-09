@@ -23,6 +23,7 @@ def load_users():
         anon = usr.Anonymous()
         g.user = anon.username
 
+
 @app.route("/api/admin")
 def admin():
     return render_template("admin.html")
@@ -367,8 +368,8 @@ def post_problem():
         }
         return jsonify(output)
 
-# todo HANDLE OLD VALUE TO EDIT
-@app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
+
+@app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_resource():
     """NEW!
     get list of site resources needed for administration
@@ -393,20 +394,39 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['resource_name'])
+    # #edit resource by id
+    # if request.method == "PUT" and request.get_json():
+    #     edit_data = request.get_json()
+    #     try:
+    #         db.edit_resource_by_id(edit_data['resource_name'],
+    #                          edit_data['resource_id'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success", edited=edit_data['resource_name'])
 
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_resource(edit_data['resource_name'],
-                             edit_data['resource_id'])
+            db.edit_resource_value(edit_data['old_resource_value'],
+                             edit_data['new_resource_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['resource_name'])
+        return jsonify(status="success", edited=edit_data['new_resource_value'])
+
+    # # delete by id
+    # if request.method == "DELETE" and request.get_json():
+    #     del_data = request.get_json()
+    #     try:
+    #         db.delete_resource_by_id(del_data['resource_name'], del_data['resource_id'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success",
+    #                    deleted_resource=del_data['resource_name'])
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         try:
-            db.del_resource(del_data['resource_name'], del_data['resource_id'])
+            db.delete_resource_value(del_data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success",
@@ -444,22 +464,41 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['role_name'])
 
+    # # edit role by id
+    # if request.method == "PUT" and request.get_json():
+    #     edit_data = request.get_json()
+    #     try:
+    #         db.edit_role_by_id(edit_data['role_name'], edit_data['role_id'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success", edited=edit_data['role_name'])
+
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+            db.edit_role_value(edit_data['old_role_value'], edit_data['new_role_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['role_name'])
+        return jsonify(status="success", edited=edit_data['new_role_value'])
+
+    # delete role by id
+    # if request.method == "DELETE" and request.get_json():
+    #     del_data = request.get_json()
+    #     try:
+    #         db.delete_role_by_id(del_data['role_name'], del_data['role_id'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success",
+    #                    deleted_resource=del_data['role_name'])
 
     if request.method == "DELETE" and request.get_json():
-        del_data = request.get_json()
+        data = request.get_json()
         try:
-            db.del_resource(del_data['role_name'], del_data['role_id'])
+            db.delete_role(data['role_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success",
-                       deleted_resource=del_data['role_name'])
+                       deleted_resource=data['role_name'])
 
     parsed_data = db.get_roles()
     logger.warning(parsed_data)
@@ -504,13 +543,13 @@ def make_json(sql_list):
         if resource not in dct:
             dct[resource] = {}
         if method not in dct[resource]:
-            dct[resource][method] = []
+            dct[resource][method] = {}
         # dct[resource][method] = {}
         # if role not in dct[resource][method]:
         #     # dct[resource][method][perm] = {}
         #     dct[resource][method][role] = []
         if role not in dct[resource][method]:
-            dct[resource][method].append({role: perm})
+            dct[resource][method].update({role: perm})
             # print [{k:v} for k,v in dct[resource][method].items()]
     return dct
 
@@ -606,10 +645,8 @@ def new_def_all_permissions():
     return jsonify(res)
 
 
-
-
-@app.route("/api/makeit", methods=['GET', 'POST'])
-def make_it():
+@app.route("/api/get_all_permissions", methods=['GET', 'POST'])
+def get_all():
     """NEW!
         SHOW TABLE
         makes join

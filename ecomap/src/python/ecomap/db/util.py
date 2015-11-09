@@ -114,11 +114,12 @@ def add_resource(res_name):
         conn.commit()
     return True
 
+
 @retry_query(tries=3, delay=1)
-def edit_resource(res_name, res_id):
-    """ modify resource name in db.
-    :params: res_name - name of resource that had to be modifed
-             res_id - key for searching resource name in DB
+def edit_resource_by_id(res_name, res_id):
+    """modify resource name in db.
+    :params: res_name - name of resource that had to be modified.
+             res_id - key for searching resource name in DB.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
@@ -129,8 +130,22 @@ def edit_resource(res_name, res_id):
 
 
 @retry_query(tries=3, delay=1)
-def del_resource(res_name, res_id):
-    """ modify resource name in db.
+def edit_resource_value(old_value, new_value):
+    """modify resource pages name in db.
+    :params: old_value - name of page resource that had to be modified.
+             new_value - name of resource page after edit.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `resource` SET `resource_name` = %s WHERE resource_name = %s;"""
+        cursor.execute(sql, (new_value, old_value))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def delete_resource_by_id(res_name, res_id):
+    """modify resource name in db.
     :params: res_name - name of resource that had to be deleted
              res_id - key for searching resource name in DB for deleting
     """
@@ -139,6 +154,20 @@ def del_resource(res_name, res_id):
         sql = """DELETE FROM `resource` WHERE `resource_name`=%s AND
                  `id`=%s;"""
         cursor.execute(sql, (res_name, res_id))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def delete_resource_value(res_name):
+    """modify resource name in db.
+    :params: res_name - name of resource that had to be deleted
+
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `resource` WHERE `resource_name`=%s;"""
+        cursor.execute(sql, (res_name,))
         conn.commit()
     return True
 
@@ -158,7 +187,6 @@ def get_roles():
     return parsed_data
 
 
-# todo  DELETE for roles
 @retry_query(tries=3, delay=1)
 def add_role(role_name):
     """Adds new role in db.
@@ -173,7 +201,7 @@ def add_role(role_name):
 
 
 @retry_query(tries=3, delay=1)
-def edit_role(role_name, role_id):
+def edit_role_by_id(role_name, role_id):
     """ modify resource name in db.
     :params: role_name - name of role that had to be modifed
              role_id - key for searching role name in DB
@@ -187,15 +215,42 @@ def edit_role(role_name, role_id):
 
 
 @retry_query(tries=3, delay=1)
-def del_role(role_name, role_id):
+def edit_role_value(old_value, new_value):
     """ modify resource name in db.
-    :params: role_name - name of role that had to be deleted
-             role_id - key for searching role name in DB for deleting
+    :params: old_value - name of role that had to be modified.
+             new_value - new name of role in DB.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `role` SET `name` = %s WHERE name = %s;"""
+        cursor.execute(sql, (new_value, old_value))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def delete_role_by_id(role_name, role_id):
+    """ delete resource name in db by ID.
+    :params: role_name - name of role that had to be deleted.
+             role_id - key for searching role name in DB for deleting.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """DELETE FROM `role` WHERE `name` = %s AND `id` = %s;"""
         cursor.execute(sql, (role_name, role_id))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def delete_role(role_name):
+    """ delete resource name in db by its value.
+    :params: role_name - name of role that had to be deleted.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `role` WHERE `name` = %s;"""
+        cursor.execute(sql, (role_name,))
         conn.commit()
     return True
 
@@ -334,19 +389,10 @@ def select_all():
     parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """select res.resource_name, p.action, p.modifier, r.name
-                    from role_permission as rp
-                    left join
-                     role as r on rp.role_id = r.id
-                    left join
-                      permission as p on rp.permission_id = p.id
-                    left join
-                      resource res on p.resourse_id = res.id;"""
-        # sql = """select res.resource_name,  p.action, p.modifier, r.name
-        #                 from role as r join role_permission
-        #                 as rp on r.id = rp.id join permission
-        #                 as p on rp.id = p.id join resource
-        #                  as res on p.resourse_id = res.id;"""
+        sql = """select r.resource_name, p.action, p.modifier, role.name
+        from `permission` as p
+        left join `resource` as r on p.resource_id = r.id
+        left join `role` on p.role_id = role.id;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
         if sql_response:

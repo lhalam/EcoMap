@@ -367,6 +367,7 @@ def post_problem():
         }
         return jsonify(output)
 
+
 # todo HANDLE OLD VALUE TO EDIT
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
 def get_resource():
@@ -500,18 +501,16 @@ def make_json(sql_list):
     :return:
     """
     dct = {}
-    for (resource, method, perm, role) in sql_list:
+    for (resource_id, resource, method, perm, role_id, role) in sql_list:
         if resource not in dct:
             dct[resource] = {}
+            dct[resource] = {'resource_id': int(resource_id)}
         if method not in dct[resource]:
-            dct[resource][method] = []
-        # dct[resource][method] = {}
-        # if role not in dct[resource][method]:
-        #     # dct[resource][method][perm] = {}
-        #     dct[resource][method][role] = []
+            dct[resource][method] = {}
         if role not in dct[resource][method]:
-            dct[resource][method].append({role: perm})
-            # print [{k:v} for k,v in dct[resource][method].items()]
+            dct[resource][method][role] = {}
+            dct[resource][method][role].update({'role_id': int(role_id),
+                                                'perm': perm})
     return dct
 
 
@@ -530,13 +529,14 @@ def role_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'], data['modifier'],
-                              data['resource_name']))
+                        data['resource_name']))
         try:
-            db.add_role_permission(data['role_name'], data['action'], data['modifier'],
-                              data['resource_name'])
+            db.add_role_permission(data['role_name'], data['action'],
+                                   data['modifier'], data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
+        return jsonify(added_permission_for=(data['resource_name'] + " " +
+                                             data['role_name']))
 
     parsed_data = db.select_all()
     res = make_json(parsed_data)
@@ -560,14 +560,14 @@ def new_all_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'], data['modifier'],
-                              data['resource_name']))
+                        data['resource_name']))
         try:
             db.bulk_insert(data['role_name'], data['action'], data['modifier'],
-                              data['resource_name'])
+                           data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
-
+        return jsonify(added_permission_for=(data['resource_name'] + " " +
+                                             data['role_name']))
 
     parsed_data = db.select_all()
     res = make_json(parsed_data)
@@ -590,7 +590,7 @@ def new_def_all_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'],
-                              data['resource_name']))
+                        data['resource_name']))
 
         try:
             db.default_insert(data['role_name'], data['action'],
@@ -604,8 +604,6 @@ def new_def_all_permissions():
     parsed_data = db.select_all()
     res = make_json(parsed_data)
     return jsonify(res)
-
-
 
 
 @app.route("/api/makeit", methods=['GET', 'POST'])

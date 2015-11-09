@@ -324,19 +324,10 @@ def select_all():
     parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """select res.resource_name, p.action, p.modifier, r.name
-                    from role_permission as rp
-                    left join
-                     role as r on rp.role_id = r.id
-                    left join
-                      permission as p on rp.permission_id = p.id
-                    left join
-                      resource res on p.resourse_id = res.id;"""
-        # sql = """select res.resource_name,  p.action, p.modifier, r.name
-        #                 from role as r join role_permission
-        #                 as rp on r.id = rp.id join permission
-        #                 as p on rp.id = p.id join resource
-        #                  as res on p.resourse_id = res.id;"""
+        sql = """SELECT r.id, r.resource_name, p.action, p.modifier,
+             role.id, role.name FROM `resource` AS r LEFT JOIN
+             `permission` AS p ON r.id=p.resource_id LEFT JOIN
+             `role` AS role ON p.role_id=role.id ORDER BY r.resource_name;"""
         cursor.execute(sql)
         sql_response = cursor.fetchall()
         if sql_response:

@@ -39,6 +39,7 @@ class User(UserMixin):
         """This method encodes a secure token from a cookie.
             :returns token
         """
+
         data = [str(self.uid), self.password]
         return login_serializer.dumps(data)
 
@@ -63,6 +64,10 @@ class User(UserMixin):
 
     def get_id(self):
         return unicode(self.uid)
+
+    # def get_id(self):
+    #     """Return the email address to satisfy Flask-Login's requirements."""
+    #     return self.email
 
 
 def hash_pass(password):

@@ -97,16 +97,25 @@ def change_password():
     if current_user.is_authenticated:
         user = current_user
         logger.warning('AUTHEND')
-        logger.warning(user)
-        logger.warning(user.first_name)
+        logger.warning(current_user._get_current_object())
+        logger.warning(dir(current_user))
         return jsonify(authentificated=(user.uid +
-                                             " " + user.first_name))
+                                             " " + user.first_name),
+                        dir = dir(user),
+                       uid = user.uid,
+                       fn = user.first_name,
+                       ln = user.last_name,
+                       pas = user.password,
+                       mail = user.email,
+                       cu = current_user.__dict__
+                       )
     if not current_user.is_authenticated:
         user = usr.Anonymous()
         logger.warning('NOT AUTH')
         logger.warning(user.username)
         return jsonify(error="you are not logged in - you are anon.",
-                           logined=0), 401
+                           logined=0,
+                       cu = current_user.__dict__), 401
         # if not user.verify_password(data['password']):
         #     return jsonify(error="Invalid password, try again.",
         #                    logined=0), 401

@@ -15,14 +15,14 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
-@app.before_request
-def load_users():
-    if current_user.is_authenticated:
-        g.user = current_user.first_name
-    else:
-        anon = usr.Anonymous()
-        g.user = anon.username
-
+# @app.before_request
+# def load_users():
+#     if current_user.is_authenticated:
+#         g.user = current_user.first_name
+#     else:
+#         anon = usr.Anonymous()
+#         g.user = anon.username
+#
 
 @app.route("/api/admin")
 def admin():
@@ -162,7 +162,7 @@ def register():
             return jsonify(error="Unauthorized, missing fields"), 401
         if not usr.get_user_by_email(email):
             usr.register(first_name, last_name, email, password)
-            status = 'added %s %s', (first_name, last_name)
+            status = 'added %s %s' % (first_name, last_name)
         else:
             status = 'user with this email already exists'
             return jsonify({'status': status}), 400

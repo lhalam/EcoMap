@@ -6,6 +6,7 @@
 */
 CREATE TABLE IF NOT EXISTS `resource` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `resource_name` varchar(100) NOT NULL, UNIQUE,   # name of resource
+  `resource_name` varchar(100) NOT NULL, # name of resource
+  UNIQUE (`resource_name`),
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

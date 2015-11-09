@@ -91,9 +91,6 @@ def js_js(sql_list):
     return dct
 
 
-
-
-
 #
 # def js_js(sql_list):
 #     dct = {}

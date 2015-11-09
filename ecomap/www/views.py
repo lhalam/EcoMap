@@ -417,16 +417,18 @@ def get_resource():
         edit_data = request.get_json()
         try:
             db.edit_resource_value(edit_data['old_resource_value'],
-                             edit_data['new_resource_value'])
+                                   edit_data['new_resource_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['new_resource_value'])
+        return jsonify(status="success",
+                       edited=edit_data['new_resource_value'])
 
     # # delete by id
     # if request.method == "DELETE" and request.get_json():
     #     del_data = request.get_json()
     #     try:
-    #         db.delete_resource_by_id(del_data['resource_name'], del_data['resource_id'])
+    #         db.delete_resource_by_id(del_data['resource_name'],
+    #                                  del_data['resource_id'])
     #     except KeyError:
     #         return jsonify(error="Bad Request[key_error]"), 400
     #     return jsonify(status="success",
@@ -485,7 +487,8 @@ def roles():
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role_value(edit_data['old_role_value'], edit_data['new_role_value'])
+            db.edit_role_value(edit_data['old_role_value'],
+                               edit_data['new_role_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['new_role_value'])
@@ -548,18 +551,16 @@ def make_json(sql_list):
     :return:
     """
     dct = {}
-    for (resource, method, perm, role) in sql_list:
+    for (resource_id, resource, method, perm, role_id, role) in sql_list:
         if resource not in dct:
             dct[resource] = {}
+            dct[resource] = {'resource_id': int(resource_id)}
         if method not in dct[resource]:
             dct[resource][method] = {}
-        # dct[resource][method] = {}
-        # if role not in dct[resource][method]:
-        #     # dct[resource][method][perm] = {}
-        #     dct[resource][method][role] = []
         if role not in dct[resource][method]:
-            dct[resource][method].update({role: perm})
-            # print [{k:v} for k,v in dct[resource][method].items()]
+            dct[resource][method][role] = {}
+            dct[resource][method][role].update({'role_id': int(role_id),
+                                                'perm': perm})
     return dct
 
 
@@ -578,13 +579,14 @@ def role_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'], data['modifier'],
-                              data['resource_name']))
+                        data['resource_name']))
         try:
-            db.add_role_permission(data['role_name'], data['action'], data['modifier'],
-                              data['resource_name'])
+            db.add_role_permission(data['role_name'], data['action'],
+                                   data['modifier'], data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
+        return jsonify(added_permission_for=(data['resource_name'] + " " +
+                                             data['role_name']))
 
     parsed_data = db.select_all()
     res = make_json(parsed_data)
@@ -608,21 +610,21 @@ def new_all_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'], data['modifier'],
-                              data['resource_name']))
+                        data['resource_name']))
         try:
             db.bulk_insert(data['role_name'], data['action'], data['modifier'],
-                              data['resource_name'])
+                           data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=(data['resource_name']+" "+data['role_name']))
-
+        return jsonify(added_permission_for=(data['resource_name'] + " " +
+                                             data['role_name']))
 
     parsed_data = db.select_all()
     res = make_json(parsed_data)
     return jsonify(res)
 
 
-#DEF MODIF
+# DEF MODIF
 @app.route("/api/new_def_permissions", methods=['GET', 'POST'])
 def new_def_all_permissions():
     """NEW!
@@ -638,7 +640,7 @@ def new_def_all_permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         logger.warning((data['role_name'], data['action'],
-                              data['resource_name']))
+                        data['resource_name']))
 
         try:
             db.default_insert(data['role_name'], data['action'],

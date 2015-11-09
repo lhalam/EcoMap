@@ -369,12 +369,7 @@ def post_problem():
         return jsonify(output)
 
 
-<<<<<<< HEAD
-# todo HANDLE OLD VALUE TO EDIT
-@app.route("/api/resources", methods=['GET', 'POST', 'PUT'])
-=======
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
->>>>>>> 5c315a8ef5ad23c0d9536b826e7c96d128c3233a
 def get_resource():
     """NEW!
     get list of site resources needed for administration
@@ -413,16 +408,18 @@ def get_resource():
         edit_data = request.get_json()
         try:
             db.edit_resource_value(edit_data['old_resource_value'],
-                             edit_data['new_resource_value'])
+                                   edit_data['new_resource_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['new_resource_value'])
+        return jsonify(status="success",
+                       edited=edit_data['new_resource_value'])
 
     # # delete by id
     # if request.method == "DELETE" and request.get_json():
     #     del_data = request.get_json()
     #     try:
-    #         db.delete_resource_by_id(del_data['resource_name'], del_data['resource_id'])
+    #         db.delete_resource_by_id(del_data['resource_name'],
+    #                                  del_data['resource_id'])
     #     except KeyError:
     #         return jsonify(error="Bad Request[key_error]"), 400
     #     return jsonify(status="success",
@@ -481,7 +478,8 @@ def roles():
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role_value(edit_data['old_role_value'], edit_data['new_role_value'])
+            db.edit_role_value(edit_data['old_role_value'],
+                               edit_data['new_role_value'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['new_role_value'])
@@ -550,20 +548,10 @@ def make_json(sql_list):
             dct[resource] = {'resource_id': int(resource_id)}
         if method not in dct[resource]:
             dct[resource][method] = {}
-<<<<<<< HEAD
         if role not in dct[resource][method]:
             dct[resource][method][role] = {}
             dct[resource][method][role].update({'role_id': int(role_id),
                                                 'perm': perm})
-=======
-        # dct[resource][method] = {}
-        # if role not in dct[resource][method]:
-        #     # dct[resource][method][perm] = {}
-        #     dct[resource][method][role] = []
-        if role not in dct[resource][method]:
-            dct[resource][method].update({role: perm})
-            # print [{k:v} for k,v in dct[resource][method].items()]
->>>>>>> 5c315a8ef5ad23c0d9536b826e7c96d128c3233a
     return dct
 
 
@@ -627,7 +615,7 @@ def new_all_permissions():
     return jsonify(res)
 
 
-#DEF MODIF
+# DEF MODIF
 @app.route("/api/new_def_permissions", methods=['GET', 'POST'])
 def new_def_all_permissions():
     """NEW!
@@ -659,13 +647,8 @@ def new_def_all_permissions():
     return jsonify(res)
 
 
-<<<<<<< HEAD
-@app.route("/api/makeit", methods=['GET', 'POST'])
-def make_it():
-=======
 @app.route("/api/get_all_permissions", methods=['GET', 'POST'])
 def get_all():
->>>>>>> 5c315a8ef5ad23c0d9536b826e7c96d128c3233a
     """NEW!
         SHOW TABLE
         makes join

@@ -1,14 +1,23 @@
 var admin=angular.module("admin",[])
 
 admin.controller("tableCtrl",function ($scope){
-	$scope.acceptedData={'cabinet': {'put': {'user': 'None', 'admin': 'own'},
-                     'get': {'user': 'own', 'admin': 'any'},
-                     'post': {'user': 'any', 'admin': 'none'}},
-         'page': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'}},
-         'page2': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'}}
-              }
+$scope.data1 = {'admin_page': {'del': {'admin': 'any', 'user': 'own'},
+                'post': {'admin': 'any', 'user': 'None'},
+                'put': {'admin': 'any', 'guest': 'none', 'user': 'own'}},
+ 'problems': {'post': {'admin': 'any'},
+              'put': {'admin': 'any', 'user': 'None'}},
+ 'resource': {'post': {'user': 'any'}}};
+
+	$scope.acceptedData=$scope.data1;
+	//$scope.acceptedData={'cabinet': {'put': {'user': 'None', 'admin': 'own'},
+     //                'get': {'user': 'own', 'admin': 'any'},
+     //                'post': {'user': 'any', 'admin': 'none'}},
+     //    'page': {'get': {'user': 'any', 'admin': 'any'},
+     //             'post': {'user': 'None', 'admin': 'any'}},
+     //    'page2': {'get': {'user': 'any', 'admin': 'any'},
+     //             'post': {'user': 'None', 'admin': 'any'}}
+     //         }
+
     $scope.TableData={}
  	$scope.parse = function(){
  		acceptedData=$scope.acceptedData

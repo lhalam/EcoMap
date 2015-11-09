@@ -153,5 +153,5 @@ db_pool = lambda: DBPool(user=_CONFIG['db.user'],
                          db_name=_CONFIG['db.db_name'],
                          host=_CONFIG['db.host'],
                          port=_CONFIG['db.port'],
-                         ttl=_CONFIG['db.connection_ttl'],
+                         ttl=_CONFIG['db.connection_lifetime'],
                          pool_size=_CONFIG['db.pool_size'])

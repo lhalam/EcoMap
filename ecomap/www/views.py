@@ -117,6 +117,11 @@ def register():
 
 @app.route("/api/email_exist", methods=['POST'])
 def email_exist():
+    """Method for checking if current email exists in db.
+
+        :returns json with isValid field, which tells if
+        such email exists.
+    """
     if request.method == "POST":
         data = request.get_json()
         user = usr.get_user_by_email(data['email'])

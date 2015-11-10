@@ -137,7 +137,3 @@ def load_token(token):
     if user and data[1] == user.password:
         return user
     return None
-
-
-if __name__ == "__main__":
-    print get_user_by_email("admin@gmail.com")

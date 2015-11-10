@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS `permission` (
   `action` enum('GET', 'PUT', 'POST', 'DELETE' ) NOT NULL,
   `modifier` enum('Any', 'Own', 'None') NOT NULL DEFAULT 'None',
   `resource_id` int(10) unsigned NOT NULL,
-  `role_id` int(10) unsigned NOT NULL,
+  `description` VARCHAR (255) NOT NULL,
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

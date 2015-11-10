@@ -508,7 +508,7 @@ def roles():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
-            db.add_role(data['role_name'])
+            db.insert_role(data['role_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(added_resource=data['role_name'])
@@ -517,7 +517,7 @@ def roles():
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role_by_id(edit_data['role_name'], edit_data['role_id'])
+            db.edit_role(edit_data['role_name'], edit_data['role_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['role_name'])
@@ -578,10 +578,14 @@ def permissions():
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
-            db.add_permission(data['resource_name'])
+            db.insert_permission(data['resource_id'],
+                                 data['action'],
+                                 data['modifier'],
+                                 data['description']
+                                 )
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=data['resource_name'])
+        return jsonify(added_permission_for=data['description'])
 
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
@@ -594,8 +598,19 @@ def permissions():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['role_name'])
 
-    parsed_data = db.get_permissions()
-    return Response(json.dumps(parsed_data), mimetype='application/json')
+    resource_id = request.get_json()['resource_id']
+    d = db.get_all_permissions_from_resource(resource_id)
+    dc = {}
+    if d:
+        for res in d:
+
+            for res in d:
+                dc['permission'].append({'id': res[0], 'action': res[1],
+                                    'modifier': res[2],
+                                    'description': res[3]})
+    # parsed_data = db.get_all_permissions_from_resource()
+    # return jsonify(dc)
+    return Response(json.dumps(dc), mimetype='application/json')
 
 
 @app.route("/api/get_all_permissions", methods=['GET', 'POST'])

@@ -409,15 +409,16 @@ def post_problem():
         }
         return jsonify(output)
 
-
+# ADMIN PAGE API
+# todo add new DELETE method
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_resource():
     """NEW!
     get list of site resources needed for administration.
     and server permission control.
     action PUT:
-    'resourse_name' = changes to name of the resource.
-    'resourse_id' = key to search name of the resource in db.
+    'resource_name' = changes to name of the resource.
+    'resource_id' = key to search name of the resource in db.
     action DELETE:
     'resource_name' = that has to be Deleted.
     'resource_id' = key to search name of resource in db to delete.
@@ -438,13 +439,13 @@ def get_resource():
 
     # edit resource by id
     if request.method == "PUT" and request.get_json():
-        edit_data = request.get_json()
+        data = request.get_json()
         try:
-            db.edit_resource_by_id(edit_data['resource_name'],
-                             edit_data['resource_id'])
+            db.edit_resource_name(data['resource_name'],
+                                   data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['resource_name'])
+        return jsonify(status="success", edited=data['resource_name'])
 
     # #edit resource by value
     # if request.method == "PUT" and request.get_json():
@@ -468,22 +469,20 @@ def get_resource():
     #     return jsonify(status="success",
     #                    deleted_resource=del_data['resource_name'])
 
-    if request.method == "DELETE" and request.get_json():
-        del_data = request.get_json()
-        try:
-            db.delete_resource(del_data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success",
-                       deleted_resource=del_data['resource_name'])
+    # if request.method == "DELETE" and request.get_json():
+    #     del_data = request.get_json()
+    #     try:
+    #         db.delete_resource(del_data['resource_name'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success",
+    #                    deleted_resource=del_data['resource_name'])
 
-    data = db.get_all_resources()
+    query = db.get_all_resources()
     parsed_data = {}
-    if data:
-        resource_list = [x[0] for x in data]
-        parsed_data = [{"resource_name": name} for name in
-                       [res for res in resource_list]]
-    return Response(json.dumps(parsed_data), mimetype='application/json')
+    if query:
+        parsed_data = {res[1]: res[0] for res in query}
+    return jsonify(parsed_data)
 
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
@@ -552,9 +551,15 @@ def roles():
         return jsonify(status="success",
                        deleted_resource=data['role_name'])
 
-    parsed_data = db.get_roles()
-    logger.warning(parsed_data)
-    return Response(json.dumps(parsed_data), mimetype='application/json')
+    # parsed_data = db.get_roles()
+    # logger.warning(parsed_data)
+    # return Response(json.dumps(parsed_data), mimetype='application/json')
+    #
+    query = db.get_all_roles()
+    parsed_data = {}
+    if query:
+        parsed_data = {res[1]: res[0] for res in query}
+    return jsonify(parsed_data)
 
 
 @app.route("/api/permissions", methods=['GET', 'PUT', 'POST'])

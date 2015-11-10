@@ -19,14 +19,7 @@ def get_user_by_email(email):
                    FROM `user` WHERE `email`=%s;"""
         cursor.execute(query, (email, ))
         return cursor.fetchone()
-# 
-# @retry_query(tries=3, delay=1)
-# def get_user_by_email(email):
-#     # todo add roles SQL reference to user model???
-#     """Function which returns full user data by unique email.
-#         returns tuple of rows(id, password) from db.
-#     """
-#     logger.debug(email)
+
 #     with db_pool().manager() as conn:
 #         logger.info('log from GET USER user by mail')
 #         cursor = conn.cursor()
@@ -39,7 +32,6 @@ def get_user_by_email(email):
 #         cursor.execute(query, (email,))
 #         user_data = cursor.fetchone()
 #         return user_data
-
 
 
 @retry_query(tries=3, delay=1)
@@ -55,11 +47,6 @@ def get_user_by_id(user_id):
         cursor.execute(query, (user_id, ))
         return cursor.fetchone()
 
-# @retry_query(tries=3, delay=1)
-# def get_user_by_id(uid):
-#     """Function which returns user by uid.
-#         returns tuple of rows(uid, password) from db.
-#     """
 #     with db_pool().manager() as conn:
 #         cursor = conn.cursor()
 #         query = """SELECT user.first_name, user.last_name, user.email,
@@ -69,6 +56,7 @@ def get_user_by_id(user_id):
 #         cursor.execute(query, (uid,))
 #         user_data = cursor.fetchone()
 #     return user_data
+
 
 @retry_query(tries=3, delay=1)
 def insert_user(first_name, last_name, email, password):
@@ -97,7 +85,6 @@ def insert_user(first_name, last_name, email, password):
     #     query = """INSERT INTO `user`
     #         (`first_name`, `last_name`, `email`, `password`)
     #        VALUES (%s, %s, %s, %s);
-    # 
     #        INSERT INTO `user_role` (`user_id`, `role_id`)
     #        VALUES
     #         (LAST_INSERT_ID(),
@@ -142,34 +129,21 @@ def get_all_resources():
 #         resource_list = cursor.fetchall()
 #     return resource_list
 
-
-
-@retry_query(tries=3, delay=1)
-def get_all_resource_id():
-    """Return all resources id's.
-    :return: list if id's
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource`;"""
-        cursor.execute(sql)
-        return [x[0] for x in cursor.fetchall()]
-
-
-@retry_query(tries=3, delay=1)
-def get_resource_id(resource_name):
-    """Gets resource id.
-    :params: resource_name - name of resource
-    :return: tuple, containing id
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        cursor.execute(sql, (resource_name, ))
-        return cursor.fetchone()
-        # query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        # cursor.execute(query, (resource_name, ))
-        # return cursor.fetchone()[0]
+#
+# @retry_query(tries=3, delay=1)
+# def get_resource_id(resource_name):
+#     """Gets resource id.
+#     :params: resource_name - name of resource
+#     :return: tuple, containing id
+#     """
+#     with db_pool().manager() as conn:
+#         cursor = conn.cursor()
+#         sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+#         cursor.execute(sql, (resource_name, ))
+#         return cursor.fetchone()
+#         # query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+#         # cursor.execute(query, (resource_name, ))
+#         # return cursor.fetchone()[0]
 
 
 @retry_query(tries=3, delay=1)

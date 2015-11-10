@@ -125,6 +125,7 @@ def email_exist():
 
 @app.route("/api/user_detailed_info/<user_id>")
 def get_user_info(user_id):
+    """This method returns json object with user data."""
     if request.method == 'GET':
         user = usr.get_user_by_id(user_id)
         if user:
@@ -134,9 +135,22 @@ def get_user_info(user_id):
             return jsonify(status="There is no user with given email"), 401
 
 
+@app.route("/api/change_password", methods=["POST"])
+@login_required
+def change_password():
+    if request.method == 'POST':
+        data = request.get_json()
+        user = usr.get_user_by_id(data['id'])
+        if user and user.verify_password(data['old_pass']):
+            user.change_password(data['new_pass'])
+            return jsonify(), 200
+    return jsonify(), 401
+
+
 @app.route("/test/<id>")
 def test(id):
     return str(id)
 
 if __name__ == "__main__":
+    print True
     app.run()

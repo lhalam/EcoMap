@@ -49,5 +49,18 @@ def insert_user(first_name, last_name, email, password):
         conn.commit()
     return True
 
+
+@retry_query(tries=3, delay=1)
+def change_user_password(uid, new_pass):
+    """Changes users password
+    :input: uid - id of user
+            new_pass - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
+        cursor.execute(query, (new_pass, uid))
+        conn.commit()
+
 if __name__ == "__main__":
-    print get_user_by_email("admin@gmail.com")
+    change_user_password(27, "test")

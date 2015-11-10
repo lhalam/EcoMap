@@ -301,7 +301,7 @@ form{
 /*Map styles*/
 .container-fluid.map-div{
     padding: 0;
-    height:100%;
+    height:90%;
 }
 #map{
     width: 100%;

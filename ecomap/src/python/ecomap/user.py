@@ -43,6 +43,11 @@ class User(UserMixin):
         """
         return self.password == hash_pass(password)
 
+    def change_password(self, new_pass):
+        """Method which changes user's password."""
+        new_pass_salted = hash_pass(new_pass)
+        util.change_user_password(self.uid, new_pass_salted)
+
     def is_active(self):
         """Overloaded method from UserMixin.
         Since we don't have activation mechanism, we just
@@ -140,4 +145,4 @@ def load_token(token):
 
 
 if __name__ == "__main__":
-    print get_user_by_email("admin@gmail.com")
+    get_user_by_id(27).change_password('test_new')

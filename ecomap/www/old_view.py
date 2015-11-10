@@ -5,45 +5,14 @@ ecomap project.
 """
 # import sys
 import json
-import imghdr
-import os
-import time
 
 from flask import render_template, request, jsonify, Response, g
 from flask_login import login_user, logout_user, login_required, current_user
-from flask.ext.wtf import Form
-from flask_wtf import Form
-
-from wtforms import FileField, SubmitField, ValidationError
 
 import ecomap.user as usr
 
 from ecomap.app import app, logger
 from ecomap.db import util as db
-
-
-class UploadForm(Form):
-    image_file = FileField('Image file')
-    submit = SubmitField('Submit')
-
-    def validate_image_file(self, field):  # if name starts with validate_ + <fieldname>
-                                            # flask wtf defines function as a standard validation
-        if field.data.filename[-4:].lower() != '.jpg':
-            raise ValidationError('Invalid file extension')  # exception from flask wtf
-        if imghdr.what(field.data) != 'jpeg':
-            x = imghdr.what(field.data)
-            raise ValidationError('Invalid image format %s' %x)
-
-
-@app.route('/api/test_photo', methods=['GET', 'POST'])
-def test_photo():
-    image = None
-    form = UploadForm()
-    if form.validate_on_submit():
-        image = '/image_profile' + form.image_file.data.filename  # image path with custom name
-        form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)  # save method of data.
-        #  app.static_folder - default flask config
-    return render_template('photo_test.html', form=form, image=image)
 
 
 # @app.before_request
@@ -453,7 +422,6 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['resource_name'])
-
     # #edit resource by value
     # if request.method == "PUT" and request.get_json():
     #     edit_data = request.get_json()
@@ -596,6 +564,104 @@ def permissions():
     return Response(json.dumps(parsed_data), mimetype='application/json')
 
 
+
+#
+# @app.route("/api/role_permissions", methods=['GET', 'POST'])
+# def role_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'],
+#                         data['modifier'],
+#                         data['resource_name']))
+#         try:
+#             db.add_role_permission(data['role_name'],
+#                                    data['action'],
+#                                    data['modifier'],
+#                                    data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] + " " +
+#                                              data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#     # parsed_data = db.get_permissions()
+#     # return Response(json.dumps(parsed_data), mimetype='application/json')
+
+#
+# @app.route("/api/new_permissions", methods=['GET', 'POST'])
+# def new_all_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'], data['modifier'],
+#                         data['resource_name']))
+#         try:
+#             db.bulk_insert(data['role_name'], data['action'], data['modifier'],
+#                            data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] + " " +
+#                                              data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#
+
+
+# # DEF MODIF
+# @app.route("/api/new_def_permissions", methods=['GET', 'POST'])
+# def new_def_all_permissions():
+#     """NEW!
+#     get and modify actions of
+#     server permission conrtol
+#
+#        :return:
+#             - list of jsons
+#             - if no resource in DB
+#                 return empty json
+#     """
+#
+#     if request.method == "POST" and request.get_json():
+#         data = request.get_json()
+#         logger.warning((data['role_name'], data['action'],
+#                         data['resource_name']))
+#
+#         try:
+#             db.default_insert(data['role_name'], data['action'],
+#                               data['resource_name'])
+#         except KeyError:
+#             return jsonify(error="Bad Request[key_error]"), 400
+#         return jsonify(added_permission_for=(data['resource_name'] +
+#                                              " " + data['resource_name'] +
+#                                              " " + data['role_name']))
+#
+#     parsed_data = db.select_all()
+#     res = make_json(parsed_data)
+#     return jsonify(res)
+#
+
 @app.route("/api/get_all_permissions", methods=['GET', 'POST'])
 def get_all():
     """NEW!
@@ -609,6 +675,19 @@ def get_all():
     parsed_data = db.select_all()
     res = make_json(parsed_data)
     return jsonify(res)
+    # return Response(json.dumps(res), mimetype='application/json')
+
+
+# @app.route("/api/role_permission", methods=['POST', 'PUT'])
+# def role_permission():
+#     data = request.get_json()
+#     if request.method == 'POST':
+#         db.add_role_permisson(data['role_name'], data['resource_name'],
+#                               data['action'], data['modifier'])
+#     if request.method == 'PUT':
+#         db.update_role_permission(data['resource_name'], data['action'],
+#                                   data['old_modifier'], data['new_modifier'],
+#                                   data['role_name'])
 
 
 if __name__ == "__main__":

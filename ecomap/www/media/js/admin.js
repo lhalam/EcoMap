@@ -35,12 +35,12 @@ admin.controller("mainCtrl",function ($scope,$http){
   var tableIter=0;
   $scope.loadPermis=function(){
     $scope.permisShow=!$scope.permisShow
-    $scope.DataGenerator=function(){
+    $scope.DataGenerator=function(id){
     $http({
-      method:"POST",
+      method:"GET",
       url:'/api/permissions',
-      data:{
-        'resource_id':7
+      params:{
+        'resource_id':id
       }
     }).then(function successCallback(data) {
       console.log(data.data)
@@ -49,11 +49,11 @@ admin.controller("mainCtrl",function ($scope,$http){
     })
 
     }
-    $scope.DataGenerator()
-    /*for (res in $scope.acceptedData){
+    for(res in $scope.acceptedData){
+      console.log(res)
       var id =$scope.acceptedData[res]
-      $scope.DataGenerator(id)
-    }*/
+       $scope.DataGenerator(id)
+    }
     
   }
 })

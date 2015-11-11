@@ -1,122 +1,59 @@
 var admin=angular.module("admin",[])
 
-admin.controller("tableCtrl",function ($scope,$rootScope){
-
-	$scope.acceptedData={'cabinet': {'put': {'user': 'None', 'admin': 'own'},
-                     'get': {'user': 'own', 'admin': 'any'},
-                     'post': {'user': 'any', 'admin': 'None'}},
-       'page': {'get': {'user': 'any', 'admin': 'any'},
-                 'post': {'user': 'None', 'admin': 'any'}},
-         'page2': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'},}
-                  ,
-         'page3': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'},}
-              }
-  $scope.items=["a","b","c"]           
-  $scope.TableData={}
-  $scope.roles={
-
+admin.controller("mainCtrl",function ($scope,$http){
+  $scope.resourceShow=false
+  $scope.permisShow=false
+  $scope.acceptedData
+  $scope.tablesData={'news': {'PUT': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'POST': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'GET': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'DELETE': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'resource_id': 1}, 'problem': {'PUT': {'Moderator': {'perm': 'None', 'role_id': 2}, 'Admin': {'perm': 'None', 'role_id': 1}}, 'POST': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'GET': {'Moderator': {'perm': 'None', 'role_id': 2}, 'Admin': {'perm': 'None', 'role_id': 1}}, 'DELETE': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'resource_id': 2}, 'cabinet': {'PUT': {'Moderator': {'perm': 'None', 'role_id': 2}, 'Admin': {'perm': 'None', 'role_id': 1}}, 'POST': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'GET': {'Moderator': {'perm': 'None', 'role_id': 2}, 'Admin': {'perm': 'None', 'role_id': 1}}, 'DELETE': {'Admin': {'perm': 'None', 'role_id': 1}, 'Moderator': {'perm': 'None', 'role_id': 2}}, 'resource_id': 3}}
+  $scope.loadRes=function(){
+    $scope.resourceShow=!$scope.resourceShow
+    $http({
+      method: 'GET',
+      url: '/api/resources'
+    }).then(function successCallback(data) {
+      $scope.acceptedData=data.data
+      console.log( $scope.acceptedData)
+    }, function errorCallback(response) {
+      console.log(response)
+    });
   }
-  $scope.meth_obj={
-    "1":"get",
-    "2":"put",
-    "3":"post",
-    "4":'deleted'
-  }
-  $scope.permisions_obj={
-    '1':'None',
-    '2':'own',
-    "3":"any"
-  }
-
- 	$scope.parse = function(){
- 		acceptedData=$scope.acceptedData
- 		for (resource in acceptedData){
- 			resourceObj={} 	
- 			//resourceObj['method_roles']={};		
- 			for(method in acceptedData[resource]){	
- 				var methodObj={}	
- 				for(role in  acceptedData[resource][method]){
- 					methodObj[role]=acceptedData[resource][method][role]
-          $scope.roles[role]=role	
-					//resourceObj['method_roles'][role]=role	
-  				}
- 				resourceObj[method]=methodObj
- 			}
- 			$scope.TableData[resource]=resourceObj
- 		}
-    console.log($scope.roles)
- 	}
- 	$scope.show=function () {
- 		$scope.parse()
- 		
- 		
- 	}
- 	$scope.printTable=function(){
- 		console.log($scope.TableData)
- 	}
- 	$scope.addRole=function(new_role){
- 		$scope.roles[new_role]=new_role
-    for(res in $scope.TableData)
-      {
-      for (meth in $scope.TableData[res]) {
-        //console.log($scope.TableData[res])
-       $scope.TableData[res][meth][new_role]="None"
+  $scope.addRes=function(newName){
+    $http({
+      method:"POST",
+      url:"/api/resources",
+      data:{
+        'resource_name':newName
       }
-    }
-
- 	}
-  $scope.creatResourse=function(res_name,res_method){
-    $scope.TableData[res_name]={}
-    $scope.TableData[res_name][res_method]={}
-    //console.log( $scope.roles.length)
-    for(role in $scope.roles){
-      $scope.TableData[res_name][res_method][role]="None"
-    }
-   
-  }
-  $scope.addMeth=function(resource_name,meth_name){
-    for (meth in $scope.TableData[resource_name]){
-      console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if(!$scope.TableData[resource_name].hasOwnProperty(meth_name)){
-          $scope.TableData[resource_name][meth_name]={}
-          for (role in $scope.roles) {
-          $scope.TableData[resource_name][meth_name][role]="None"
-          console.log($scope.TableData)
-          }
-      }
-      else {
-        console.log("already has")
-      }
-    }
+    }).then(function successCallback(data) {
+      var addedobject=data.data['added_resource']
       
-
+      $scope.tablesData[addedobject]={}
+    }, function errorCallback(response) {
+      console.log(response)
+    });
   }
-  $scope.removeMeth=function(resource_name,remove_meth_name){
-    for (meth in $scope.TableData[resource_name]){
-      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if($scope.TableData[resource_name].hasOwnProperty(remove_meth_name)){
-          delete $scope.TableData[resource_name][remove_meth_name]
-        }
-      else{
-        console.log("does`n exist")
+  var tableIter=0;
+  $scope.loadPermis=function(){
+    $scope.permisShow=!$scope.permisShow
+    $scope.DataGenerator=function(){
+    $http({
+      method:"POST",
+      url:'/api/permissions',
+      data:{
+        'resource_id':7
       }
-      }
-     
+    }).then(function successCallback(data) {
+      console.log(data.data)
+    }, function errorCallback(response) {
+      console.log(response)
+    })
+
     }
-  $scope.removeRes=function(remove_res){
-
-    for (resour in $scope.TableData){
-      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if($scope.TableData.hasOwnProperty(remove_res)){
-          delete $scope.TableData[remove_res]
-        }
-      else{
-        console.log("does`n exist")
-        }
-      }
-   
+    $scope.DataGenerator()
+    /*for (res in $scope.acceptedData){
+      var id =$scope.acceptedData[res]
+      $scope.DataGenerator(id)
+    }*/
+    
   }
-
 })

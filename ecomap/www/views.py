@@ -606,18 +606,28 @@ def permissions():
                                  )
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_permission_for=data['description'])
+        try:
+            added_perm_id = db.get_permission_id(data['resource_id'],
+                                                data['action'],
+                                                data['modifier'])
+            logger.warning('selecet by id')
+            logger.warning(added_perm_id)
+        except KeyError:
+            return jsonify(error="Bad Request[key_error_add]"), 400
 
+        return jsonify(added_permission_for=data['description'],
+                       permission_id=added_perm_id)
+    # todo add unique handler!
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.update_role_permission(edit_data['resource_name'],
-                                      edit_data['action'],
-                                      edit_data['modifier'],
-                                      edit_data['role_name'])
+            db.edit_permission(edit_data['new_action'],
+                                      edit_data['new_modifier'],
+                                      edit_data['permission_id'],
+                                      edit_data['new_description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['role_name'])
+        return jsonify(status="success", edited_perm_id=edit_data['permission_id'])
 
     resource_id = request.get_json()['resource_id']
     d = db.get_all_permissions_from_resource(resource_id)

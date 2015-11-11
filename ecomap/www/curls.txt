@@ -40,15 +40,40 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
     "status": "success"
     }
 
+ADD PERMISSION FOR RESOURCE BY RESOURCE ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_id":"2", "action":"GET", "modifier":"Any", "description":"some text"}' http://localhost:81/api/permissions
+     запрос:
+     resource_id - айди ресурса на который навешиваем пермишны. ты его получаешь при создании.
+     action, modifier, description - новые значения с фронта (юзер ввел в данные в твою форму) которые нам отправляются
 
-GET ALL PERMISSIONS FOR RESOURCE ID
+     ответ якщо все ок:
+     {
+      "added_permission_for": "get any" *(поле description)
+        'permission_id': 15
+    }
+
+
+GET ALL PERMISSIONS BY RESOURCE ID
 curl -H "Accept: application/json" -H "Content-type: application/json" -X GET -d '{"resource_id":"2"}' http://localhost:81/api/permissions
 
-* resource_id - айді ресурсу для якого витягаємо пермішни
+    * resource_id - айді ресурсу для якого витягаємо пермішни
 
-[
-	{"action": "GET", "permission_id": 1, "modifier": "Any", "description": "some text"},
-	{"action": "PUT", "permission_id": 2, "modifier": "Any", "description": "some text"},
-	{"action": "POST", "permission_id": 3, "modifier": "Any", "description": "some text"}
-]
+    результат: получаешь все пермишны для конкретного ресурса. их может быть много
+    [
+        {"action": "GET", "permission_id": 1, "modifier": "Any", "description": "some text"},
+        {"action": "PUT", "permission_id": 2, "modifier": "Any", "description": "some text"},
+        {"action": "POST", "permission_id": 3, "modifier": "Any", "description": "some text"}
+    ]
+
+EDIT PERMISSION BY PERMISSION ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"permission_id":"6", "new_action":"DELETE", "new_modifier":"Any", "new_description":"DELETE ANY"}' http://localhost:81/api/permissions
+
+    * permission_id - айді пермышну для редагування
+    ключі з префіксом new - нові значення для редагування
+
+    відповідь якщо все ок
+    {
+      "edited_perm_id": "6",
+      "status": "success"
+    }
 

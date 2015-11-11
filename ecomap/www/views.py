@@ -637,7 +637,10 @@ def permissions():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited_perm_id=edit_data['permission_id'])
 
-    resource_id = request.get_json()['resource_id']
+
+    resource_id = request.args.get('resource_id')
+    logger.warning(resource_id)
+    logger.warning('!IOUioufoiUIOURIOEUREOIWUROIEWUROWIRUOIW')
     d = db.get_all_permissions_from_resource(resource_id)
     dc = []
     if d:

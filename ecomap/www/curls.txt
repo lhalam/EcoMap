@@ -54,7 +54,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
 
 
 GET ALL PERMISSIONS BY RESOURCE ID
-curl -X GET http://localhost:81/api/permissions?resource_id=4
+curl -H "Accept: application/json" -H "Content-type: application/json" -X GET -d '{"resource_id":"2"}' http://localhost:81/api/permissions
 
     * resource_id - айді ресурсу для якого витягаємо пермішни
 
@@ -77,46 +77,11 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
       "status": "success"
     }
 
+DELETE RESOURCE BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"resource_id":"2"}' http://ecomap.new//api/resources
 
+DELETE ROLE BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"role_id":"2"}' http://ecomap.new/api/roles
 
-GET ALL ROLES
-curl -H "Accept: application/json" -H "Content-type: application/json" -X GET  http://localhost:81/api/roles
-{
-  "Moderator": 3,
-  "admin": 1,
-  "curl_edited": 4,
-  "user": 2
-}
-
-ADD ROLE
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_name":"unique_role_name"}' http://localhost:81/api/roles
-
-    резульати:
-        if success :
-        {
-          "added_role": "unique_resource_name",
-          "added_role_id": 38
-        }
-
-        if already exists:
-
-        {
-          "error": "Already exists"
-        }
-
-        else : keyerror - status 400 bad request
-
-EDIT ROLE_BY_ID:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"new_role_name":"curl_edited", "role_id" : 4}' http://localhost:81/api/roles
-    result:
-    {
-    "edited": "curl_edited",
-    "status": "success"
-    }
-
-
-ADD ROLE PERMISSION
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_id":"2", "permission_id":6}' http://localhost:81/api/role_permissions
-
-GET ROLE PERM BY ROLE ID
-curl -X GET http://localhost:81/api/role_permissions?role_id=2
+DELETE PERMISSION BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"permission_id":"7"}' http://ecomap.new/api/permissions

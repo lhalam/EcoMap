@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html ng-app="admin">
 <head>
-	<title></title>
-	 <script src="/js/angular.min.js"></script>
-	 <script type="text/javascript" src="/js/admin.js"></script>
-	 <link rel="stylesheet" type="text/css" href="/css/admin.css">
-	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
+  <title></title>
+   <script src="/js/angular.min.js"></script>
+   <script type="text/javascript" src="/js/admin.js"></script>
+   <link rel="stylesheet" type="text/css" href="/css/admin.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
 
 </head>
 <body ng-controller="mainCtrl">
-	<div class="container">
-  		<h2>Justified Button Groups</h2>
-  		<div class="btn-group btn-group-justified" >
-    		<div class="btn-group">
-      			<button type="button" class="btn btn-primary" ng-click="loadRes()">Resource</button>
-    		</div>
-   			<div class="btn-group">
-      			<button type="button" class="btn btn-primary" ng-click="loadPermis()">Permisions</button>
-    		</div>
-    		<div class="btn-group">
-     			 <button type="button" class="btn btn-primary">Role</button>
-    		</div>
-  		</div>
-	</div>
+  <div class="container">
+      <h2>Justified Button Groups</h2>
+      <div class="btn-group btn-group-justified" >
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" ng-click="loadRes()">Resource</button>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" ng-click="loadPermis()">Permisions</button>
+        </div>
+        <div class="btn-group">
+           <button type="button" class="btn btn-primary">Role</button>
+        </div>
+      </div>
+  </div>
 
-	<div class="container" ng-show="resourceShow">
+  <div class="container" ng-show="resourceShow">
   <h2>Basic Table</h2>           
  <div class="row">
- 	<div class="col-md-9">
- 	<table class="table table-nonfluid ">
+  <div class="col-md-9">
+  <table class="table table-nonfluid ">
     <thead>
       <tr>
         <th>Resource</th>
@@ -39,14 +39,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="(name,ojb) in tablesData">
- 		<td>{{name|angular}}</td>
- 		<td><a href="">edit</a> / <a href="">delete</a></td>
+      <tr ng-repeat="(name,id) in acceptedData">
+    <td> <label ng-hide="isEdit">{{name|angular}}</label>
+        <div class="col-sm-7" ng-show="isEdit">
+              <input class="form-control input-sm"  type="text" ng-model="name" ng-blur="editRes(name,id)">
+        </div>
+    </td>
+    <td><a href="" ng-click="editShow()">edit</a> / <a href="" ng-click="deleteRes(name)">delete</a></td>
+
       </tr>
 
     </tbody>
   </table>
- 	</div>
+  </div>
  </div>
 </div>
 
@@ -62,12 +67,12 @@
           <h4 class="modal-title">Create new resource</h4>
         </div>
         <div class="modal-body">
-          	<div class="row">
-          		<div class="col-xs-4">
-          			<p>Add name</p>
-    				<input type="text" class="form-control" placeholder="Name" ng-model="newRes">
-  				</div>
-          	</div>
+            <div class="row">
+              <div class="col-xs-4">
+                <p>Add name</p>
+            <input type="text" class="form-control" placeholder="Name" ng-model="newRes">
+          </div>
+            </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addRes(newRes)">Submit</button>
@@ -81,29 +86,29 @@
       
 <div class="container" ng-show="permisShow">
 <ul>
-	<li ng-repeat="(tableName,tableObj) in tablesData">
-		<div class="table-responsive">          
-  		<table class="table">
-    	  <thead>
-      	  <tr>
-        	  <th>Action</th>
-        	  <th>Resource</th>
-        	  <th>Modifier</th>
-        	  <th>Edit</th>
-      	  </tr>
-    	  </thead>
-    	  <tbody>
-      	  <tr ng-repeat="(methodName,methodObj) in tableObj">
-      	  	  <td>{{method |angular}}</td>
-      	  	  <td>{{tableName |angular}}</td>
-      	  	  <td>{{methodObj |angular}}</td>
-      	  </tr>
-    	  </tbody>
-  		</table>
+  <li ng-repeat="(tableName,tableObj) in tablesData">
+    <div class="table-responsive">          
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Resource</th>
+            <th>Modifier</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(methodName,methodObj) in tableObj">
+              <td>{{method |angular}}</td>
+              <td>{{tableName |angular}}</td>
+              <td>{{methodObj |angular}}</td>
+          </tr>
+        </tbody>
+      </table>
   </div>
 </div>
 </div>
-	</li>
+  </li>
 </ul>
  
 

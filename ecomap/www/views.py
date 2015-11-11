@@ -410,7 +410,7 @@ def get_resource():
         edit_data = request.get_json()
         try:
             db.edit_resource_by_id(edit_data['resource_name'],
-                             edit_data['resource_id'])
+                                   edit_data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['resource_name'])

@@ -174,14 +174,15 @@ def edit_resource_name(new_resource_name, resource_id):
 @retry_query(tries=3, delay=1)
 def check_resource_deletion(res_id):
     """Serching connection with parent table "permission"
-        if match found abort entering to DB
-        if match not found deleting resource
-        argument res_id = key for searching in parent table
-                          "permission" 
+       if match found abort entering to DB
+       if match not found deleting resource
+       argument res_id = key for searching in parent table
+       "permission".
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `resource_id` FROM `permission` WHERE `resource_id`=%s;"""
+        query = """SELECT `resource_id` FROM `permission` WHERE
+                   `resource_id`=%s;"""
         cursor.execute(query, (res_id))
     return cursor.fetchall()
 
@@ -198,6 +199,7 @@ def delete_resource_by_id(res_id):
         conn.commit()
     return True
 
+
 @retry_query(tries=3, delay=1)
 def get_all_roles():
     """Return all roles in db.
@@ -208,9 +210,6 @@ def get_all_roles():
         query = """SELECT `id`, `name` FROM `role`;"""
         cursor.execute(query)
         return cursor.fetchall()
-
-
-
 
 
 @retry_query(tries=3, delay=1)
@@ -260,7 +259,8 @@ def check_role_deletion(role_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `role_id` FROM `role_permission` WHERE `role_id`=%s;"""
+        query = """SELECT `role_id` FROM `role_permission` WHERE
+                   `role_id`=%s;"""
         cursor.execute(query, (role_id))
     return cursor.fetchall()
 
@@ -337,6 +337,7 @@ def get_permission_id(resource_id, action, modifier):
         cursor.execute(query, (resource_id, action, modifier))
         return cursor.fetchone()[0]
 
+
 @retry_query(tries=3, delay=1)
 def check_permission_deletion(permission_id):
     """Serching connection with parent table "role_permission"
@@ -347,8 +348,8 @@ def check_permission_deletion(permission_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `permission_id` FROM `role_permission` 
-                    WHERE `permission_id`=%s;"""
+        query = """SELECT `permission_id` FROM `role_permission`
+                   WHERE `permission_id`=%s;"""
         cursor.execute(query, (permission_id))
     return cursor.fetchall()
 
@@ -364,7 +365,6 @@ def delete_permission_by_id(permission_id):
         cursor.execute(query, (permission_id))
         conn.commit()
     return True
-
 
 
 @retry_query(tries=3, delay=1)

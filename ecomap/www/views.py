@@ -29,13 +29,12 @@ class UploadForm(Form):
     image_file = FileField('Image file')
     submit = SubmitField('Submit')
 
-    def validate_image_file(self, field):  # if name starts with validate_ + <fieldname>
-                                            # flask wtf defines function as a standard validation
+    def validate_image_file(self, field):
         if field.data.filename[-4:].lower() != '.jpg':
-            raise ValidationError('Invalid file extension')  # exception from flask wtf
+            raise ValidationError('Invalid file extension')
         if imghdr.what(field.data) != 'jpeg':
             x = imghdr.what(field.data)
-            raise ValidationError('Invalid image format %s' %x)
+            raise ValidationError('Invalid image format %s' % x)
 
 
 @app.route('/api/test_photo', methods=['GET', 'POST'])
@@ -43,8 +42,8 @@ def test_photo():
     image = None
     form = UploadForm()
     if form.validate_on_submit():
-        image = '/image_profile' + form.image_file.data.filename  # image path with custom name
-        form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)  # save method of data.
+        image = '/image_profile' + form.image_file.data.filename
+        form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)
         #  app.static_folder - default flask config
     return render_template('photo_test.html', form=form, image=image)
 
@@ -596,8 +595,8 @@ def permissions():
             return jsonify(error="Bad Request[key_error]"), 400
         try:
             added_perm_id = db.get_permission_id(data['resource_id'],
-                                                data['action'],
-                                                data['modifier'])
+                                                 data['action'],
+                                                 data['modifier'])
             logger.warning('selecet by id')
             logger.warning(added_perm_id)
         except KeyError:
@@ -610,9 +609,9 @@ def permissions():
         edit_data = request.get_json()
         try:
             db.edit_permission(edit_data['new_action'],
-                                      edit_data['new_modifier'],
-                                      edit_data['permission_id'],
-                                      edit_data['new_description'])
+                               edit_data['new_modifier'],
+                               edit_data['permission_id'],
+                               edit_data['new_description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited_perm_id=edit_data['permission_id'])

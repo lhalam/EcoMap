@@ -305,7 +305,7 @@ def get_permission_id(resource_id, action, modifier):
         query = """SELECT `id` FROM `permission` WHERE `resource_id`=%s AND
                    `action`=%s AND `modifier`=%s;"""
         cursor.execute(query, (resource_id, action, modifier))
-        return cursor.fetchone()
+        return cursor.fetchone()[0]
 
 
 @retry_query(tries=3, delay=1)

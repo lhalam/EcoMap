@@ -532,16 +532,24 @@ def roles():
             db.insert_role(data['role_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_resource=data['role_name'])
+         # todo change to uniqueIndentifyEror or Exception
+        except DBPoolError:
+            return jsonify(error="Already exists"), 400
+        try:
+            added_role_id = db.get_role_id(data['role_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error_add]"), 400
+        return jsonify(added_role=data['role_name'],
+                       added_role_id=added_role_id)
 
     # edit role by id
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+            db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['role_name'])
+        return jsonify(status="success", edited=edit_data['new_role_name'])
 
     # # edit role by value
     # if request.method == "PUT" and request.get_json():

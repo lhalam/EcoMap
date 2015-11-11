@@ -77,3 +77,38 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
       "status": "success"
     }
 
+ADD ROLE
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_name":"unique_role_name"}' http://localhost:81/api/roles
+
+    резульати:
+        if success :
+        {
+          "added_role": "unique_resource_name",
+          "added_role_id": 38
+        }
+
+        if already exists:
+
+        {
+          "error": "Already exists"
+        }
+
+        else : keyerror - status 400 bad request
+
+
+EDIT ROLE_BY_ID:
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"new_role_name":"curl_edited", "role_id" : 4}' http://localhost:81/api/roles
+    result:
+    {
+    "edited": "curl_edited",
+    "status": "success"
+    }
+
+GET ALL ROLES
+curl -H "Accept: application/json" -H "Content-type: application/json" -X GET  http://localhost:81/api/roles
+{
+  "Moderator": 3,
+  "admin": 1,
+  "curl_edited": 4,
+  "user": 2
+}

@@ -3,83 +3,23 @@
 This module holds all views controls for
 ecomap project.
 """
-# import sys
-from _mysql import IntegrityError
 import json
-import imghdr
-import os
-import time
 
-from flask import render_template, request, jsonify, Response, g
-from flask_login import login_user, logout_user, login_required, current_user
-from flask.ext.wtf import Form
-from flask_wtf import Form
-
-from wtforms import FileField, SubmitField, ValidationError
+from flask import render_template, request, jsonify, Response
+from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr
 
 from ecomap.app import app, logger
 from ecomap.db import util as db
-# from ecomap.src.python.ecomap.db.db_pool import DBPoolError
 from ecomap.db.db_pool import DBPoolError
-
-# class UploadForm(Form):
-#     image_file = FileField('Image file')
-#     submit = SubmitField('Submit')
-#
-#     def validate_image_file(self, field):  # if name starts with validate_ + <fieldname>
-#                                            # flask wtf defines function as a standard validation
-#         if field.data.filename[-4:].lower() != '.jpg':
-#             raise ValidationError('Invalid file extension')  # exception from flask wtf
-#         if imghdr.what(field.data) != 'jpeg':
-#             x = imghdr.what(field.data)
-#             raise ValidationError('Invalid image format %s' %x)
-
-
-# @app.route('/api/test_photo', methods=['GET', 'POST'])
-# def test_photo():
-#     image = None
-#     form = UploadForm()
-#     if form.validate_on_submit():
-#         image = '/image_profile' + form.image_file.data.filename  # image path with custom name
-#         form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)  # save method of data.
-#         #  app.static_folder - default flask config
-#     return render_template('photo_test.html', form=form, image=image)
-
-
-# @app.before_request
-# def load_users():
-#     if current_user.is_authenticated:
-#         g.user = current_user.first_name
-#     else:
-#         anon = usr.Anonymous()
-#         g.user = anon.username
-#
-
-def make_json(sql_list):
-    """
-    MOVE THIS SOMEWHERE AND RENAME
-    PARSES DB TUPLE INTO JSON
-    :param sql_list:
-    :return:
-    """
-    dct = {}
-    for (resource_id, resource, method, perm, role_id, role) in sql_list:
-        if resource not in dct:
-            dct[resource] = {}
-            dct[resource] = {'resource_id': int(resource_id)}
-        if method not in dct[resource]:
-            dct[resource][method] = {}
-        if role not in dct[resource][method]:
-            dct[resource][method][role] = {}
-            dct[resource][method][role].update({'role_id': int(role_id),
-                                                'perm': perm})
-    return dct
 
 
 @app.route("/api/admin")
 def admin():
+    """Controller for retrieving admin page from template.
+    return: renders html template with angular app.
+    """
     return render_template("admin.html")
 
 
@@ -87,7 +27,7 @@ def admin():
 def index():
     """Controller starts main application page.
 
-    return: renders html template.
+    return: renders html template with angular app.
     """
     return render_template("index.html")
 
@@ -108,7 +48,6 @@ def login():
             Status 401 - Unauthorized
         - if login data has invalid format:
             Status 400 - Bad Request
-
     """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
@@ -130,42 +69,6 @@ def login():
         if not user.verify_password(data['password']):
             return jsonify(error="Invalid password, try again.",
                            logined=0), 401
-
-
-@app.route("/api/change_password", methods=["GET"])
-def change_password():
-    """handler for change password
-    return:
-        - if succeed:
-            Status 200 - OK
-        - if password was invalid:
-            json with error message
-            {'error':'message'}
-            Status 401 - Unauthorized
-        - if data has invalid format:
-            Status 400 - Bad Request
-
-    """
-    logger.warning('CURRENT')
-    logger.warning(current_user)
-    if current_user.is_authenticated:
-        user = current_user
-        logger.warning('AUTHEND')
-        logger.warning(current_user._get_current_object())
-        logger.warning(dir(current_user))
-        return jsonify(authentificated=(user.uid + " " + user.first_name),
-                       dir=dir(user), uid=user.uid, fn=user.first_name,
-                       ln=user.last_name, pas=user.password, mail=user.email,
-                       cu=current_user.__dict__)
-    if not current_user.is_authenticated:
-        user = usr.Anonymous()
-        logger.warning('NOT AUTH')
-        logger.warning(user.username)
-        return jsonify(error="you are not logged in - you are anon.",
-                       logined=0, cu=current_user.__dict__), 401
-        # if not user.verify_password(data['password']):
-        #     return jsonify(error="Invalid password, try again.",
-        #                    logined=0), 401
 
 
 @app.route("/api/logout", methods=["POST", 'GET'])
@@ -227,6 +130,11 @@ def register():
 
 @app.route("/api/email_exist", methods=['POST'])
 def email_exist():
+    """Function for AJAX call from frontend.
+    Validates unique email identifier before registering a new user
+
+    :return: json with status 200 or 400
+    """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         user = usr.get_user_by_email(data['email'])
@@ -242,6 +150,7 @@ def get_problems():
     """
     Get all moderated problems in
      brief (id, title, coordinates, type and status);
+
     return: list of jsons
     """
     data = [
@@ -261,8 +170,7 @@ def get_problems():
 
 @app.route("/api/problems/<int:id>", methods=['GET'])
 def get_problems_by_id(id):
-    """
-    get detailed problem description
+    """Get detailed problem description.
     (all information from tables 'Problems', 'Activities', 'Photos')
     by it's id;
     """
@@ -381,8 +289,6 @@ def post_problem():
     """
     if request.method == 'POST' and request.form:
         input_data = request.form
-        # logger.warning(input_data)
-        # logger.warning(request.content_type)
         try:
             input_data['type']
         except KeyError:
@@ -403,7 +309,7 @@ def post_problem():
                 "insertId": 191,
                 "serverStatus": 2,
                 "warningCount": 0,
-                "message": "\u0000",
+                "message": u"\u0000",
                 "protocol41": True,
                 "changedRows": 0
             }
@@ -412,9 +318,9 @@ def post_problem():
 
 
 # ADMIN PAGE API
-# todo add new DELETE method
+# TODO change return to abort()
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
-def get_resource():
+def resources():
     """Get list of site resources needed for administration
     and server permission control.
     method PUT:
@@ -439,7 +345,7 @@ def get_resource():
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         except DBPoolError:
-            return jsonify(error="Already exists]"), 400
+            return jsonify(error="Resource already exists"), 400
         try:
             added_res_id = db.get_resource_id(data['resource_name'])
         except KeyError:
@@ -447,13 +353,12 @@ def get_resource():
         return jsonify(added_resource=data['resource_name'],
                        resource_id=added_res_id[0])
 
-    # edit resource by id
     # todo add unique handler!
     if request.method == "PUT" and request.get_json():
         data = request.get_json()
         try:
             db.edit_resource_name(data['new_resource_name'],
-                                   data['resource_id'])
+                                  data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=data['new_resource_name'])
@@ -522,25 +427,6 @@ def roles():
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=edit_data['new_role_name'])
 
-    # # edit role by value
-    # if request.method == "PUT" and request.get_json():
-    #     edit_data = request.get_json()
-    #     try:
-    #         db.edit_role_value(edit_data['old_role_value'],
-    #                            edit_data['new_role_value'])
-    #     except KeyError:
-    #         return jsonify(error="Bad Request[key_error]"), 400
-    #     return jsonify(status="success", edited=edit_data['new_role_value'])
-
-    # delete role by id
-    # if request.method == "DELETE" and request.get_json():
-    #     del_data = request.get_json()
-    #     try:
-    #         db.delete_role_by_id(del_data['role_name'], del_data['role_id'])
-    #     except KeyError:
-    #         return jsonify(error="Bad Request[key_error]"), 400
-    #     return jsonify(status="success",
-    #                    deleted_resource=del_data['role_name'])
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         if not db.check_role_deletion(del_data['role_id']):
@@ -562,8 +448,8 @@ def roles():
 
 @app.route("/api/permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
 def permissions():
-    """get and add actions of
-    server permission control.
+    """Controller used for mange getting and adding actions of
+    server permission options.
 
        :return:
             - list of lists with permission data
@@ -578,16 +464,13 @@ def permissions():
             db.insert_permission(data['resource_id'],
                                  data['action'],
                                  data['modifier'],
-                                 data['description']
-                                 )
+                                 data['description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         try:
             added_perm_id = db.get_permission_id(data['resource_id'],
                                                  data['action'],
                                                  data['modifier'])
-            logger.warning('selecet by id')
-            logger.warning(added_perm_id)
         except KeyError:
             return jsonify(error="Bad Request[key_error_add]"), 400
 
@@ -619,13 +502,13 @@ def permissions():
             return jsonify(error="Cannot delete!")
 
     resource_id = request.args.get('resource_id')
-    d = db.get_all_permissions_from_resource(resource_id)
-    dc = {}
-    if d:
-        for res in d:
-            dc.update({'permission_id': res[0], 'action': res[1],
-                       'modifier': res[2], 'description': res[3]})
-    return Response(json.dumps(dc), mimetype='application/json')
+    permission_tuple = db.get_all_permissions_from_resource(resource_id)
+    parsed_json = {}
+    if permission_tuple:
+        for res in permission_tuple:
+            parsed_json.update({'permission_id': res[0], 'action': res[1],
+                                'modifier': res[2], 'description': res[3]})
+    return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
 @app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
@@ -671,24 +554,22 @@ def get_role_permission():
     role_id = request.args.get('role_id')
     permissions_of_role = db.get_role_permission(role_id)
     all_permissions = db.get_all_permissions()
-    dc = {}
+    parsed_json = {}
     if all_permissions:
-        dc['all_permissions'] = []
-        dc['actual'] = []
+        parsed_json['all_permissions'] = []
+        parsed_json['actual'] = []
         for res in all_permissions:
-            dc['all_permissions'].append({'action': res[1],
-                                          'modifier': res[2],
-                                          'description': res[3]})
+            parsed_json['all_permissions'].append({'action': res[1],
+                                                   'modifier': res[2],
+                                                   'description': res[3]})
 
-            dc['actual'] = [({'action': x[0], 'modifier': x[1],
-                              'description': x[2]}) for x in
-                            permissions_of_role]
+            parsed_json['actual'] = [({'action': x[0], 'modifier': x[1],
+                                       'description': x[2]}) for x in
+                                     permissions_of_role]
 
-    return Response(json.dumps(dc), mimetype='application/json')
+    return Response(json.dumps(parsed_json), mimetype='application/json')
+
 
 if __name__ == "__main__":
     app.run()
     app.logger = logger
-    # usr.login_manager.init_app(app)
-    # user = usr.User.get(username="admin")
-    # login_user(user, remember=True)

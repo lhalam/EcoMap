@@ -1,6 +1,28 @@
 import json
 from pprint import pprint
 
+
+def make_json(sql_list):
+    """MOVE THIS SOMEWHERE AND RENAME
+    PARSES DB TUPLE INTO JSON
+    :param sql_list:
+    :return:
+    """
+    dct = {}
+    for (resource_id, resource, method, perm, role_id, role) in sql_list:
+        if resource not in dct:
+            dct[resource] = {}
+            dct[resource] = {'resource_id': int(resource_id)}
+        if method not in dct[resource]:
+            dct[resource][method] = {}
+        if role not in dct[resource][method]:
+            dct[resource][method][role] = {}
+            dct[resource][method][role].update({'role_id': int(role_id),
+                                                'perm': perm})
+    return dct
+
+
+
 # json = {
 #
 #  "resource_name": {

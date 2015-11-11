@@ -525,14 +525,14 @@ def roles():
             - if no resource in DB
                 return empty dict
     """
-
+    # todo MODULE FRONT UNIQUE VALIDATION
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
             db.insert_role(data['role_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-         # todo change to uniqueIndentifyEror or Exception
+         # todo change to uniqueIndentifyError or Exception
         except DBPoolError:
             return jsonify(error="Already exists"), 400
         try:
@@ -640,10 +640,10 @@ def permissions():
 
     resource_id = request.args.get('resource_id')
     d = db.get_all_permissions_from_resource(resource_id)
-    dc = []
+    dc = {}
     if d:
         for res in d:
-            dc.append({'permission_id': res[0], 'action': res[1],
+            dc.update({'permission_id': res[0], 'action': res[1],
                                 'modifier': res[2],
                                 'description': res[3]})
     # parsed_data = db.get_all_permissions_from_resource()
@@ -665,9 +665,46 @@ def get_all():
     res = make_json(parsed_data)
     return jsonify(res)
 
+#BY ROLE ID
 @app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
 def get_role_permission():
-    pass
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        try:
+            db.add_role_permission(data['role_id'],
+                                 data['permission_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+
+        return jsonify(added_role_permission_for=data['role_id'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.edit_role(edit_data['description'],
+                        edit_data['role_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+
+
+    role_id = request.args.get('role_id')
+    permissions_of_role = db.get_role_permission(role_id)
+    all_permissions = db.get_all_permissions()
+    dc = {}
+    if all_permissions:
+        dc['all_permissions'] = []
+        dc['actual'] = []
+        for res in all_permissions:
+            dc['all_permissions'].append({'action': res[1],
+                                          'modifier': res[2],
+                                          'description': res[3]})
+
+            dc['actual'] = [({'action': x[0], 'modifier': x[1],
+                        'description': x[2]}) for x in permissions_of_role]
+
+
+    return Response(json.dumps(dc), mimetype='application/json')
 
 if __name__ == "__main__":
     app.run()

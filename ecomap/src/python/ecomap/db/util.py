@@ -261,6 +261,19 @@ def get_all_permissions_from_resource(resource_id):
         cursor.execute(query, (resource_id, ))
         return cursor.fetchall()
 
+@retry_query(tries=3, delay=1)
+def get_all_permissions():
+    """Find all permissions by resource.
+    :params: resource_id - id of resource
+    :return: tuple, containing permissions
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `action`, `modifier`, `description`
+                   FROM `permission`;"""
+        cursor.execute(query)
+        return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def insert_permission(resource_id, action, modifier, description=''):
@@ -348,6 +361,17 @@ def add_role_permission(role_id, permission_id):
         cursor.execute(query, (role_id, permission_id))
         conn.commit()
 
+
+@retry_query(tries=3, delay=1)
+def get_role_permission(role_id):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.action, p.modifier, p.description
+                    FROM role_permission as rp
+                    LEFT JOIN permission as p  on rp.permission_id=p.id
+                    where role_id=%s;"""
+        cursor.execute(query, (role_id,))
+        return cursor.fetchall()
 
 @retry_query(tries=3, delay=1)
 def change_role_permission(new_permission_id, old_permission_id, role_id):

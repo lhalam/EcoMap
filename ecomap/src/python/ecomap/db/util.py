@@ -209,6 +209,7 @@ def get_all_roles():
 #         conn.commit()
 #     return True
 
+
 @retry_query(tries=3, delay=1)
 def get_role_id(role_name):
     """Return role id.

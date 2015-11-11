@@ -1,12 +1,10 @@
-app.controller('UserProfileCtrl', ['$scope', '$rootScope', '$cookies', '$http', function($scope, $rootScope, $cookies, $http){
-  $scope.closeProfile = function(){
-    $rootScope.userProfile = false;
-  };
+app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scope, $cookies, $http){
 
   $scope.user = {};
   $scope.user.id = $cookies.get("id");
 
-  console.log($scope.user.id);
+  $scope.body = angular.element(document.body);
+  $scope.body.addClass("body-scroll-shown");
 
   if($scope.user.id){
       $http({
@@ -64,5 +62,9 @@ app.controller('UserProfileCtrl', ['$scope', '$rootScope', '$cookies', '$http', 
   $scope.showAlert = function(){
     return $scope.alert;
   };
+
+  $scope.$on("$destroy", function handler() {
+    $scope.body.removeClass("body-scroll-shown");
+  });
   
 }]);

@@ -14,8 +14,12 @@ html,body, .wrapper{
     height: 100%;
 }
 
-.body-scroll-hidden{
+body{
   overflow: hidden;
+}
+
+.body-scroll-shown{
+  overflow-y: scroll;
 }
 
 .navbar.navbar-default{
@@ -301,7 +305,7 @@ form{
 /*Map styles*/
 .container-fluid.map-div{
     padding: 0;
-    height:90%;
+    height:100%;
 }
 #map{
     width: 100%;

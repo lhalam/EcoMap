@@ -70,7 +70,6 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
       $cookies.put('surname', responce.data.surname);
       $cookies.put('id', responce.data.id);
       $scope.user = {};      
-      $window.location.reload();
     },
       function errorCallback(responce){
         if(responce.status == 401 && responce.data['reason'] == "password"){
@@ -88,7 +87,6 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
       $cookies.remove('name');
       $cookies.remove('surname');
       $cookies.remove('id');
-      $window.location.reload();
     },
       function errorCallback(data){});
   };

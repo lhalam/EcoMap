@@ -421,3 +421,29 @@ def change_role_permission(new_permission_id, old_permission_id, role_id):
                    `permission_id`=%s AND `role_id`=%s;"""
         cursor.execute(query, (new_permission_id, old_permission_id, role_id))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def delete_permissions_by_role_id(role_id):
+    """Deletes all permissions from role_permission table by role_id.
+    :params: role_id - id of role
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE `role_permission` FROM `role_permission`
+                   WHERE `role_id`=%s;"""
+        cursor.execute(query, (role_id, ))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_permission_id_by_description(description):
+    """Return permission id by it's unique description.
+    :params: description - description of permission
+    :return: tuple, containing permission id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `permission` WHERE `description`=%s;"""
+        cursor.execute(query, (description, ))
+        return cursor.fetchone()

@@ -365,6 +365,11 @@ def add_role_permission(role_id, permission_id):
 
 @retry_query(tries=3, delay=1)
 def get_role_permission(role_id):
+    """
+    Get all permissions for specific role by it id.
+    :param role_id:
+    :return: tuple of permissions
+    """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.action, p.modifier, p.description

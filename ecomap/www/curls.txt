@@ -1,118 +1,122 @@
-LOGIN
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"email":"new22_curl@gmail.com", "password": "curl"}' http://localhost:81/api/login
-
-REGISTER
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"firstName":"222curl", "lastName":"222api", "email":"new22_curl@gmail.com", "password": "curl"}' http://localhost:81/api/register
-
-PROBLEMPOST
-<VALIID>:
-curl -H "Content-Type: multipart/form-data" -F 'type=2' -F 'userId=2'  http://localhost:81/api/problempost
-
-<EXAMPLE>
-#curl -i -H "Authorization":"eyJhbGciOiJIUzI1NiIsImV4cCI6MTQyNjcwNTY4NiwiaWF0IjoxNDI2NzAyMDg2fQ.eyJpZCI6MTc3fQ.yBwLFez2RnxTojLniL8YLItWVvBb90HF_yfhcsyg3lY"     -F 'user_data={"user data": {"preferred_city":"Newyork","within_radious":"5"}};type=application/json'         http://localhost:81/api/problempost
-#curl -H "Content-Type: multipart/form-data" -F 'user_data={"user data": {"preferred_city":"Newyork","within_radious":"5"}};type=application/json' http://localhost:81/api/problempost
-
-<OK>
-GET ALL PERMISSION DATA JSON
-curl -H "Accept: application/json" -H "Content-type: application/json" -X GET http://localhst:81/api/get_all_permissions
-
-<OK>
 GET_RESORCE:
 curl -H "Accept: application/json" -H "Content-type: application/json" -X GET http://localhost:81/api/resources
 
-<OK>
-DELETE_RESORCE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"resource_name":"CurlEdited"}' http://localhost:81/api/resources
+    result
+    {
+      "Admin": 4,
+      "NEW": 5,
+      "Page": 2,
+      "Problems": 3,
+      "Test_Page": 10,
+      "Unique": 9,
+      "ffrom curle2": 12,
+      "from_curl": 11,
+      "newnewnew": 13
+    }
 
-<OK>
 POST RESOURCE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_name":"Test_Page"}' http://localhost:81/api/resources
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_name":"unique_resource_name"}' http://localhost:81/api/resources
 
-GET PERMISSIONS
-curl -H "Accept: application/json" -H "Content-type: application/json" -X GET http://localhost:81/api/permissions
+    резульати:
+        if success :
+        {
+          "added_resource": "unique_resource_name",
+          "resource_id": 38
+        }
 
-ADD PERMISSIONS (and resource!)
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_name":"Problem", "action":"DEL", "modifier":"Any"}' http://localhost:81/api/permissions;
+        if already exists:
+
+        {
+          "error": "Already exists"
+        }
+
+        else : keyerror - status 400 bad request
 
 EDIT RESOURCE_BY_ID:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"resource_name":"curl_edited", "resource_id" : 1}' http://localhost:81/api/resources
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"new_resource_name":"curl_edited", "resource_id" : 1}' http://localhost:81/api/resources
+    result:
+    {
+    "edited": "curl_edited",
+    "status": "success"
+    }
 
-<OK>
-EDIT RESOURCE_BY_VALUE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"old_resource_value":"Problem", "new_resource_value" : "CurlEdited"}' http://localhost:81/api/resources
+ADD PERMISSION FOR RESOURCE BY RESOURCE ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_id":"2", "action":"GET", "modifier":"Any", "description":"some text"}' http://localhost:81/api/permissions
+     запрос:
+     resource_id - айди ресурса на который навешиваем пермишны. ты его получаешь при создании.
+     action, modifier, description - новые значения с фронта (юзер ввел в данные в твою форму) которые нам отправляются
 
-<OK>
-GET ROLE
- curl -H "Accept: application/json" -H "Content-type: application/json" -X GET http://localhost:81/api/roles
-
-<OK>
-ADD_ROLE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_name":"SuperAdmin"}' http://localhost:81/api/roles
-
-<OK>
-DELETE_ROLE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"role_name":"Admin"}' http://localhost:81/api/roles
-
-
-EDIT ROLE NAME BY ID:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"role_name":"User", "role_id":"2"}' http://ecomap.new/api/roles
-
-<OK>
-EDIT ROLE_BY_VALUE:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"old_role_value":"Admin", "new_role_value" : "CurlEdited"}' http://localhost:81/api/roles
-
-<OK>
-UPDATE PERMISSIONS
- curl -H "Accept application/json" -H "Content-type: application/json" -X PUT -d '{"resource_name":"Problem", "action" : "GET", "role_name": "Admin", "modifier":"Any"}' http://localhost:81/api/permissions
-
-<OK>
-NEW JOIN
-select r.resource_name, p.action, p.modifier, role.name from permission as p left join resource as r on p.resource_id = r.id left join role on p.role_id = role.id;
+     ответ якщо все ок:
+     {
+      "added_permission_for": "get any" *(поле description)
+        'permission_id': 15
+    }
 
 
-<OLD>JOIN FOR ROLE_PERM
-select * from role as r join role_permission as rp on r.id = rp.id join permission as p on rp.id = p.id;
+GET ALL PERMISSIONS BY RESOURCE ID
+curl -X GET http://localhost:81/api/permissions?resource_id=4
 
-<OLD>JOIN MAIN!!!
-select r.name, p.action, p.modifier, res.resource_name from role as r join role_permission as rp on r.id = rp.id join permission as p on rp.id = p.id join resource as res on p.resourse_id = res.id;
+    * resource_id - айді ресурсу для якого витягаємо пермішни
 
-ADD ROLE_PERMISSIONS_FOR_RESOURCE
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_name":"Problem", "action":"DELETE", "modifier":"Any", "role_name":"Admin"}' http://localhost:81/api/role_permissions;
+    результат: получаешь все пермишны для конкретного ресурса. их может быть много
+    [
+        {"action": "GET", "permission_id": 1, "modifier": "Any", "description": "some text"},
+        {"action": "PUT", "permission_id": 2, "modifier": "Any", "description": "some text"},
+        {"action": "POST", "permission_id": 3, "modifier": "Any", "description": "some text"}
+    ]
 
+EDIT PERMISSION BY PERMISSION ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"permission_id":"6", "new_action":"DELETE", "new_modifier":"Any", "new_description":"DELETE ANY"}' http://localhost:81/api/permissions
 
+    * permission_id - айді пермышну для редагування
+    ключі з префіксом new - нові значення для редагування
 
-<OLD PARSE JSON>
-def js_js(sql_list):
-    dct = {}
-    for (resource, method, perm, role) in sql_list:
-        if resource not in dct:
-            dct[resource] = {}
-        if method not in dct[resource]:
-            dct[resource][method] = {}
-        # dct[resource][method] = {}
-        if role not in dct[resource][method]:
-            # dct[resource][method][perm] = {}
-            dct[resource][method][role] = []
-        if perm not in dct[resource][method][role]:
-            dct[resource][method][role].append({perm:role})
-            print [{k:v} for k,v in dct[resource][method].items()]
-
-    return dct
+    відповідь якщо все ок
+    {
+      "edited_perm_id": "6",
+      "status": "success"
+    }
 
 
-    def js_js(sql_list):
-    dct = {}
-    for (resource, method, perm, role) in sql_list:
-        if resource not in dct:
-            dct[resource] = {}
-        if method not in dct[resource]:
-            dct[resource][method] = []
-        # dct[resource][method] = {}
-        # if role not in dct[resource][method]:
-        #     # dct[resource][method][perm] = {}
-        #     dct[resource][method][role] = []
-        if role not in dct[resource][method]:
-            dct[resource][method].append({role: perm})
-            # print [{k:v} for k,v in dct[resource][method].items()]
-    return dct
 
+GET ALL ROLES
+curl -H "Accept: application/json" -H "Content-type: application/json" -X GET  http://localhost:81/api/roles
+{
+  "Moderator": 3,
+  "admin": 1,
+  "curl_edited": 4,
+  "user": 2
+}
+
+ADD ROLE
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_name":"unique_role_name"}' http://localhost:81/api/roles
+
+    резульати:
+        if success :
+        {
+          "added_role": "unique_resource_name",
+          "added_role_id": 38
+        }
+
+        if already exists:
+
+        {
+          "error": "Already exists"
+        }
+
+        else : keyerror - status 400 bad request
+
+EDIT ROLE_BY_ID:
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"new_role_name":"curl_edited", "role_id" : 4}' http://localhost:81/api/roles
+    result:
+    {
+    "edited": "curl_edited",
+    "status": "success"
+    }
+
+
+ADD ROLE PERMISSION
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_id":"2", "permission_id":6}' http://localhost:81/api/role_permissions
+
+GET ROLE PERM BY ROLE ID
+curl -X GET http://localhost:81/api/role_permissions?role_id=2

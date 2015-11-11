@@ -7,7 +7,6 @@ from db_pool import db_pool, retry_query
 logger = logging.getLogger('util')
 
 
-# todo fetch one;
 @retry_query(tries=3, delay=1)
 def get_user_by_email(email):
     # todo add roles SQL reference to user model???
@@ -26,14 +25,13 @@ def get_user_by_email(email):
     with db_pool().manager() as conn:
         logger.info('log from GET USER user by mail')
         q1 = conn.cursor()
-        query = """SELECT user.id, user.first_name, user.last_name,
+        sql = """SELECT user.id, user.first_name, user.last_name,
                  user.email, user.password,
-                 user_role.role_id FROM `user` INNER JOIN `user_role` ON
+                 user_role.role_id FROM `user` LEFT JOIN `user_role` ON
                  user.id = user_role.user_id WHERE user.email=%s;"""
-        q1.execute(query, (email,))
+        q1.execute(sql, (email,))
         db_userid = q1.fetchone()
         if db_userid:
-            # return only fetchone
             logger.info('DB.UTIL result!! %s %s %s %s %s' % (db_userid[0],
                                                              db_userid[1],
                                                              db_userid[2],
@@ -43,7 +41,7 @@ def get_user_by_email(email):
                     db_userid[4])
     return None
 
-# todo return fetchone
+
 @retry_query(tries=3, delay=1)
 def get_user_by_id(uid):
     """Function which returns user by uid.
@@ -52,15 +50,15 @@ def get_user_by_id(uid):
     user = None
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT user.first_name, user.last_name, user.email,
+        sql = """SELECT user.first_name, user.last_name, user.email,
                  user.password, user_role.role_id FROM `user`
-                 INNER JOIN `user_role` ON user.id = user_role.user_id
+                 LEFT JOIN `user_role` ON user.id = user_role.user_id
                  WHERE user.id=%s;"""
-        cursor.execute(query, (uid,))
+        cursor.execute(sql, (uid,))
         user = cursor.fetchone()
     return user
 
-# todo return true - change, transection
+
 @retry_query(tries=3, delay=1)
 def insert_user(first_name, last_name, email, password):
     """Adds new user into db.
@@ -92,11 +90,12 @@ def change_user_password(uid, new_pass):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
+        cursor.connection.autocommit(True)
         sql = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
         cursor.execute(sql, (new_pass, uid))
 
 
-# todo change logics to views. return
+# todo put,delete for resources
 @retry_query(tries=3, delay=1)
 def get_all_resources():
     """Gets all resources from db.
@@ -114,7 +113,7 @@ def get_all_resources():
                            [res for res in resource_list]]
     return parsed_data
 
-# todo delete it or merge
+
 @retry_query(tries=3, delay=1)
 def get_all_resource_id():
     """Return all resources id's.
@@ -127,7 +126,6 @@ def get_all_resource_id():
         return [x[0] for x in cursor.fetchall()]
 
 
-# todo error tuple
 @retry_query(tries=3, delay=1)
 def get_resource_id(resource_name):
     """Gets resource id.
@@ -141,7 +139,6 @@ def get_resource_id(resource_name):
         return cursor.fetchone()[0]
 
 
-# todo CHANGE true
 @retry_query(tries=3, delay=1)
 def add_resource(resource_name):
     """Adds new resource in db.
@@ -166,7 +163,7 @@ def edit_resource_by_id(res_name, res_id):
         cursor = conn.cursor()
         sql = """UPDATE `resource` SET `resource_name` = %s WHERE id = %s;"""
         cursor.execute(sql, (res_name, res_id))
-        conn.commit() # del
+        conn.commit()
     return True
 
 
@@ -229,7 +226,7 @@ def get_roles():
             parsed_data = [x for x in sql_response]
     return parsed_data
 
-# todo [0]
+
 @retry_query(tries=3, delay=1)
 def get_role_id(role_name):
     """Gets role id.
@@ -242,7 +239,7 @@ def get_role_id(role_name):
         cursor.execute(sql, (role_name, ))
         return cursor.fetchone()[0]
 
-# todo add only role
+
 @retry_query(tries=3, delay=1)
 def add_role(role_name):
     """Adds new role in db.
@@ -261,7 +258,7 @@ def add_role(role_name):
                          `resource_id`, `role_id`) VALUES (%s, %s, %s, %s)"""
                 cursor.execute(sql, (action, 'None', resource_id, role_id))
                 conn.commit()
-    return True #
+    return True
 
 
 @retry_query(tries=3, delay=1)
@@ -278,19 +275,19 @@ def edit_role_by_id(role_name, role_id):
     return True
 
 
-# @retry_query(tries=3, delay=1)
-# def edit_role_value(old_value, new_value):
-#     """ modify resource name in db.
-#     :params: old_value - name of role that had to be modified.
-#              new_value - new name of role in DB.
-#     """
-#     with db_pool().manager() as conn:
-#         cursor = conn.cursor()
-#         sql = """UPDATE `role` SET `name` = %s WHERE name = %s;"""
-#         cursor.execute(sql, (new_value, old_value))
-#         conn.commit()
-#     return True
-#
+@retry_query(tries=3, delay=1)
+def edit_role_value(old_value, new_value):
+    """ modify resource name in db.
+    :params: old_value - name of role that had to be modified.
+             new_value - new name of role in DB.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """UPDATE `role` SET `name` = %s WHERE name = %s;"""
+        cursor.execute(sql, (new_value, old_value))
+        conn.commit()
+    return True
+
 
 @retry_query(tries=3, delay=1)
 def delete_role_by_id(role_name, role_id):
@@ -306,17 +303,17 @@ def delete_role_by_id(role_name, role_id):
     return True
 
 
-# @retry_query(tries=3, delay=1)
-# def delete_role(role_name):
-#     """ delete resource name in db by its value.
-#     :params: role_name - name of role that had to be deleted.
-#     """
-#     with db_pool().manager() as conn:
-#         cursor = conn.cursor()
-#         sql = """DELETE FROM `role` WHERE `name` = %s;"""
-#         cursor.execute(sql, (role_name,))
-#         conn.commit()
-#     return True
+@retry_query(tries=3, delay=1)
+def delete_role(role_name):
+    """ delete resource name in db by its value.
+    :params: role_name - name of role that had to be deleted.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """DELETE FROM `role` WHERE `name` = %s;"""
+        cursor.execute(sql, (role_name,))
+        conn.commit()
+    return True
 
 
 @retry_query(tries=3, delay=1)
@@ -336,7 +333,7 @@ def get_permissions():
             parsed_data = [x for x in sql_response]
     return parsed_data
 
-# change
+
 @retry_query(tries=3, delay=1)
 def add_permission(resource_name):
     # def add_action_for_resource!

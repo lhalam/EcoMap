@@ -27,8 +27,8 @@ def get_user_by_email(email):
 #                  user.email, user.password,
 #                  user_role.role_id FROM `user` INNER JOIN `user_role` ON
 #                  user.id = user_role.user_id WHERE user.email=%s;"""
-#         # query = """SELECT user.id, user.first_name, user.last_name, user.email,
-#         #             user.password FROM user WHERE email=%s;"""
+#         # query = """SELECT user.id, user.first_name, user.last_name,
+#         #            user.email, user.password FROM user WHERE email=%s;"""
 #         cursor.execute(query, (email,))
 #         user_data = cursor.fetchone()
 #         return user_data
@@ -172,35 +172,6 @@ def edit_resource_name(new_resource_name, resource_id):
 
 
 @retry_query(tries=3, delay=1)
-def check_resource_deletion(res_id):
-    """Serching connection with parent table "permission"
-       if match found abort entering to DB
-       if match not found deleting resource
-       argument res_id = key for searching in parent table
-       "permission".
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `resource_id` FROM `permission` WHERE
-                   `resource_id`=%s;"""
-        cursor.execute(query, (res_id))
-    return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def delete_resource_by_id(res_id):
-    """delete resource in db.
-    :params: res_id - key for searching resource name in DB for deleting
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """DELETE FROM `resource` WHERE `id`=%s;"""
-        cursor.execute(query, (res_id))
-        conn.commit()
-    return True
-
-
-@retry_query(tries=3, delay=1)
 def get_all_roles():
     """Return all roles in db.
     :return: tuple, containing all roles
@@ -210,6 +181,33 @@ def get_all_roles():
         query = """SELECT `id`, `name` FROM `role`;"""
         cursor.execute(query)
         return cursor.fetchall()
+
+# @retry_query(tries=3, delay=1)
+# def delete_resource_by_id(res_name, res_id):
+#     """modify resource name in db.
+#     :params: res_name - name of resource that had to be deleted
+#              res_id - key for searching resource name in DB for deleting
+#     """
+#     with db_pool().manager() as conn:
+#         cursor = conn.cursor()
+#         sql = """DELETE FROM `resource` WHERE `resource_name`=%s AND
+#                  `id`=%s;"""
+#         cursor.execute(sql, (res_name, res_id))
+#         conn.commit()
+#     return True
+
+# @retry_query(tries=3, delay=1)
+# def delete_resource(res_name):
+#     """modify resource name in db.
+#     :params: res_name - name of resource that had to be deleted
+#
+#     """
+#     with db_pool().manager() as conn:
+#         cursor = conn.cursor()
+#         sql = """DELETE FROM `resource` WHERE `resource_name`=%s;"""
+#         cursor.execute(sql, (res_name,))
+#         conn.commit()
+#     return True
 
 
 @retry_query(tries=3, delay=1)
@@ -251,34 +249,6 @@ def edit_role(new_role_name, role_id):
 
 
 @retry_query(tries=3, delay=1)
-def check_role_deletion(role_id):
-    """Serching connection with parent table "role_permission"
-        if match found abort entering to DB
-        if match not found deleting role
-        argument role_id = key for searching in table "role_permission"
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `role_id` FROM `role_permission` WHERE
-                   `role_id`=%s;"""
-        cursor.execute(query, (role_id))
-    return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def delete_role_by_id(role_id):
-    """Delete role name in db.
-    :params: role_id - key for searching resource name in DB for deleting
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """DELETE FROM `role` WHERE `id`=%s;"""
-        cursor.execute(query, (role_id))
-        conn.commit()
-    return True
-
-
-@retry_query(tries=3, delay=1)
 def get_all_permissions_from_resource(resource_id):
     """Find all permissions by resource.
     :params: resource_id - id of resource
@@ -289,6 +259,20 @@ def get_all_permissions_from_resource(resource_id):
         query = """SELECT `id`, `action`, `modifier`, `description`
                    FROM `permission` WHERE `resource_id`=%s;"""
         cursor.execute(query, (resource_id, ))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_permissions():
+    """Find all permissions by resource.
+    :params: resource_id - id of resource
+    :return: tuple, containing permissions
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `action`, `modifier`, `description`
+                   FROM `permission`;"""
+        cursor.execute(query)
         return cursor.fetchall()
 
 
@@ -339,35 +323,6 @@ def get_permission_id(resource_id, action, modifier):
 
 
 @retry_query(tries=3, delay=1)
-def check_permission_deletion(permission_id):
-    """Serching connection with parent table "role_permission"
-        if match found abort entering to DB
-        if match not found deleting permission row
-        argument permission_id = key for searching in parent table
-                                 "role_permission"
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `permission_id` FROM `role_permission`
-                   WHERE `permission_id`=%s;"""
-        cursor.execute(query, (permission_id))
-    return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def delete_permission_by_id(permission_id):
-    """Delete permission row in db.
-    :params: permission_id - key for searching resource name in DB for deleting
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """DELETE FROM `permission` WHERE `id`=%s;"""
-        cursor.execute(query, (permission_id))
-        conn.commit()
-    return True
-
-
-@retry_query(tries=3, delay=1)
 def set_role_to_user(user_id, role_id):
     """Set role to user.
     :params: user_id - id of user
@@ -406,6 +361,18 @@ def add_role_permission(role_id, permission_id):
                    VALUES (%s, %s);"""
         cursor.execute(query, (role_id, permission_id))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_role_permission(role_id):
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.action, p.modifier, p.description
+                   FROM `role_permission` AS rp
+                   LEFT JOIN `permission` AS p  ON rp.permission_id=p.id
+                   WHERE `role_id`=%s;"""
+        cursor.execute(query, (role_id,))
+        return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)
@@ -448,3 +415,89 @@ def get_permission_id_by_description(description):
         cursor.execute(query, (description, ))
         return cursor.fetchone()
 
+
+@retry_query(tries=3, delay=1)
+def check_resource_deletion(res_id):
+    """Serching connection with parent table "permission"
+        if match found abort entering to DB
+        if match not found deleting resource
+        :params: res_id = key for searching in parent table "permission"
+        :return: tuple, empty if not found
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `resource_id` FROM `permission` WHERE
+                   `resource_id`=%s;"""
+        cursor.execute(query, (res_id))
+    return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def delete_resource_by_id(res_id):
+    """delete resource in db.
+    :params: res_id - key for searching resource name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `resource` WHERE `id`=%s;"""
+        cursor.execute(query, (res_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def check_permission_deletion(permission_id):
+    """Serching connection with parent table "role_permission"
+        if match found abort entering to DB
+        if match not found deleting permission row
+        :params: permission_id = key for searching in parent table
+                                 "role_permission"
+        :return: tuple, empty if not found
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `permission_id` FROM `role_permission`
+                   WHERE `permission_id`=%s;"""
+        cursor.execute(query, (permission_id))
+    return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def delete_permission_by_id(permission_id):
+    """Delete permission row in db.
+    :params: permission_id - key for searching resource name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `permission` WHERE `id`=%s;"""
+        cursor.execute(query, (permission_id))
+        conn.commit()
+    return True
+
+
+@retry_query(tries=3, delay=1)
+def check_role_deletion(role_id):
+    """Serching connection with parent table "role_permission"
+        if match found abort entering to DB
+        if match not found deleting role
+        :params: role_id = key for searching in table "role_permission"
+        :return: tuple, empty if not found
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `role_id` FROM `role_permission` WHERE
+                   `role_id`=%s;"""
+        cursor.execute(query, (role_id))
+    return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def delete_role_by_id(role_id):
+    """Delete role name in db.
+    :params: role_id - key for searching resource name in DB for deleting
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `role` WHERE `id`=%s;"""
+        cursor.execute(query, (role_id))
+        conn.commit()
+    return True

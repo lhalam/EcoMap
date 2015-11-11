@@ -1,26 +1,26 @@
 
 /* Nav bar*/
 body{
-	overflow-x:hidden;
-	overflow-y:hidden;
+    overflow-x:hidden;
+    overflow-y:hidden;
 }
 .navbar.navbar-default{
-	height: 3.7em;
-	text-transform:uppercase;
+    height: 3.7em;
+    text-transform:uppercase;
 }
 
 .navbar-brand{
     padding-top:0px;
 }
 .navbar img{
-	height: 70px;
+    height: 70px;
 }
 
 .nav.navbar-nav li{
-	height: 100%;
-	line-height: 4.5em;
-	vertical-align: middle;
-	cursor: pointer;	
+    height: 100%;
+    line-height: 4.5em;
+    vertical-align: middle;
+    cursor: pointer;    
 }
 
 /*Modal dialog styles*/
@@ -41,122 +41,122 @@ body{
 .problem_filter{
 }
 .toogle{
-	cursor: pointer;
-	position: absolute;
-	background-color: #ccc;
-	right: -3.6em;
-	bottom:1.6em;
-	-webkit-transform: rotate(-90deg);
-	border:1px solid transparent;
-	border-radius: 0 0 5px 5px;
-	padding: 0.1em;
-	z-index: 99999999;
+    cursor: pointer;
+    position: absolute;
+    background-color: #ccc;
+    right: -3.6em;
+    bottom:1.6em;
+    -webkit-transform: rotate(-90deg);
+    border:1px solid transparent;
+    border-radius: 0 0 5px 5px;
+    padding: 0.1em;
+    z-index: 99999999;
 
 }
 .list-group-item{
 
 }
 #filter{
-	position: absolute;
-	top:6.4em;
-	left: -25%;
-	border:2px solid #ccc;
-	-webkit-transition:1s;
-	transition:1s;
+    position: absolute;
+    top:6.4em;
+    left: -25%;
+    border:2px solid #ccc;
+    -webkit-transition:1s;
+    transition:1s;
 
 
 }
 .toggle_hide{
-	left: 0% !important;
+    left: 0% !important;
 
 }
 
 #filter h4{
-	text-align: center;
-	margin-bottom: 1.2em
+    text-align: center;
+    margin-bottom: 1.2em
 }
 
 /*inform about problem block*/
 #inform_probl_btn{
-	transition:0.1s;
+    transition:0.1s;
 }
 #inform_probl_btn:hover{
-	background-color: #aaa;
+    background-color: #aaa;
 }
 .inform_probl_block{
-	margin-left: 100%;
+    margin-left: 100%;
 }
 .hide_probl_block{
-	margin-left: 50%;
+    margin-left: 50%;
 }
 
 /*Create User Form*/
 .form-group input {
-	width: 90%
+    width: 90%
 }
 .form-group label{
-	text-align: center;
+    text-align: center;
 }
 
 #user_form{
-	width: 200px;
+    width: 200px;
 }
 #user_form input{
-	margin-top: 20px;
+    margin-top: 20px;
 }
 #user_form .form-group,.checkbox{
-	margin-left: 15px;
+    margin-left: 15px;
 }
 .checkbox {
-	font-size: 0.8em
+    font-size: 0.8em
 }
 #user_form button{
-	margin-left:25% 
+    margin-left:25% 
 }
 #user_form .btn.btn-primary {
-	width: 100px;
+    width: 100px;
 }
 .sing_in_buttons_block{
-	margin-top:1em;
-	margin-left: 5%;
+    margin-top:1em;
+    margin-left: 5%;
 }
 .sing_in_button{
-	display: inline-block;
-	background-color: #fff;
-	color: #777;
-	border:1px solid #ccc;
-	border-radius: 5px;
-	height: 2.2em;
-	width: 44%;
-	position: relative;
-	margin: 0 !important;
-	margin-left: 2% !important;
-	margin-bottom: -100% !important;
-	vertical-align: center;
-	line-height: 2.2em;
-	text-align: center;
+    display: inline-block;
+    background-color: #fff;
+    color: #777;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    height: 2.2em;
+    width: 44%;
+    position: relative;
+    margin: 0 !important;
+    margin-left: 2% !important;
+    margin-bottom: -100% !important;
+    vertical-align: center;
+    line-height: 2.2em;
+    text-align: center;
 }
 .sing_in_button:active{
-	border :2px solid #ccc ;
-	background-color: #ddd
+    border :2px solid #ccc ;
+    background-color: #ddd
 
 }
 .sing_in_button:focus{
-	border: none;
+    border: none;
 }
 .hidden{
-	display: none;
+    display: none;
 }
 /*registration form*/
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 .registr_block{
-	width:60%;
-	display: none;
-	margin-top: -20%;
-	font-family:'Open Sans',sans-serif;
-	transition :1s;
-	-webkit-transition:opacity 1s;
-	
+    width:60%;
+    display: none;
+    margin-top: -20%;
+    font-family:'Open Sans',sans-serif;
+    transition :1s;
+    -webkit-transition:opacity 1s;
+    
 }
 
 .registr_block h1{
@@ -187,8 +187,8 @@ form{
 
 }
 .registr_block input[type='submit']{
-	font-size: 1.3em;
-	margin-top: 1em;
+    font-size: 1.3em;
+    margin-top: 1em;
 }
 .registr_btn{
   width:100%;
@@ -208,16 +208,16 @@ form{
   background:#2288bb;
 }
 .visibible{
-	display: block;
+    display: block;
 }
 .warning{
-	margin-left: 5%;
-	margin-top: -1%;
-	text-transform: uppercase;
-	color: red;
+    margin-left: 5%;
+    margin-top: -1%;
+    text-transform: uppercase;
+    color: red;
 }
 #log_out button{
-	margin-left: 20%;
+    margin-left: 20%;
 }
 
 .message {
@@ -267,11 +267,11 @@ form{
 }
 
 #message_head{
-	margin-left: 35%;
-	margin-top: -7%;
-	margin-bottom: 10%;
+    margin-left: 35%;
+    margin-top: -7%;
+    margin-bottom: 10%;
 }
 #message_text{
-	font-size: 1.8em;
-	text-align: center;
+    font-size: 1.8em;
+    text-align: center;
 }

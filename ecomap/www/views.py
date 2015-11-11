@@ -24,28 +24,28 @@ from ecomap.db import util as db
 # from ecomap.src.python.ecomap.db.db_pool import DBPoolError
 from ecomap.db.db_pool import DBPoolError
 
+# class UploadForm(Form):
+#     image_file = FileField('Image file')
+#     submit = SubmitField('Submit')
+#
+#     def validate_image_file(self, field):  # if name starts with validate_ + <fieldname>
+#                                            # flask wtf defines function as a standard validation
+#         if field.data.filename[-4:].lower() != '.jpg':
+#             raise ValidationError('Invalid file extension')  # exception from flask wtf
+#         if imghdr.what(field.data) != 'jpeg':
+#             x = imghdr.what(field.data)
+#             raise ValidationError('Invalid image format %s' %x)
 
-class UploadForm(Form):
-    image_file = FileField('Image file')
-    submit = SubmitField('Submit')
 
-    def validate_image_file(self, field):
-        if field.data.filename[-4:].lower() != '.jpg':
-            raise ValidationError('Invalid file extension')
-        if imghdr.what(field.data) != 'jpeg':
-            x = imghdr.what(field.data)
-            raise ValidationError('Invalid image format %s' % x)
-
-
-@app.route('/api/test_photo', methods=['GET', 'POST'])
-def test_photo():
-    image = None
-    form = UploadForm()
-    if form.validate_on_submit():
-        image = '/image_profile' + form.image_file.data.filename
-        form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)
-        #  app.static_folder - default flask config
-    return render_template('photo_test.html', form=form, image=image)
+# @app.route('/api/test_photo', methods=['GET', 'POST'])
+# def test_photo():
+#     image = None
+#     form = UploadForm()
+#     if form.validate_on_submit():
+#         image = '/image_profile' + form.image_file.data.filename  # image path with custom name
+#         form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)  # save method of data.
+#         #  app.static_folder - default flask config
+#     return render_template('photo_test.html', form=form, image=image)
 
 
 # @app.before_request
@@ -368,15 +368,15 @@ def post_problem():
     Request Content-Type: multipart/form-data;
 
     Request parameters:
-    title	optional
-    content	optional
-    proposal	optional
-    latitude	optional
-    longitude	optional
-    type	1-6, required
-    userId	optional
-    userName	optional
-    userSurname	optional
+    title   optional
+    content optional
+    proposal    optional
+    latitude    optional
+    longitude   optional
+    type    1-6, required
+    userId  optional
+    userName    optional
+    userSurname optional
 
        :return: json Content-type: application/json;charset=UTF-8
     """
@@ -411,6 +411,7 @@ def post_problem():
         }
         return jsonify(output)
 
+
 # ADMIN PAGE API
 # todo add new DELETE method
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
@@ -422,15 +423,13 @@ def get_resource():
     'resource_name' = changes to name of the resource.
     'resource_id' = key to search name of the resource in db.
     action DELETE:
-    'resource_id' = 1)key to search match in parent table ("permission")
-                    2)key to search name of resource in db to delete.
+    'resource_name' = that has to be Deleted.
+    'resource_id' = key to search name of resource in db to delete.
 
        :return:
             - list of jsons
             - if no resource in DB
                 return empty json
-            - if cannot delete resource
-                return 
     """
 
     if request.method == "POST" and request.get_json():
@@ -457,21 +456,10 @@ def get_resource():
         data = request.get_json()
         try:
             db.edit_resource_name(data['new_resource_name'],
-                                   data['resource_id'])
+                                  data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
         return jsonify(status="success", edited=data['new_resource_name'])
-
-    # #edit resource by value
-    # if request.method == "PUT" and request.get_json():
-    #     edit_data = request.get_json()
-    #     try:
-    #         db.edit_resource_value(edit_data['old_resource_value'],
-    #                                edit_data['new_resource_value'])
-    #     except KeyError:
-    #         return jsonify(error="Bad Request[key_error]"), 400
-    #     return jsonify(status="success",
-    #                    edited=edit_data['new_resource_value'])
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
@@ -481,21 +469,19 @@ def get_resource():
             except KeyError:
                 return jsonify(error="Bad Request[key_error]"), 400
             return jsonify(status="success",
-                       deleted_resource=del_data['resource_id'])
+                           deleted_resource=del_data['resource_id'])
         else:
             return jsonify(error="Cannot delete!")
 
-
-
     query = db.get_all_resources()
     parsed_data = {}
-     #  {
-     # "Admin": 4,
-     # "NEW": 5,
-     # "Page": 2,
-     # "Problems": 3,
-     # "Test_Page": 10,
-     # "Unique": 9
+    # {
+    # "Admin": 4,
+    # "NEW": 5,
+    # "Page": 2,
+    # "Problems": 3,
+    # "Test_Page": 10,
+    # "Unique": 9
     # }
     if query:
         parsed_data = {res[1]: res[0] for res in query}
@@ -514,32 +500,38 @@ def roles():
     'role_name' = changes to name of the role
     'role_id' = key to search name of the role in db
     action DELETE:
-    'role_id' = 1)key to search match in parent table ("roles_pemission")
-                2)key to search name of role in db to delete.
-
+    'role_name' = that has to be Deleted
+    'role_id' = key to search name of resource in db to delete
        :return:
             - list of jsons(dicts)
-            - list with error = "cannot delete"
             - if no resource in DB
                 return empty dict
     """
-
+    # todo MODULE FRONT UNIQUE VALIDATION
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         try:
             db.insert_role(data['role_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_resource=data['role_name'])
+        # todo change to uniqueIndentifyError or Exception
+        except DBPoolError:
+            return jsonify(error="Already exists"), 400
+        try:
+            added_role_id = db.get_role_id(data['role_name'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error_add]"), 400
+        return jsonify(added_role=data['role_name'],
+                       added_role_id=added_role_id)
 
     # edit role by id
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         try:
-            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+            db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['role_name'])
+        return jsonify(status="success", edited=edit_data['new_role_name'])
 
     # # edit role by value
     # if request.method == "PUT" and request.get_json():
@@ -551,6 +543,15 @@ def roles():
     #         return jsonify(error="Bad Request[key_error]"), 400
     #     return jsonify(status="success", edited=edit_data['new_role_value'])
 
+    # delete role by id
+    # if request.method == "DELETE" and request.get_json():
+    #     del_data = request.get_json()
+    #     try:
+    #         db.delete_role_by_id(del_data['role_name'], del_data['role_id'])
+    #     except KeyError:
+    #         return jsonify(error="Bad Request[key_error]"), 400
+    #     return jsonify(status="success",
+    #                    deleted_resource=del_data['role_name'])
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         if not db.check_role_deletion(del_data['role_id']):
@@ -559,10 +560,14 @@ def roles():
             except KeyError:
                 return jsonify(error="Bad Request[key_error]"), 400
             return jsonify(status="success",
-                       deleted_role=del_data['role_id'])
+                           deleted_role=del_data['role_id'])
         else:
             return jsonify(error="Cannot delete!")
 
+    # parsed_data = db.get_roles()
+    # logger.warning(parsed_data)
+    # return Response(json.dumps(parsed_data), mimetype='application/json')
+    #
     query = db.get_all_roles()
     parsed_data = {}
     if query:
@@ -614,8 +619,8 @@ def permissions():
                                edit_data['new_description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited_perm_id=edit_data['permission_id'])
-
+        return jsonify(status="success",
+                       edited_perm_id=edit_data['permission_id'])
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
@@ -625,19 +630,17 @@ def permissions():
             except KeyError:
                 return jsonify(error="Bad Request[key_error]"), 400
             return jsonify(status="success",
-                       deleted_permission=del_data['permission_id'])
+                           deleted_permission=del_data['permission_id'])
         else:
             return jsonify(error="Cannot delete!")
 
-
-    resource_id = request.get_json()['resource_id']
+    resource_id = request.args.get('resource_id')
     d = db.get_all_permissions_from_resource(resource_id)
-    dc = []
+    dc = {}
     if d:
         for res in d:
-            dc.append({'permission_id': res[0], 'action': res[1],
-                                'modifier': res[2],
-                                'description': res[3]})
+            dc.update({'permission_id': res[0], 'action': res[1],
+                       'modifier': res[2], 'description': res[3]})
     # parsed_data = db.get_all_permissions_from_resource()
     # return jsonify(dc)
     return Response(json.dumps(dc), mimetype='application/json')
@@ -657,6 +660,57 @@ def get_all():
     res = make_json(parsed_data)
     return jsonify(res)
 
+
+@app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
+def get_role_permission():
+
+    if request.method == "POST" and request.get_json():
+        data = request.get_json()
+        try:
+            db.add_role_permission(data['role_id'],
+                                   data['permission_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+
+        return jsonify(added_role_permission_for=data['role_id'])
+
+    if request.method == "PUT" and request.get_json():
+        edit_data = request.get_json()
+        try:
+            db.edit_role(edit_data['description'],
+                         edit_data['role_id'])
+        except KeyError:
+            return jsonify(error="Bad Request[key_error]"), 400
+
+    if request.method == 'DELETE' and request.get_json():
+        del_data = request.get_json()
+        if not db.check_role_deletion(del_data['role_id']):
+            try:
+                db.delete_role_by_id(del_data['role_id'])
+            except KeyError:
+                return jsonify(error="Bad Request[key_error]"), 400
+            return jsonify(status="success",
+                           deleted_role=del_data['role_id'])
+        else:
+            return jsonify(error="Cannot delete!")
+
+    role_id = request.args.get('role_id')
+    permissions_of_role = db.get_role_permission(role_id)
+    all_permissions = db.get_all_permissions()
+    dc = {}
+    if all_permissions:
+        dc['all_permissions'] = []
+        dc['actual'] = []
+        for res in all_permissions:
+            dc['all_permissions'].append({'action': res[1],
+                                          'modifier': res[2],
+                                          'description': res[3]})
+
+            dc['actual'] = [({'action': x[0], 'modifier': x[1],
+                              'description': x[2]}) for x in
+                            permissions_of_role]
+
+    return Response(json.dumps(dc), mimetype='application/json')
 
 if __name__ == "__main__":
     app.run()

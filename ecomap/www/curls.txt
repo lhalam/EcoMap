@@ -77,7 +77,11 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
       "status": "success"
     }
 
+DELETE RESOURCE BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"resource_id":"2"}' http://ecomap.new//api/resources
 
+DELETE ROLE BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"role_id":"2"}' http://ecomap.new/api/roles
 
 GET ALL ROLES
 curl -H "Accept: application/json" -H "Content-type: application/json" -X GET  http://localhost:81/api/roles
@@ -120,3 +124,6 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
 
 GET ROLE PERM BY ROLE ID
 curl -X GET http://localhost:81/api/role_permissions?role_id=2
+
+DELETE PERMISSION BY ID
+curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"permission_id":"7"}' http://ecomap.new/api/permissions

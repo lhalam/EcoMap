@@ -447,3 +447,4 @@ def get_permission_id_by_description(description):
         query = """SELECT `id` FROM `permission` WHERE `description`=%s;"""
         cursor.execute(query, (description, ))
         return cursor.fetchone()
+

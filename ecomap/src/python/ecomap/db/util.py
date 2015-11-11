@@ -72,6 +72,7 @@ def insert_user(first_name, last_name, email, password):
                    `password`) VALUES (%s, %s, %s, %s);"""
         cursor.execute(query, (first_name, last_name, email, password))
         conn.commit()
+
     # with db_pool().manager() as conn:
     #     cursor = conn.cursor()
     #     cursor.connection.autocommit(True)
@@ -129,7 +130,7 @@ def get_all_resources():
 #         resource_list = cursor.fetchall()
 #     return resource_list
 
-#
+
 @retry_query(tries=3, delay=1)
 def get_resource_id(resource_name):
     """Gets resource id.
@@ -140,7 +141,7 @@ def get_resource_id(resource_name):
         cursor = conn.cursor()
         sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
         cursor.execute(sql, (resource_name, ))
-        return cursor.fetchone()[0]
+        return cursor.fetchone()
         # query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
         # cursor.execute(query, (resource_name, ))
         # return cursor.fetchone()[0]
@@ -319,7 +320,7 @@ def get_permission_id(resource_id, action, modifier):
         query = """SELECT `id` FROM `permission` WHERE `resource_id`=%s AND
                    `action`=%s AND `modifier`=%s;"""
         cursor.execute(query, (resource_id, action, modifier))
-        return cursor.fetchone()[0]
+        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)

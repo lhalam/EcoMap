@@ -1,13 +1,23 @@
-.resList{
+body {
+  background-color: #D7F2FF;
+  font-family: "Roboto", helvetica, arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+}
+td,th{
+	border: 1px solid #222;
+	margin-top: 2px;
+	border-collapse: separate ;
+}
+.table_name{
+	height: 10em;
+	width: 10em;
+	background: #ccc;
+	text-align: center;
 
 }
-.resList li {
-  display: inline-block;
-
-}
-.table-nonfluid {
-   width: auto !important;
-}
-.isShow{
-  display: none;
+.table_nucleaus{
+	height: 5em;
+	width: 10em;
 }

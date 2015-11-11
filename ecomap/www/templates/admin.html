@@ -5,108 +5,72 @@
 	 <script src="/js/angular.min.js"></script>
 	 <script type="text/javascript" src="/js/admin.js"></script>
 	 <link rel="stylesheet" type="text/css" href="/css/admin.css">
-	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
-
 </head>
-<body ng-controller="mainCtrl">
-	<div class="container">
-  		<h2>Justified Button Groups</h2>
-  		<div class="btn-group btn-group-justified" >
-    		<div class="btn-group">
-      			<button type="button" class="btn btn-primary" ng-click="loadRes()">Resource</button>
-    		</div>
-   			<div class="btn-group">
-      			<button type="button" class="btn btn-primary" ng-click="loadPermis()">Permisions</button>
-    		</div>
-    		<div class="btn-group">
-     			 <button type="button" class="btn btn-primary">Role</button>
-    		</div>
-  		</div>
-	</div>
+<body>
+	<h3>Table</h3>
+	<div ng-controller="tableCtrl">
+	<button ng-click="addRole(new_role)">add role!</button>
+	<input placeholder="add role" ng-model="new_role"></button>
+	<hr>
+		<button ng-click="show()" >click</button>
+		<button ng-click="printTable()" >print</button>
+		<form>
+			<input type="text" ng-model="res_name">
+			<button ng-click="creatResourse(res_name,res_method)" >create Resource</button>
+			<select ng-model="res_method" ng-options="meth for meth in meth_obj"></select>
+			
+		</form>
+		<hr>
 
-	<div class="container" ng-show="resourceShow">
-  <h2>Basic Table</h2>           
- <div class="row">
- 	<div class="col-md-9">
- 	<table class="table table-nonfluid ">
-    <thead>
-      <tr>
-        <th>Resource</th>
-        <th><button class="btn-primary" data-toggle="modal" data-target="#myModal">add new</button></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="(name,ojb) in tablesData">
- 		<td>{{name|angular}}</td>
- 		<td><a href="">edit</a> / <a href="">delete</a></td>
-      </tr>
+	   	
+	   
+	<table>
+	     	<tr ng-repeat="(resource_name,resource_obj) in TableData">
+	     		<td>
+	     			<table>
+	     				<tr>
+	     					<td class="table_name">{{resource_name |angular}}</td>
+	     					<td>
+	     						<table>
+	     						
+	     						<tr>
+	     						<td>Roles</td>
+	     							<td ng-repeat="role in roles">{{role |angular}}</td>
+	     						</tr>
+	     						<tr ng-repeat="(method_name,method_obj) in resource_obj">
+	     							<td class="table_nucleaus">{{method_name |angular}}</td>
+	     							<td ng-repeat="(role,permision) in method_obj" class="table_nucleaus" >	
+	     							<!--<input type="text" ng-model="TableData[resource_name][method_name][role]" value="{{permision |angular}}"> -->
+	     							<select ng-model="TableData[resource_name][method_name][role]" data-ng-options="perm as perm for perm in permisions_obj" ></select>
+	     							</td>
 
-    </tbody>
-  </table>
- 	</div>
- </div>
-</div>
+	     						</tr>
+	     						
+	     						</table>
+	     					</td>
+	     				</tr>
+	     				<tr>
+	     		
+	     					<td>
+	     						<button ng-click="addMeth(resource_name,meth_name)">add new meth!</button>
+	     					</td>
+	     					<td>
+	     						<select ng-model="meth_name" ng-options="meth for meth in meth_obj"></select>
+	     						<button ng-click="removeMeth(resource_name,remove_meth_name)">remove meth!</button>
+	     						<select ng-model="remove_meth_name" ng-options="meth for meth in meth_obj"></select>
+	     						<button ng-click="removeRes(resource_name)">removeRes</button>
+	   							
+	     					</td>
+	     					
+	     					
+	     				</tr>
 
-<div class="container"  >
+	     			</table>
+	     		</td>
+	     	</tr>
+	     </table>
 
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Create new resource</h4>
-        </div>
-        <div class="modal-body">
-          	<div class="row">
-          		<div class="col-xs-4">
-          			<p>Add name</p>
-    				<input type="text" class="form-control" placeholder="Name" ng-model="newRes">
-  				</div>
-          	</div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="addRes(newRes)">Submit</button>
-        </div>
-      </div>
-      
     </div>
-  </div>
-  
-</div>
-      
-<div class="container" ng-show="permisShow">
-<ul>
-	<li ng-repeat="(tableName,tableObj) in tablesData">
-		<div class="table-responsive">          
-  		<table class="table">
-    	  <thead>
-      	  <tr>
-        	  <th>Action</th>
-        	  <th>Resource</th>
-        	  <th>Modifier</th>
-        	  <th>Edit</th>
-      	  </tr>
-    	  </thead>
-    	  <tbody>
-      	  <tr ng-repeat="(methodName,methodObj) in tableObj">
-      	  	  <td>{{method |angular}}</td>
-      	  	  <td>{{tableName |angular}}</td>
-      	  	  <td>{{methodObj |angular}}</td>
-      	  </tr>
-    	  </tbody>
-  		</table>
-  </div>
-</div>
-</div>
-	</li>
-</ul>
- 
-
 
 </body>
 </html>

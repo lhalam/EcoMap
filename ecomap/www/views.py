@@ -639,8 +639,6 @@ def permissions():
 
 
     resource_id = request.args.get('resource_id')
-    logger.warning(resource_id)
-    logger.warning('!IOUioufoiUIOURIOEUREOIWUROIEWUROWIRUOIW')
     d = db.get_all_permissions_from_resource(resource_id)
     dc = []
     if d:
@@ -667,6 +665,9 @@ def get_all():
     res = make_json(parsed_data)
     return jsonify(res)
 
+@app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
+def get_role_permission():
+    pass
 
 if __name__ == "__main__":
     app.run()

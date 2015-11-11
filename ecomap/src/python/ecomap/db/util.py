@@ -130,20 +130,20 @@ def get_all_resources():
 #     return resource_list
 
 #
-# @retry_query(tries=3, delay=1)
-# def get_resource_id(resource_name):
-#     """Gets resource id.
-#     :params: resource_name - name of resource
-#     :return: tuple, containing id
-#     """
-#     with db_pool().manager() as conn:
-#         cursor = conn.cursor()
-#         sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-#         cursor.execute(sql, (resource_name, ))
-#         return cursor.fetchone()
-#         # query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-#         # cursor.execute(query, (resource_name, ))
-#         # return cursor.fetchone()[0]
+@retry_query(tries=3, delay=1)
+def get_resource_id(resource_name):
+    """Gets resource id.
+    :params: resource_name - name of resource
+    :return: tuple, containing id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        cursor.execute(sql, (resource_name, ))
+        return cursor.fetchone()[0]
+        # query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        # cursor.execute(query, (resource_name, ))
+        # return cursor.fetchone()[0]
 
 
 @retry_query(tries=3, delay=1)

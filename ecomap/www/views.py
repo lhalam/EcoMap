@@ -4,6 +4,7 @@ This module holds all views controls for
 ecomap project.
 """
 # import sys
+from _mysql import IntegrityError
 import json
 import imghdr
 import os
@@ -20,7 +21,8 @@ import ecomap.user as usr
 
 from ecomap.app import app, logger
 from ecomap.db import util as db
-
+# from ecomap.src.python.ecomap.db.db_pool import DBPoolError
+from ecomap.db.db_pool import DBPoolError
 
 class UploadForm(Form):
     image_file = FileField('Image file')
@@ -435,17 +437,28 @@ def get_resource():
             db.add_resource(data['resource_name'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(added_resource=data['resource_name'])
+        except DBPoolError:
+            return jsonify(error="Already exists]"), 400
+        try:
+            added_res_id = db.get_resource_id(data['resource_name'])
+            logger.warning('selecet by id')
+            logger.warning(added_res_id)
+        except KeyError:
+            return jsonify(error="Bad Request[key_error_add]"), 400
+        # except :
+        return jsonify(added_resource=data['resource_name'],
+                       resource_id=added_res_id)
 
     # edit resource by id
+    # todo add unique handler!
     if request.method == "PUT" and request.get_json():
         data = request.get_json()
         try:
-            db.edit_resource_name(data['resource_name'],
+            db.edit_resource_name(data['new_resource_name'],
                                    data['resource_id'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=data['resource_name'])
+        return jsonify(status="success", edited=data['new_resource_name'])
 
     # #edit resource by value
     # if request.method == "PUT" and request.get_json():
@@ -480,6 +493,14 @@ def get_resource():
 
     query = db.get_all_resources()
     parsed_data = {}
+     #  {
+     # "Admin": 4,
+     # "NEW": 5,
+     # "Page": 2,
+     # "Problems": 3,
+     # "Test_Page": 10,
+     # "Unique": 9
+    # }
     if query:
         parsed_data = {res[1]: res[0] for res in query}
     return jsonify(parsed_data)
@@ -600,14 +621,12 @@ def permissions():
 
     resource_id = request.get_json()['resource_id']
     d = db.get_all_permissions_from_resource(resource_id)
-    dc = {}
+    dc = []
     if d:
         for res in d:
-
-            for res in d:
-                dc['permission'].append({'id': res[0], 'action': res[1],
-                                    'modifier': res[2],
-                                    'description': res[3]})
+            dc.append({'permission_id': res[0], 'action': res[1],
+                                'modifier': res[2],
+                                'description': res[3]})
     # parsed_data = db.get_all_permissions_from_resource()
     # return jsonify(dc)
     return Response(json.dumps(dc), mimetype='application/json')

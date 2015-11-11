@@ -47,6 +47,29 @@ def test_photo():
         #  app.static_folder - default flask config
     return render_template('photo_test.html', form=form, image=image)
 
+# class UploadForm(Form):
+#     image_file = FileField('Image file')
+#     submit = SubmitField('Submit')
+#
+#     def validate_image_file(self, field):  # if name starts with validate_ + <fieldname>
+#                                            # flask wtf defines function as a standard validation
+#         if field.data.filename[-4:].lower() != '.jpg':
+#             raise ValidationError('Invalid file extension')  # exception from flask wtf
+#         if imghdr.what(field.data) != 'jpeg':
+#             x = imghdr.what(field.data)
+#             raise ValidationError('Invalid image format %s' %x)
+
+
+# @app.route('/api/test_photo', methods=['GET', 'POST'])
+# def test_photo():
+#     image = None
+#     form = UploadForm()
+#     if form.validate_on_submit():
+#         image = '/image_profile' + form.image_file.data.filename  # image path with custom name
+#         form.image_file.data.save('/home/padalko/ss_projects/Lv-164.UI/ecomap/www/media/image.', image)  # save method of data.
+#         #  app.static_folder - default flask config
+#     return render_template('photo_test.html', form=form, image=image)
+
 
 # @app.before_request
 # def load_users():

@@ -99,7 +99,8 @@ admin.controller("mainCtrl", function ($scope, $http) {
                     'resource_id': id
                 }
             }).then(function successCallback(data) {
-                $scope.selectedResObj['permissions']=data
+                console.log(data.data)
+                $scope.selectedResObj['permissions']=data.data
             }, function errorCallback(response) {
                 console.log(response)
             })
@@ -110,16 +111,36 @@ admin.controller("mainCtrl", function ($scope, $http) {
         $scope.permisShow = !$scope.permisShow
          $http({
                 method: "GET",
-                url: '/api/permissions',
-                params: {
-                    'resource_id': 1
-                }
+                url: '/api/all_permissions',
+               
             }).then(function successCallback(data) {
-                $scope.selectedResObj['permissions']=data
+                $scope.allPermisions=data.data;
+                console.log(data.data)
             }, function errorCallback(response) {
                 console.log(response)
             })
     } 
+    $scope.editPermis=function(permisObj){
+        $scope.editPermisObj=permisObj;
+        console.log($scope.editPermisObj['action'])
+
+    }
+    $scope.submitPermEdit=function(){
+        $http({
+            method:"PUT",
+            url:"/api/permissions",
+            data:{
+                "permission_id":$scope.editPermisObj.permission_id,
+                "new_action":$scope.editPermisObj['action'],
+                "new_modifier":$scope.editPermisObj.modifier, 
+                "new_description":$scope.editPermisObj['description']
+            }
+        }).then(function successCallback(data) {
+                console.log(data.data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+    }
 /*
 admin.controller("tableCtrl",function ($scope,$rootScope){
 

@@ -30,7 +30,7 @@
   <div class="container" ng-show="resourceShow">
   <h2>Basic Table</h2>           
  <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-4">
   <table class="table table-nonfluid ">
     <thead>
       <tr>
@@ -52,6 +52,26 @@
     </tbody>
   </table>
   </div>
+  <div class="col-md-6" ng-show="selectedResObj">
+    <div class="table-responsive">          
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Resource id</th>
+            <th>Modifier</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td ng-repeat="(methodName,methodObj) in selectedResObj.permissions">{{methodObj |angular}}</td>
+
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
  </div>
 </div>
 
@@ -83,55 +103,83 @@
   </div>
   
 </div>
-<div class="container" ng-show="selectedResObj">
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2" ng-show="permisShow">
+
     <div class="table-responsive">          
-      <table class="table">
+      <table class="table table-hover ">
         <thead>
           <tr>
             <th>Action</th>
+            <th>Id</th>
             <th>Resource</th>
             <th>Modifier</th>
-            <th>Edit</th>
+            <th>Descrption</th>
+
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="(methodName,methodObj) in selectedResObj">
-              <td>{{method |angular}}</td>
-              <td>{{tableName |angular}}</td>
-              <td>{{methodObj |angular}}</td>
+          <tr ng-repeat="(tableName,tableObj) in allPermisions">
+              <td ng-repeat="prop in tableObj" data-toggle = "modal" data-target = "#permisWindow" ng-click="editPermis(tableObj)">{{prop |angular}}</td>
+             
           </tr>
         </tbody>
       </table>
   </div>
 </div>
-<div class="container" ng-show="permisShow">
-<ul>
-  <li ng-repeat="(tableName,tableObj) in ac">
-    <div class="table-responsive">          
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Action</th>
-            <th>Resource</th>
-            <th>Modifier</th>
-            <th>Edit</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="(methodName,methodObj) in tableObj">
-              <td>{{method |angular}}</td>
-              <td>{{tableName |angular}}</td>
-              <td>{{methodObj |angular}}</td>
-          </tr>
-        </tbody>
-      </table>
+  </div>
+   <div class="modal fade" id="permisWindow" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Edit permision</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+              <div class="col-xs-4">
+                <p>Edit</p>
+            <input type="text" class="form-control" placeholder="Name" >
+                      
+                  <table class="table table-hover ">
+                  <thead>
+                    <tr>
+                      <th>Action</th>
+                      <th>Id</th>
+                      <th>Resource</th>
+                      <th>Modifier</th>
+                      <th>Descrption</th>
+
+                    </tr>
+                 </thead>
+                  <tbody>
+                    <tr >
+                          <td ng-model="$scope.editPermisObj.action">{{editPermisObj.action |angular}}</td>
+                          <td ng-model="$scope.editPermisObj.permission_id">{{editPermisObj.permission_id |angular}}</td>
+                          <td ng-model="$scope.editPermisObj.resource_name">{{editPermisObj.resource_name |angular}}</td>
+                        <td ng-model="$scope.editPermisObj.modifier">{{editPermisObj.modifier |angular}}</td>
+                        <td ng-model="$scope.editPermisObj.description">{{editPermisObj.description |angular}}</td>
+             
+                      </tr>
+                  </tbody>
+                  </table>
+    
+          </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="submitPermEdit()">Submit</button>
+        </div>
+      </div>
+      
+    </div>
   </div>
 </div>
 </div>
-  </li>
-</ul>
-
-
 
 </body>
 </html>

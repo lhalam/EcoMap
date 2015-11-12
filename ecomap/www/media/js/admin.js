@@ -28,8 +28,9 @@ admin.controller("mainCtrl", function ($scope, $http) {
             }
         }).then(function successCallback(data) {
             var addedobject = data.data['added_resource']
+            var addedId = data.data['resource_id']
             console.log(data.data)
-            $scope.acceptedData[addedobject]={}
+            $scope.acceptedData[addedobject]=addedId
         }, function errorCallback(response) {
             console.log(response)
         });
@@ -45,14 +46,20 @@ admin.controller("mainCtrl", function ($scope, $http) {
             "resource_id":id
           }
         }).then(function successCallback(data) {
-            deletedResId=data.data['deleted_resource']
-            for (name in $scope.acceptedData){
+            if(data.data['deleted_resource']){
+                deletedResId=data.data['deleted_resource']
+                for (name in $scope.acceptedData){
                 if ($scope.acceptedData[name] === id){
                     console.log($scope.acceptedData[name])
                     delete $scope.acceptedData[name]
                 }
             }
-            console.log(data.data)
+            }
+            else{
+               console.log('eroorrr') 
+            }
+            
+            //console.log(data.data)
            //$scope.acceptedData=data.data
            
         }, function errorCallback(response) {

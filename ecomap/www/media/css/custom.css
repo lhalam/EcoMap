@@ -333,10 +333,17 @@ form{
     font-size: 20px;
 }
 
-.user-profile .user-info-brief img{
-    padding: 30px 0;
-    border-radius: 100%;
-    margin: auto;    
+.user-profile .list-group{
+  padding-top: 20px;
+}
+
+.user-profile img{
+    border-radius: 10%;
+    float: right;
+}
+
+.user-profile .change-photo{
+  clear: both;
 }
 
 .user-profile .user-info{

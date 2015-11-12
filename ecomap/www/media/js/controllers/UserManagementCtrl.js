@@ -18,11 +18,6 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
     }
   }
 
-  $rootScope.userProfile = false;
-  $scope.triggerUserProfile = function(){
-    $rootScope.userProfile = true;
-  };
-
   $scope.newUser = {};
   $scope.Register = function(){
     if(!$scope.newUser.email || !$scope.newUser.firstName ||

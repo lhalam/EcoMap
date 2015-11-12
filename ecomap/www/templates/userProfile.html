@@ -15,7 +15,7 @@
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userInfo')">
           <h3>Відомості про аккаунт</h3>
           <hr>
-            <img src="http://placehold.it/200x200" class="img-responsive">
+            <img src="http://placehold.it/150x150" class="img-responsive">
           <div class="user-info">
             <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
             <p><strong>Прізвище: </strong><span ng-bind="user.data.surname"></span></p>
@@ -23,17 +23,19 @@
             <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>
             </div>
           <br>
-
-          <h3>Зміна фотографії профіля</h3>        
-          <hr>
-          <form action="" class="add-profile-photo">
-            <div class="form-group">
-              <label for="photo_insert" class="control-label">Вставити фотографію:</label>
-              <input type="file" id="photo_insert" name="photo_insert" class="form-control">
-            </div>
-            <button class="btn btn-default" type="submit">Завантажити</button>
-          </form>
-          <br>
+          
+          <div class="change-photo">
+            <h3>Зміна фотографії профіля</h3>        
+            <hr>
+            <form action="" class="add-profile-photo">
+              <div class="form-group">
+                <label for="photo_insert" class="control-label">Вставити фотографію:</label>
+                <input type="file" id="photo_insert" name="photo_insert" class="form-control">
+              </div>
+              <button class="btn btn-default" type="submit">Завантажити</button>
+            </form>
+            <br>
+          </div>
 
           <h3>Зміна пароля</h3>
           <hr>

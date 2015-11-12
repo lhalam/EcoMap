@@ -11,6 +11,10 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     templateUrl: '/templates/userProfile.html',
     controller: 'UserProfileCtrl'
   });
+  // .when('/login', {
+  //   templateUrl: '/templates/login/html',
+  //   controller: 'UserManagementCtrl'
+  // });
 
   // $locationProvider.html5Mode({
   //   enabled: true,

@@ -124,8 +124,9 @@ admin.controller("mainCtrl", function ($scope, $http) {
                 url: '/api/all_permissions',
                
             }).then(function successCallback(data) {
-                $scope.allPermisions=data.data;
                 console.log(data.data)
+                $scope.allPermisions=data.data;
+                
             }, function errorCallback(response) {
                 console.log(response)
             })
@@ -182,18 +183,44 @@ admin.controller("mainCtrl", function ($scope, $http) {
         $scope.deleteRole=function(id){
             $http({
                 method:"DELETE",
+                headers: {"Content-Type": "application/json;charset=utf-8"},
                 url:"/api/roles",
                 data:{
                     "role_id":id
                 }
             }).then(function successCallback(data) {
-                $scope.Roles=data.data
+                for(r in $scope.Roles){
+                    if($scope.Roles[r] == data.data['deleted_role']){
+                        delete $scope.Roles[r]
+                    }
+                }
+                //$scope.Roles=data.data
                 console.log(data)
             }, function errorCallback(response) {
                 console.log(response)
             })
         }
-        $scope.selectedRole=function(){
-
+        $scope.selectedRole=function(name,id){
+            console.log("click selectedRole")
+            $scope.selectedRoleObj={
+            "name":name,
+            "id":id
+        }
+        
+        }
+        $scope.bindResRole=function(tableObj){
+            console.log($scope.selectedRoleObj)
+            $http({
+                method:"POST",
+                url:"/api/role_permissions",
+                data:{
+                  "role_id":$scope.selectedRoleObj.id, 
+                  "permission_id":tableObj['permission_id']
+                }
+            }).then(function successCallback(data) {
+                console.log(data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
         }
 })

@@ -1,7 +1,60 @@
-app.controller('AdminCtrl', ['$scope', function($scope){
+app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
-	// here you fetch all resources, permission, roles from backend
+    $scope.meth_obj={
+        "1":"GET",
+        "2":"PUT",
+        "3":"POST",
+        "4":'DELETE'
+    }
+    $scope.modif_obj={
+        '1':'None',
+        '2':'Own',
+        "3":"Any"
+    }
 
+    $scope.loadData=function(){
+
+        //load resources
+        console.log("load")
+        $http({
+            method: 'GET',
+            url: '/api/resources'
+        }).then(function successCallback(data) {
+            $scope.Resources = data.data
+            console.log($scope.Resources)
+
+        }, function errorCallback(response) {
+            console.log(response)
+        });
+
+        //load permisions
+         $http({
+                method: "GET",
+                url: '/api/all_permissions',
+               
+            }).then(function successCallback(data) {
+                $scope.Permisions=data.data;
+                console.log($scope.Permisions)
+                
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+
+        // load roles
+
+        $http({
+                method:"GET",
+                url:"/api/roles",
+
+            }).then(function successCallback(data) {
+                $scope.Roles=data.data
+                console.log($scope.Roles)
+            },function errorCallback(response) {
+                console.log(response)
+            })
+    }
+
+    $scope.loadData()
 
 	// resource section
     $scope.addResModal = false;
@@ -10,25 +63,57 @@ app.controller('AdminCtrl', ['$scope', function($scope){
     };
 
     $scope.editResModal = false;
-    $scope.showEditResModal = function(id){
+    $scope.showEditResModal = function(name,id){
     	$scope.editResObj={
+            'name':name,
     		'id':id
     	};
     	$scope.editResModal = true;
     }
     $scope.res = {};
     $scope.editResource = function(){
-
-    	//...
+        $http({
+        method:"PUT",
+        url:"/api/resources",
+        data:{
+          "new_resource_name":$scope.editResObj['name'],
+          "resource_id" : $scope.editResObj['id']
+        }
+        }).then(function successCallback(data) {
+            $scope.Resources=data.data
+        }, function errorCallback(response) {
+            console.log(response)
+        })
     };
 
    	$scope.deleteResource = function(id){
-
+        $http({
+          method:"DELETE",
+          headers: {"Content-Type": "application/json;charset=utf-8"},
+          url:"/api/resources",
+          data:{
+            "resource_id":id
+          }
+        }).then(function successCallback(data) {
+            console.log(data)        
+        }, function errorCallback(response) {
+            console.log(response)
+        })
    	};
 
     $scope.new_res = {};
     $scope.addResource = function(){
-
+         $http({
+            method: "POST",
+            url: "/api/resources",
+            data:{
+                'resource_name': new_res['name']
+            }
+        }).then(function successCallback(data) {
+            console.log(data.data)
+        }, function errorCallback(response) {
+            console.log(response)
+        });
     };
 
 

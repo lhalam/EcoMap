@@ -43,7 +43,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
 ADD PERMISSION FOR RESOURCE BY RESOURCE ID
 curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"resource_id":"2", "action":"GET", "modifier":"Any", "description":"some text"}' http://localhost:81/api/permissions
      запрос:
-     resource_id - айди ресурса на который навешиваем пермишны. ты его получаешь при создании.
+     resource_id - айди ресурса на который навешиваем пермишны. ты его получаешь при создании0.
      action, modifier, description - новые значения с фронта (юзер ввел в данные в твою форму) которые нам отправляются
 
      ответ якщо все ок:

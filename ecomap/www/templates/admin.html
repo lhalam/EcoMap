@@ -143,8 +143,6 @@
             <div class="row">
               <div class="col-xs-4">
                 <p>Edit</p>
-            <input type="text" class="form-control" placeholder="Name" >
-                      
                   <table class="table table-hover ">
                   <thead>
                     <tr>
@@ -156,13 +154,18 @@
 
                     </tr>
                  </thead>
-                  <tbody>
-                    <tr >
-                          <td ng-model="$scope.editPermisObj.action">{{editPermisObj.action |angular}}</td>
-                          <td ng-model="$scope.editPermisObj.permission_id">{{editPermisObj.permission_id |angular}}</td>
-                          <td ng-model="$scope.editPermisObj.resource_name">{{editPermisObj.resource_name |angular}}</td>
-                        <td ng-model="$scope.editPermisObj.modifier">{{editPermisObj.modifier |angular}}</td>
-                        <td ng-model="$scope.editPermisObj.description">{{editPermisObj.description |angular}}</td>
+                      <tbody>
+                         <tr >
+                          <td >
+                          <select  ng-model="editPermisObj.action" data-ng-options="meth as meth for meth in meth_obj" ></select>
+-                         </td>
+                          {{editPermisObj.action |angular}}</td>
+                          <td ng-model="editPermisObj.permission_id">{{editPermisObj.permission_id |angular}}</td>
+                          <td ng-model="editPermisObj.resource_name">{{editPermisObj.resource_name |angular}}</td>
+                        <td ng-model="editPermisObj.modifier">
+                        <select class="primary" ng-model="editPermisObj.modifier" data-ng-options="modif as modif for modif in modif_obj" ></select>
+                        </td>
+                        <td ><input type="text" ng-model="editPermisObj.description" class="form-control " id="editPermisObjInput"></td>
              
                       </tr>
                   </tbody>

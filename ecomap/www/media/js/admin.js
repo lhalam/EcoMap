@@ -5,7 +5,17 @@ admin.controller("mainCtrl", function ($scope, $http) {
     $scope.resourceShow = false
     $scope.permisShow = false
     $scope.acceptedData
-    
+    $scope.meth_obj={
+    "1":"GET",
+    "2":"PUT",
+    "3":"POST",
+    "4":'DELETE'
+  }
+  $scope.modif_obj={
+    '1':'None',
+    '2':'Own',
+    "3":"Any"
+  }
     $scope.loadRes = function () {
         $scope.resourceShow = !$scope.resourceShow
         $http({

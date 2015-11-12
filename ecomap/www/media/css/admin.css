@@ -11,3 +11,6 @@
 .isShow{
   display: none;
 }
+#editPermisObjInput{
+	width: 8em;
+}

@@ -39,13 +39,22 @@ admin.controller("mainCtrl", function ($scope, $http) {
         console.log(id)
         $http({
           method:"DELETE",
+          headers: {"Content-Type": "application/json;charset=utf-8"},
           url:"/api/resources",
-          params:{
-            "resource_id":19
+          data:{
+            "resource_id":id
           }
         }).then(function successCallback(data) {
-           $scope.acceptedData=data.data
-           console.log(data.data)
+            deletedResId=data.data['deleted_resource']
+            for (name in $scope.acceptedData){
+                if ($scope.acceptedData[name] === id){
+                    console.log($scope.acceptedData[name])
+                    delete $scope.acceptedData[name]
+                }
+            }
+            console.log(data.data)
+           //$scope.acceptedData=data.data
+           
         }, function errorCallback(response) {
             console.log(response)
         })

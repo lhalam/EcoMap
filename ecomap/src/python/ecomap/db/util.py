@@ -69,7 +69,9 @@ def insert_user(first_name, last_name, email, password):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`, `last_name`, `email`,
-                   `password`) VALUES (%s, %s, %s, %s);"""
+                                      `password`)
+                   VALUES (%s, %s, %s, %s);
+                """
         cursor.execute(query, (first_name, last_name, email, password))
         conn.commit()
 
@@ -277,7 +279,7 @@ def get_all_permissions():
 
 
 @retry_query(tries=3, delay=1)
-def insert_permission(resource_id, action, modifier, description=''):
+def insert_permission(resource_id, action, modifier, description=None):
     """Insert new permission.
     :params: resource_id - id of resource
              action - action ('POST', 'GET', 'DELETE', 'PUT')

@@ -369,7 +369,7 @@ def check_resource_deletion(res_id):
         query = """SELECT `resource_id` FROM `permission`
                    WHERE `resource_id`=%s;
                 """
-        cursor.execute(query, (res_id))
+        cursor.execute(query, (res_id,))
         return cursor.fetchall()
 
 
@@ -399,7 +399,7 @@ def check_permission_deletion(permission_id):
         query = """SELECT `permission_id` FROM `role_permission`
                    WHERE `permission_id`=%s;
                 """
-        cursor.execute(query, (permission_id))
+        cursor.execute(query, (permission_id,))
         return cursor.fetchall()
 
 
@@ -428,7 +428,7 @@ def check_role_deletion(role_id):
         query = """SELECT `role_id` FROM `role_permission`
                    WHERE `role_id`=%s;
                 """
-        cursor.execute(query, (role_id))
+        cursor.execute(query, (role_id,))
         return cursor.fetchall()
 
 

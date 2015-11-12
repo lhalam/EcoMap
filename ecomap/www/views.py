@@ -17,7 +17,7 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap.db.db_pool import DBPoolError
-
+from ecomap.utils import Validators as v, validate
 
 @app.route("/api/admin")
 def admin():
@@ -55,26 +55,26 @@ def login():
     """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-        logger.warning(data)
-        logger.warning('DDDDDDDDDDDDDDDdata')
-        try:
+        if validate(data, keys=('password', 'email'),
+                    validators_list=([v.required, v.is_string, v.no_spaces],
+                    [v.required, v.no_spaces,
+                     v.max_lenth, v.email_pattern])):
+
             user = usr.get_user_by_email(data['email'])
-        except KeyError:
-            return jsonify(error="Bad Request", logined=0), 400
-        if user and user.verify_password(data['password']):
-            login_user(user, remember=True)
-            return jsonify(id=user.uid,
-                           name=user.first_name,
-                           surname=user.last_name,
-                           role='???', iat="???",
-                           token=user.get_auth_token(),
-                           email=user.email)
-        if not user:
-            return jsonify(error="There is no user with given email.",
-                           logined=0), 401
-        if not user.verify_password(data['password']):
-            return jsonify(error="Invalid password, try again.",
-                           logined=0), 401
+            if user and user.verify_password(data['password']):
+                login_user(user, remember=True)
+                return jsonify(id=user.uid,
+                               name=user.first_name,
+                               surname=user.last_name,
+                               role='???', iat="???",
+                               token=user.get_auth_token(),
+                               email=user.email)
+            if not user:
+                return jsonify(error="There is no user with given email.",
+                               logined=0), 401
+            if not user.verify_password(data['password']):
+                return jsonify(error="Invalid password, try again.",
+                               logined=0), 401
 
 
 @app.route("/api/logout", methods=["POST", 'GET'])

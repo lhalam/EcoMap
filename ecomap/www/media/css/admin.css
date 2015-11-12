@@ -15,3 +15,9 @@ button{
 .del, .def:hover{
     color: red;
 }
+
+.return-profile{
+    position: absolute;
+    right: 20px;
+    top:25px;
+}

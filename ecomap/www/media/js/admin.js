@@ -173,8 +173,22 @@ admin.controller("mainCtrl", function ($scope, $http) {
                     "role_name":role
                 }
             }).then(function successCallback(data) {
-                $scope.Roles[data.data.added_role]=data.data
-                console.log(data.data)
+                $scope.Roles[data.data.added_role]=data.data.added_role_id
+                console.log($scope.Roles)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+        }
+        $scope.deleteRole=function(id){
+            $http({
+                method:"DELETE",
+                url:"/api/roles",
+                data:{
+                    "role_id":id
+                }
+            }).then(function successCallback(data) {
+                $scope.Roles=data.data
+                console.log(data)
             }, function errorCallback(response) {
                 console.log(response)
             })

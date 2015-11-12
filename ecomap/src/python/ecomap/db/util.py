@@ -18,7 +18,7 @@ def get_user_by_email(email):
         query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
                    FROM `user` WHERE `email`=%s;
                 """
-        cursor.execute(query, (email, ))
+        cursor.execute(query, (email,))
         return cursor.fetchone()
 
 
@@ -33,7 +33,7 @@ def get_user_by_id(user_id):
         query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
                    FROM `user` WHERE `id`=%s;
                 """
-        cursor.execute(query, (user_id, ))
+        cursor.execute(query, (user_id,))
         return cursor.fetchone()
 
 
@@ -91,7 +91,7 @@ def get_resource_id(resource_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        cursor.execute(sql, (resource_name, ))
+        cursor.execute(sql, (resource_name,))
         return cursor.fetchone()
 
 
@@ -105,7 +105,7 @@ def add_resource(resource_name):
         query = """INSERT INTO `resource` (`resource_name`)
                    VALUES (%s);
                 """
-        cursor.execute(query, (resource_name, ))
+        cursor.execute(query, (resource_name,))
         conn.commit()
 
 
@@ -143,7 +143,7 @@ def get_role_id(role_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `role` WHERE `name`=%s;"""
-        cursor.execute(query, (role_name, ))
+        cursor.execute(query, (role_name,))
         return cursor.fetchone()
 
 
@@ -155,7 +155,7 @@ def insert_role(role_name):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """INSERT INTO `role` (`name`) VALUES (%s);"""
-        cursor.execute(query, (role_name, ))
+        cursor.execute(query, (role_name,))
         conn.commit()
 
 
@@ -183,7 +183,7 @@ def get_all_permissions_from_resource(resource_id):
         query = """SELECT `id`, `action`, `modifier`, `description`
                    FROM `permission` WHERE `resource_id`=%s;
                 """
-        cursor.execute(query, (resource_id, ))
+        cursor.execute(query, (resource_id,))
         return cursor.fetchall()
 
 
@@ -339,7 +339,7 @@ def delete_permissions_by_role_id(role_id):
         query = """DELETE `role_permission` FROM `role_permission`
                    WHERE `role_id`=%s;
                 """
-        cursor.execute(query, (role_id, ))
+        cursor.execute(query, (role_id,))
         conn.commit()
 
 
@@ -352,7 +352,7 @@ def get_permission_id_by_description(description):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `permission` WHERE `description`=%s;"""
-        cursor.execute(query, (description, ))
+        cursor.execute(query, (description,))
         return cursor.fetchone()
 
 
@@ -369,7 +369,7 @@ def check_resource_deletion(res_id):
         query = """SELECT `resource_id` FROM `permission`
                    WHERE `resource_id`=%s;
                 """
-        cursor.execute(query, (res_id))
+        cursor.execute(query, (res_id,))
         return cursor.fetchall()
 
 
@@ -399,7 +399,7 @@ def check_permission_deletion(permission_id):
         query = """SELECT `permission_id` FROM `role_permission`
                    WHERE `permission_id`=%s;
                 """
-        cursor.execute(query, (permission_id))
+        cursor.execute(query, (permission_id,))
         return cursor.fetchall()
 
 
@@ -428,7 +428,7 @@ def check_role_deletion(role_id):
         query = """SELECT `role_id` FROM `role_permission`
                    WHERE `role_id`=%s;
                 """
-        cursor.execute(query, (role_id))
+        cursor.execute(query, (role_id,))
         return cursor.fetchall()
 
 

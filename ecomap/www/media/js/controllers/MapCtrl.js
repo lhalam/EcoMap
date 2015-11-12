@@ -1,3 +1,3 @@
-app.controller('MapCtrl', ['', function(){
+app.controller('MapCtrl', ['$scope', function($scope){
 
 }])

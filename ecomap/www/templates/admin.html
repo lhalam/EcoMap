@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/admin.css">
+<script type="text/javascript" src="/js/angularjs-dropdown-multiselect.min.js"></script>
 
 <div class="container">
   <div class="row">
@@ -24,17 +25,17 @@
                 <tr>
                   <td>/api/login</td>
                   <td>
-                    <a href="">редагувати</a>
+                    <a href="" ng-click="showEditResModal(1)">редагувати</a>
                     <a href="" class="del">видалити</a>
                   </td>
                 </tr>
-                <tr>
-                  <td>/api/register</td>
+                <!-- <tr ng-repeat="(resource_name, id) in resources">
+                  <td>{{resource_name}}</td>
                   <td>
-                    <a href="">редагувати</a>
-                    <a href="" class="del">видалити</a>
+                    <a href="" ng-click="showEditResModal(id)">редагувати</a>
+                    <a href="" class="del" ng-click="deleteResource(id)">видалити</a>
                   </td>
-                </tr>
+                </tr> -->
                 <tr>
                   <td>/api/logout</td>
                   <td>
@@ -67,7 +68,7 @@
                  <td>Any</td>
                  <td>Вхід всім юзерам</td>
                  <td>
-                  <a href="">редагувати</a>
+                  <a href="" ng-click="showEditPermModal()">редагувати</a>
                   <a href="" class="del">видалити</a>
                  </td>
                </tr>
@@ -83,9 +84,10 @@
                </tr>
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати право</button>
+            <button class="btn btn-primary" ng-click="showAddPermModal()">Додати право</button>
             <div class="clear"></div>
         </uib-tab>
+
         <uib-tab heading="Ролі">
           <table class="table table-stripped">
               <thead>
@@ -97,7 +99,7 @@
               </thead>
               <tbody>
                 <tr>
-                 <td rowspan="2">Модератор</td>
+                 <td rowspan= "2">Модератор</td>
                  <td>Вхід всім юзерам</td>
                  <td rowspan="2">
                   <a href="">редагувати</a>
@@ -117,7 +119,7 @@
                </tr>
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати роль</button>
+            <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
             <div class="clear"></div>
         </uib-tab>
       </uib-tabset>
@@ -125,11 +127,107 @@
   </div>
 </div>
 
-<modal title="Увійти" visible="addResModal">
-  <form action="">
+<!-- Modal window for resource creating -->
+<modal title="Додати ресурс" visible="addResModal">
+  <form action="" ng-submit="addResource()" name="addResForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
+      <label for="" class="control-label" >Назва ресурса</label>
+      <input type="text" class="form-control" name="resName" ng-model="new_res.name" ng-maxlength="255" required>
+    </div>
+    <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">
+      <p ng-message="maxlength">Занадто довге імя ресурсу!</p>
+      <p ng-message="required">Необхідно ввести нове імя ресурсу!</p>
+      <!-- custom error: name already exists -->
+    </div>
+    <button type="submit" class="btn btn-primary">Додати</button>
+  </form>
+</modal>
+
+<!-- Modal window for editing resource -->
+<modal title="Редагувати ресурс" visible="editResModal">
+  <form action="" ng-submit="editResource()" name="editResForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': editResForm.resName.$touched && editResForm.resName.$invalid }">
+      <label for="" class="control-label" >Назва ресурса</label>
+      <input type="text" class="form-control" name="resName" ng-model="res.new_name" ng-maxlength="255" required>
+    </div>
+    <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched">
+      <p ng-message="maxlength">Занадто довге імя ресурсу!</p>
+      <p ng-message="required">Необхідно ввести нове імя ресурсу!</p>
+      <!-- custom error: name already exists -->
+    </div>
+    <button type="submit" class="btn btn-primary">Змінити</button>
+  </form>
+</modal>
+
+<!-- Modal window for adding permissions -->
+<modal title="Додати право" visible="addPermModal">
+  <form action="" ng-submit="addPermSubmit()" name="addPerm" novalidate>
     <div class="form-group">
-      <label for="" class="control-label">Назва ресурса</label>
-      <input type="text" class="form-control">
+      <label for="" class="control-label" >Назва ресурса</label>
+      <select class="form-control" ></select>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Метод</label>
+      <select class="form-control"></select>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Модифікатор доступу</label>
+      <select class="form-control"></select>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error': addPerm.descr.$touched && addPerm.descr.$invalid }">
+      <label for="" class="control-label" >Опис права</label>
+      <input type="text" class="form-control" name="descr" ng-model="perm.descr" ng-maxlength="255" required>
+    </div>
+    <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
+      <p ng-message="maxlength">Занадто довгий опис!</p>
+      <p ng-message="required">Необхідно ввести опис!</p>
+    </div>
+    <button type="submit" class="btn btn-primary">Додати право</button>
+  </form>
+</modal>
+
+<!-- Modal window for editing permissions -->
+<modal title="Редагувати право" visible="editPermModal">
+  <form action="" ng-submit="editPermSubmit()" name="editPerm" novalidate>
+    <div class="form-group">
+      <label for="" class="control-label" >Назва ресурса</label>
+      <select class="form-control"></select>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Метод</label>
+      <select class="form-control"></select>
+    </div>
+    <div class="form-group">
+      <label class="control-label">Модифікатор доступу</label>
+      <select class="form-control"></select>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error': editPerm.descr.$touched && editPerm.descr.$invalid }">
+      <label for="" class="control-label" >Опис права</label>
+      <input type="text" class="form-control" name="descr" ng-model="perm.descr" ng-maxlength="255" required>
+    </div>
+    <div class="help-block" ng-messages="editPerm.descr.$error" ng-show="editPerm.descr.$touched">
+      <p ng-message="maxlength">Занадто довгий опис!</p>
+      <p ng-message="required">Необхідно ввести опис!</p>
+    </div>
+    <button type="submit" class="btn btn-primary">Змінити право</button>
+  </form>
+</modal>
+
+<!-- Modal window for creating roles -->
+<modal title="Додати роль" visible="addRoleModal">
+  <form action="" ng-submit="addRoleSubmit()" name="addRoleForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
+      <label for="" class="control-label" >Назва ролі</label>
+      <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required>
+    </div>
+    <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched">
+      <p ng-message="maxlength">Занадто довге імя ролі!</p>
+      <p ng-message="required">Необхідно ввести нове імя ролі!</p>
+      <!-- custom error: name already exists -->
+    </div>
+    <div class="form-group">
+      <label class="control-label">Права ролі:</label>
+      <div ng-dropdown-multiselect="" options="availableRoles" selected-model="chosenRoles"></div>
     </div>
     <button type="submit" class="btn btn-primary">Додати</button>
   </form>

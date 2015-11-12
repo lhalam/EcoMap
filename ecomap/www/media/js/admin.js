@@ -151,127 +151,35 @@ admin.controller("mainCtrl", function ($scope, $http) {
                 console.log(response)
             })
     }
-/*
-admin.controller("tableCtrl",function ($scope,$rootScope){
+        $scope.loadRole=function(){
+            $scope.isRoleShow=!$scope.isRoleShow
+            $http({
+                method:"GET",
+                url:"/api/roles",
 
-    $scope.acceptedData={'cabinet': {'put': {'user': 'None', 'admin': 'own'},
-                     'get': {'user': 'own', 'admin': 'any'},
-                     'post': {'user': 'any', 'admin': 'None'}},
-       'page': {'get': {'user': 'any', 'admin': 'any'},
-                 'post': {'user': 'None', 'admin': 'any'}},
-         'page2': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'},}
-                  ,
-         'page3': {'get': {'user': 'any', 'admin': 'any'},
-                  'post': {'user': 'None', 'admin': 'any'},}
-              }
-  $scope.items=["a","b","c"]           
-  $scope.TableData={}
-  $scope.roles={
+            }).then(function successCallback(data) {
+                $scope.Roles=data.data
+                console.log(data.data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
 
-  }
-  $scope.meth_obj={
-    "1":"get",
-    "2":"put",
-    "3":"post",
-    "4":'deleted'
-  }
-  $scope.permisions_obj={
-    '1':'None',
-    '2':'own',
-    "3":"any"
-  }
-
-    $scope.parse = function(){
-        acceptedData=$scope.acceptedData
-        for (resource in acceptedData){
-            resourceObj={}  
-            //resourceObj['method_roles']={};       
-            for(method in acceptedData[resource]){  
-                var methodObj={}    
-                for(role in  acceptedData[resource][method]){
-                    methodObj[role]=acceptedData[resource][method][role]
-          $scope.roles[role]=role   
-                    //resourceObj['method_roles'][role]=role    
+        }
+        $scope.createRole=function(role){
+            $http({
+                method:"POST",
+                url:"/api/roles",
+                data:{
+                    "role_name":role
                 }
-                resourceObj[method]=methodObj
-            }
-            $scope.TableData[resource]=resourceObj
+            }).then(function successCallback(data) {
+                $scope.Roles[data.data.added_role]=data.data
+                console.log(data.data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
         }
-    console.log($scope.roles)
-    }
-    $scope.show=function () {
-        $scope.parse()
-        
-        
-    }
-    $scope.printTable=function(){
-        console.log($scope.TableData)
-    }
-    $scope.addRole=function(new_role){
-        $scope.roles[new_role]=new_role
-    for(res in $scope.TableData)
-      {
-      for (meth in $scope.TableData[res]) {
-        //console.log($scope.TableData[res])
-       $scope.TableData[res][meth][new_role]="None"
-      }
-    }
+        $scope.selectedRole=function(){
 
-    }
-  $scope.creatResourse=function(res_name,res_method){
-    $scope.TableData[res_name]={}
-    $scope.TableData[res_name][res_method]={}
-    //console.log( $scope.roles.length)
-    for(role in $scope.roles){
-      $scope.TableData[res_name][res_method][role]="None"
-    }
-   
-  }
-  $scope.addMeth=function(resource_name,meth_name){
-    for (meth in $scope.TableData[resource_name]){
-      console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if(!$scope.TableData[resource_name].hasOwnProperty(meth_name)){
-          $scope.TableData[resource_name][meth_name]={}
-          for (role in $scope.roles) {
-          $scope.TableData[resource_name][meth_name][role]="None"
-          console.log($scope.TableData)
-          }
-      }
-      else {
-        console.log("already has")
-      }
-    }
-      
-
-  }
-  $scope.removeMeth=function(resource_name,remove_meth_name){
-    for (meth in $scope.TableData[resource_name]){
-      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if($scope.TableData[resource_name].hasOwnProperty(remove_meth_name)){
-          delete $scope.TableData[resource_name][remove_meth_name]
         }
-      else{
-        console.log("does`n exist")
-      }
-      }
-     
-    }
-  $scope.removeRes=function(remove_res){
->>>>>>> 87e1910345eb166bd51402fb76511c0b68a898e2
-
-    for (resour in $scope.TableData){
-      //console.log("this is method"+meth+" this is bool"+$scope.TableData[resource_name].hasOwnProperty(meth_name))
-      if($scope.TableData.hasOwnProperty(remove_res)){
-          delete $scope.TableData[remove_res]
-        }
-      else{
-        console.log("does`n exist")
-        }
-      }
-   
-  }
-
-    }*/
-
 })

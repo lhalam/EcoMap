@@ -64,6 +64,4 @@ app.controller('AdminCtrl', ['$scope', function($scope){
 
     };
 
-    $scope.availableRoles = {'perm1', 'perm2'};
-    $scope.chosenRoles = {};
 }]);

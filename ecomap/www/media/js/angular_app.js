@@ -1,1 +1,1 @@
-var app=angular.module('app',['angularjs-dropdown-multiselect', 'ngAnimate', 'ngCookies', 'ngMessages', 'ngRoute', 'ui.bootstrap']);
+var app=angular.module('app',['ngAnimate', 'ngCookies', 'ngMessages', 'ngRoute', 'ui.bootstrap']);

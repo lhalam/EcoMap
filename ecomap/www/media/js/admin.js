@@ -103,7 +103,7 @@ admin.controller("mainCtrl", function ($scope, $http) {
                     'resource_id': 1
                 }
             }).then(function successCallback(data) {
-                console.log(data.data)
+                $scope.selectedResObj['permissions']=data
             }, function errorCallback(response) {
                 console.log(response)
             })

@@ -58,7 +58,7 @@ def insert_user(first_name, last_name, email, password):
 
 
 @retry_query(tries=3, delay=1)
-def change_user_password(new_password, user_id):
+def change_user_password(user_id, new_password):
     """Change password to user account.
     :params: new_password - new password
              user_id - id of user
@@ -304,7 +304,7 @@ def add_role_permission(role_id, permission_id):
 def get_role_permission(role_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.action, p.modifier, p.description
+        query = """SELECT p.id, p.action, p.modifier, p.description
                    FROM `role_permission` AS rp
                    LEFT JOIN `permission` AS p  ON rp.permission_id=p.id
                    WHERE `role_id`=%s;

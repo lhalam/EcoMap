@@ -270,8 +270,8 @@ def get_all_permissions():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `action`, `modifier`, `description`
-                   FROM `permission`;"""
+        query = """SELECT p.id, r.resource_name, p.action, p.modifier, p.description
+                   FROM `permission` as p INNER JOIN `resource` as r on p.resource_id = r.id;"""
         cursor.execute(query)
         return cursor.fetchall()
 

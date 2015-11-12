@@ -40,8 +40,8 @@ admin.controller("mainCtrl", function ($scope, $http) {
         $http({
           method:"DELETE",
           url:"/api/resources",
-          data:{
-            "resource_id":id
+          params:{
+            "resource_id":19
           }
         }).then(function successCallback(data) {
            $scope.acceptedData=data.data

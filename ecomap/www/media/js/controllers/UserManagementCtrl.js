@@ -1,4 +1,4 @@
-app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope){
+app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$location', function($scope, $cookies, $http, $location){
 
   $scope.showLoginModal = false;
   $scope.toggleLoginModal = function(){
@@ -42,12 +42,12 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
     }
   };
 
-  $scope.invalidPassword = false;
-  $scope.getInvalidPassword = function(){
-    return $scope.invalidPassword;
+  $scope.invalidPasswordEmail = false;
+  $scope.getInvalidPasswordEmail = function(){
+    return $scope.invalidPasswordEmail;
   };
-  $scope.changeInvalidPassword = function(){
-    $scope.invalidPassword = false;
+  $scope.changeInvalidPasswordEmail = function(){
+    $scope.invalidPasswordEmail = false;
   };
 
   $scope.user = {};
@@ -67,9 +67,9 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
       $scope.user = {};      
     },
       function errorCallback(responce){
-        if(responce.status == 401 && responce.data['reason'] == "password"){
-          $scope.invalidPassword = true;
-        }
+        if(responce.status == 401){
+          $scope.invalidPasswordEmail = true;
+        } 
       });
   };
 
@@ -82,6 +82,11 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
       $cookies.remove('name');
       $cookies.remove('surname');
       $cookies.remove('id');
+      $location.url('/map');
+      $scope.newUser = {};
+      $scope.user = {};
+      // angular.element(document.querySelector('#loginForm')).$setPristine();
+      // angular.element(document.querySelector('#registerForm')).$setPristine();
     },
       function errorCallback(data){});
   };

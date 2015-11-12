@@ -8,7 +8,7 @@
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userInfo') }" ng-click="setTab('userInfo')">Відомості про користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userProblems') }" ng-click="setTab('userProblems')">Проблеми користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userComments') }" ng-click="setTab('userComments')">Коментарі користувача</a>
-            <a href="" class="list-group-item" ng-class="{ 'active': isSelected('permRestriction') }" ng-click="setTab('permRestriction')">Редагування прав</a>
+            <a href="/#/admin" class="list-group-item" >Адміністрування</a>
           </div>
         </div>
 
@@ -79,11 +79,6 @@
 
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userComments')">
           <h3>Коментарі користувача</h3>
-          <hr>
-        </div>
-
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('permRestriction')">
-          <h3>Редагування прав і ролей</h3>
           <hr>
         </div>
 

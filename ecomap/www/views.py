@@ -21,8 +21,6 @@ from ecomap.db.db_pool import DBPoolError
 from ecomap.utils import Validators as v, validate
 
 
-
-
 @app.route("/", methods=['GET'])
 def index():
     """Controller starts main application page.
@@ -67,7 +65,7 @@ def login():
                                email=user.email)
             if not user:
                 return jsonify(error="There is no user with given email.",
-                               logined=0), 401
+                               logined=0, ), 401
             if not user.verify_password(data['password']):
                 return jsonify(error="Invalid password, try again.",
                                logined=0), 401

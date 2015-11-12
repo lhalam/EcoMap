@@ -3,14 +3,9 @@
 This module holds all views controls for
 ecomap project.
 """
-import imghdr
 import json
-import os
-from random import random
-import uuid
-import re
 
-from flask import render_template, request, jsonify, Response, redirect, url_for
+from flask import render_template, request, jsonify, Response
 from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr
@@ -119,7 +114,7 @@ def register():
         data = request.get_json()
         arguments = ['firstName', 'lastName', 'email',
                      'password', 'pass_confirm']
-        # TODO separate user func
+
         try:
             if [v for k, v in request.get_json().iteritems() if
                     not v or k not in arguments]:
@@ -131,6 +126,7 @@ def register():
             password = data['password']
         except KeyError:
             return jsonify(error="Unauthorized, missing fields"), 401
+
         if not usr.get_user_by_email(email):
             usr.register(first_name, last_name, email, password)
             status = 'added %s %s' % (first_name, last_name)
@@ -165,7 +161,6 @@ def get_user_info(user_id):
             return jsonify(status="There is no user with given email"), 401
 
 
-# API ECOMAP-007 MOCK-Routes
 @app.route("/api/problems", methods=['GET'])
 def get_problems():
     """
@@ -338,8 +333,6 @@ def post_problem():
         return jsonify(output)
 
 
-# ADMIN PAGE API
-# TODO change return to abort()
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def resources():
     """Get list of site resources needed for administration
@@ -580,12 +573,14 @@ def get_role_permission():
         parsed_json['all_permissions'] = []
         parsed_json['actual'] = []
         for res in all_permissions:
-            parsed_json['all_permissions'].append({'action': res[2],
+            parsed_json['all_permissions'].append({'id': res[0],
+                                                   'action': res[2],
                                                    'modifier': res[3],
                                                    'description': res[4]})
 
-            parsed_json['actual'] = [({'action': x[0], 'modifier': x[1],
-                                       'description': x[2]}) for x in
+            parsed_json['actual'] = [({'id': x[0], 'action': x[1],
+                                       'modifier': x[2],
+                                       'description': x[3]}) for x in
                                      permissions_of_role]
 
     return Response(json.dumps(parsed_json), mimetype='application/json')

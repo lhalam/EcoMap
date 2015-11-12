@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="/css/admin.css">
 
-<div class="container">
+<div class="container" >
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <a href="/#/user_profile" class="return-profile">Повернутись до профілю</a>
@@ -23,27 +23,14 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>/api/login</td>
-                  <td>
-                    <a href="" ng-click="showEditResModal(1)">редагувати</a>
-                    <a href="" class="del">видалити</a>
-                  </td>
-                </tr>
-                <!-- <tr ng-repeat="(resource_name, id) in resources">
+                <tr ng-repeat="(resource_name,resource_id) in Resources">
                   <td>{{resource_name}}</td>
                   <td>
-                    <a href="" ng-click="showEditResModal(id)">редагувати</a>
-                    <a href="" class="del" ng-click="deleteResource(id)">видалити</a>
-                  </td>
-                </tr> -->
-                <tr>
-                  <td>/api/logout</td>
-                  <td>
-                    <a href="">редагувати</a>
-                    <a href="" class="del">видалити</a>
+                    <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
+                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a>
                   </td>
                 </tr>
+                
               </tbody>
             </table>
             <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати ресурс</button>
@@ -149,7 +136,7 @@
   <form action="" ng-submit="editResource()" name="editResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': editResForm.resName.$touched && editResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="resName" ng-model="res.new_name" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched">
       <p ng-message="maxlength">Занадто довге імя ресурсу!</p>

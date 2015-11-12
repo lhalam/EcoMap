@@ -55,6 +55,8 @@ def login():
     """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
+        logger.warning(data)
+        logger.warning('DDDDDDDDDDDDDDDdata')
         try:
             user = usr.get_user_by_email(data['email'])
         except KeyError:
@@ -420,7 +422,7 @@ def roles():
         except KeyError:
             return jsonify(error="Bad Request[key_error_add]"), 400
         return jsonify(added_role=data['role_name'],
-                       added_role_id=added_role_id)
+                       added_role_id=added_role_id[0])
 
     # edit role by id
     if request.method == "PUT" and request.get_json():

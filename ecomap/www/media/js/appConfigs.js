@@ -10,7 +10,11 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
   .when('/user_profile', {
     templateUrl: '/templates/userProfile.html',
     controller: 'UserProfileCtrl'
-  });
+  })
+  .when('/admin', {
+    templateUrl: '/templates/admin.html',
+    controller: 'AdminCtrl'
+  })
   // .when('/login', {
   //   templateUrl: '/templates/login/html',
   //   controller: 'UserManagementCtrl'

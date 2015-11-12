@@ -11,18 +11,22 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
-
-  <script src="/js/angular-route.min.js" type="text/javascript"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-cookies.js" type="text/javascript"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+  <script src="/js/angular-route.min.js" type="text/javascript"></script>
+  <script src="/js/angular-animate.min.js"></script>
+
   <script src="/js/angular_app.js"></script>
+
   <script src="/js/controllers/UserManagementCtrl.js"></script>
-  <!--!<script src="/js/controllers/DatepickerDemoCtrl.js"></script> -->
   <script src="/js/controllers/MainCtrl.js"></script>
   <script src="/js/controllers/UserProfileCtrl.js"></script>
   <script src="/js/controllers/MapCtrl.js"></script>
+  <script src="/js/controllers/AdminCtrl.js"></script>
+
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
+
   <script src="/js/appConfigs.js"></script>
    <link rel="stylesheet" type="text/css" href="/css/custom.css">
 </head>
@@ -167,7 +171,7 @@
   </nav> 
   
   <ng-view></ng-view>
-  
+
 <!--   <div class="container-fluid map-div" ng-hide="showUserProfile()">
     <div id="map">
         

@@ -1,0 +1,136 @@
+<link rel="stylesheet" href="/css/admin.css">
+
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <h3>Адміністрування</h3>
+      <hr>
+      <uib-tabset justified="true">
+
+        <uib-tab heading="Ресурси">
+          <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <td>
+                    Назва ресурсу
+                  </td>
+                  <td>
+                    Редагування
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>/api/login</td>
+                  <td>
+                    <a href="">редагувати</a>
+                    <a href="" class="del">видалити</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>/api/register</td>
+                  <td>
+                    <a href="">редагувати</a>
+                    <a href="" class="del">видалити</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td>/api/logout</td>
+                  <td>
+                    <a href="">редагувати</a>
+                    <a href="" class="del">видалити</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати ресурс</button>
+            <div class="clear"></div>
+          </div>
+        </uib-tab>
+
+        <uib-tab heading="Права">
+          <table class="table table-hover">
+              <thead>
+               <tr>
+                 <td>Назва ресурсу</td>
+                 <td>Метод</td>
+                 <td>Модифікатор доступу</td>
+                 <td>Опис права</td>
+                 <td>Редагування</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr>
+                 <td>/api/login</td>
+                 <td>POST</td>
+                 <td>Any</td>
+                 <td>Вхід всім юзерам</td>
+                 <td>
+                  <a href="">редагувати</a>
+                  <a href="" class="del">видалити</a>
+                 </td>
+               </tr>
+               <tr>
+                 <td>/api/register</td>
+                 <td>POST</td>
+                 <td>Any</td>
+                 <td>Реєстрація</td>
+                 <td>
+                  <a href="">редагувати</a>
+                  <a href="" class="del">видалити</a>
+                 </td>
+               </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати право</button>
+            <div class="clear"></div>
+        </uib-tab>
+        <uib-tab heading="Ролі">
+          <table class="table table-stripped">
+              <thead>
+               <tr>
+                 <td>Назва ролі</td>
+                 <td>Право</td>
+                 <td>Редагування</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr>
+                 <td rowspan="2">Модератор</td>
+                 <td>Вхід всім юзерам</td>
+                 <td rowspan="2">
+                  <a href="">редагувати</a>
+                  <a href="" class="del">видалити</a>
+                 </td>
+               </tr>
+               <tr>
+                 <td>Реєстрація</td>
+               </tr>
+               <tr>
+                 <td >Адмін</td>
+                 <td>Додати проблему</td>
+                 <td >
+                  <a href="">редагувати</a>
+                  <a href="" class="del">видалити</a>
+                 </td>
+               </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати роль</button>
+            <div class="clear"></div>
+        </uib-tab>
+      </uib-tabset>
+    </div>
+  </div>
+</div>
+
+<modal title="Увійти" visible="addResModal">
+  <form action="">
+    <div class="form-group">
+      <label for="" class="control-label">Назва ресурса</label>
+      <input type="text" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Додати</button>
+  </form>
+</modal>

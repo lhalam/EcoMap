@@ -1,0 +1,18 @@
+table{
+    margin: 20px;
+}
+
+thead{
+    font-weight:700;
+}
+button{
+    float: right;
+}
+.clear{
+    clear: both;
+}
+
+.del, .def:hover{
+    color: red;
+}
+

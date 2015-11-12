@@ -136,7 +136,7 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+         
           <h4 class="modal-title">Edit permision</h4>
         </div>
         <div class="modal-body">
@@ -193,7 +193,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="(name,id) in Roles">
-    <td> <label ng-hide="isEdit" ng-click="selectedRole(name,id)">{{name|angular}}</label>
+    <td> <label ng-hide="isEdit" ng-click="selectedRole(name,id)" data-toggle="modal" data-target="#rolePermis">{{name|angular}}</label>
         <div class="col-sm-7" ng-show="isEdit">
               <input class="form-control input-sm"  type="text" ng-model="name" ng-blur="editRole(name,id)">
         </div>
@@ -226,6 +226,51 @@
       
     </div>
   </div>
+    <div class="modal fade" id="rolePermis" role="dialog">
+    <div class="modal-dialog">
+
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Add permision to role</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+              <div class="col-md-12">
+                <p>Edit</p>
+                  <div class="table-responsive">          
+            <table class="table table-hover ">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Id</th>
+                  <th>Resource</th>
+                  <th>Modifier</th>
+                  <th>Descrption</th>
+      
+                </tr>
+               </thead>
+           <tbody>
+              <tr ng-repeat="(tableName,tableObj) in allPermisions">
+              <td ng-repeat="prop in tableObj" data-toggle = "modal" data-target = "#permisWindow" ng-click="bindResRole(tableObj)">{{prop |angular}}</td>
+             
+          </tr>
+        </tbody>
+      </table>
+  </div>      
+    
+          </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="submitPermEdit()">Submit</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</div>
 </div>
 </body>
 </html>

@@ -3,9 +3,13 @@
 This module holds all views controls for
 ecomap project.
 """
+import imghdr
 import json
+import os
+from random import random
+import uuid
 
-from flask import render_template, request, jsonify, Response
+from flask import render_template, request, jsonify, Response, redirect, url_for
 from flask_login import login_user, logout_user, login_required
 
 import ecomap.user as usr

@@ -35,15 +35,17 @@ admin.controller("mainCtrl", function ($scope, $http) {
         });
     }
 
-    $scope.deleteRes=function(name){
+    $scope.deleteRes=function(id){
+        console.log(id)
         $http({
           method:"DELETE",
-          url:"api/resources",
+          url:"/api/resources",
           data:{
-            "deleted_res":name
+            "resource_id":id
           }
         }).then(function successCallback(data) {
-           console.log(data)
+           $scope.acceptedData=data.data
+           console.log($scope.acceptedData)
         }, function errorCallback(response) {
             console.log(response)
         })

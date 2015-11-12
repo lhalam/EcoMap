@@ -83,7 +83,27 @@
   </div>
   
 </div>
-  
+<div class="container" ng-show="selectedResObj">
+    <div class="table-responsive">          
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Resource</th>
+            <th>Modifier</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(methodName,methodObj) in selectedResObj">
+              <td>{{method |angular}}</td>
+              <td>{{tableName |angular}}</td>
+              <td>{{methodObj |angular}}</td>
+          </tr>
+        </tbody>
+      </table>
+  </div>
+</div>
 <div class="container" ng-show="permisShow">
 <ul>
   <li ng-repeat="(tableName,tableObj) in ac">

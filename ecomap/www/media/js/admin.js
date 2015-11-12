@@ -92,6 +92,18 @@ admin.controller("mainCtrl", function ($scope, $http) {
             "name":name,
             "id":id
         }
+        $http({
+                method: "GET",
+                url: '/api/permissions',
+                params: {
+                    'resource_id': id
+                }
+            }).then(function successCallback(data) {
+                $scope.selectedResObj['permissions']=data
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+              console.log($scope.selectedResObj)  
     }
     $scope.loadPermis = function () {
         console.log("click")

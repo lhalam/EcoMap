@@ -106,7 +106,6 @@ def change_user_password(new_password, user_id):
         conn.commit()
 
 
-# todo put,delete for resources
 @retry_query(tries=3, delay=1)
 def get_all_resources():
     """Get all resources.
@@ -429,7 +428,7 @@ def check_resource_deletion(res_id):
         cursor = conn.cursor()
         query = """SELECT `resource_id` FROM `permission` WHERE
                    `resource_id`=%s;"""
-        cursor.execute(query, (res_id))
+        cursor.execute(query, (res_id,))
     return cursor.fetchall()
 
 
@@ -441,7 +440,7 @@ def delete_resource_by_id(res_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """DELETE FROM `resource` WHERE `id`=%s;"""
-        cursor.execute(query, (res_id))
+        cursor.execute(query, (res_id,))
         conn.commit()
 
 
@@ -458,7 +457,7 @@ def check_permission_deletion(permission_id):
         cursor = conn.cursor()
         query = """SELECT `permission_id` FROM `role_permission`
                    WHERE `permission_id`=%s;"""
-        cursor.execute(query, (permission_id))
+        cursor.execute(query, (permission_id,))
     return cursor.fetchall()
 
 
@@ -470,7 +469,7 @@ def delete_permission_by_id(permission_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """DELETE FROM `permission` WHERE `id`=%s;"""
-        cursor.execute(query, (permission_id))
+        cursor.execute(query, (permission_id,))
         conn.commit()
     return True
 
@@ -487,7 +486,7 @@ def check_role_deletion(role_id):
         cursor = conn.cursor()
         query = """SELECT `role_id` FROM `role_permission` WHERE
                    `role_id`=%s;"""
-        cursor.execute(query, (role_id))
+        cursor.execute(query, (role_id,))
     return cursor.fetchall()
 
 
@@ -499,6 +498,6 @@ def delete_role_by_id(role_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """DELETE FROM `role` WHERE `id`=%s;"""
-        cursor.execute(query, (role_id))
+        cursor.execute(query, (role_id,))
         conn.commit()
     return True

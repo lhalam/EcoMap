@@ -42,12 +42,12 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
     }
   };
 
-  $scope.invalidPassword = false;
-  $scope.getInvalidPassword = function(){
-    return $scope.invalidPassword;
+  $scope.invalidPasswordEmail = false;
+  $scope.getInvalidPasswordEmail = function(){
+    return $scope.invalidPasswordEmail;
   };
-  $scope.changeInvalidPassword = function(){
-    $scope.invalidPassword = false;
+  $scope.changeInvalidPasswordEmail = function(){
+    $scope.invalidPasswordEmail = false;
   };
 
   $scope.user = {};
@@ -68,9 +68,9 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
       console.log(responce);
     },
       function errorCallback(responce){
-        if(responce.status == 401 && responce.data['reason'] == "password"){
-          $scope.invalidPassword = true;
-        }
+        if(responce.status == 401){
+          $scope.invalidPasswordEmail = true;
+        } 
       });
   };
 

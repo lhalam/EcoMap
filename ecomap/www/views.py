@@ -559,9 +559,9 @@ def get_role_permission():
         parsed_json['all_permissions'] = []
         parsed_json['actual'] = []
         for res in all_permissions:
-            parsed_json['all_permissions'].append({'action': res[1],
-                                                   'modifier': res[2],
-                                                   'description': res[3]})
+            parsed_json['all_permissions'].append({'action': res[2],
+                                                   'modifier': res[3],
+                                                   'description': res[4]})
 
             parsed_json['actual'] = [({'action': x[0], 'modifier': x[1],
                                        'description': x[2]}) for x in
@@ -569,6 +569,25 @@ def get_role_permission():
 
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
+
+@app.route("/api/all_permissions", methods=['GET'])
+def get_all_permissions():
+    """Handler for sending all created permissions to frontend.
+
+    :return: list of json
+    """
+    all_permissions = db.get_all_permissions()
+    perms_list = []
+    if all_permissions:
+        for perm in all_permissions:
+            perms_list.append({
+                'permission_id': perm[0],
+                'resource_name': perm[1],
+                'action': perm[2],
+                'modifier': perm[3],
+                'description': perm[4]
+            })
+    return Response(json.dumps(perms_list), mimetype='application/json')
 
 if __name__ == "__main__":
     app.run()

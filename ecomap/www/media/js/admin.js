@@ -20,6 +20,7 @@ admin.controller("mainCtrl", function ($scope, $http) {
     }
 
     $scope.addRes = function (newName) {
+        console.log($scope.acceptedData)
         $http({
             method: "POST",
             url: "/api/resources",
@@ -86,22 +87,28 @@ admin.controller("mainCtrl", function ($scope, $http) {
             console.log(response)
         })
     }
-    /*
+    $scope.selectedRes=function(name,id){
+        $scope.selectedResObj={
+            "name":name,
+            "id":id
+        }
+    }
     $scope.loadPermis = function () {
+        console.log("click")
         $scope.permisShow = !$scope.permisShow
-        $scope.DataGenerator = function (id) {
-            $http({
+         $http({
                 method: "GET",
                 url: '/api/permissions',
                 params: {
-                    'resource_id': id
+                    'resource_id': 1
                 }
             }).then(function successCallback(data) {
                 console.log(data.data)
             }, function errorCallback(response) {
                 console.log(response)
             })
-
+    } 
+/*
 admin.controller("tableCtrl",function ($scope,$rootScope){
 
     $scope.acceptedData={'cabinet': {'put': {'user': 'None', 'admin': 'own'},

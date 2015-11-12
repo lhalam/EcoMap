@@ -40,7 +40,7 @@
     </thead>
     <tbody>
       <tr ng-repeat="(name,id) in acceptedData">
-    <td> <label ng-hide="isEdit">{{name|angular}}</label>
+    <td> <label ng-hide="isEdit" ng-click="selectedRes(name,id)">{{name|angular}}</label>
         <div class="col-sm-7" ng-show="isEdit">
               <input class="form-control input-sm"  type="text" ng-model="name" ng-blur="editRes(name,id)">
         </div>
@@ -83,10 +83,10 @@
   </div>
   
 </div>
-      
+  
 <div class="container" ng-show="permisShow">
 <ul>
-  <li ng-repeat="(tableName,tableObj) in tablesData">
+  <li ng-repeat="(tableName,tableObj) in ac">
     <div class="table-responsive">          
       <table class="table">
         <thead>
@@ -110,7 +110,7 @@
 </div>
   </li>
 </ul>
- 
+
 
 
 </body>

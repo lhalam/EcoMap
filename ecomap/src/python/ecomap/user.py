@@ -1,7 +1,7 @@
 """This module holds User class"""
 import hashlib
 
-from flask_login import UserMixin, LoginManager
+from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
 import db.util as util
@@ -11,6 +11,14 @@ from ecomap.app import app
 login_serializer = URLSafeTimedSerializer(app.secret_key)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
+
+
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.username = 'ANON'
+
+    def __repr__(self):
+        return self.username
 
 
 class User(UserMixin):
@@ -24,10 +32,14 @@ class User(UserMixin):
         self.email = email
         self.password = password
 
+    def __repr__(self):
+        return self.first_name
+
     def get_auth_token(self):
         """This method encodes a secure token from a cookie.
             :returns token
         """
+
         data = [str(self.uid), self.password]
         return login_serializer.dumps(data)
 
@@ -58,6 +70,10 @@ class User(UserMixin):
     def get_id(self):
         return unicode(self.uid)
 
+    # def get_id(self):
+    #     """Return the email address to satisfy Flask-Login's requirements."""
+    #     return self.email
+
 
 def hash_pass(password):
     """This function adds some salt(secret_key)
@@ -78,7 +94,7 @@ def get_user_by_email(email):
     """
     user = None
     if email:
-        app.logger.info('USER.PY GET U_BY EMAL initial email %s' % email)
+        app.logger.info('USER.PY GET U_BY EMAL initial email %s', email)
         user = util.get_user_by_email(email)
     if user:
         return User(user[0], user[1], user[2],

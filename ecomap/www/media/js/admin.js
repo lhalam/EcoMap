@@ -45,7 +45,7 @@ admin.controller("mainCtrl", function ($scope, $http) {
           }
         }).then(function successCallback(data) {
            $scope.acceptedData=data.data
-           console.log($scope.acceptedData)
+           console.log(data.data)
         }, function errorCallback(response) {
             console.log(response)
         })

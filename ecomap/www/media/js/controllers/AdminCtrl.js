@@ -47,10 +47,11 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                //console.log($scope.Roles)
+                console.log($scope.Roles)
             },function errorCallback(response) {
                 console.log(response)
             })
+
     }
 
     $scope.loadData()
@@ -219,6 +220,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.addRoleModal = false;
     $scope.showAddRoleModal = function(){
     	$scope.addRoleModal = true;
+
     }
 
     $scope.role = {};

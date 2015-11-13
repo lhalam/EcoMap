@@ -77,10 +77,8 @@
                </tr>
               </thead>
               <tbody>
-                <tr>
-                 <td rowspan= "2">Модератор</td>
-                 <td>Вхід всім юзерам</td>
-                 <td rowspan="2">
+                <tr ng-repeat="(role_name,role_id) in Roles">
+                  <td>{{role_name}}</td>
                   <a href="">редагувати</a>
                   <a href="" class="del">видалити</a>
                  </td>

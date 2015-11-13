@@ -15,13 +15,12 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.loadData=function(){
 
         //load resources
-        console.log("load")
         $http({
             method: 'GET',
             url: '/api/resources'
         }).then(function successCallback(data) {
             $scope.Resources = data.data
-            console.log($scope.Resources)
+            //console.log($scope.Resources)
 
         }, function errorCallback(response) {
             console.log(response)
@@ -52,6 +51,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             },function errorCallback(response) {
                 console.log(response)
             })
+
     }
 
     $scope.loadData()
@@ -80,9 +80,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
-            $scope.Resources=data.data
+            console.log(data)
         }, function errorCallback(response) {
-            console.log(response)
+            $scope.addResModal=false
         })
     };
 
@@ -95,9 +95,23 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "resource_id":id
           }
         }).then(function successCallback(data) {
-            console.log(data)        
+            if(data.data['deleted_resource']){
+                deletedResId=data.data['deleted_resource']
+                for (name in $scope.Resources){
+                if ($scope.Resources[name] === id){
+                    console.log($scope.Resources[name])
+                    delete $scope.Resources[name]
+                }
+
+                }
+            }
+            else {
+                    $scope.Eror=data.data['error']
+                    $scope.customEror=true
+                }        
         }, function errorCallback(response) {
-            console.log(response)
+            $scope.Eror=response.statusText
+            $scope.customEror=true
         })
    	};
 
@@ -107,12 +121,16 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             method: "POST",
             url: "/api/resources",
             data:{
-                'resource_name': new_res['name']
+                'resource_name': $scope.new_res.name
             }
         }).then(function successCallback(data) {
-            console.log(data.data)
+        $scope.Resources[data.data.added_resource]=data.data.resource_id
+        $scope.addResModal=false
+         console.log(data)
         }, function errorCallback(response) {
-            console.log(response)
+            $scope.addResModal=false
+            $scope.Eror=response.statusText
+            $scope.customEror=true
         });
     };
 
@@ -122,26 +140,87 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.showAddPermModal = function(){
     	$scope.addPermModal = true;
     };
-
+    $scope.show=function(){
+        console.log($scope.editPerm)
+    }
     $scope.perm = {};
     $scope.addPermSubmit = function(){
-
+        $http({
+            method:"POST",
+            headers: {"Content-Type": "application/json;charset=utf-8"},
+            url:"/api/permissions",
+            params:{
+            "resource_id":2,
+            "action":"GET" ,//$scope.perm['action'],
+            "modifier":"Any", //$scope.perm['modifier'],
+            "description":"text",//$scope.perm['description']
+            } 
+        }).then(function successCallback(data) {
+         console.log(data)
+        }, function errorCallback(response) {
+            console.log(perm)
+        });
     };
 
     $scope.editPermModal = false;
-    $scope.showEditPermModal = function(){
+    $scope.showEditPermModal = function(perm){
+        console.log(perm)
+        $scope.editPerm=perm
     	$scope.editPermModal = true;
     }
     // function for editPerm submit
+    
     $scope.editPermSubmit = function(id){
-
+         $http({
+            method:"PUT",
+            url:"/api/permissions",
+            data:{
+                "permission_id":$scope.editPerm.permission_id,
+                "new_action":$scope.editPerm['action'],
+                "new_modifier":$scope.editPerm.modifier, 
+                "new_description":$scope.editPerm['description']
+            }
+        }).then(function successCallback(data) {
+                console.log(data.data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
     };
+    $scope.deletePerm=function(perm){
+        $http({
+            'method':"DELETE",
+            'headers': {"Content-Type": "application/json;charset=utf-8"},
+            'url':"/api/permissions",
+            "data":{
+                "permission_id":perm.permission_id
+            }
+        }).then(function successCallback(data) {
+                if(data.data['deleted_resource']){
+                    deletedResId=data.data['deleted_permission:']
+                    for (name in $scope.Permisions){
+                        console.log(name)
+                    if ($scope.Permisions[name] === perm.permission_id){
+                        //console.log($scope.Resources[name])
+                        delete $scope.Resources[name]
+                        }
 
+                    }   
+                    }
+            else {
+                    $scope.Eror=data.data['error']
+                    $scope.customEror=true
+                }
+            }, function errorCallback(response) {
+                $scope.Eror=response.statusText
+                $scope.customEror=true
+        })
+    }
 
     // Role section
     $scope.addRoleModal = false;
     $scope.showAddRoleModal = function(){
     	$scope.addRoleModal = true;
+
     }
 
     $scope.role = {};

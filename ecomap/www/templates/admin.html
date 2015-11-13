@@ -39,6 +39,7 @@
         </uib-tab>
 
         <uib-tab heading="Права">
+        <button ng-click="show()">clikc1</button>
           <table class="table table-hover">
               <thead>
                <tr>
@@ -50,26 +51,18 @@
                </tr>
               </thead>
               <tbody>
-                <tr>
-                 <td>/api/login</td>
-                 <td>POST</td>
-                 <td>Any</td>
-                 <td>Вхід всім юзерам</td>
+                <tr ng-repeat="permision in Permisions">
+                 <td>{{permision.resource_name}}</td>
+                 <td>{{permision.action}}</td>
+                 <td>{{permision.modifier}}</td>
+                 <td>{{permision.description}}</td>
+             
                  <td>
-                  <a href="" ng-click="showEditPermModal()">редагувати</a>
-                  <a href="" class="del">видалити</a>
+                  <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a>
                  </td>
                </tr>
-               <tr>
-                 <td>/api/register</td>
-                 <td>POST</td>
-                 <td>Any</td>
-                 <td>Реєстрація</td>
-                 <td>
-                  <a href="">редагувати</a>
-                  <a href="" class="del">видалити</a>
-                 </td>
-               </tr>
+             
               </tbody>
             </table>
             <button class="btn btn-primary" ng-click="showAddPermModal()">Додати право</button>
@@ -86,10 +79,8 @@
                </tr>
               </thead>
               <tbody>
-                <tr>
-                 <td rowspan= "2">Модератор</td>
-                 <td>Вхід всім юзерам</td>
-                 <td rowspan="2">
+                <tr ng-repeat="(role_name,role_id) in Roles">
+                  <td>{{role_name}}</td>
                   <a href="">редагувати</a>
                   <a href="" class="del">видалити</a>
                  </td>
@@ -117,10 +108,11 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Додати ресурс" visible="addResModal">
-  <form action="" ng-submit="addResource()" name="addResForm" novalidate>
+  <form  ng-submit="addResource()" name="addResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="new_res.name" ng-maxlength="255" required>
+      {{new_res.name}}
     </div>
     <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">
       <p ng-message="maxlength">Занадто довге імя ресурсу!</p>
@@ -147,51 +139,59 @@
   </form>
 </modal>
 
-<!-- Modal window for adding permissions -->
+<!-- Modal window for adding permissions 
+
+<td>{{permision.resource_name}}</td>
+                 <td>{{permision.action}}</td>
+                 <td>{{permision.modifier}}</td>
+                 <td>{{permision.description}}</td>
+
+
+-->
 <modal title="Додати право" visible="addPermModal">
   <form action="" ng-submit="addPermSubmit()" name="addPerm" novalidate>
     <div class="form-group">
       <label for="" class="control-label" >Назва ресурса</label>
-      <select class="form-control" ></select>
+      <select ng-model="perm.resource_name" class="form-control" data-ng-options="resource_name as resource_name for (resource_name,resource_id) in Resources"></select>
     </div>
     <div class="form-group">
       <label class="control-label">Метод</label>
-      <select class="form-control"></select>
+      <select ng-model="perm.action" class="form-control" data-ng-options="meth as meth for meth in meth_obj"></select>
     </div>
     <div class="form-group">
       <label class="control-label">Модифікатор доступу</label>
-      <select class="form-control"></select>
+      <select ng-model="perm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj"></select>
     </div>
     <div class="form-group" ng-class="{ 'has-error': addPerm.descr.$touched && addPerm.descr.$invalid }">
       <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="perm.descr" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="descr" ng-model="perm.descripton" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <p ng-message="maxlength">Занадто довгий опис!</p>
       <p ng-message="required">Необхідно ввести опис!</p>
     </div>
-    <button type="submit" class="btn btn-primary">Додати право</button>
+    <button ng-click="show()" class="btn btn-primary">Додати право</button>
   </form>
 </modal>
 
 <!-- Modal window for editing permissions -->
 <modal title="Редагувати право" visible="editPermModal">
-  <form action="" ng-submit="editPermSubmit()" name="editPerm" novalidate>
+  <form action="" ng-submit="editPermSubmit()" name="editPermition" novalidate>
     <div class="form-group">
       <label for="" class="control-label" >Назва ресурса</label>
-      <select class="form-control"></select>
+      <select ng-model="editPerm.resource_name" class="form-control" data-ng-options="resource_name as resource_name for (resource_name,resource_id) in Resources"></select>
     </div>
     <div class="form-group">
       <label class="control-label">Метод</label>
-      <select class="form-control"></select>
+      <select ng-model="editPerm.action" class="form-control" data-ng-options="meth as meth for meth in meth_obj"></select>
     </div>
     <div class="form-group">
       <label class="control-label">Модифікатор доступу</label>
-      <select class="form-control"></select>
+      <select ng-model="editPerm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj"></select>
     </div>
     <div class="form-group" ng-class="{ 'has-error': editPerm.descr.$touched && editPerm.descr.$invalid }">
       <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="perm.descr" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="descr" ng-model="editPerm.description" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="editPerm.descr.$error" ng-show="editPerm.descr.$touched">
       <p ng-message="maxlength">Занадто довгий опис!</p>
@@ -218,4 +218,12 @@
     </div>
     <button type="submit" class="btn btn-primary">Додати</button>
   </form>
+</modal>
+
+<modal title="Error" visible="customEror" id="customEror">
+  <div class="row" >
+    <div class="col-md-6 ">
+      {{Eror}}
+    </div>
+  </div>
 </modal>

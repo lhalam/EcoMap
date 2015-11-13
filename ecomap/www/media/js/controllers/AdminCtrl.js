@@ -142,12 +142,19 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     };
     $scope.show=function(){
        var name= $scope.perm.resource_name
-        console.log($scope.Resources[name])
+        console.log($scope.OBJ)
     }
     $scope.perm = {};
     $scope.addPermSubmit = function(){
+
         var id= $scope.Resources[$scope.perm.resource_name]
-        //console.log($scope.Resources[name])
+        $scope.OBJ= {
+            "resource_id":id,
+            "action":$scope.perm['action'],
+            "modifier":$scope.perm['modifier'],
+            "description":$scope.perm['description']
+            } 
+        console.log($scope.Data)
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
@@ -211,7 +218,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
                     }   
                     }
-            else {
+            else if(data.data['error']){
                     $scope.Eror=data.data['error']
                     $scope.customEror=true
                 }

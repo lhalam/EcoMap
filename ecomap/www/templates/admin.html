@@ -177,7 +177,7 @@
     </div>
     <div class="form-group" ng-class="{ 'has-error': addPerm.descr.$touched && addPerm.descr.$invalid }">
       <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="perm.descripton" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="descr" ng-model="perm.description" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <p ng-message="maxlength">Занадто довгий опис!</p>

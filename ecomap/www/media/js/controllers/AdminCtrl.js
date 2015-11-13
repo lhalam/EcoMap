@@ -147,7 +147,6 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.perm = {};
     $scope.addPermSubmit = function(){
         var name= $scope.perm.resource_name
-        //console.log($scope.Resources[name])
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},

@@ -141,24 +141,27 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     	$scope.addPermModal = true;
     };
     $scope.show=function(){
-        console.log($scope.editPerm)
+       var name= $scope.perm.resource_name
+        console.log($scope.Resources[name])
     }
     $scope.perm = {};
     $scope.addPermSubmit = function(){
         $http({
             method:"POST",
-            headers: {"Content-Type": "application/json;charset=utf-8"},
+            headers: {"Content-Type": "application/json;"},
             url:"/api/permissions",
-            params:{
-            "resource_id":2,
+            data:{
+            "resource_id":'2',
             "action":"GET" ,//$scope.perm['action'],
             "modifier":"Any", //$scope.perm['modifier'],
             "description":"text",//$scope.perm['description']
             } 
         }).then(function successCallback(data) {
-         console.log(data)
+            $scope.Eror=data.data
+            $scope.customEror=true
         }, function errorCallback(response) {
-            console.log(perm)
+            $scope.Eror=response.statusText
+            $scope.customEror=true
         });
     };
 
@@ -225,7 +228,67 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
     $scope.role = {};
     $scope.addRoleSubmit = function(){
-
+         $http({
+                method:"POST",
+                url:"/api/roles",
+                data:{
+                    "role_name":$scope.role['name']
+                }
+            }).then(function successCallback(data) {
+                $scope.Roles[data.data.added_role]=data.data.added_role_id
+                console.log($scope.Roles)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
     };
-
+    $scope.deleteRole=function(id){
+            $http({
+                method:"DELETE",
+                headers: {"Content-Type": "application/json;charset=utf-8"},
+                url:"/api/roles",
+                data:{
+                    "role_id":id
+                }
+            }).then(function successCallback(data) {
+                for(r in $scope.Roles){
+                    if($scope.Roles[r] == data.data['deleted_role']){
+                        delete $scope.Roles[r]
+                    }
+                }
+                if(data.data.error){
+                $scope.Eror=data.data.error
+                $scope.customEror=true
+                }
+                //$scope.Roles=data.data
+                console.log(data)
+            }, function errorCallback(response) {
+                $scope.Eror=response
+                $scope.customEror=true
+            })
+        }
+        $scope.editRoleObj={}
+        $scope.editRole=function(){
+            $http({
+        
+                    method:"PUT",
+                    url:"/api/roles",
+                    data:{
+                    "new_role_name":$scope.editRoleObj['name'],
+                    "role_id" : $scope.editRoleObj['id']
+                    }
+            }).then(function successCallback(data) {
+                
+                console.log(data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+        }
+    $scope.editRoleModal=false
+    $scope.showEditRoleModal=function(name,id){
+        $scope.editRoleObj = {
+            'name':name,
+            "id":id
+        }
+        $scope.editRoleModal=true
+    }
 }]);

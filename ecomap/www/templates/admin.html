@@ -80,22 +80,14 @@
               </thead>
               <tbody>
                 <tr ng-repeat="(role_name,role_id) in Roles">
-                  <td>{{role_name}}</td>
-                  <a href="">редагувати</a>
-                  <a href="" class="del">видалити</a>
+                  <td >{{role_name}}</td>
+                 </td>
+                 <td>
+                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>
                  </td>
                </tr>
-               <tr>
-                 <td>Реєстрація</td>
-               </tr>
-               <tr>
-                 <td >Адмін</td>
-                 <td>Додати проблему</td>
-                 <td >
-                  <a href="">редагувати</a>
-                  <a href="" class="del">видалити</a>
-                 </td>
-               </tr>
+          
               </tbody>
             </table>
             <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
@@ -170,7 +162,7 @@
       <p ng-message="maxlength">Занадто довгий опис!</p>
       <p ng-message="required">Необхідно ввести опис!</p>
     </div>
-    <button ng-click="show()" class="btn btn-primary">Додати право</button>
+    <button type="sumbit" class="btn btn-primary">Додати право</button>
   </form>
 </modal>
 
@@ -219,6 +211,23 @@
     <button type="submit" class="btn btn-primary">Додати</button>
   </form>
 </modal>
+
+<modal title="Редагувати роль" visible="editRoleModal">
+  <form action="" ng-submit="editRole()" name="editRole()" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
+      <label for="" class="control-label" >Назва ролі</label>
+      <input type="text" class="form-control" name="roleName" ng-model="editRoleObj.name" ng-maxlength="255" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Додати</button>
+  </form>
+</modal>
+
+
+
+
+
+
 
 <modal title="Error" visible="customEror" id="customEror">
   <div class="row" >

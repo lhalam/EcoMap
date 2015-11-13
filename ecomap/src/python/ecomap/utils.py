@@ -28,8 +28,6 @@ class Singleton(type):
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
 
-
-
 MAX_LENGTH = 255
 
 
@@ -47,11 +45,8 @@ class Validators(object):
 
     @staticmethod
     def no_spaces(val):
-        # message = 'no spaces'
-
         return True if ' ' not in val else False
 
-    # @length_dec(2)
     @staticmethod
     def max_lenth(val, length=MAX_LENGTH):
         return True if len(val) < length else False
@@ -60,11 +55,6 @@ class Validators(object):
     def email_pattern(val):
         return True if re.match(r"^[a-zA-Z0-9._]+\@[a-zA-Z0-9._]+"
                                 r"\.[a-zA-Z]{3,}$", val) else False
-
-# v = Validators()
-# JSON_OBJ = {u'password': 'dddd', u'email': u'email@email.riu', u'age':34}
-# KEYS = ('password', 'email', 'age')
-# VALIDATORS = ([v.required, v.is_string, v.no_spaces], [v.required, v.no_spaces, v.max_lenth, v.email_pattern])
 
 
 def validate(instance, keys, validators_list):
@@ -82,4 +72,3 @@ def validate(instance, keys, validators_list):
 
     return True if not errors else errors
 
-# print validate(JSON_OBJ, KEYS, VALIDATORS)

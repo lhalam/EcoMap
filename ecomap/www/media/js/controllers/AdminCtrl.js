@@ -147,6 +147,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.perm = {};
     $scope.addPermSubmit = function(){
         var id= $scope.Resources[$scope.perm.resource_name]
+        //console.log($scope.Resources[name])
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
@@ -158,8 +159,8 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "description":$scope.perm['description']
             } 
         }).then(function successCallback(data) {
-            $scope.Eror=data.data
-            $scope.customEror=true
+            //$scope.Eror=data.data
+            //$scope.customEror=true
         }, function errorCallback(response) {
             $scope.Eror=response.statusText
             $scope.customEror=true

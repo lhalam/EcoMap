@@ -121,7 +121,7 @@ admin.controller("mainCtrl", function ($scope, $http) {
         $scope.permisShow = !$scope.permisShow
          $http({
                 method: "GET",
-                url: '/api/all_permissions',
+                url: '/api/all_permissions'
                
             }).then(function successCallback(data) {
                 console.log(data.data)

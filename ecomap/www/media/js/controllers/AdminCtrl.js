@@ -296,26 +296,39 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
 
     $scope.rolePerm=false
+    $scope.selectPermObj=[]
+    $scope.selectPerm=function(perm){
+        $scope.selectPermObj.push(perm)
+        console.log($scope.selectPermObj)
+    }
     $scope.showRolePerm=function(name,id){
+
         $scope.rolePerm=true
         $scope.rolePermObj={
             "name":name,
             "id":id
         }
-        $http({
+     
+        
+    }
+    $scope.bindResPerm=function(){
+          for(var i=0;i<$scope.selectPermObj.length;i++){
+            $http({
             method:"GET",
             url:"/api/permissions",
             params:{
-                'resource_id':$scope.rolePermObj['id']
+                "role_id": $scope.rolePermObj.id, 
+                "permission_id":$scope.selectPermObj[i].permission_id
             }
-        }).then(function successCallback(data) {
+            }).then(function successCallback(data) {
                 $scope.rolePermList=data.data
                 console.log(data)
             }, function errorCallback(response) {
                 console.log(response)
             })
-        
+        }
 
     }
     $scope.selectedPerms=[]
+    $scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"}];
 }]);

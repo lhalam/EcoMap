@@ -84,7 +84,7 @@
                  <td>
                    <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
                   <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Ролі даного ресурсу</a>
+                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Права даного ресурсу</a>
                  </td>
                </tr>
           
@@ -100,33 +100,23 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Права ресурсу" visible="rolePerm">
-  <form  ng-submit="addResource()" name="addResForm" novalidate>
-   <uib-tab heading="права ">
-          <table class="table table-stripped">
+  <table class="table table-stripped">
               <thead>
                <tr>
-                 <td>Назва ролі</td>
-                 <td>Редагування</td>
+                 <td>Назва методу</td>
+                 <td>Modifier</td>
+                 <td>Опис</td>
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="(role_name,role_id) in rolePermList">
-                  <td >{{role_name}}</td>
-                 </td>
-                 <td>
-                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Ролі даного ресурсу</a>
-                 </td>
+                <tr ng-repeat="perm in rolePermObj">
+                  <td>{{perm.action}}</td>
+                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.description}}</td>
                </tr>
           
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
-            <div class="clear"></div>
-        </uib-tab>
-      </uib-tabset>
-  </form>
 </modal>
 
 
@@ -187,7 +177,7 @@
     </div>
     <div class="form-group" ng-class="{ 'has-error': addPerm.descr.$touched && addPerm.descr.$invalid }">
       <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="perm.descripton" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="descr" ng-model="perm.description" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <p ng-message="maxlength">Занадто довгий опис!</p>

@@ -146,13 +146,13 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
     $scope.perm = {};
     $scope.addPermSubmit = function(){
-        var name= $scope.perm.resource_name
+        var id= $scope.Resources[$scope.perm.resource_name]
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
             url:"/api/permissions",
             data:{
-            "resource_id":$scope.Resources[name],
+            "resource_id":id,
             "action":$scope.perm['action'],
             "modifier":$scope.perm['modifier'],
             "description":$scope.perm['description']
@@ -307,7 +307,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 'resource_id':$scope.rolePermObj['id']
             }
         }).then(function successCallback(data) {
-                //$scope.rolePermList=data.data
+                $scope.rolePermList=data.data
                 console.log(data)
             }, function errorCallback(response) {
                 console.log(response)

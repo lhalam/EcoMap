@@ -442,3 +442,6 @@ def delete_role_by_id(role_id):
         query = """DELETE FROM `role` WHERE `id`=%s;"""
         cursor.execute(query, (role_id,))
         conn.commit()
+
+if __name__ == '__main__':
+    print insert_permission(123, 'GET', 'ANY', 'descriptom')

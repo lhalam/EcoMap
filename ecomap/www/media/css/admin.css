@@ -15,14 +15,13 @@ button{
 .del, .def:hover{
     color: red;
 }
-<<<<<<< HEAD
+
 #customEror{
 	font-size:1.5em;
-=======
+}
 
 .return-profile{
     position: absolute;
     right: 20px;
     top:25px;
 }
->>>>>>> 1af6f8e9e9fc3f76d9c906d9c9ff1091eeb1e0e8

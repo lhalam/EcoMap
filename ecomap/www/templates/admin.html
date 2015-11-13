@@ -74,7 +74,6 @@
               <thead>
                <tr>
                  <td>Назва ролі</td>
-                 <td>Право</td>
                  <td>Редагування</td>
                </tr>
               </thead>
@@ -84,7 +83,8 @@
                  </td>
                  <td>
                    <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>
+                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Ролі даного ресурсу</a>
                  </td>
                </tr>
           
@@ -99,6 +99,37 @@
 </div>
 
 <!-- Modal window for resource creating -->
+<modal title="Права ресурсу" visible="rolePerm">
+  <form  ng-submit="addResource()" name="addResForm" novalidate>
+   <uib-tab heading="права ">
+          <table class="table table-stripped">
+              <thead>
+               <tr>
+                 <td>Назва ролі</td>
+                 <td>Редагування</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="(role_name,role_id) in rolePermList">
+                  <td >{{role_name}}</td>
+                 </td>
+                 <td>
+                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Ролі даного ресурсу</a>
+                 </td>
+               </tr>
+          
+              </tbody>
+            </table>
+            <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
+            <div class="clear"></div>
+        </uib-tab>
+      </uib-tabset>
+  </form>
+</modal>
+
+
 <modal title="Додати ресурс" visible="addResModal">
   <form  ng-submit="addResource()" name="addResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
@@ -213,13 +244,13 @@
 </modal>
 
 <modal title="Редагувати роль" visible="editRoleModal">
-  <form action="" ng-submit="editRole()" name="editRole()" novalidate>
+  <form action="" ng-submit="editRole()" name="editRoleForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
       <label for="" class="control-label" >Назва ролі</label>
       <input type="text" class="form-control" name="roleName" ng-model="editRoleObj.name" ng-maxlength="255" required>
     </div>
     
-    <button type="submit" class="btn btn-primary">Додати</button>
+    <button type="submit" class="btn btn-primary">Змінити</button>
   </form>
 </modal>
 

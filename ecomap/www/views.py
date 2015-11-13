@@ -476,7 +476,6 @@ def permissions():
         data = request.get_json()
 
         try:
-            logger.info('Got data.')
             db.insert_permission(data['resource_id'],
                                  data['action'],
                                  data['modifier'],

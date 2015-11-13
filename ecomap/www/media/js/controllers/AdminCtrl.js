@@ -20,7 +20,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             url: '/api/resources'
         }).then(function successCallback(data) {
             $scope.Resources = data.data
-            //console.log($scope.Resources)
+            console.log($scope.Resources)
 
         }, function errorCallback(response) {
             console.log(response)
@@ -146,15 +146,17 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
     $scope.perm = {};
     $scope.addPermSubmit = function(){
+        var name= $scope.perm.resource_name
+        //console.log($scope.Resources[name])
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
             url:"/api/permissions",
             data:{
-            "resource_id":'2',
-            "action":"GET" ,//$scope.perm['action'],
-            "modifier":"Any", //$scope.perm['modifier'],
-            "description":"text",//$scope.perm['description']
+            "resource_id":$scope.Resources[name],
+            "action":$scope.perm['action'],
+            "modifier":$scope.perm['modifier'],
+            "description":$scope.perm['description']
             } 
         }).then(function successCallback(data) {
             $scope.Eror=data.data
@@ -290,5 +292,28 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "id":id
         }
         $scope.editRoleModal=true
+    }
+
+    $scope.rolePerm=false
+    $scope.showRolePerm=function(name,id){
+        $scope.rolePerm=true
+        $scope.rolePermObj={
+            "name":name,
+            "id":id
+        }
+        $http({
+            method:"GET",
+            url:"/api/permissions",
+            params:{
+                'resource_id':$scope.rolePermObj['id']
+            }
+        }).then(function successCallback(data) {
+                //$scope.rolePermList=data.data
+                console.log(data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+        
+
     }
 }]);

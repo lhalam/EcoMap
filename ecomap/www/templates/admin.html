@@ -39,7 +39,7 @@
         </uib-tab>
 
         <uib-tab heading="Права">
-        <button ng-click="show()">clikc1</button>
+
           <table class="table table-hover">
               <thead>
                <tr>
@@ -100,6 +100,16 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Права ресурсу" visible="rolePerm">
+<form ng-submit="bindResPerm()" name="addResForm" novalidate>
+<div class="container">
+  <select class="select2" id="mySel3" style="width: 400px;" multiple="multiple" ng-options="resource_name as resource_name for (resource_name,resource_id) in Resources">
+    <optgroup label="Select resource">
+     <option ng-repeat="(resource_name,resource_id) in Resources">{{resource_name}}</option>
+    </optgroup>
+
+  </select>
+  
+</div>
   <table class="table table-stripped">
               <thead>
                <tr>
@@ -109,7 +119,7 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in rolePermObj">
+                <tr ng-repeat="perm in Permisions">
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.description}}</td>
@@ -117,6 +127,8 @@
           
               </tbody>
             </table>
+          <button type="submit">Додати</button>
+</form>
 </modal>
 
 
@@ -257,3 +269,20 @@
     </div>
   </div>
 </modal>
+
+<script type="text/javascript">
+  $.getScript('http://davidstutz.github.io/bootstrap-multiselect/js/bootstrap-multiselect.js',function(){
+  
+  $("#mySel3").multiselect({
+    
+  });
+  
+  $('.single option').click(function() {
+    // only affects options contained within the same optgroup
+    // and doesn't include this
+    //$(this).siblings().prop('selected', false);
+  });
+  
+});
+
+</script>

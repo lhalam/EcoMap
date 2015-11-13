@@ -1,5 +1,7 @@
 var admin=angular.module("admin",[])
-
+ $(document).ready(function() {
+        $('#example-getting-started').multiselect();
+    });
 
 admin.controller("mainCtrl", function ($scope, $http) {
     $scope.resourceShow = false

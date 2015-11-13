@@ -474,6 +474,7 @@ def permissions():
 
     if request.method == "POST" and request.get_json():
         data = request.get_json()
+
         try:
             db.insert_permission(data['resource_id'],
                                  data['action'],
@@ -481,6 +482,7 @@ def permissions():
                                  data['description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
+
         try:
             added_perm_id = db.get_permission_id(data['resource_id'],
                                                  data['action'],
@@ -493,6 +495,7 @@ def permissions():
     # todo add unique handler!
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
+
         try:
             db.edit_permission(edit_data['new_action'],
                                edit_data['new_modifier'],
@@ -500,16 +503,19 @@ def permissions():
                                edit_data['new_description'])
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
+
         return jsonify(status="success",
                        edited_perm_id=edit_data['permission_id'])
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
         if not db.check_permission_deletion(del_data['permission_id']):
+
             try:
                 db.delete_permission_by_id(del_data['permission_id'])
             except KeyError:
                 return jsonify(error="Bad Request[key_error]"), 400
+
             return jsonify(status="success",
                            deleted_permission=del_data['permission_id'])
         else:
@@ -537,6 +543,7 @@ def get_role_permission():
     """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
+
         try:
             db.add_role_permission(data['role_id'],
                                    data['permission_id'])
@@ -547,19 +554,23 @@ def get_role_permission():
 
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
+
         try:
-            db.edit_role(edit_data['description'],
-                         edit_data['role_id'])
+            db.delete_permissions_by_role_id(edit_data['role_id'])
+            for id in edit_data['permission_id']:
+                db.add_role_permission(edit_data['role_id'], id)
         except KeyError:
             return jsonify(error="Bad Request[key_error]"), 400
 
     if request.method == 'DELETE' and request.get_json():
         del_data = request.get_json()
         if not db.check_role_deletion(del_data['role_id']):
+
             try:
                 db.delete_role_by_id(del_data['role_id'])
             except KeyError:
                 return jsonify(error="Bad Request[key_error]"), 400
+
             return jsonify(status="success",
                            deleted_role=del_data['role_id'])
         else:

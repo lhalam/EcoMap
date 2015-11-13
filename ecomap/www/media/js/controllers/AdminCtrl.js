@@ -148,13 +148,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.addPermSubmit = function(){
 
         var id= $scope.Resources[$scope.perm.resource_name]
-        $scope.OBJ= {
-            "resource_id":id,
-            "action":$scope.perm['action'],
-            "modifier":$scope.perm['modifier'],
-            "description":$scope.perm['description']
-            } 
-        console.log($scope.Data)
+
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
@@ -323,4 +317,5 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         
 
     }
+    $scope.selectedPerms=[]
 }]);

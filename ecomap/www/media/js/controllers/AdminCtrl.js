@@ -102,12 +102,16 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
    	};
 
     $scope.new_res = {};
+    var data = {
+        'resource_name': $scope.new_res['name']
+
+    }
     $scope.addResource = function(){
          $http({
             method: "POST",
             url: "/api/resources",
             data:{
-                'resource_name': new_res['name']
+                'resource_name': $scope.new_res['name']
             }
         }).then(function successCallback(data) {
             console.log(data.data)

@@ -149,11 +149,11 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             method:"POST",
             headers: {"Content-Type": "application/json;charset=utf-8"},
             url:"/api/permissions",
-            params:{
-            "resource_id":2,
-            "action":"GET" ,//$scope.perm['action'],
-            "modifier":"Any", //$scope.perm['modifier'],
-            "description":"text",//$scope.perm['description']
+            data:{
+            "resource_id":4,
+            "action": 'GET',
+            "modifier": 'Own',
+            "description": 'Got some new'
             } 
         }).then(function successCallback(data) {
          console.log(data)

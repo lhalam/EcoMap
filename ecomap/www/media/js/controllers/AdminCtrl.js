@@ -20,7 +20,6 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             url: '/api/resources'
         }).then(function successCallback(data) {
             $scope.Resources = data.data
-            console.log($scope.Resources)
 
         }, function errorCallback(response) {
             console.log(response)
@@ -33,7 +32,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
-                console.log($scope.Permisions)
+                //console.log($scope.Permisions)
                 
             }, function errorCallback(response) {
                 console.log(response)
@@ -47,7 +46,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                console.log($scope.Roles)
+                //console.log($scope.Roles)
             },function errorCallback(response) {
                 console.log(response)
             })
@@ -95,21 +94,23 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "resource_id":id
           }
         }).then(function successCallback(data) {
+            console.log(data)
             if(data.data['deleted_resource']){
                 deletedResId=data.data['deleted_resource']
                 for (name in $scope.Resources){
-                if ($scope.Resources[name] === id){
-                    console.log($scope.Resources[name])
+                if ($scope.Resources[name] === deletedResId){
                     delete $scope.Resources[name]
                 }
 
                 }
             }
             else {
+                    console.log(data)
                     $scope.Eror=data.data['error']
                     $scope.customEror=true
                 }        
         }, function errorCallback(response) {
+            console.log(response)
             $scope.Eror=response.statusText
             $scope.customEror=true
         })
@@ -128,8 +129,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         $scope.addResModal=false
          console.log(data)
         }, function errorCallback(response) {
+            console.log(response)
             $scope.addResModal=false
-            $scope.Eror=response.statusText
+            $scope.Eror=response.data.error
             $scope.customEror=true
         });
     };
@@ -148,11 +150,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     $scope.addPermSubmit = function(){
 
         var id= $scope.Resources[$scope.perm.resource_name]
-<<<<<<< HEAD
 
-=======
-        //console.log($scope.Resources[name])
->>>>>>> f88a43345dc37ed53b034f410797daeec14204fe
         $http({
             method:"POST",
             headers: {"Content-Type": "application/json;"},
@@ -205,13 +203,18 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 "permission_id":perm.permission_id
             }
         }).then(function successCallback(data) {
-                if(data.data['deleted_resource']){
-                    deletedResId=data.data['deleted_permission:']
+            //console.log(data)
+            
+                if(data.data.deleted_permission){
+                    //console.log(data.data['deleted_resource'])
+                    deletedResId=data.data['deleted_permission']
                     for (name in $scope.Permisions){
                         console.log(name)
-                    if ($scope.Permisions[name] === perm.permission_id){
-                        //console.log($scope.Resources[name])
-                        delete $scope.Resources[name]
+                        //console.log($scope.Permisions[name]['permission_id'])
+                    if ($scope.Permisions[name]['permission_id'] === perm.permission_id){
+                        console.log($scope.Permisions)
+                        $scope.Permisions.length = $scope.Permisions.length-1
+                        delete $scope.Permisions[name]
                         }
 
                     }   
@@ -300,10 +303,14 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
 
     $scope.rolePerm=false
-    $scope.selectPermObj=[]
+    $scope.selectPermObj={}
     $scope.selectPerm=function(perm){
-        $scope.selectPermObj.push(perm)
-        console.log($scope.selectPermObj)
+    $('#tablePermRole tbody').on( 'click', 'tr', function () {
+        $(this).toggleClass('selected');
+    } );
+
+        $scope.selectPermObj[perm.permission_id]=perm
+        //console.log($scope.selectPermObj)
     }
     $scope.showRolePerm=function(name,id){
 
@@ -316,13 +323,17 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         
     }
     $scope.bindResPerm=function(){
-          for(var i=0;i<$scope.selectPermObj.length;i++){
-            $http({
+        var listToSend=[]
+        for(id in $scope.selectPermObj){
+            listToSend.push(id)
+        }
+
+         $http({
             method:"GET",
             url:"/api/permissions",
             params:{
-                "role_id": $scope.rolePermObj.id, 
-                "permission_id":$scope.selectPermObj[i].permission_id
+                "role_id":$scope.rolePermObj.id, 
+                "permission_id":listToSend
             }
             }).then(function successCallback(data) {
                 $scope.rolePermList=data.data
@@ -330,9 +341,22 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             }, function errorCallback(response) {
                 console.log(response)
             })
-        }
+
 
     }
-    $scope.selectedPerms=[]
-    $scope.example1data = [ {id: 1, label: "David"}, {id: 2, label: "Jhon"}, {id: 3, label: "Danny"}];
+
+    $scope.showResPerm=function(id){
+        $http({
+            method:"GET",
+            url:"/api/permissions",
+            params:{
+                resource_id:id
+            }
+        }).then(function successCallback(data) {
+
+                console.log(data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+    }
 }]);

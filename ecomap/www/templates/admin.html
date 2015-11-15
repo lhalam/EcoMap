@@ -24,7 +24,7 @@
               </thead>
               <tbody>
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
-                  <td>{{resource_name}}</td>
+                  <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
                   <td>
                     <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
                     <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a>
@@ -52,11 +52,10 @@
               </thead>
               <tbody>
                 <tr ng-repeat="permision in Permisions">
-                 <td>{{permision.resource_name}}</td>
+                 <td >{{permision.resource_name}}</td>
                  <td>{{permision.action}}</td>
                  <td>{{permision.modifier}}</td>
-                 <td>{{permision.description}}</td>
-             
+                 <td>{{permision.description}}</td> 
                  <td>
                   <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
                   <a href="" class="del" ng-click="deletePerm(permision)">видалити</a>
@@ -105,7 +104,7 @@
 
   
 </div>
-  <table class="table table-stripped">
+  <table class="table table-stripped" id="tablePermRole">
               <thead>
                <tr>
                  <td>Назва методу</td>
@@ -114,7 +113,7 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in Permisions" ng-click="selectPerm(perm)">
+                <tr ng-repeat="perm in Permisions" ng-click="selectPerm(perm)" >
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.description}}</td>
@@ -265,19 +264,3 @@
   </div>
 </modal>
 
-<script type="text/javascript">
-  $.getScript('http://davidstutz.github.io/bootstrap-multiselect/js/bootstrap-multiselect.js',function(){
-  
-  $("#mySel3").multiselect({
-    
-  });
-  
-  $('.single option').click(function() {
-    // only affects options contained within the same optgroup
-    // and doesn't include this
-    //$(this).siblings().prop('selected', false);
-  });
-  
-});
-
-</script>

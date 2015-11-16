@@ -80,10 +80,11 @@ def get_user_role_by_email(email):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """select r.name from user_role as ur
-                  inner join user as u on ur.user_id = u.id
-                  inner join role as r on ur.role_id = r.id
-                  where u.email = %s;"""
+        query = """SELECT r.name FROM `user_role` AS ur
+                   INNER JOIN `user` AS u ON ur.user_id = u.id
+                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   WHERE u.email=%s;
+                """
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
@@ -95,10 +96,10 @@ def get_user_role_by_id(id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """select r.name from user_role as ur
-                  inner join user as u on ur.user_id = u.id
-                  inner join role as r on ur.role_id = r.id
-                  where u.id = %s;"""
+        query = """SELECT r.name FROM `role` AS r
+                   INNER JOIN `user_role` AS ur ON r.id=ur.role_id
+                   WHERE ur.user_id=%s;
+                """
         cursor.execute(query, (id,))
         return cursor.fetchone()
 

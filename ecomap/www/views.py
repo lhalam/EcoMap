@@ -390,7 +390,7 @@ def resources():
                                resource_id=added_res_id[0])
         else:
             response = Response(json.dumps(validation['errors']),
-                                mimetype='application/json')
+                                mimetype='application/json'), 400
         return response
 
     # todo change unique handler to ajax?
@@ -544,51 +544,64 @@ def permissions():
 
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-        try:
+        validation = validate(data, validators=(
+            {'resource_id': [v.required]},
+            {'action': [v.required]},
+            {'modifier': [v.required]},
+            {'description': [v.required]}))
+
+        if not validation['errors']:
             db.insert_permission(data['resource_id'],
                                  data['action'],
                                  data['modifier'],
                                  data['description'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-
-        try:
             added_perm_id = db.get_permission_id(data['resource_id'],
                                                  data['action'],
                                                  data['modifier'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error_add]"), 400
 
-        return jsonify(added_permission_for=data['description'],
-                       permission_id=added_perm_id[0])
+            response = jsonify(added_permission_for=data['description'],
+                               permission_id=added_perm_id[0])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
+
     # todo add unique handler!
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
+        validation = validate(edit_data, validators=(
+            {'new_action': [v.required]},
+            {'new_modifier': [v.required]},
+            {'permission_id': [v.required]},
+            {'new_description': [v.required]}))
 
-        try:
+        if not validation['errors']:
             db.edit_permission(edit_data['new_action'],
                                edit_data['new_modifier'],
                                edit_data['permission_id'],
                                edit_data['new_description'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-
-        return jsonify(status="success",
-                       edited_perm_id=edit_data['permission_id'])
+            response = jsonify(msg="success",
+                               edited_perm_id=edit_data['permission_id'])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     if request.method == "DELETE" and request.get_json():
-        del_data = request.get_json()
-        if not db.check_permission_deletion(del_data['permission_id']):
-
-            try:
-                db.delete_permission_by_id(del_data['permission_id'])
-            except KeyError:
-                return jsonify(error="Bad Request[key_error]"), 400
-
-            return jsonify(status="success",
-                           deleted_permission=del_data['permission_id'])
+        data = request.get_json()
+        validation = validate(data, validators=(
+            {'permission_id': [v.required]}))
+        if not validation['errors']:
+            if not db.check_permission_deletion(data['permission_id']):
+                db.delete_permission_by_id(data['permission_id'])
+                response = jsonify(msg="success",
+                                   deleted_permission=data['permission_id'])
+            else:
+                response = jsonify(error="Cannot delete!")
         else:
-            return jsonify(error="Cannot delete!")
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     resource_id = request.args.get('resource_id')
     permission_tuple = db.get_all_permissions_from_resource(resource_id)
@@ -612,38 +625,48 @@ def get_role_permission():
     """
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-
-        try:
+        validation = validate(data, validators=(
+            {'role_id': [v.required]},
+            {'permission_id': [v.required]}))
+        if not validation['errors']:
             db.add_role_permission(data['role_id'],
                                    data['permission_id'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-
-        return jsonify(added_role_permission_for=data['role_id'])
+            response = jsonify(added_role_permission_for=data['role_id'])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
-
-        try:
+        validation = validate(edit_data, validators=(
+            {'role_id': [v.required]},
+            {'permission_id': [v.required]}))
+        if not validation['errors']:
             db.delete_permissions_by_role_id(edit_data['role_id'])
             for id in edit_data['permission_id']:
                 db.add_role_permission(edit_data['role_id'], id)
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
+            response = jsonify(msg="edited permission")
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     if request.method == 'DELETE' and request.get_json():
         del_data = request.get_json()
-        if not db.check_role_deletion(del_data['role_id']):
-
-            try:
+        validation = validate(del_data, validators=(
+            {'role_id': [v.required]}))
+        if not validation['errors']:
+            if not db.check_role_deletion(del_data['role_id']):
                 db.delete_role_by_id(del_data['role_id'])
-            except KeyError:
-                return jsonify(error="Bad Request[key_error]"), 400
-
-            return jsonify(status="success",
+                response = jsonify(status="success",
                            deleted_role=del_data['role_id'])
+            else:
+                response = jsonify(error="Cannot delete!")
         else:
-            return jsonify(error="Cannot delete!")
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     role_id = request.args.get('role_id')
     permissions_of_role = db.get_role_permission(role_id)

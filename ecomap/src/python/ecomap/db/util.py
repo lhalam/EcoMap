@@ -329,10 +329,10 @@ def delete_permissions_by_role_id(role_id):
 
 @retry_query(tries=3, delay=1)
 def check_resource_deletion(res_id):
-    """Serching connection with parent table "permission"
+    """Serching connection with parent table 'permission'
         if match found abort entering to DB
         if match not found deleting resource
-        :params: res_id = key for searching in parent table "permission"
+        :params: res_id = key for searching in parent table 'permission'
         :return: tuple, empty if not found
     """
     with db_pool().manager() as conn:
@@ -358,11 +358,11 @@ def delete_resource_by_id(res_id):
 
 @retry_query(tries=3, delay=1)
 def check_permission_deletion(permission_id):
-    """Serching connection with parent table "role_permission"
+    """Serching connection with parent table 'role_permission'
         if match found abort entering to DB
         if match not found deleting permission row
         :params: permission_id = key for searching in parent table
-                                 "role_permission"
+                                 'role_permission'
         :return: tuple, empty if not found
     """
     with db_pool().manager() as conn:
@@ -388,10 +388,10 @@ def delete_permission_by_id(permission_id):
 
 @retry_query(tries=3, delay=1)
 def check_role_deletion(role_id):
-    """Serching connection with parent table "role_permission"
+    """Serching connection with parent table 'role_permission'
         if match found abort entering to DB
         if match not found deleting role
-        :params: role_id = key for searching in table "role_permission"
+        :params: role_id = key for searching in table 'role_permission'
         :return: tuple, empty if not found
     """
     with db_pool().manager() as conn:

@@ -178,7 +178,7 @@ def validate(json_data, validators):
         for _val in validators:
             if not _val.keys()[0] in [key for key in json_data.keys()]:
                 msg['errors'].append({'key_error': 'no key {"%s":} in request '
-                                                   '<_debug_mode' % _val.keys()[0]})
+                                      '<_debug_mode' % _val.keys()[0]})
                 break
         else:
             for validator in validators:

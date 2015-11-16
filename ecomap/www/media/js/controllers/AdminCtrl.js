@@ -337,7 +337,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         for(id in $scope.selectPermObj){
             listToSend.push(id)
         }
-
+        console.log(listToSend);
          $http({
             method:"GET",
             url:"/api/permissions",

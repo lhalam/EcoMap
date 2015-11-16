@@ -1,4 +1,4 @@
-app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScope', function($scope, $cookies, $http, $rootScope){
+app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$authProvider', function($scope, $cookies, $http, $authProvider){
 
   $scope.showLoginModal = false;
   $scope.toggleLoginModal = function(){
@@ -50,27 +50,40 @@ app.controller('UserManagementCtrl', ['$scope',  '$cookies', '$http', '$rootScop
     $scope.invalidPasswordEmail = false;
   };
 
+
   $scope.user = {};
-  $scope.Login = function(){
-    if(!$scope.user.email || !$scope.user.password){
+  // $scope.Login = function(){
+  //   if(!$scope.user.email || !$scope.user.password){
+  //     return null;
+  //   }
+  //   $http({
+  //     method: 'POST',
+  //     url: '/api/login',
+  //     data: $scope.user
+  //   }).then(function successCallback(responce){
+  //     $scope.showLoginModal = false;
+  //     $cookies.put('name', responce.data.name);
+  //     $cookies.put('surname', responce.data.surname);
+  //     $cookies.put('id', responce.data.id);
+  //     $scope.user = {};      
+  //     console.log(responce);
+  //   },
+  //     function errorCallback(responce){
+  //       if(responce.status == 401){
+  //         $scope.invalidPasswordEmail = true;
+  //       } 
+  //     });
+  // };
+  $scope.Login = function(credentials){
+    if(!credentials.email || !credentials.password){
       return null;
     }
-    $http({
-      method: 'POST',
-      url: '/api/login',
-      data: $scope.user
-    }).then(function successCallback(responce){
-      $scope.showLoginModal = false;
-      $cookies.put('name', responce.data.name);
-      $cookies.put('surname', responce.data.surname);
-      $cookies.put('id', responce.data.id);
-      $scope.user = {};      
-      console.log(responce);
-    },
-      function errorCallback(responce){
-        if(responce.status == 401){
-          $scope.invalidPasswordEmail = true;
-        } 
+    $authProvider.login(credentials)
+      .then(function(){
+        console.log(true);
+      })
+      .catch(function(){
+        console.log(false);
       });
   };
 

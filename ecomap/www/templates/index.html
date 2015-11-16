@@ -4,20 +4,32 @@
   <title>ecomap</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/custom.css">
+  
+  <!-- Non-angular libraries -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  <!-- angular libraries -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-route.min.js" type="text/javascript"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-cookies.js" type="text/javascript"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+  <script src="/js/satellizer.min.js"></script>
+
+  <!-- App -->
   <script src="/js/angular_app.js"></script>
+
+  <!-- Ctrls -->
   <script src="/js/controllers/UserManagementCtrl.js"></script>
-  <script src="/js/controllers/DatepickerDemoCtrl.js"></script>
+
+  <!-- Others -->
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
-   <link rel="stylesheet" type="text/css" href="/css/custom.css">
 </head>
 <body >
 
@@ -46,7 +58,7 @@
           <a href="" ng-click="toggleLoginModal()" >Увійти</a>
 
           <modal title="Увійти" visible="showLoginModal">
-            <form role="form" name="loginForm" ng-submit="Login()" novalidate>
+            <form role="form" name="loginForm" ng-submit="Login(user)" novalidate>
 
               <div class="form-group" ng-class="{ 'has-error': loginForm.email.$touched && loginForm.email.$invalid || getInvalidPasswordEmail() }">
                 <label for="email" class="control-label">Електронна адреса</label>
@@ -148,68 +160,6 @@
     </div>
   </div>
 </nav> 
-
-<div class="row">
-  <div class="col-md-3" id="filter" class="problem_filter" showform="True">
-    <div ng-controller="DatepickerDemoCtrl">
-
-      <h4>ФІЛЬТРАЦІЯ ЗА ДАТОЮ</h4>
-
-      <div class="row">
-      
-          <div class="col-md-10 col-md-offset-1">
-              <p class="input-group">
-                <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="status.opened1" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-              </p>
-          </div>
-
-          <div class="col-md-10 col-md-offset-1">
-              <p class="input-group">
-                <input type="date" class="form-control" uib-datepicker-popup ng-model="dt" is-open="status.opened2" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" ng-click="open2($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>
-              </p>
-          </div>
-
-      </div>
-
-    </div>
-      <div class="toogle" id="toggle">фільтрація</div>
-      <h4>Тип проблеми</h4>
-      <div class="col-md-12">
-        <ul class="list-group">
-          <li class="list-group-item">First item</li>
-          <li class="list-group-item">Second item</li>
-          <li class="list-group-item">Third item</li>
-        </ul>
-      </div>
-      <div class="col-md-12">
-      <h4>Статус проблеми</h4>
-        <ul class="list-group">
-          <li class="list-group-item">First item</li>
-          <li class="list-group-item">Second item</li>
-          <li class="list-group-item">Third item</li>
-        </ul>
-      </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6 col-md-offset-6 inform_probl_block" showform="True">
-  <h2>Повідомити про проблему</h2>
-
-    <ul class="nav nav-tabs nav-justified">
-        <li class="active"><a href="#">Точка</a></li>
-        <li><a href="#">Опис</a></li>
-        <li><a href="#">Фото</a></li>
-    </ul>
-
-  </div>
-</div>
 
 </body>
 </html>

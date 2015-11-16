@@ -375,59 +375,59 @@ def resources():
             - if no such resource in DB
                 return empty json
     """
-
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         validation = validate(data, validators=(
-            {'resource_name': [v.required]}
-        ))
+            {'resource_name': [v.required]}))
         if not validation['errors']:
             try:
                 db.add_resource(data['resource_name'])
                 added_res_id = db.get_resource_id(data['resource_name'])
             except DBPoolError:
                 return jsonify(error="Resource already exists"), 400
-            return jsonify(added_resource=data['resource_name'],
-                           resource_id=added_res_id[0])
+
+            response = jsonify(added_resource=data['resource_name'],
+                               resource_id=added_res_id[0])
         else:
-            return Response(json.dumps(validation['errors']),
-                            mimetype='application/json')
-        # try:
-        #     db.add_resource(data['resource_name'])
-        # except KeyError:
-        #     return jsonify(error="Bad Request[key_error]"), 400
-        # except DBPoolError:
-        #     return jsonify(error="Resource already exists"), 400
-        # try:
-        #     added_res_id = db.get_resource_id(data['resource_name'])
-        # except KeyError:
-        #     return jsonify(error="Bad Request[key_error_add]"), 400
-        # return jsonify(added_resource=data['resource_name'],
-        #                resource_id=added_res_id[0])
-        #
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json')
+        return response
 
-
-    # todo add unique handler!
+    # todo change unique handler to ajax?
     if request.method == "PUT" and request.get_json():
         data = request.get_json()
-        try:
-            db.edit_resource_name(data['new_resource_name'],
-                                  data['resource_id'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=data['new_resource_name'])
+        validation = validate(data, validators=(
+            {'new_resource_name': [v.required]},
+            {'resource_id': [v.required]}))
+        if not validation['errors']:
+            try:
+                db.edit_resource_name(data['new_resource_name'],
+                                      data['resource_id'])
+            except DBPoolError:
+                return jsonify(error="this name already exists"), 400
+
+            response = jsonify(status="success",
+                               edited=data['new_resource_name'])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json')
+        return response
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
-        if not db.check_resource_deletion(del_data['resource_id']):
-            try:
+        validation = validate(del_data, validators=(
+            {'resource_id': [v.required]}))
+        if not validation['errors']:
+            if not db.check_resource_deletion(del_data['resource_id']):
                 db.delete_resource_by_id(del_data['resource_id'])
-            except KeyError:
-                return jsonify(error="Bad Request[key_error]"), 400
-            return jsonify(status="success",
-                           deleted_resource=del_data['resource_id'])
+                response = jsonify(msg="success",
+                                   deleted_resource=del_data['resource_id'])
+            else:
+                response = jsonify(error="Cannot delete!")
         else:
-            return jsonify(error="Cannot delete!")
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json')
+        return response
 
     query = db.get_all_resources()
     parsed_data = {}
@@ -458,19 +458,36 @@ def roles():
     # todo MODULE FRONT UNIQUE VALIDATION
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-        try:
-            db.insert_role(data['role_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        # todo change to uniqueIndentifyError or Exception
-        except DBPoolError:
-            return jsonify(error="Already exists"), 400
-        try:
-            added_role_id = db.get_role_id(data['role_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error_add]"), 400
-        return jsonify(added_role=data['role_name'],
-                       added_role_id=added_role_id[0])
+        validation = validate(data, validators=(
+            {'role_name': [v.required, v.min_l(2)]}
+        ))
+        if not validation['errors']:
+            try:
+                db.insert_role(data['role_name'])
+                added_role_id = db.get_role_id(data['role_name'])
+            except DBPoolError:
+                return jsonify(error="role already exists"), 400
+
+            response = jsonify(added_role=data['role_name'],
+                               added_role_id=added_role_id[0])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
+
+        # try:
+        #     db.insert_role(data['role_name'])
+        # except KeyError:
+        #     return jsonify(error="Bad Request[key_error]"), 400
+        # # todo change to uniqueIndentifyError or Exception
+        # except DBPoolError:
+        #     return jsonify(error="Already exists"), 400
+        # try:
+        #     added_role_id = db.get_role_id(data['role_name'])
+        # except KeyError:
+        #     return jsonify(error="Bad Request[key_error_add]"), 400
+        # return jsonify(added_role=data['role_name'],
+        #                added_role_id=added_role_id[0])
 
     # edit role by id
     if request.method == "PUT" and request.get_json():

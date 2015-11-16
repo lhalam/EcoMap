@@ -82,6 +82,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             console.log(data)
         }, function errorCallback(response) {
             $scope.addResModal=false
+            $scope.Eror=response.data.error;
+            $scope.customEror=true;
+            //alert(response.data.error)
         })
     };
 
@@ -245,9 +248,16 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                     "role_name":$scope.role['name']
                 }
             }).then(function successCallback(data) {
-                $scope.Roles[data.data.added_role]=data.data.added_role_id
+                $scope.Roles[data.data.added_role]=data.data.added_role_id;
                 console.log($scope.Roles)
             }, function errorCallback(response) {
+                try {
+                    $scope.Eror=response.data[0].validation_error;
+                }
+                catch (err) {
+                    $scope.Eror=response.data.error;
+                }
+                $scope.customEror=true;
                 console.log(response)
             })
     };

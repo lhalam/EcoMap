@@ -24,7 +24,7 @@
               </thead>
               <tbody>
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
-                  <td>{{resource_name}}</td>
+                  <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
                   <td>
                     <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
                     <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a>
@@ -39,7 +39,7 @@
         </uib-tab>
 
         <uib-tab heading="Права">
-        <button ng-click="show()">clikc1</button>
+
           <table class="table table-hover">
               <thead>
                <tr>
@@ -52,11 +52,10 @@
               </thead>
               <tbody>
                 <tr ng-repeat="permision in Permisions">
-                 <td>{{permision.resource_name}}</td>
+                 <td >{{permision.resource_name}}</td>
                  <td>{{permision.action}}</td>
                  <td>{{permision.modifier}}</td>
-                 <td>{{permision.description}}</td>
-             
+                 <td>{{permision.description}}</td> 
                  <td>
                   <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
                   <a href="" class="del" ng-click="deletePerm(permision)">видалити</a>
@@ -100,7 +99,12 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Права ресурсу" visible="rolePerm">
-  <table class="table table-stripped">
+<form ng-submit="bindResPerm()" name="rolePerm" novalidate>
+<div class="container">
+
+  
+</div>
+  <table class="table table-stripped" id="tablePermRole">
               <thead>
                <tr>
                  <td>Назва методу</td>
@@ -109,7 +113,7 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in rolePermObj">
+                <tr ng-repeat="perm in Permisions" ng-click="selectPerm(perm)" >
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.description}}</td>
@@ -117,6 +121,8 @@
           
               </tbody>
             </table>
+          <button type="submit" class="btn btn-primary">Додати</button>
+</form>
 </modal>
 
 
@@ -257,3 +263,4 @@
     </div>
   </div>
 </modal>
+

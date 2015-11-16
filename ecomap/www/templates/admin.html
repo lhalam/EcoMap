@@ -83,7 +83,7 @@
                  <td>
                    <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
                   <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">Права даного ресурсу</a>
+                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">права ролі</a>
                  </td>
                </tr>
           
@@ -98,7 +98,9 @@
 </div>
 
 <!-- Modal window for resource creating -->
-<modal title="Права ресурсу" visible="rolePerm">
+<modal title="Права ролі" visible="rolePerm">
+<div ng-dropdown-multiselect="" data-ng-options="Resources" selected-model="example1model"></div>
+
 <form ng-submit="bindResPerm()" name="rolePerm" novalidate>
 <div class="container">
 

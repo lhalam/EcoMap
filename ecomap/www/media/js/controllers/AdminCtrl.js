@@ -323,11 +323,12 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         
     }
     $scope.bindResPerm=function(){
+        console.log($scope.Permisions)
         var listToSend=[]
         for(id in $scope.selectPermObj){
             listToSend.push(id)
         }
-
+        console.log(listToSend)
          $http({
             method:"GET",
             url:"/api/permissions",
@@ -336,7 +337,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 "permission_id":listToSend
             }
             }).then(function successCallback(data) {
-                $scope.rolePermList=data.data
+                //$scope.rolePermList=data.data
                 console.log(data)
             }, function errorCallback(response) {
                 console.log(response)
@@ -359,4 +360,8 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 console.log(response)
             })
     }
+    $scope.example1model = [];
+     $scope.example1data = [ {id: 1, label: "David"},
+      {id: 2, label: "Jhon"},
+       {id: 3, label: "Danny"}];
 }]);

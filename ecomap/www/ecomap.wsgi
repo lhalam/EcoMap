@@ -17,9 +17,6 @@ os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
 sys.path.insert(0, os.environ['PRODROOT'] + '/www')
 sys.path.insert(1, os.environ['PYSRCROOT'])
 
-print sys.path[:3]
-
 from views import app as application
 
 # application = DebuggedApplication(application, True)
-

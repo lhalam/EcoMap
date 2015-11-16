@@ -410,7 +410,7 @@ def resources():
                                edited=data['new_resource_name'])
         else:
             response = Response(json.dumps(validation['errors']),
-                                mimetype='application/json')
+                                mimetype='application/json'), 400
         return response
 
     if request.method == "DELETE" and request.get_json():
@@ -426,7 +426,7 @@ def resources():
                 response = jsonify(error="Cannot delete!")
         else:
             response = Response(json.dumps(validation['errors']),
-                                mimetype='application/json')
+                                mimetype='application/json'), 400
         return response
 
     query = db.get_all_resources()
@@ -455,7 +455,7 @@ def roles():
             - if no resource in DB
                 return empty dict
     """
-    # todo MODULE FRONT UNIQUE VALIDATION
+    # todo ajax validation?
     if request.method == "POST" and request.get_json():
         data = request.get_json()
         validation = validate(data, validators=(
@@ -492,23 +492,36 @@ def roles():
     # edit role by id
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
-        try:
-            db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        return jsonify(status="success", edited=edit_data['new_role_name'])
+        validation = validate(edit_data, validators=(
+            {'new_role_name': [v.required]},
+            {'role_id': [v.required]}))
+        if not validation['errors']:
+            try:
+                db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
+            except DBPoolError:
+                return jsonify(error="this name already exists"), 400
+            response = jsonify(msg="success",
+                               edited=edit_data['new_role_name'])
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     if request.method == "DELETE" and request.get_json():
         del_data = request.get_json()
-        if not db.check_role_deletion(del_data['role_id']):
-            try:
+        validation = validate(del_data, validators=(
+            {'role_id': [v.required]}))
+        if not validation['errors']:
+            if not db.check_role_deletion(del_data['role_id']):
                 db.delete_role_by_id(del_data['role_id'])
-            except KeyError:
-                return jsonify(error="Bad Request[key_error]"), 400
-            return jsonify(status="success",
-                           deleted_role=del_data['role_id'])
+                response = jsonify(msg="success",
+                                   deleted_role=del_data['role_id'])
+            else:
+                response = jsonify(error="Cannot delete!")
         else:
-            return jsonify(error="Cannot delete!")
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+        return response
 
     query = db.get_all_roles()
     parsed_data = {}

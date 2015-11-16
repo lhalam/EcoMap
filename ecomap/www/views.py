@@ -42,28 +42,40 @@ def login():
         - if login data has invalid format:
             Status 400 - Bad Request
     """
+    # todo change debug error messages
+    response = jsonify(), 401
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-        if validate(data, keys=('password', 'email'),
-                    validators_list=([v.required, v.is_string, v.no_spaces],
-                    [v.required, v.no_spaces,
-                     v.max_lenth, v.email_pattern])):
+
+        validation = validate(data, validators=(
+            {'password': [v.is_string, v.max_l(30),
+                          v.min_l(6), v.required, v.no_spaces]},
+            {'email': [v.required, v.no_spaces, v.max_l(30),
+                       v.email_pattern]}))
+        if not validation['errors']:
 
             user = usr.get_user_by_email(data['email'])
             if user and user.verify_password(data['password']):
                 login_user(user, remember=True)
-                return jsonify(id=user.uid,
-                               name=user.first_name,
-                               surname=user.last_name,
-                               role='???', iat="???",
-                               token=user.get_auth_token(),
-                               email=user.email)
+                response = jsonify(id=user.uid,
+                                   name=user.first_name,
+                                   surname=user.last_name,
+                                   role='???', iat="???",
+                                   token=user.get_auth_token(),
+                                   email=user.email)
             if not user:
-                return jsonify(error="There is no user with given email.",
-                               logined=0, ), 401
-            if not user.verify_password(data['password']):
-                return jsonify(error="Invalid password, try again.",
-                               logined=0), 401
+                logger.warning('if not user')
+                response = jsonify(error="There is no user with given email.",
+                                   logined=0, ), 401
+            elif not user.verify_password(data['password']):
+                logger.warning('if not user verify')
+                response = jsonify(error="Invalid password, try again.",
+                                   logined=0), 401
+
+        else:
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json')
+    return response
 
 
 @app.route("/api/change_password", methods=["POST"])
@@ -71,11 +83,17 @@ def login():
 def change_password():
     if request.method == 'POST':
         data = request.get_json()
-        user = usr.get_user_by_id(data['id'])
-        if user and user.verify_password(data['old_pass']):
-            user.change_password(data['new_pass'])
-            return jsonify(), 200
-    return jsonify(), 401
+        validation = validate(data, validators=(
+            {'id': [v.required]},
+            {'old_pass': [v.required, v.min_l(6)]},
+            {'new_pass': [v.required, v.min_l(6), v.no_spaces]}))
+        if not validation['errors']:
+
+            user = usr.get_user_by_id(data['id'])
+            if user and user.verify_password(data['old_pass']):
+                user.change_password(data['new_pass'])
+                return jsonify(), 200
+        return jsonify(validation['errors']), 401
 
 
 @app.route("/api/logout", methods=["POST", 'GET'])
@@ -110,30 +128,36 @@ def register():
             json {'status': added user <username>}
             Status 200 - OK
     """
+    # TODO get back login logic to server
+    # todo ?pass confirm on server logic
+    response = jsonify(msg='unauthorized'), 400
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        arguments = ['firstName', 'lastName', 'email',
-                     'password', 'pass_confirm']
+        validation = validate(data, validators=(
+            {'firstName': [v.is_string, v.max_l(30),
+                           v.min_l, v.required, v.no_spaces]},
+            {'email': [v.required, v.no_spaces, v.max_l(30),
+                       v.email_pattern]},
+            {'lastName': [v.is_string, v.max_l(30),
+                          v.min_l, v.required, v.no_spaces]},
+            {'password': [v.is_string, v.max_l(30),
+                          v.min_l(6), v.required, v.no_spaces]},
+            {'pass_confirm': [v.is_string, v.max_l(30),
+                              v.min_l(6), v.required, v.no_spaces]}))
+        if not validation['errors']:
 
-        try:
-            if [v for k, v in request.get_json().iteritems() if
-                    not v or k not in arguments]:
-                return jsonify(error="Unauthorized,"
-                                     " some fields are empty"), 401
-            first_name = data['firstName']
-            last_name = data['lastName']
-            email = data['email']
-            password = data['password']
-        except KeyError:
-            return jsonify(error="Unauthorized, missing fields"), 401
-
-        if not usr.get_user_by_email(email):
-            usr.register(first_name, last_name, email, password)
-            status = 'added %s %s' % (first_name, last_name)
+            if not usr.get_user_by_email(data['email']):
+                usr.register(data['firstName'], data['lastName'],
+                             data['email'], data['password'])
+                msg = 'added %s %s' % (data['firstName'], data['lastName'])
+                response = jsonify({'status_message': msg}), 201
+            else:
+                msg = 'user with this email already exists'
+                response = jsonify({'status_message': msg}), 401
         else:
-            status = 'user with this email already exists'
-            return jsonify({'status': status}), 400
-        return jsonify({'status': status})
+            response = Response(json.dumps(validation['errors']),
+                                mimetype='application/json'), 400
+    return response
 
 
 @app.route("/api/email_exist", methods=['POST'])
@@ -149,7 +173,7 @@ def email_exist():
         return jsonify(isValid=bool(user))
 
 
-@app.route("/api/user_detailed_info/<user_id>")
+@app.route("/api/user_detailed_info/<int:user_id>")
 def get_user_info(user_id):
     """This method returns json object with user data."""
     if request.method == 'GET':
@@ -354,18 +378,34 @@ def resources():
 
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-        try:
-            db.add_resource(data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error]"), 400
-        except DBPoolError:
-            return jsonify(error="Resource already exists"), 400
-        try:
-            added_res_id = db.get_resource_id(data['resource_name'])
-        except KeyError:
-            return jsonify(error="Bad Request[key_error_add]"), 400
-        return jsonify(added_resource=data['resource_name'],
-                       resource_id=added_res_id[0])
+        validation = validate(data, validators=(
+            {'resource_name': [v.required]}
+        ))
+        if not validation['errors']:
+            try:
+                db.add_resource(data['resource_name'])
+                added_res_id = db.get_resource_id(data['resource_name'])
+            except DBPoolError:
+                return jsonify(error="Resource already exists"), 400
+            return jsonify(added_resource=data['resource_name'],
+                           resource_id=added_res_id[0])
+        else:
+            return Response(json.dumps(validation['errors']),
+                            mimetype='application/json')
+        # try:
+        #     db.add_resource(data['resource_name'])
+        # except KeyError:
+        #     return jsonify(error="Bad Request[key_error]"), 400
+        # except DBPoolError:
+        #     return jsonify(error="Resource already exists"), 400
+        # try:
+        #     added_res_id = db.get_resource_id(data['resource_name'])
+        # except KeyError:
+        #     return jsonify(error="Bad Request[key_error_add]"), 400
+        # return jsonify(added_resource=data['resource_name'],
+        #                resource_id=added_res_id[0])
+        #
+
 
     # todo add unique handler!
     if request.method == "PUT" and request.get_json():
@@ -474,7 +514,6 @@ def permissions():
 
     if request.method == "POST" and request.get_json():
         data = request.get_json()
-
         try:
             db.insert_permission(data['resource_id'],
                                  data['action'],
@@ -615,6 +654,7 @@ def get_all_permissions():
                 'description': perm[4]
             })
     return Response(json.dumps(perms_list), mimetype='application/json')
+
 
 if __name__ == "__main__":
     app.run()

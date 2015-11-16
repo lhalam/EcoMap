@@ -1,7 +1,7 @@
-app.controller('MainCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
+app.controller('MainCtrl', ['$scope', '$auth', function($scope, $auth){
   
-  $scope.showUserProfile = function(){
-    return $rootScope.userProfile;
+  $scope.isAuthenticated = function(){
+    return $auth.isAuthenticated();
   };
 
 }]);

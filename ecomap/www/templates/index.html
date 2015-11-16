@@ -5,30 +5,42 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Styles -->
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/custom.css">
+
+  <!-- Non-angularJS scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+  <!-- AngularJS modules -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-cookies.js" type="text/javascript"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
-  <script src="/js/angular-route.min.js" type="text/javascript"></script>
+  <!-- <script src="/js/angular-route.min.js" type="text/javascript"></script> -->
   <script src="/js/angular-animate.min.js"></script>
+  <script src="/js/angular-ui-router.min.js"></script>
+  <script src="/js/satellizer.min.js"></script>
 
+  <!-- AngularJS app -->
   <script src="/js/angular_app.js"></script>
+  <script src="/js/appConfigs.js"></script>
 
+  <!-- AngularJS Ctrls -->
   <script src="/js/controllers/UserManagementCtrl.js"></script>
   <script src="/js/controllers/MainCtrl.js"></script>
   <script src="/js/controllers/UserProfileCtrl.js"></script>
   <script src="/js/controllers/MapCtrl.js"></script>
   <script src="/js/controllers/AdminCtrl.js"></script>
+  <script src='/js/controllers/LoginCtrl.js'></script>
+  <script src='/js/controllers/RegisterCtrl.js'></script>
+  <script src="/js/controllers/LogoutCtrl.js"></script>
 
+  <!-- AngularJS others -->
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
 
-  <script src="/js/appConfigs.js"></script>
-   <link rel="stylesheet" type="text/css" href="/css/custom.css">
 </head>
 <body ng-controller="MainCtrl" ng-class="{ 'body-scroll-hidden': !showUserProfile() }">
 
@@ -62,11 +74,11 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right" ng-controller="UserManagementCtrl">
-          <li id="loginField" ng-hide="checkLogined()">
-            <a href="" ng-click="toggleLoginModal()" >Увійти</a>
+          <li id="loginField" ng-if="!isAuthenticated()">
+            <a href="/#/login">Увійти</a>
 
-            <modal title="Увійти" visible="showLoginModal">
-              <form role="form" name="loginForm" ng-submit="Login()" novalidate>
+            <!-- <modal title="Увійти" visible="showLoginModal">
+              <form role="form" name="loginForm" ng-submit="Login(user)" novalidate>
               
                 <div class="form-group" ng-class="{ 'has-error': loginForm.email.$touched && loginForm.email.$invalid || getInvalidPasswordEmail() }">
                   <label for="email" class="control-label">Електронна адреса</label>
@@ -93,18 +105,18 @@
                 <br>
                 <button type="submit" class="btn btn-primary">Увійти</button>
               </form>
-            </modal>
+            </modal> -->
           </li>
 
-          <li ng-show="checkLogined()">
+          <li ng-if="isAuthenticated()">
             <a href="/#/user_profile" ng-bind="checkLogined()" ></a>
           </li>
 
-          <li ng-show="checkLogined()">
+          <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
             <a href="" ng-click="Logout()">Вихід</a>
           </li>
 
-          <li ng-hide="checkLogined()">
+          <li ng-if="!isAuthenticated()">
             <a href="" ng-click="toggleRegisterModal()">Реєстрація</a>
 
             <modal title="Реєстрація" visible="showRegisterModal">
@@ -169,7 +181,7 @@
     </div>
   </nav> 
   
-  <ng-view></ng-view>
+  <div ui-view class="map-div"></div>
 
   
 </div>

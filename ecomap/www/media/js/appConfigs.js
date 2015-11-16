@@ -1,27 +1,41 @@
-app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
-  $routeProvider
-   .when('/', {
-    redirectTo: '/map'
-  })
-   .when('/map', {
-    templateUrl: '/templates/map.html',
-    controller: 'MapCtrl'
-  })
-  .when('/user_profile', {
-    templateUrl: '/templates/userProfile.html',
-    controller: 'UserProfileCtrl'
-  })
-  .when('/admin', {
-    templateUrl: '/templates/admin.html',
-    controller: 'AdminCtrl'
-  })
-  // .when('/login', {
-  //   templateUrl: '/templates/login/html',
-  //   controller: 'UserManagementCtrl'
-  // });
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
 
-  // $locationProvider.html5Mode({
-  //   enabled: true,
-  //   requireBase: false
-  // });
+  $urlRouterProvider.otherwise('/map');
+
+  $stateProvider
+    .state('map', {
+      url: '/map',
+      templateUrl: '/templates/map.html',
+      controller: 'MapCtrl'
+    })
+    .state('user_profile', {
+      url: '/user_profile',
+      templateUrl: '/templates/userProfile.html',
+      controller: 'UserProfileCtrl'
+    })
+    .state('admin', {
+      url: '/admin',
+      templateUrl: '/templates/admin.html',
+      controller: 'AdminCtrl'
+    })
+    .state('login', {
+      url: '/login',
+      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        $uibModal.open({
+            templateUrl: '/templates/login.html',
+            controller: 'LoginCtrl',
+        }).result.finally(function() {
+            $state.go('map');
+        });
+    }]
+    })
+    
+
+    $authProvider.loginUrl = '/api/login';
+    $authProvider.singupUrl = '/api/register';    
+
 }]);
+  // app.config(['$authProvider', function('$authProvider'){
+  //   $authProvider.logingUrl = '/api/login';
+  //   $authProvider.singupUrl = '/api/register';    
+  // }]);example

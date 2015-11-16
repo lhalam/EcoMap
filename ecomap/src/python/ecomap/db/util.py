@@ -46,15 +46,18 @@ def insert_user(first_name, last_name, email, password):
              password - hashed password of user
     """
     with db_pool().manager() as conn:
+        conn.autocommit(True)
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
                                        `email`,
                                        `password`)
                    VALUES (%s, %s, %s, %s);
+                   INSERT INTO `user_role` (`user_id`, `role_id`)
+                   values (LAST_INSERT_ID(), 2);
                 """
         cursor.execute(query, (first_name, last_name, email, password))
-        conn.commit()
+        # conn.commit()
 
 
 @retry_query(tries=3, delay=1)
@@ -68,6 +71,36 @@ def change_user_password(user_id, new_password):
         query = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
         cursor.execute(query, (new_password, user_id))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_role_by_email(email):
+    """Get all resources.
+    :return: tuple of resources
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """select r.name from user_role as ur
+                  inner join user as u on ur.user_id = u.id
+                  inner join role as r on ur.role_id = r.id
+                  where u.email = %s;"""
+        cursor.execute(query, (email,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_role_by_id(id):
+    """Get all resources.
+    :return: tuple of resources
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """select r.name from user_role as ur
+                  inner join user as u on ur.user_id = u.id
+                  inner join role as r on ur.role_id = r.id
+                  where u.id = %s;"""
+        cursor.execute(query, (id,))
+        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)

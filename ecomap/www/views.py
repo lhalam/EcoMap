@@ -5,8 +5,8 @@ ecomap project.
 """
 import json
 
-from flask import render_template, request, jsonify, Response
-from flask_login import login_user, logout_user, login_required
+from flask import render_template, request, jsonify, Response, g, abort
+from flask_login import login_user, logout_user, login_required, current_user
 
 import ecomap.user as usr
 
@@ -14,6 +14,67 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap.db.db_pool import DBPoolError
 from ecomap.utils import Validators as v, validate
+
+import functools
+
+
+@app.before_request
+def load_users():
+    if current_user.is_authenticated:
+        g.user = current_user
+        logger.warning(g.user)
+    else:
+        anon = usr.Anonymous()
+        g.user = anon.username
+        logger.warning(g.user)
+
+
+def is_admin(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        logger.warning(g.user)
+        logger.warning('SIC!')
+        logger.warning(g.user.role)
+        if g.user.role != 'admin':
+            abort(403)
+        return f(*args, **kwargs)
+    return wrapped
+
+
+@app.route("/api/user_stat", methods=["GET"])
+def user_stat():
+    """handler for change password
+    return:
+        - if succeed:
+            Status 200 - OK
+        - if password was invalid:
+            json with error message
+            {'error':'message'}
+            Status 401 - Unauthorized
+        - if data has invalid format:
+            Status 400 - Bad Request
+
+    """
+    logger.warning('CURRENT')
+    logger.warning(current_user)
+    if current_user.is_authenticated:
+        user = current_user
+        logger.warning('AUTHEND')
+        logger.warning(current_user._get_current_object())
+        logger.warning(dir(current_user))
+        return jsonify(authentificated=(user.uid),
+                       dir=dir(user), uid=user.uid, fn=user.first_name,
+                       ln=user.last_name, pas=user.password, mail=user.email,
+                       cu=current_user.__dict__)
+    if not current_user.is_authenticated:
+        user = usr.Anonymous()
+        logger.warning('NOT AUTH')
+        logger.warning(user.username)
+        return jsonify(error="you are not logged in - you are anon.",
+                       logined=0, cu=current_user.__dict__), 401
+        # if not user.verify_password(data['password']):
+        #     return jsonify(error="Invalid password, try again.",
+        #                    logined=0), 401
 
 
 @app.route("/", methods=['GET'])
@@ -60,7 +121,7 @@ def login():
                 response = jsonify(id=user.uid,
                                    name=user.first_name,
                                    surname=user.last_name,
-                                   role='???', iat="???",
+                                   role=user.role, iat="???",
                                    token=user.get_auth_token(),
                                    email=user.email)
             if not user:
@@ -178,9 +239,10 @@ def get_user_info(user_id):
     """This method returns json object with user data."""
     if request.method == 'GET':
         user = usr.get_user_by_id(user_id)
+
         if user:
             return jsonify(name=user.first_name, surname=user.last_name,
-                           email=user.email, role="user")
+                           email=user.email, role=user.role)
         else:
             return jsonify(status="There is no user with given email"), 401
 
@@ -358,6 +420,8 @@ def post_problem():
 
 
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@login_required
+@is_admin
 def resources():
     """Get list of site resources needed for administration
     and server permission control.
@@ -437,6 +501,8 @@ def resources():
 
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@login_required
+@is_admin
 def roles():
     """NEW!
     get list of roles for server permission control.
@@ -474,20 +540,6 @@ def roles():
             response = Response(json.dumps(validation['errors']),
                                 mimetype='application/json'), 400
         return response
-
-        # try:
-        #     db.insert_role(data['role_name'])
-        # except KeyError:
-        #     return jsonify(error="Bad Request[key_error]"), 400
-        # # todo change to uniqueIndentifyError or Exception
-        # except DBPoolError:
-        #     return jsonify(error="Already exists"), 400
-        # try:
-        #     added_role_id = db.get_role_id(data['role_name'])
-        # except KeyError:
-        #     return jsonify(error="Bad Request[key_error_add]"), 400
-        # return jsonify(added_role=data['role_name'],
-        #                added_role_id=added_role_id[0])
 
     # edit role by id
     if request.method == "PUT" and request.get_json():
@@ -531,6 +583,8 @@ def roles():
 
 
 @app.route("/api/permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
+@login_required
+@is_admin
 def permissions():
     """Controller used for mange getting and adding actions of
     server permission options.
@@ -546,8 +600,10 @@ def permissions():
         data = request.get_json()
         validation = validate(data, validators=(
             {'resource_id': [v.required]},
-            {'action': [v.required]},
-            {'modifier': [v.required]},
+            {'action': [v.required,
+                        v.enum(['POST', 'GET', 'PUT', 'DELETE'])]},
+            {'modifier': [v.required,
+                          v.enum(['Own', 'Any', 'None'])]},
             {'description': [v.required]}))
 
         if not validation['errors']:
@@ -570,8 +626,10 @@ def permissions():
     if request.method == "PUT" and request.get_json():
         edit_data = request.get_json()
         validation = validate(edit_data, validators=(
-            {'new_action': [v.required]},
-            {'new_modifier': [v.required]},
+            {'new_action': [v.required,
+                            v.enum(['POST', 'GET', 'PUT', 'DELETE'])]},
+            {'new_modifier': [v.required,
+                              v.enum(['Own', 'Any', 'None'])]},
             {'permission_id': [v.required]},
             {'new_description': [v.required]}))
 
@@ -614,6 +672,8 @@ def permissions():
 
 
 @app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
+@login_required
+@is_admin
 def get_role_permission():
     """
     Handler for assigning permissions to role.
@@ -690,6 +750,8 @@ def get_role_permission():
 
 
 @app.route("/api/all_permissions", methods=['GET'])
+@login_required
+@is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 

@@ -127,3 +127,9 @@ curl -X GET http://localhost:81/api/role_permissions?role_id=2
 
 DELETE PERMISSION BY ID
 curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"permission_id":"7"}' http://ecomap.new/api/permissions
+
+
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"email":"", "password": 'helloo'}' http://localhost:81/api/login
+
+
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":5, "old_pass": "", "new_pass": "222222"}' http://localhost:81/api/change_password

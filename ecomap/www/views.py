@@ -13,7 +13,8 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap.db.db_pool import DBPoolError
-from ecomap.utils import Validators as v, validate
+# from ecomap.utils import Validators as v, validate
+from ecomap import validator as v
 
 import functools
 
@@ -77,7 +78,6 @@ def user_stat():
         #                    logined=0), 401
 
 
-
 @app.route('/', methods=['GET'])
 def index():
     """Controller starts main application page.
@@ -109,13 +109,14 @@ def login():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        validation = validate(data, validators=(
-            {'password': [v.is_string, v.max_l(30),
-                          v.min_l(6), v.required, v.no_spaces]},
-            {'email': [v.required, v.no_spaces, v.max_l(30),
-                       v.email_pattern]}))
-        if not validation['errors']:
+        valid = v.main_validator([[data, 'password', 6, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'email', 1, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length, v.validate_email]])
 
+        if not valid:
             user = usr.get_user_by_email(data['email'])
             if user and user.verify_password(data['password']):
                 login_user(user, remember=True)
@@ -135,7 +136,7 @@ def login():
                                    logined=0), 401
 
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json')
     return response
 
@@ -145,17 +146,24 @@ def login():
 def change_password():
     if request.method == 'POST':
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'id': [v.required]},
-            {'old_pass': [v.required, v.min_l(6)]},
-            {'new_pass': [v.required, v.min_l(6), v.no_spaces]}))
-        if not validation['errors']:
 
+        valid = v.main_validator([[data, 'id', 1, 100, v.validate_key,
+                                   v.validate_empty],
+                                  [data, 'old_pass', 1, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'new_pass', 1, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length]])
+
+        if not valid:
             user = usr.get_user_by_id(data['id'])
             if user and user.verify_password(data['old_pass']):
                 user.change_password(data['new_pass'])
                 return jsonify(), 200
-        return jsonify(validation['errors']), 401
+            return jsonify(), 400
+        return Response(json.dumps({'error': valid}),
+                        mimetype='application/json')
 
 
 @app.route('/api/logout', methods=['POST', 'GET'])
@@ -195,19 +203,24 @@ def register():
     response = jsonify(msg='unauthorized'), 400
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'firstName': [v.is_string, v.max_l(30),
-                           v.min_l, v.required, v.no_spaces]},
-            {'email': [v.required, v.no_spaces, v.max_l(30),
-                       v.email_pattern]},
-            {'lastName': [v.is_string, v.max_l(30),
-                          v.min_l, v.required, v.no_spaces]},
-            {'password': [v.is_string, v.max_l(30),
-                          v.min_l(6), v.required, v.no_spaces]},
-            {'pass_confirm': [v.is_string, v.max_l(30),
-                              v.min_l(6), v.required, v.no_spaces]}))
-        if not validation['errors']:
 
+        valid = v.main_validator([[data, 'email', 2, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length, v.validate_email],
+                                  [data, 'firstName', 2, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'lastName', 2, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'password', 2, 100, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'pass_confirm', 2, 100,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length]])
+
+        if not valid:
             if not usr.get_user_by_email(data['email']):
                 usr.register(data['firstName'], data['lastName'],
                              data['email'], data['password'])
@@ -217,7 +230,7 @@ def register():
                 msg = 'user with this email already exists'
                 response = jsonify({'status_message': msg}), 401
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
     return response
 
@@ -442,9 +455,11 @@ def resources():
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'resource_name': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[data, 'resource_name', 2, 100,
+                                  v.validate_key, v.validate_empty]])
+
+        if not valid:
             try:
                 db.add_resource(data['resource_name'])
                 added_res_id = db.get_resource_id(data['resource_name'])
@@ -454,17 +469,21 @@ def resources():
             response = jsonify(added_resource=data['resource_name'],
                                resource_id=added_res_id[0])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     # todo change unique handler to ajax?
     if request.method == 'PUT' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'new_resource_name': [v.required]},
-            {'resource_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[data, 'new_resource_name', 2, 100,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length],
+                                  [data, 'resource_id', 1, 100, v.validate_key,
+                                   v.validate_empty]])
+
+        if not valid:
             try:
                 db.edit_resource_name(data['new_resource_name'],
                                       data['resource_id'])
@@ -474,15 +493,17 @@ def resources():
             response = jsonify(status='success',
                                edited=data['new_resource_name'])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     if request.method == 'DELETE' and request.get_json():
         del_data = request.get_json()
-        validation = validate(del_data, validators=(
-            {'resource_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[del_data, 'resource_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+
+        if not valid:
             if not db.check_resource_deletion(del_data['resource_id']):
                 db.delete_resource_by_id(del_data['resource_id'])
                 response = jsonify(msg='success',
@@ -490,7 +511,7 @@ def resources():
             else:
                 response = jsonify(error='Cannot delete!')
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
@@ -522,13 +543,14 @@ def roles():
             - if no resource in DB
                 return empty dict
     """
-    # todo ajax validation?
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'role_name': [v.required, v.min_l(2)]}
-        ))
-        if not validation['errors']:
+
+        valid = v.main_validator([[data, 'role_name', 2, 100,
+                                  v.validate_key, v.validate_empty,
+                                  v.validate_string, v.validate_length]])
+
+        if not valid:
             try:
                 db.insert_role(data['role_name'])
                 added_role_id = db.get_role_id(data['role_name'])
@@ -538,17 +560,21 @@ def roles():
             response = jsonify(added_role=data['role_name'],
                                added_role_id=added_role_id[0])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
-    # edit role by id
     if request.method == 'PUT' and request.get_json():
         edit_data = request.get_json()
-        validation = validate(edit_data, validators=(
-            {'new_role_name': [v.required]},
-            {'role_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[edit_data, 'new_role_name', 2, 100,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length],
+                                  [edit_data, 'role_id', 2, 100,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length]])
+
+        if not valid:
             try:
                 db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
             except DBPoolError:
@@ -556,15 +582,17 @@ def roles():
             response = jsonify(msg='success',
                                edited=edit_data['new_role_name'])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     if request.method == 'DELETE' and request.get_json():
         del_data = request.get_json()
-        validation = validate(del_data, validators=(
-            {'role_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[del_data, 'role_id', 1, 100, v.validate_key,
+                                  v.validate_empty]])
+
+        if not valid:
             if not db.check_role_deletion(del_data['role_id']):
                 db.delete_role_by_id(del_data['role_id'])
                 response = jsonify(msg='success',
@@ -572,7 +600,7 @@ def roles():
             else:
                 response = jsonify(error='Cannot delete!')
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
@@ -599,15 +627,20 @@ def permissions():
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'resource_id': [v.required]},
-            {'action': [v.required,
-                        v.enum(['POST', 'GET', 'PUT', 'DELETE'])]},
-            {'modifier': [v.required,
-                          v.enum(['Own', 'Any', 'None'])]},
-            {'description': [v.required]}))
 
-        if not validation['errors']:
+        valid = v.main_validator([[data, 'resource_id', 1, 100,
+                                   v.validate_key, v.validate_empty],
+                                  [data, 'action', 3, 7, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'modifier', 3, 5, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length],
+                                  [data, 'description', 1, 256, v.validate_key,
+                                   v.validate_empty, v.validate_string,
+                                   v.validate_length]])
+
+        if not valid:
             db.insert_permission(data['resource_id'],
                                  data['action'],
                                  data['modifier'],
@@ -615,26 +648,29 @@ def permissions():
             added_perm_id = db.get_permission_id(data['resource_id'],
                                                  data['action'],
                                                  data['modifier'])
-
             response = jsonify(added_permission_for=data['description'],
                                permission_id=added_perm_id[0])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
-    # todo add unique handler!
     if request.method == 'PUT' and request.get_json():
         edit_data = request.get_json()
-        validation = validate(edit_data, validators=(
-            {'new_action': [v.required,
-                            v.enum(['POST', 'GET', 'PUT', 'DELETE'])]},
-            {'new_modifier': [v.required,
-                              v.enum(['Own', 'Any', 'None'])]},
-            {'permission_id': [v.required]},
-            {'new_description': [v.required]}))
 
-        if not validation['errors']:
+        valid = v.main_validator([[edit_data, 'new_action', 3, 7,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length],
+                                  [edit_data, 'new_modifier', 3, 5,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length],
+                                  [edit_data, 'new_description', 1, 256,
+                                   v.validate_key, v.validate_empty,
+                                   v.validate_string, v.validate_length],
+                                  [edit_data, 'permission_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+
+        if not valid:
             db.edit_permission(edit_data['new_action'],
                                edit_data['new_modifier'],
                                edit_data['permission_id'],
@@ -642,15 +678,17 @@ def permissions():
             response = jsonify(msg='success',
                                edited_perm_id=edit_data['permission_id'])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     if request.method == 'DELETE' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'permission_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[data, 'permission_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+
+        if not valid:
             if not db.check_permission_deletion(data['permission_id']):
                 db.delete_permission_by_id(data['permission_id'])
                 response = jsonify(msg='success',
@@ -658,7 +696,7 @@ def permissions():
             else:
                 response = jsonify(error='Cannot delete!')
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
@@ -686,38 +724,46 @@ def get_role_permission():
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-        validation = validate(data, validators=(
-            {'role_id': [v.required]},
-            {'permission_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[data, 'role_id', 1, 100, v.validate_key,
+                                   v.validate_empty],
+                                  [data, 'permission_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+
+        if not valid:
             db.add_role_permission(data['role_id'],
                                    data['permission_id'])
             response = jsonify(added_role_permission_for=data['role_id'])
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     if request.method == 'PUT' and request.get_json():
         edit_data = request.get_json()
-        validation = validate(edit_data, validators=(
-            {'role_id': [v.required]},
-            {'permission_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[edit_data, 'role_id', 1, 100,
+                                   v.validate_key, v.validate_empty],
+                                  [edit_data, 'permission_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+
+        if not valid:
             db.delete_permissions_by_role_id(edit_data['role_id'])
             for id in edit_data['permission_id']:
                 db.add_role_permission(edit_data['role_id'], id)
             response = jsonify(msg='edited permission')
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 
     if request.method == 'DELETE' and request.get_json():
         del_data = request.get_json()
-        validation = validate(del_data, validators=(
-            {'role_id': [v.required]}))
-        if not validation['errors']:
+
+        valid = v.main_validator([[del_data, 'role_id', 1, 100, v.validate_key,
+                                   v.validate_empty]])
+
+        if not valid:
             if not db.check_role_deletion(del_data['role_id']):
                 db.delete_role_by_id(del_data['role_id'])
                 response = jsonify(status='success',
@@ -725,7 +771,7 @@ def get_role_permission():
             else:
                 response = jsonify(error='Cannot delete!')
         else:
-            response = Response(json.dumps(validation['errors']),
+            response = Response(json.dumps({'error': valid}),
                                 mimetype='application/json'), 400
         return response
 

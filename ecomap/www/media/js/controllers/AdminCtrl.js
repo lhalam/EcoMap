@@ -32,7 +32,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
-                //console.log($scope.Permisions)
+                console.log($scope.Permisions)
                 
             }, function errorCallback(response) {
                 console.log(response)
@@ -46,7 +46,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                //console.log($scope.Roles)
+                console.log($scope.Roles)
             },function errorCallback(response) {
                 console.log(response)
             })
@@ -84,7 +84,6 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             $scope.addResModal=false
             $scope.Eror=response.data.error;
             $scope.customEror=true;
-            //alert(response.data.error)
         })
     };
 
@@ -313,15 +312,37 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
 
     $scope.rolePerm=false
-    $scope.selectPermObj={}
-    $scope.selectPerm=function(perm){
-    $('#tablePermRole tbody').on( 'click', 'tr', function () {
-        $(this).toggleClass('selected');
-    } );
 
-        $scope.selectPermObj[perm.permission_id]=perm
-        //console.log($scope.selectPermObj)
+    $scope.selectPerm=function(ev,perm){
+        // Define all permision,wich already bind
+        
+        
+
+        if(ev.currentTarget.classList.contains("selected")){
+            ev.currentTarget.classList.remove("selected")
+            //splice( $scope.listToSend.indexOf(perm), 1 )
+            //delete $scope.listToSend[$scope.listToSend.indexOf(perm)]
+            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
+            //console.log( $scope.listToSend.indexOf(perm.permission_id))
+            //delete $scope.listToSend[$scope.listToSend.indexOf(perm)]
+            delete $scope.selectPermObj[perm.permission_id]
+
+            
+        }
+        else{
+            ev.currentTarget.classList.add("selected")
+            $scope.listToSend.push(perm.permission_id)
+            $scope.selectPermObj[perm.permission_id]=perm
+            //console.log(ev.currentTarget.classList.contains("selected"))
+            //console.log($scope.selectPermObj)
+        }
+         
+
+
+        console.log($scope.listToSend)
+
     }
+    
     $scope.showRolePerm=function(name,id){
 
         $scope.rolePerm=true
@@ -329,22 +350,62 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "name":name,
             "id":id
         }
-     
-        
+
+        $scope.selectPermObj={}
+        $scope.listToSend=[]
+
+        $http({
+            method:"GET",
+            url:"/api/role_permissions",
+            params:{
+                role_id:$scope.rolePermObj.id
+            }
+        }).then(function successCallback(data) {
+                $scope.actualPermInRole = data.data.actual
+                for(var i=0;i < $scope.actualPermInRole.length;i++){
+                if($scope.listToSend.indexOf($scope.actualPermInRole[i].id) == -1){
+                $scope.listToSend.push($scope.actualPermInRole[i].id)
+                $scope.selectPermObj[$scope.actualPermInRole[i].id]=$scope.actualPermInRole[i]
+            }
+            
+        }
+            $scope.checkInActual=function(id){
+                console.log($scope.listToSend)
+                var list=[]
+                     $scope.actualPermInRole.forEach(function(elem){
+                        list.push(elem.id)
+                     })
+                if(list.indexOf(id) !=-1){
+                    return false
+                    }
+                else return true
+                }
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+
+       
+
+
+    }
+    $scope.deletePermFormRole=function(perm){
+         $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
+         delete $scope.selectPermObj[perm.id]
+         console.log(perm.id)
     }
     $scope.bindResPerm=function(){
-        console.log($scope.Permisions)
-        var listToSend=[]
+        $scope.listToSend=[]
         for(id in $scope.selectPermObj){
-            listToSend.push(id)
+            $scope.listToSend.push(id)
         }
-        console.log(listToSend)
+
+
          $http({
-            method:"GET",
-            url:"/api/permissions",
-            params:{
+            method:"PUT",
+            url:"/api/role_permissions",
+            data:{
                 "role_id":$scope.rolePermObj.id, 
-                "permission_id":listToSend
+                "permission_id":$scope.listToSend
             }
             }).then(function successCallback(data) {
                 //$scope.rolePermList=data.data
@@ -353,7 +414,18 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 console.log(response)
             })
 
-
+            $http({
+                method:"GET",
+                url:"/api/role_permissions",
+                params:{
+                    'role_id':$scope.rolePermObj.id
+                }
+            }).then(function successCallback(data) {
+                console.log(data)
+            }, function errorCallback(response) {
+                console.log(response)
+            })
+            $scope.rolePerm=false
     }
 
     $scope.showResPerm=function(id){
@@ -370,8 +442,5 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 console.log(response)
             })
     }
-    $scope.example1model = [];
-     $scope.example1data = [ {id: 1, label: "David"},
-      {id: 2, label: "Jhon"},
-       {id: 3, label: "Danny"}];
+
 }]);

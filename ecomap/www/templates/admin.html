@@ -99,26 +99,49 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Права ролі" visible="rolePerm">
-<div ng-dropdown-multiselect="" data-ng-options="Resources" selected-model="example1model"></div>
 
 <form ng-submit="bindResPerm()" name="rolePerm" novalidate>
 <div class="container">
 
   
 </div>
+<h3>Вже прив’язані події</h3>  
+  <table class="table table-stripped">
+  <thead>
+               <tr>
+                 <td>Назва методу</td>
+                 <td>Modifier</td>
+                 <td>Id</td>
+                 <td>Опис</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="perm in actualPermInRole" >
+                
+                  <td ng-repeat="perm_prop in perm">{{perm_prop}}</td>
+                  <td><button class="btn-danger"  ng-click="deletePermFormRole(perm)">DELETE</button></td>
+                
+               </tr>
+          
+              </tbody>
+            </table>
+  </table>
+  <h3>Виберіть події для прив’язки</h3> 
   <table class="table table-stripped" id="tablePermRole">
               <thead>
                <tr>
                  <td>Назва методу</td>
+                 <td>Id</td>
+                 <td>Ресурс</td>
                  <td>Modifier</td>
                  <td>Опис</td>
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in Permisions" ng-click="selectPerm(perm)" >
-                  <td>{{perm.action}}</td>
-                  <td>{{perm.modifier}}</td>
-                  <td>{{perm.description}}</td>
+                <tr ng-repeat="perm in Permisions" ng-click="selectPerm($event,perm)" ng-class="selectPermObj.hasOwnProperty(perm.permission_id) ? 'selected' : ''" ng-show="checkInActual(perm.permission_id)">
+                
+                  <td ng-repeat="perm_prop in perm" >{{perm_prop}}</td>
+                  
                </tr>
           
               </tbody>
@@ -133,7 +156,7 @@
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="new_res.name" ng-maxlength="255" required>
-      {{new_res.name}}
+
     </div>
     <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">
       <p ng-message="maxlength">Занадто довге імя ресурсу!</p>

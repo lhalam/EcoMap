@@ -29,13 +29,19 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
         });
     }]
     })
+    .state('register', {
+      url: '/register',
+      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        $uibModal.open({
+            templateUrl: '/templates/register.html',
+            controller: 'RegisterCtrl',
+        }).result.finally(function() {
+            $state.go('map');
+        });
+    }]
+    })
     
-
     $authProvider.loginUrl = '/api/login';
-    $authProvider.singupUrl = '/api/register';    
+    $authProvider.signupUrl = '/api/register';    
 
 }]);
-  // app.config(['$authProvider', function('$authProvider'){
-  //   $authProvider.logingUrl = '/api/login';
-  //   $authProvider.singupUrl = '/api/register';    
-  // }]);example

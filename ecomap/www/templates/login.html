@@ -1,27 +1,33 @@
-<form role="form" name="loginForm" ng-submit="Login(user)" novalidate>
-  
-  <div class="form-group" ng-class="{ 'has-error': loginForm.email.$touched && loginForm.email.$invalid || getInvalidPasswordEmail() }">
-    <label for="email" class="control-label">Електронна адреса</label>
-    <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
-    <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched">
-      <p ng-message="maxlength">Занадто довга електронна пошта!</p>
-      <p ng-message="required">Необхідно ввести електронну пошту!</p>
-      <p ng-message="email">Некоректна електронна пошта!</p>
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" ng-click="dismiss()" aria-hidden="true">&times;</button>
+  <h4 class="modal-title">Увійти</h4>  
+</div>
+<div class="modal-body">
+  <form role="form" name="loginForm" ng-submit="Login(user)" novalidate>
+    
+    <div class="form-group" ng-class="{ 'has-error': loginForm.email.$touched && loginForm.email.$invalid || getInvalidPasswordEmail() }">
+      <label for="email" class="control-label">Електронна адреса</label>
+      <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
+      <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched">
+        <p ng-message="maxlength">Занадто довга електронна пошта!</p>
+        <p ng-message="required">Необхідно ввести електронну пошту!</p>
+        <p ng-message="email">Некоректна електронна пошта!</p>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group" ng-class="{ 'has-error': (loginForm.password.$touched && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
-    <label for="password" class="control-label">Пароль</label>
-    <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
-    <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched">
-      <p ng-message="minlength">Пароль не може бути коротшим, ніж 6 символів!</p>
-      <p ng-message="required">Необхідно ввести пароль!</p>
+    <div class="form-group" ng-class="{ 'has-error': (loginForm.password.$touched && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
+      <label for="password" class="control-label">Пароль</label>
+      <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
+      <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched">
+        <p ng-message="minlength">Пароль не може бути коротшим, ніж 6 символів!</p>
+        <p ng-message="required">Необхідно ввести пароль!</p>
+      </div>
+      <div class="help-block">
+        <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>
+      </div>
     </div>
-    <div class="help-block">
-      <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>
-    </div>
-  </div>
 
-  <br>
-  <button type="submit" class="btn btn-primary">Увійти</button>
-</form>
+    <br>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+  </form>
+</div>

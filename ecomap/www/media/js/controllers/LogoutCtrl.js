@@ -8,12 +8,7 @@ app.controller('LogoutCtrl', ['$scope','$http','$cookies','$auth','$state', func
       $cookies.remove('surname');
       $cookies.remove('id');
       $auth.logout();
-      $state.go('/map');
-
-      // $scope.newUser = {};
-      // $scope.user = {};
-      // angular.element(document.querySelector('#loginForm')).$setPristine();
-      // angular.element(document.querySelector('#registerForm')).$setPristine();
+      $state.go('map');
     },
       function errorCallback(data){});
 

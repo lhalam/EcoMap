@@ -54,7 +54,7 @@ def insert_user(first_name, last_name, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s);
                    INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), 2);
+                   values (LAST_INSERT_ID(), 3);
                 """
         cursor.execute(query, (first_name, last_name, email, password))
         # conn.commit()

@@ -1,7 +1,15 @@
-app.controller('MainCtrl', ['$scope', '$rootScope', function($scope, $rootScope){
+app.controller('MainCtrl', ['$scope', '$auth', '$cookies', function($scope, $auth, $cookies){
   
-  $scope.showUserProfile = function(){
-    return $rootScope.userProfile;
+  $scope.isAuthenticated = function(){
+    return $auth.isAuthenticated();
   };
+
+  $scope.getUsername = function(){
+    if($cookies.get('name') && $cookies.get('surname')){
+      return $cookies.get('name') + " " + $cookies.get('surname');
+    } else{
+      return null;
+    }
+  }
 
 }]);

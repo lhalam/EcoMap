@@ -120,6 +120,10 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
    	};
 
     $scope.new_res = {};
+    var data = {
+        'resource_name': $scope.new_res['name']
+
+    }
     $scope.addResource = function(){
          $http({
             method: "POST",

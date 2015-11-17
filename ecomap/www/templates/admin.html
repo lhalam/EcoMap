@@ -127,7 +127,9 @@
             </table>
   </table>
   <h3>Виберіть події для прив’язки</h3> 
+   <input type="text" ng-model="searchWord" class="form-control">
   <table class="table table-stripped" id="tablePermRole">
+
               <thead>
                <tr>
                  <td>Назва методу</td>
@@ -138,8 +140,8 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in Permisions" ng-click="selectPerm($event,perm)" ng-class="selectPermObj.hasOwnProperty(perm.permission_id) ? 'selected' : ''" ng-show="checkInActual(perm.permission_id)">
-                
+                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-class="selectPermObj.hasOwnProperty(perm.permission_id) ? 'selected' : ''" ng-show="checkInActual(perm.permission_id)">
+                  
                   <td ng-repeat="perm_prop in perm" >{{perm_prop}}</td>
                   
                </tr>
@@ -155,7 +157,7 @@
   <form  ng-submit="addResource()" name="addResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="resName" ng-model="new_res.name" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
 
     </div>
     <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">

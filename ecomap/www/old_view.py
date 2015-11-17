@@ -427,11 +427,11 @@ def get_resource():
     #     edit_data = request.get_json()
     #     try:
     #         db.edit_resource_value(edit_data['old_resource_value'],
-    #                                edit_data['new_resource_value'])
+    #                                edit_data['newResourceource_value'])
     #     except KeyError:
     #         return jsonify(error="Bad Request[key_error]"), 400
     #     return jsonify(status="success",
-    #                    edited=edit_data['new_resource_value'])
+    #                    edited=edit_data['newResourceource_value'])
 
     # # delete by id
     # if request.method == "DELETE" and request.get_json():

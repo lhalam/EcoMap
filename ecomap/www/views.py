@@ -397,17 +397,17 @@ def resources():
     if request.method == "PUT" and request.get_json():
         data = request.get_json()
         validation = validate(data, validators=(
-            {'new_resource_name': [v.required]},
+            {'newResourceource_name': [v.required]},
             {'resource_id': [v.required]}))
         if not validation['errors']:
             try:
-                db.edit_resource_name(data['new_resource_name'],
+                db.edit_resource_name(data['newResourceource_name'],
                                       data['resource_id'])
             except DBPoolError:
                 return jsonify(error="this name already exists"), 400
 
             response = jsonify(status="success",
-                               edited=data['new_resource_name'])
+                               edited=data['newResourceource_name'])
         else:
             response = Response(json.dumps(validation['errors']),
                                 mimetype='application/json'), 400

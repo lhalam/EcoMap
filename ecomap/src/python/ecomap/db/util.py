@@ -448,5 +448,10 @@ def delete_role_by_id(role_id):
         cursor.execute(query, (role_id,))
         conn.commit()
 
+
+@retry_query(tries=3, delay=1)
+def get_pages_titles():
+    pass
+
 if __name__ == '__main__':
     print insert_permission(123, 'GET', 'ANY', 'descriptom')

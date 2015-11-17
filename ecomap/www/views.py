@@ -420,6 +420,11 @@ def post_problem():
         return jsonify(output)
 
 
+@app.route('/api/getTitles', methods=['GET'])
+def getTitles():
+    pass
+
+
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 @login_required
 @is_admin

@@ -39,7 +39,7 @@
         </uib-tab>
 
         <uib-tab heading="Права">
-        <button ng-click="show()">clikc1</button>
+        <!-- <button ng-click="show()">clikc1</button> -->
           <table class="table table-hover">
               <thead>
                <tr>
@@ -79,14 +79,20 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="(role_name,role_id) in Roles">
+<!--                 <tr ng-repeat="(role_name,role_id) in Roles">
                   <td>{{role_name}}</td>
+                <td>
                   <a href="">редагувати</a>
                   <a href="" class="del">видалити</a>
                  </td>
-               </tr>
+               </tr> -->
                <tr>
+                 <td>Адмін</td>
                  <td>Реєстрація</td>
+                 <td >
+                  <a href="">редагувати</a>
+                  <a href="" class="del">видалити</a>
+                 </td>
                </tr>
                <tr>
                  <td >Адмін</td>

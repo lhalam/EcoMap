@@ -133,6 +133,23 @@ class Validators(object):
         return check_pattern
 
     @staticmethod
+    def enum(values):
+        """
+        Function wrapper, using closure to transfer user's validation argument.
+        :param enums: required. list of optional values.
+        :return: inner function which does a work with user argument.
+        """
+        def _enum(val, enums=values):
+            """
+            Inner function checks if json value matches allowed value.
+            :param val: json input data
+            :param enums: a list of values given by wrapper function
+            :return:True or False
+            """
+            return True if val in enums else False
+        return _enum
+
+    @staticmethod
     def email_pattern(val):
         """
         Checks if json value matches a pre-defined email regexp pattern.
@@ -161,7 +178,7 @@ def validate(json_data, validators):
         for _val in validators:
             if not _val.keys()[0] in [key for key in json_data.keys()]:
                 msg['errors'].append({'key_error': 'no key {"%s":} in request '
-                                                   '<_debug_mode' % _val.keys()[0]})
+                                      '<_debug_mode' % _val.keys()[0]})
                 break
         else:
             for validator in validators:

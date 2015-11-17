@@ -49,7 +49,9 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                     time.sleep(mdelay)
                 else:
                     raise DBPoolError('Error message: Got error with '
-                                      'connection to database')
+                                      'connection to database. '
+                                      'Possibly caused by wrong sql or '
+                                      'database pool is out of connections.')
         return inner
     return retry_wrapper
 

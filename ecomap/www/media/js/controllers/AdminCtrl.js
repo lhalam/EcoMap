@@ -123,6 +123,10 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     //Create new resource object 
 
     $scope.new_res = {};
+    var data = {
+        'resource_name': $scope.new_res['name']
+
+    }
     $scope.addResource = function(){
          $http({
             method: "POST",
@@ -383,7 +387,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
         }
-
+        console.log(listToSend);
          $http({
             method:"PUT",
             url:"/api/role_permissions",

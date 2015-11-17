@@ -5,24 +5,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Styles -->
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/custom.css">
+
+  <!-- Non-angularJS scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
+  <!-- AngularJS modules -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-cookies.js" type="text/javascript"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
-  <script src="/js/angular-route.min.js" type="text/javascript"></script>
+  <!-- <script src="/js/angular-route.min.js" type="text/javascript"></script> -->
   <script src="/js/angular-animate.min.js"></script>
+  <script src="/js/angular-ui-router.min.js"></script>
+  <script src="/js/satellizer.min.js"></script>
 
+  <!-- AngularJS app -->
   <script src="/js/angular_app.js"></script>
-  <script src="/js/controllers/UserManagementCtrl.js"></script>
+  <script src="/js/appConfigs.js"></script>
+
+  <!-- AngularJS Ctrls -->
+
   <script src="/js/controllers/MainCtrl.js"></script>
   <script src="/js/controllers/UserProfileCtrl.js"></script>
   <script src="/js/controllers/MapCtrl.js"></script>
   <script src="/js/controllers/AdminCtrl.js"></script>
-  <script src="/js/admin.js" ></script>
+  <script src='/js/controllers/LoginCtrl.js'></script>
+  <script src='/js/controllers/RegisterCtrl.js'></script>
+  <script src="/js/controllers/LogoutCtrl.js"></script>
+
+  <!-- AngularJS others -->
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
   <script src="/js/appConfigs.js"></script>
@@ -32,146 +47,58 @@
 </head>
 <body ng-controller="MainCtrl" ng-class="{ 'body-scroll-hidden': !showUserProfile() }">
 
-<div class="wrapper">
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-          <button type = "button" class = "navbar-toggle" 
-           data-toggle = "collapse" data-target = "#navMenu">
-           <span class = "sr-only">Toggle navigation</span>
-           <span class = "icon-bar"></span>
-           <span class = "icon-bar"></span>
-           <span class = "icon-bar"></span>
-        </button>
+  <div class="wrapper">
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+            <button type = "button" class = "navbar-toggle" 
+             data-toggle = "collapse" data-target = "#navMenu">
+             <span class = "sr-only">Toggle navigation</span>
+             <span class = "icon-bar"></span>
+             <span class = "icon-bar"></span>
+             <span class = "icon-bar"></span>
+          </button>
 
-        <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
+          <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
+        </div>
+        <div class="navbar-collapse collapse" id="navMenu">
+          <ul class="nav navbar-nav">
+            <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
+            <li class="dropdown">
+              <a class="dropdown-toggle"  data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">first</a></li>
+                <li><a href="#">second</a></li>
+                <li><a href="#">third</a></li>
+              </ul>
+            </li>
+            <li><a href="#">статистика</a></li>
+            <li><a href="">термінове повідомлення</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li id="loginField" ng-if="!isAuthenticated()">
+              <a href="/#/login">Увійти</a>
+            </li>
+
+            <li ng-if="isAuthenticated()">
+              <a href="/#/user_profile" ng-bind="getUsername()" ></a>
+            </li>
+
+            <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
+              <a href="" ng-click="Logout()">Вихід</a>
+            </li>
+
+            <li ng-if="!isAuthenticated()">
+              <a href="/#/register">Реєстрація</a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="navbar-collapse collapse" id="navMenu">
-        <ul class="nav navbar-nav">
-          <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
-          <li class="dropdown">
-            <a class="dropdown-toggle"  data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">first</a></li>
-              <li><a href="#">second</a></li>
-              <li><a href="#">third</a></li>
-            </ul>
-          </li>
-          <li><a href="#">статистика</a></li>
-          <li><a href="">термінове повідомлення</a></li>
-        </ul>
+    </nav> 
+    
+    <div ui-view class="map-div"></div>
 
-        <ul class="nav navbar-nav navbar-right" ng-controller="UserManagementCtrl">
-          <li id="loginField" ng-hide="checkLogined()">
-            <a href="" ng-click="toggleLoginModal()" >Увійти</a>
-
-            <modal title="Увійти" visible="showLoginModal">
-              <form role="form" name="loginForm" ng-submit="Login()" novalidate>
-              
-                <div class="form-group" ng-class="{ 'has-error': loginForm.email.$touched && loginForm.email.$invalid || getInvalidPasswordEmail() }">
-                  <label for="email" class="control-label">Електронна адреса</label>
-                  <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
-                  <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched">
-                    <p ng-message="maxlength">Занадто довга електронна пошта!</p>
-                    <p ng-message="required">Необхідно ввести електронну пошту!</p>
-                    <p ng-message="email">Некоректна електронна пошта!</p>
-                  </div>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-error': (loginForm.password.$touched && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
-                  <label for="password" class="control-label">Пароль</label>
-                  <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
-                  <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched">
-                    <p ng-message="minlength">Пароль не може бути коротшим, ніж 6 символів!</p>
-                    <p ng-message="required">Необхідно ввести пароль!</p>
-                  </div>
-                  <div class="help-block">
-                    <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>
-                  </div>
-                </div>
-
-                <br>
-                <button type="submit" class="btn btn-primary">Увійти</button>
-              </form>
-            </modal>
-          </li>
-
-          <li ng-show="checkLogined()">
-            <a href="/#/user_profile" ng-bind="checkLogined()" ></a>
-          </li>
-
-          <li ng-show="checkLogined()">
-            <a href="" ng-click="Logout()">Вихід</a>
-          </li>
-
-          <li ng-hide="checkLogined()">
-            <a href="" ng-click="toggleRegisterModal()">Реєстрація</a>
-
-            <modal title="Реєстрація" visible="showRegisterModal">
-              <form role="form" ng-submit="Register()" name="registerForm" id="registerForm" novalidate>
-
-                <div class="form-group" ng-class="{ 'has-error': registerForm.email.$touched && registerForm.email.$invalid }">
-                  <label for="email" class="control-label">Електронна адреса</label>
-                  <input type="email"  ng-model="newUser.email" name="email" ng-maxlength="100" ng-change="checkIfExists()" class="form-control" id="email" placeholder="Електронна адреса" required available-email/>
-                  <div class="help-block" ng-messages="registerForm.email.$error" ng-show="registerForm.email.$touched">
-                    <p ng-message="maxlength">Занадто довга електронна пошта!</p>
-                    <p ng-message="required">Необхідно ввести електронну пошту!</p>
-                    <p ng-message="email">Некоректна електронна пошта!</p>
-                    <p ng-message="availableEmail">Користувач із такою електронною поштою вже зареєстрований!</p>
-                  </div>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-error': registerForm.name.$touched && registerForm.name.$invalid }">
-                  <label for="name" class="control-label">Ім'я</label>
-                  <input type="text"  ng-model="newUser.firstName" name="name" ng-maxlength="100" class="form-control" id="name" placeholder="Ім'я" data-error="Необхідно ввести ім'я!" required/>
-                  <div class="help-block" ng-messages="registerForm.name.$error" ng-show="registerForm.name.$touched">
-                    <p ng-message="maxlength">Занадто довге ім'я!</p>
-                    <p ng-message="required">Необхідно ввести ім'я!</p>
-                  </div>
-                </div>
-
-                <div class="form-group" ng-class="{ 'has-error': registerForm.surname.$touched && registerForm.surname.$invalid }">
-                  <label for="surname" class="control-label">Прізвище</label>
-                  <input type="text"  ng-model="newUser.lastName" name="surname" ng-maxlength="100" class="form-control" id="surname" placeholder="Прізвище" data-error="Необхідно ввести прізвище!" required/>
-                  <div class="help-block" ng-messages="registerForm.surname.$error" ng-show="registerForm.surname.$touched">
-                    <p ng-message="maxlength">Занадто довге прізвище!</p>
-                    <p ng-message="required">Необхідно ввести прізвище!</p>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label for="password" class="control-label">Пароль</label>
-                  <div class="form-group" ng-class="{ 'has-error': registerForm.password.$touched && registerForm.password.$invalid }">
-                    <input type="password" ng-model="newUser.password" name="password" ng-minlength="6" ng-maxlength="40" class="form-control" id="password" placeholder="Пароль" required/>
-                    <div class="help-block" ng-messages="registerForm.password.$error" ng-show="registerForm.password.$touched">
-                      <p ng-message="maxlength">Занадто довгий пароль!</p>
-                      <p ng-message="required">Необхідно ввести пароль!</p>
-                      <p ng-message="minlength">Занадто короткий пароль!</p>
-                    </div>
-                  </div>
-
-                  <div class="form-group" ng-class="{ 'has-error': registerForm.pass_confirm.$touched && registerForm.pass_confirm.$invalid }">
-                    <input type="password" ng-model="newUser.pass_confirm" name="pass_confirm" class="form-control" id="pass_confirm" placeholder="Підтвердіть пароль" data-match-error="#password" required compare-to="newUser.password"/>
-                    <div class="help-block" ng-messages="registerForm.pass_confirm.$error" ng-show="registerForm.pass_confirm.$touched">
-                      <p ng-message="compareTo">Паролі не співпадають!</p>
-                      <p ng-message="required">Необхідно підтвердити пароль!</p>
-                    </div>              
-                  </div>                
-                </div>
-
-                <br>
-                <button type="submit" class="btn btn-primary">Зареєструвати</button>
-              </form>
-            </modal>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav> 
-  
-  <ng-view></ng-view>
-
-  
-</div>
+  </div>
 </body>
 </html>

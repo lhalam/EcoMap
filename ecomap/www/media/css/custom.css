@@ -303,7 +303,7 @@ form{
 }
 
 /*Map styles*/
-.container-fluid.map-div{
+.map-div{
     padding: 0;
     height:100%;
 }

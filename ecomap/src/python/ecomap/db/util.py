@@ -74,7 +74,7 @@ def change_user_password(user_id, new_password):
 
 @retry_query(tries=3, delay=1)
 def get_user_role_by_email(email):
-    """Get all resources.
+    """Get all resources.sad
     :return: tuple of resources
     """
     with db_pool().manager() as conn:
@@ -86,6 +86,21 @@ def get_user_role_by_email(email):
                 """
         cursor.execute(query, (email,))
         return cursor.fetchone()
+
+def get_all_permissions_for_enter():
+    """This query created for Restriction class.
+    Restriction class is for lesser entering to DB.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT r.name , res.resource_name, p.action, p.modifier 
+        FROM `role_permission` AS rp INNER JOIN `permission` AS p ON 
+        rp.permission_id = p.id INNER JOIN `role` AS r 
+        ON rp.role_id = r.id INNER JOIN `resource` AS res 
+        ON p.resource_id = res.id;
+        """
+        cursor.execute(query)
+    return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)

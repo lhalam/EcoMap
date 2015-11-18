@@ -1,17 +1,16 @@
 app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
 
-  $urlRouterProvider.otherwise('/map');
 
   $stateProvider
-    .state('map', {
-      url: '/map',
-      templateUrl: '/templates/map.html',
-      controller: 'MapCtrl'
-    })
     .state('user_profile', {
       url: '/user_profile',
       templateUrl: '/templates/userProfile.html',
       controller: 'UserProfileCtrl'
+    })
+    .state('map', {
+      url: '/map',
+      templateUrl: '/templates/map.html',
+      controller: 'MapCtrl'
     })
     .state('admin', {
       url: '/admin',
@@ -38,9 +37,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
         }).result.finally(function() {
             $state.go('map');
         });
-    }]
-    })
+      }]
+    });
     
+    $urlRouterProvider.otherwise('/map');
     $authProvider.loginUrl = '/api/login';
     $authProvider.signupUrl = '/api/register';    
 

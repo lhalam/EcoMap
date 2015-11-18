@@ -144,15 +144,15 @@ def add_resource(resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def edit_resource_name(new_resource_name, resource_id):
+def edit_resource_name(newResourceource_name, resource_id):
     """Edit resource name.
-    :params: new_resource_name - new name of resource
+    :params: newResourceource_name - new name of resource
              resource_id - id of  resource we change name
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `resource` SET `resource_name`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (new_resource_name, resource_id))
+        cursor.execute(query, (newResourceource_name, resource_id))
         conn.commit()
 
 
@@ -447,6 +447,11 @@ def delete_role_by_id(role_id):
         query = """DELETE FROM `role` WHERE `id`=%s;"""
         cursor.execute(query, (role_id,))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_pages_titles():
+    pass
 
 if __name__ == '__main__':
     print insert_permission(123, 'GET', 'ANY', 'descriptom')

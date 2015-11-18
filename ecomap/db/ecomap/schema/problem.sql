@@ -1,5 +1,5 @@
 /*
-    This table holds all particular
+    This table holds all particular 
     information about problem entity.
 */
 CREATE TABLE IF NOT EXISTS `problem` (
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `problem` (
  `content` varchar(255) NOT NULL,
  `proposal` varchar(255) NOT NULL,        # User can propose a solution
  `severity` enum('1', '2', '3', '4', '5') NOT NULL DEFAULT '1',
- `status` enum('Solved', 'Unsolved')
+ `status` enum('Solved', 'Unsolved') 
         NOT NULL DEFAULT 'Unsolved',    # not resolved or resolved
  `latitude` float NOT NULL,           # coordinats of
  `longtitude` float NOT NULL,         # location

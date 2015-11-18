@@ -165,4 +165,5 @@ def load_token(token):
 
 
 if __name__ == "__main__":
-    get_user_by_id(27).change_password('test_new')
+    # get_user_by_id(27).change_password('test_new')
+    pass

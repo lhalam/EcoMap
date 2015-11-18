@@ -1,5 +1,5 @@
 /*
-    This table provides names of all
+    This table provides names of all 
     problem types.
 */
 CREATE TABLE IF NOT EXISTS `problem_type` (

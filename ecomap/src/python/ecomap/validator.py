@@ -10,6 +10,11 @@ message = {'validate_key': 'no {} key in JSON.',
 
 
 def main_validator(to_validate):
+    """General validator function. Import this to validate.
+       :params: to_validate - list of lists with values and functions to
+                validate validate your value
+       :return: error message if validation was bad
+    """
     for args in to_validate:
         valid = validator(*args)
         if valid:
@@ -18,7 +23,7 @@ def main_validator(to_validate):
 
 
 def validator(json, key, min_len, max_len, *args):
-    """General validator function. Import it to work with this module.
+    """Validator function, which launches other functions.
        :params: json - JSON dictionary
                 key - key we want to check
                 min_len - minimal length of string

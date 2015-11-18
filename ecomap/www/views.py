@@ -12,8 +12,6 @@ import ecomap.user as usr
 
 from ecomap.app import app, logger
 from ecomap.db import util as db
-from ecomap.db.db_pool import DBPoolError
-# from ecomap.utils import Validators as v, validate
 from ecomap import validator as v
 
 import functools
@@ -460,12 +458,11 @@ def resources():
                                   v.validate_key, v.validate_empty]])
 
         if not valid:
-            try:
-                db.add_resource(data['resource_name'])
-                added_res_id = db.get_resource_id(data['resource_name'])
-            except DBPoolError:
+            if db.get_resource_id(data['resource_name']):
                 return jsonify(error='Resource already exists'), 400
 
+            db.add_resource(data['resource_name'])
+            added_res_id = db.get_resource_id(data['resource_name'])
             response = jsonify(added_resource=data['resource_name'],
                                resource_id=added_res_id[0])
         else:
@@ -484,12 +481,11 @@ def resources():
                                    v.validate_empty]])
 
         if not valid:
-            try:
-                db.edit_resource_name(data['new_resource_name'],
-                                      data['resource_id'])
-            except DBPoolError:
+            if db.get_resource_id(data['resource_name']):
                 return jsonify(error='this name already exists'), 400
 
+            db.edit_resource_name(data['new_resource_name'],
+                                  data['resource_id'])
             response = jsonify(status='success',
                                edited=data['new_resource_name'])
         else:
@@ -551,11 +547,11 @@ def roles():
                                   v.validate_string, v.validate_length]])
 
         if not valid:
-            try:
-                db.insert_role(data['role_name'])
-                added_role_id = db.get_role_id(data['role_name'])
-            except DBPoolError:
+            if db.get_role_id(data['role_name']):
                 return jsonify(error='role already exists'), 400
+
+            db.insert_role(data['role_name'])
+            added_role_id = db.get_role_id(data['role_name'])
 
             response = jsonify(added_role=data['role_name'],
                                added_role_id=added_role_id[0])
@@ -575,10 +571,10 @@ def roles():
                                    v.validate_string, v.validate_length]])
 
         if not valid:
-            try:
-                db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
-            except DBPoolError:
+            if db.get_role_id(edit_data['role_name']):
                 return jsonify(error='this name already exists'), 400
+
+            db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
             response = jsonify(msg='success',
                                edited=edit_data['new_role_name'])
         else:

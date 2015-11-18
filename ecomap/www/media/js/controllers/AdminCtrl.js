@@ -122,9 +122,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
     //Create new resource object 
 
-    $scope.new_res = {};
+    $scope.newResource = {};
     var data = {
-        'resource_name': $scope.new_res['name']
+        'resource_name': $scope.newResource['name']
 
     }
     $scope.addResource = function(){
@@ -132,13 +132,15 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             method: "POST",
             url: "/api/resources",
             data:{
-                'resource_name': $scope.new_res.name
+                'resource_name': $scope.newResource.name
             }
         }).then(function successCallback(data) {
         // add resource to scope
+        console.log($scope.newResource.name)
         $scope.Resources[data.data.added_resource]=data.data.resource_id
         $scope.addResModal=false
         }, function errorCallback(response) {
+            console.log($scope.newResource.name)
             $scope.addResModal=false
             $scope.Eror=response.data.error
             $scope.customEror=true
@@ -383,11 +385,10 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
-        $scope.listToSend=[]
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
         }
-        console.log(listToSend);
+        console.log($scope.listToSend);
          $http({
             method:"PUT",
             url:"/api/role_permissions",

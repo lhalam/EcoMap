@@ -157,7 +157,7 @@
   <form  ng-submit="addResource()" name="addResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="new_res" ng-model="newResource.name" ng-maxlength="255" required>
 
     </div>
     <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">

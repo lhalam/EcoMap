@@ -33,7 +33,7 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -
         else : keyerror - status 400 bad request
 
 EDIT RESOURCE_BY_ID:
-curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"new_resource_name":"curl_edited", "resource_id" : 1}' http://localhost:81/api/resources
+curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"newResourceource_name":"curl_edited", "resource_id" : 1}' http://localhost:81/api/resources
     result:
     {
     "edited": "curl_edited",
@@ -120,10 +120,16 @@ curl -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d
 
 
 ADD ROLE PERMISSION
-curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_id":"2", "permission_id":6}' http://localhost:81/api/role_permissions
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"role_id":"5", "permission_id":2}' http://localhost:81/api/role_permissions
 
 GET ROLE PERM BY ROLE ID
 curl -X GET http://localhost:81/api/role_permissions?role_id=2
 
 DELETE PERMISSION BY ID
 curl -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d '{"permission_id":"7"}' http://ecomap.new/api/permissions
+
+
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"email":"", "password": 'helloo'}' http://localhost:81/api/login
+
+
+curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"id":5, "old_pass": "", "new_pass": "222222"}' http://localhost:81/api/change_password

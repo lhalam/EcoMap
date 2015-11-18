@@ -16,9 +16,19 @@ button{
     color: red;
 }
 
+#customEror{
+    font-size:1.5em;
+}
 
+#customEror {
+    font-size: 1.5em;
+}
 .return-profile{
     position: absolute;
     right: 20px;
     top:25px;
+}
+
+.selected {
+  background-color: #eee;
 }

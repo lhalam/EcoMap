@@ -8,7 +8,7 @@
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userInfo') }" ng-click="setTab('userInfo')">Відомості про користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userProblems') }" ng-click="setTab('userProblems')">Проблеми користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userComments') }" ng-click="setTab('userComments')">Коментарі користувача</a>
-            <a href="/#/admin" class="list-group-item" >Адміністрування</a>
+            <a href="/#/admin" class="list-group-item" ng-show="isAdmin()">Адміністрування</a>
           </div>
         </div>
 
@@ -24,19 +24,6 @@
             </div>
           <br>
           
-          <div class="change-photo">
-            <h3>Зміна фотографії профіля</h3>        
-            <hr>
-            <form action="" class="add-profile-photo">
-              <div class="form-group">
-                <label for="photo_insert" class="control-label">Вставити фотографію:</label>
-                <input type="file" id="photo_insert" name="photo_insert" class="form-control">
-              </div>
-              <button class="btn btn-default" type="submit">Завантажити</button>
-            </form>
-            <br>
-          </div>
-
           <h3>Зміна пароля</h3>
           <hr>
           <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>

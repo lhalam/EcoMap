@@ -10,6 +10,15 @@ app.controller('MainCtrl', ['$scope', '$auth', '$cookies', function($scope, $aut
     } else{
       return null;
     }
-  }
+  };
+
+  $scope.isAdmin = function(){
+    var role = $cookies.get("role");
+    if(role == 'admin'){
+      return true;
+    } else{
+      return false;
+    }
+  };
 
 }]);

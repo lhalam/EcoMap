@@ -1,4 +1,4 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scope, $cookies, $http){
+app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', function($scope, $cookies, $http, toaster){
 
   $scope.user = {};
   $scope.user.id = $cookies.get("id");

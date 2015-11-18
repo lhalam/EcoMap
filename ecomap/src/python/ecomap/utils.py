@@ -1,8 +1,6 @@
-import json
 import logging
 import logging.config
 import os
-import re
 
 CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 

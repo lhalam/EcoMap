@@ -8,6 +8,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/css/custom.css">
+  <link rel="stylesheet" href="/css/toaster.min.css">
 
   <!-- Non-angularJS scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -21,6 +22,7 @@
   <script src="/js/angular-animate.min.js"></script>
   <script src="/js/angular-ui-router.min.js"></script>
   <script src="/js/satellizer.min.js"></script>
+  <script src="/js/toaster.min.js"></script>
 
   <!-- AngularJS app -->
   <script src="/js/angular_app.js"></script>
@@ -41,7 +43,7 @@
   <script src="/js/directives/ValidatorsDirective.js"></script>
 
 </head>
-<body ng-controller="MainCtrl" ng-class="{ 'body-scroll-hidden': !showUserProfile() }">
+<body ng-controller="MainCtrl" >
 
   <div class="wrapper">
     <nav class="navbar navbar-default">
@@ -94,7 +96,7 @@
     </nav> 
     
     <div ui-view class="map-div"></div>
-
+    
   </div>
 </body>
 </html>

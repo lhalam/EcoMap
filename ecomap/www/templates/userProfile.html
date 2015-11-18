@@ -1,3 +1,5 @@
+<toaster-container></toaster-container>
+
   <div class="container user-profile">
     <div class="row">
     <div class="panel panel-default">
@@ -8,7 +10,7 @@
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userInfo') }" ng-click="setTab('userInfo')">Відомості про користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userProblems') }" ng-click="setTab('userProblems')">Проблеми користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userComments') }" ng-click="setTab('userComments')">Коментарі користувача</a>
-            <a href="/#/admin" class="list-group-item" >Адміністрування</a>
+            <a href="/#/admin" class="list-group-item" ng-show="isAdmin()">Адміністрування</a>
           </div>
         </div>
 
@@ -24,23 +26,9 @@
             </div>
           <br>
           
-          <div class="change-photo">
-            <h3>Зміна фотографії профіля</h3>        
-            <hr>
-            <form action="" class="add-profile-photo">
-              <div class="form-group">
-                <label for="photo_insert" class="control-label">Вставити фотографію:</label>
-                <input type="file" id="photo_insert" name="photo_insert" class="form-control">
-              </div>
-              <button class="btn btn-default" type="submit">Завантажити</button>
-            </form>
-            <br>
-          </div>
-
           <h3>Зміна пароля</h3>
           <hr>
           <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>
-            <uib-alert type="success" close="closeAlert()" ng-show="showAlert()">Пароль успішно змінено!</uib-alert>
             <div class="form-group" ng-class="{ 'has-error': changePasswordForm.old_pass.$touched && changePasswordForm.old_pass.$invalid || getWrongPass()}">
               <label for="old_pass" class="control-label">Старий пароль:</label>
               <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>

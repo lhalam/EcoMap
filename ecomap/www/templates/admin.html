@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="/css/admin.css">
 
+<toaster-container></toaster-container>
+
 <div class="container" >
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -186,13 +188,10 @@
 </modal>
 
 <!-- Modal window for adding permissions 
-
 <td>{{permision.resource_name}}</td>
                  <td>{{permision.action}}</td>
                  <td>{{permision.modifier}}</td>
                  <td>{{permision.description}}</td>
-
-
 -->
 <modal title="Додати право" visible="addPermModal">
   <form action="" ng-submit="addPermSubmit()" name="addPerm" novalidate>
@@ -290,4 +289,3 @@
     </div>
   </div>
 </modal>
-

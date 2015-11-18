@@ -610,5 +610,36 @@ def get_all_permissions():
     return Response(json.dumps(perms_list), mimetype='application/json')
 
 
+@app.route("/api/user_roles", methods=['GET', 'POST'])
+# @login_required
+# @is_admin
+def get_all_users():
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+
+        valid = v.main_validator([[data, 'role_id', 1, 100, v.validate_key,
+                                   v.validate_empty],
+                                  [data, 'user_id', 1, 100,
+                                   v.validate_key, v.validate_empty]])
+        if not valid:
+            db.change_user_role(data['role_id'],
+                                data['user_id'])
+            response = jsonify(msg='success',
+                               added_role=data['role_id'])
+        else:
+            response = Response(json.dumps({'error': valid}),
+                                mimetype='application/json'), 400
+        return response
+    users_tuple = db.get_all_users()
+    parsed_json = []
+    if users_tuple:
+        for res in users_tuple:
+            parsed_json.append({'user_id': res[0], 'first_name': res[1],
+                                'last_name': res[2], 'email': res[3],
+                                'role': res[4]})
+    return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+
 if __name__ == '__main__':
     app.run()

@@ -24,6 +24,7 @@ app.controller('LoginCtrl', ['$scope','$http','$cookies', '$auth', function($sco
         $cookies.put('name', responce.data.name);
         $cookies.put('surname', responce.data.surname);
         $cookies.put('id', responce.data.id);
+        $cookies.put('role', responce.data.role);
     },
       function errorCallback(responce){
         if(responce.status == 401){

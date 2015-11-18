@@ -7,6 +7,7 @@ app.controller('LogoutCtrl', ['$scope','$http','$cookies','$auth','$state', func
       $cookies.remove('name');
       $cookies.remove('surname');
       $cookies.remove('id');
+      $cookies.remove('role');
       $auth.logout();
       $state.go('map');
     },

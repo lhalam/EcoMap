@@ -1,4 +1,4 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scope, $cookies, $http){
+app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', function($scope, $cookies, $http, toaster){
 
   $scope.user = {};
   $scope.user.id = $cookies.get("id");
@@ -23,6 +23,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
     return $scope.selectedTab == tabName;
   };
 
+  console.log($scope);
   $scope.changePassword = function(){
     var data = {};
     data.id = $cookies.get('id');
@@ -35,7 +36,8 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
         data: data
     }).then(function successCallback(responce){
         $scope.password = {};
-        $scope.alert = true;
+        toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
+        $scope.changePasswordForm.$setUntouched();
     },
       function errorCallback(responce){
         if(responce.status == 401){

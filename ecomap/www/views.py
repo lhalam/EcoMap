@@ -277,7 +277,7 @@ def resources():
                                      v.validate_empty]])
 
         if not invalid:
-            if db.get_resource_id(data['resource_name']):
+            if db.get_resource_id(data['new_resource_name']):
                 return jsonify(error='this name already exists'), 400
 
             db.edit_resource_name(data['new_resource_name'],

@@ -1,3 +1,5 @@
+<toaster-container></toaster-container>
+
   <div class="container user-profile">
     <div class="row">
     <div class="panel panel-default">
@@ -27,7 +29,6 @@
           <h3>Зміна пароля</h3>
           <hr>
           <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>
-            <uib-alert type="success" close="closeAlert()" ng-show="showAlert()">Пароль успішно змінено!</uib-alert>
             <div class="form-group" ng-class="{ 'has-error': changePasswordForm.old_pass.$touched && changePasswordForm.old_pass.$invalid || getWrongPass()}">
               <label for="old_pass" class="control-label">Старий пароль:</label>
               <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>

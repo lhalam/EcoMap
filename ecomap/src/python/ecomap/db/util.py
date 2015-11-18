@@ -466,5 +466,21 @@ def delete_role_by_id(role_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_all_users():
+    """Return all registered users from db.
+    :return: tuples with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` as ur
+                   INNER JOIN `user` as u ON ur.user_id = u.id
+                   INNER JOIN `role` as r ON ur.role_id = r.id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def get_pages_titles():
     pass

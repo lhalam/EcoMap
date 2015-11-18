@@ -54,7 +54,7 @@ def insert_user(first_name, last_name, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s);
                    INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), 2);
+                   values (LAST_INSERT_ID(), 3);
                 """
         cursor.execute(query, (first_name, last_name, email, password))
         # conn.commit()
@@ -144,15 +144,15 @@ def add_resource(resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def edit_resource_name(new_resource_name, resource_id):
+def edit_resource_name(newResourceource_name, resource_id):
     """Edit resource name.
-    :params: new_resource_name - new name of resource
+    :params: newResourceource_name - new name of resource
              resource_id - id of  resource we change name
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `resource` SET `resource_name`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (new_resource_name, resource_id))
+        cursor.execute(query, (newResourceource_name, resource_id))
         conn.commit()
 
 

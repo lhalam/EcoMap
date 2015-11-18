@@ -95,7 +95,7 @@ def get_user_by_email(email):
     """
     user = None
     if email:
-        app.logger.info('USER.PY GET U_BY EMAL initial email %s', email)
+        app.logger.info('USER.PY GET U_BY EMAIL initial email %s', email)
         user = util.get_user_by_email(email)
 
     if user:

@@ -12,11 +12,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         "3":"Any"
     }
 
-    // $scope.pop = function(type, ){
-    //     toaster.pop('error', "Помилка!", "Даний ресурс не може бути видалено, \
-    //         оскільки до нього є привязані інші права!");
-    // };
-
     $scope.msg = {
         editSuccess: function(msg){
             toaster.pop('success', 'Редагування', 'Редагування ' + msg + ' здійснено успішно!');

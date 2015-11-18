@@ -4,6 +4,7 @@ This module holds all views controls for
 ecomap project.
 """
 import json
+import functools
 
 from flask import render_template, request, jsonify, Response, g, abort
 from flask_login import login_user, logout_user, login_required, current_user
@@ -13,8 +14,6 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap import validator as v
-
-import functools
 
 
 @app.before_request
@@ -38,42 +37,6 @@ def is_admin(f):
             abort(403)
         return f(*args, **kwargs)
     return wrapped
-
-
-@app.route("/api/user_stat", methods=["GET"])
-def user_stat():
-    """handler for change password
-    return:
-        - if succeed:
-            Status 200 - OK
-        - if password was invalid:
-            json with error message
-            {'error':'message'}
-            Status 401 - Unauthorized
-        - if data has invalid format:
-            Status 400 - Bad Request
-
-    """
-    logger.warning('CURRENT')
-    logger.warning(current_user)
-    if current_user.is_authenticated:
-        user = current_user
-        logger.warning('AUTHEND')
-        logger.warning(current_user._get_current_object())
-        logger.warning(dir(current_user))
-        return jsonify(authentificated=(user.uid),
-                       dir=dir(user), uid=user.uid, fn=user.first_name,
-                       ln=user.last_name, pas=user.password, mail=user.email,
-                       cu=current_user.__dict__)
-    if not current_user.is_authenticated:
-        user = usr.Anonymous()
-        logger.warning('NOT AUTH')
-        logger.warning(user.username)
-        return jsonify(error="you are not logged in - you are anon.",
-                       logined=0, cu=current_user.__dict__), 401
-        # if not user.verify_password(data['password']):
-        #     return jsonify(error="Invalid password, try again.",
-        #                    logined=0), 401
 
 
 @app.route('/', methods=['GET'])
@@ -257,178 +220,6 @@ def get_user_info(user_id):
                            email=user.email, role=user.role)
         else:
             return jsonify(status='There is no user with given email'), 401
-
-
-@app.route('/api/problems', methods=['GET'])
-def get_problems():
-    """
-    Get all moderated problems in
-     brief (id, title, coordinates, type and status);
-
-    return: list of jsons
-    """
-    data = [
-        {
-            'id': 1,
-            'title': 'xxxx',
-            'Title': 'Xxxxxxx',
-            'Latitude': 45.350166,
-            'Longtitude': 29.001091,
-            'ProblemTypes_Id': 4,
-            'Status': 1,
-            'Date': '2014-02-18T07:15:51.000Z'
-        },
-    ]
-    return Response(json.dumps(data), mimetype='application/json')
-
-
-@app.route('/api/problems/<int:id>', methods=['GET'])
-def get_problems_by_id(id):
-    """Get detailed problem description.
-    (all information from tables 'Problems', 'Activities', 'Photos')
-    by it's id;
-    """
-
-    data = [
-        [
-            {
-                'Id': 5,
-                'Title': 'Загрязнение Днепра',
-                'Content': 'В городе Берислав нет '
-                           'очистных сооружений.',
-                'Proposal': '',
-                'Severity': 3,
-                'Moderation': 1,
-                'Votes': 13,
-                'Latitude': 46.8326,
-                'Longtitude': 33.416462,
-                'Status': 0,
-                'ProblemTypes_Id': 4
-            }
-        ],
-        [],
-        [
-            {
-                'Id': 5,
-                'Content': '{\'Content\':\'Проблему '
-                           'додано анонімно\',\'userName\''
-                           ':\'(Анонім)\'}',
-                'Date': '2014-02-27T15:24:53.000Z',
-                'ActivityTypes_Id': 1,
-                'Users_Id': 2,
-                'Problems_Id': 5
-            }
-        ]
-    ] if id == 1 else {'data': 'select ID=1'}
-    return Response(json.dumps(data), mimetype='application/json')
-
-
-@app.route('/api/users/<int:idUser>', methods=['GET'])
-def get_user_by_id(idUser):
-    """
-    get user's name and surname by id;
-    :return
-        - JSON with user's name and surname or
-            empty JSON if there is no
-            user with selected id
-    """
-
-    data = dict(json=[
-        {
-            'Name': 'admin',
-            'Surname': None
-        }
-    ], length=1) if idUser == 1 else {}
-
-    return jsonify(data)
-
-
-@app.route('/api/usersProblem/<int:id>', methods=['GET'])
-def get_users_problems(id):
-    """
-    Get all user's problems in brief
-    (id, title, coordinates, type and status) by user's id;
-    :return
-        - returns array of user's problems and empty array
-        if there is no user with such id
-    """
-
-    data = [
-        dict(Id=190,
-             Title='назва3333',
-             Latitude=51.419765,
-             Longtitude=29.520264,
-             ProblemTypes_Id=1,
-             Status=0,
-             Date='2015-02-24T14:27:22.000Z')
-    ] if id == 1 else []
-
-    return Response(json.dumps(data), mimetype='application/json')
-
-
-@app.route('/api/activities/<int:idUser>', methods=['GET'])
-def get_user_activities(idUser):
-    """
-    get all user's activity
-    (id, type, description and id of related problem);
-    :return: json
-    """
-    data = dict(
-        id=1,
-        type='activitytype',
-        description='description',
-        problem_id=2
-    ) if idUser == 1 else {}
-    return jsonify(data)
-
-
-@app.route('/api/problempost', methods=['POST'])
-def post_problem():
-    """
-    post new detailed environment problem to the server
-    Request Content-Type: multipart/form-data;
-
-    Request parameters:
-    title   optional
-    content optional
-    proposal    optional
-    latitude    optional
-    longitude   optional
-    type    1-6, required
-    userId  optional
-    userName    optional
-    userSurname optional
-
-       :return: json Content-type: application/json;charset=UTF-8
-    """
-    if request.method == 'POST' and request.form:
-        input_data = request.form
-        try:
-            input_data['type']
-        except KeyError:
-            logger.warning('no required parameter')
-            return jsonify(err='ER_BAD_NULL_ERROR'), 500
-        try:
-            int(input_data['userId'])
-        except ValueError:
-            logger.warning('user id not a int')
-            return jsonify(Response='500 Internal Server Error'), 500
-        except KeyError:
-            pass
-        output = {
-            'json': {
-                'test': input_data['type'],
-                'fieldCount': 0,
-                'affectedRows': 1,
-                'insertId': 191,
-                'serverStatus': 2,
-                'warningCount': 0,
-                'message': u'\u0000',
-                'protocol41': True,
-                'changedRows': 0
-            }
-        }
-        return jsonify(output)
 
 
 @app.route('/api/getTitles', methods=['GET'])
@@ -821,4 +612,3 @@ def get_all_permissions():
 
 if __name__ == '__main__':
     app.run()
-    # app.logger = logger

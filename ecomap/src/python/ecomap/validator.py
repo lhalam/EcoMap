@@ -94,9 +94,3 @@ def validate_string(*args):
                 False - if it is not
     """
     return True if isinstance(args[0][args[1]], basestring) else False
-
-
-if __name__ == '__main__':
-    json = {'email': 'gg.com', 'password': ''}
-    main_validator([[json, 'password', 1, 100, validate_key,
-                    validate_empty, validate_string, validate_length]])

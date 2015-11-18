@@ -71,10 +71,6 @@ class User(UserMixin):
     def get_id(self):
         return unicode(self.uid)
 
-    # def get_id(self):
-    #     """Return the email address to satisfy Flask-Login's requirements."""
-    #     return self.email
-
 
 def hash_pass(password):
     """This function adds some salt(secret_key)
@@ -162,8 +158,3 @@ def load_token(token):
     if user and data[1] == user.password:
         return user
     return None
-
-
-if __name__ == "__main__":
-    # get_user_by_id(27).change_password('test_new')
-    pass

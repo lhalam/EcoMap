@@ -1,6 +1,5 @@
 app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
 
-
   $stateProvider
     .state('user_profile', {
       url: '/user_profile',
@@ -26,7 +25,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
         }).result.finally(function() {
             $state.go('map');
         });
-    }]
+      }]
     })
     .state('register', {
       url: '/register',

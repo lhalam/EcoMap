@@ -54,10 +54,9 @@ def insert_user(first_name, last_name, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s);
                    INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), 3);
+                   values (LAST_INSERT_ID(), 2);
                 """
         cursor.execute(query, (first_name, last_name, email, password))
-        # conn.commit()
 
 
 @retry_query(tries=3, delay=1)
@@ -452,6 +451,3 @@ def delete_role_by_id(role_id):
 @retry_query(tries=3, delay=1)
 def get_pages_titles():
     pass
-
-if __name__ == '__main__':
-    print insert_permission(123, 'GET', 'ANY', 'descriptom')

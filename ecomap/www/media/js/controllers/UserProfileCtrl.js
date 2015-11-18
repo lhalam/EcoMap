@@ -23,7 +23,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
     return $scope.selectedTab == tabName;
   };
 
-  // $scope.password = {};
   $scope.changePassword = function(){
     var data = {};
     data.id = $cookies.get('id');
@@ -35,7 +34,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
         url: '/api/change_password',
         data: data
     }).then(function successCallback(responce){
-        // $scope.changePasswordForm.$setPristine();   //not working???
         $scope.password = {};
         $scope.alert = true;
     },
@@ -46,7 +44,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
       });
   };
 
-  //Showing message about wrong old password
   $scope.wrongOldPass = false;
   $scope.getWrongPass = function(){
     return $scope.wrongOldPass;
@@ -55,7 +52,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', function($scop
     $scope.wrongOldPass = false;
   };
 
-  // Showing alert about successful change of password
   $scope.alert = false;
   $scope.closeAlert = function() {
     $scope.alert = false;

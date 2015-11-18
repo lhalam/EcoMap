@@ -12,6 +12,4 @@ app.controller('MainCtrl', ['$scope', '$auth', '$cookies', function($scope, $aut
     }
   }
 
-  
-
 }]);

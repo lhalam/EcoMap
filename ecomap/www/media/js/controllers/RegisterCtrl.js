@@ -12,11 +12,6 @@ app.controller('RegisterCtrl', ['$scope','$http','$cookies', '$auth', function($
       return null;
     }
     if(user.password == user.pass_confirm){
-      // $http({
-      //   method: 'POST',
-      //   url: '/api/register',
-      //   data: $scope.newUser
-      // })
       $auth.signup(user).then(function successCallback(responce){
         $scope.dismiss();
         var credentials = {};

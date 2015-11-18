@@ -1,5 +1,5 @@
 /*
-    This table represents logging of all
+    This table represents logging of all 
     activities produced on exact problems.
 */
 CREATE TABLE IF NOT EXISTS `problem_activity` (

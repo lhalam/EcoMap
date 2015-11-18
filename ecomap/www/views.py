@@ -779,4 +779,4 @@ def get_all_permissions():
 
 if __name__ == '__main__':
     app.run()
-    app.logger = logger
+    # app.logger = logger

@@ -1,7 +1,7 @@
 /*
-    This table stands for holding comments
+    This table stands for holding comments 
     of problems and information about those
-    comments.
+    comments. 
 */
 CREATE TABLE IF NOT EXISTS `comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

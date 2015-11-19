@@ -25,13 +25,14 @@ class User(UserMixin):
 
     """Class which describes User entity"""
 
-    def __init__(self, uid, first_name, last_name, email, password, role):
+    def __init__(self, uid, first_name, last_name, email, password, role, avatar):
         self.uid = uid
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = password
         self.role = role
+        self.avatar = avatar
 
     def __repr__(self):
         return self.first_name
@@ -97,7 +98,7 @@ def get_user_by_email(email):
     if user:
         user_role = util.get_user_role_by_email(email)
         return User(user[0], user[1], user[2],
-                    user[3], user[4], user_role[0])
+                    user[3], user[4], user_role[0], user[5])
     return None
 
 
@@ -114,7 +115,7 @@ def get_user_by_id(uid):
     if user:
         user_role = util.get_user_role_by_id(uid)
         return User(user[0], user[1], user[2],
-                    user[3], user[4], user_role[0])
+                    user[3], user[4], user_role[0], user[5])
 
     return None
 

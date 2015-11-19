@@ -15,7 +15,7 @@ def get_user_by_email(email):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
                    FROM `user` WHERE `email`=%s;
                 """
         cursor.execute(query, (email,))
@@ -30,7 +30,7 @@ def get_user_by_id(user_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -60,6 +60,19 @@ def insert_user(first_name, last_name, email, password):
 
 
 @retry_query(tries=3, delay=1)
+def insert_user_avatar(user_id, img_path):
+    """Insert new user  avatar into db.
+    :params: user_id - unique id user
+             img_path - path to avatar image
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `avatar` = %s WHERE id = %s;"""
+        cursor.execute(query, (img_path, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
 def change_user_password(user_id, new_password):
     """Change password to user account.
     :params: new_password - new password
@@ -74,7 +87,7 @@ def change_user_password(user_id, new_password):
 
 @retry_query(tries=3, delay=1)
 def get_user_role_by_email(email):
-    """Get all resources.sad
+    """Get all resources.
     :return: tuple of resources
     """
     with db_pool().manager() as conn:
@@ -95,11 +108,11 @@ def get_all_permissions_for_enter():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name , res.resource_name, p.action, p.modifier 
-        FROM `role_permission` AS rp INNER JOIN `permission` AS p ON 
-        rp.permission_id = p.id INNER JOIN `role` AS r 
-        ON rp.role_id = r.id INNER JOIN `resource` AS res 
-        ON p.resource_id = res.id;
-        """
+                  FROM `role_permission` AS rp
+                  INNER JOIN `permission` AS p ON rp.permission_id = p.id
+                  INNER JOIN `role` AS r ON rp.role_id = r.id
+                  INNER JOIN `resource` AS res ON p.resource_id = res.id;
+                """
         cursor.execute(query)
     return cursor.fetchall()
 
@@ -159,15 +172,15 @@ def add_resource(resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def edit_resource_name(newResourceource_name, resource_id):
+def edit_resource_name(new_resource_name, resource_id):
     """Edit resource name.
-    :params: newResourceource_name - new name of resource
+    :params: new_resource_name - new name of resource
              resource_id - id of  resource we change name
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `resource` SET `resource_name`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (newResourceource_name, resource_id))
+        cursor.execute(query, (new_resource_name, resource_id))
         conn.commit()
 
 

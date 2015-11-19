@@ -1,3 +1,4 @@
+import imghdr
 import re
 
 email_pattern = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
@@ -94,3 +95,8 @@ def validate_string(*args):
                 False - if it is not
     """
     return True if isinstance(args[0][args[1]], basestring) else False
+
+
+def validate_image_file(file):
+    return True if str(imghdr.what(file)) == 'png' else False
+

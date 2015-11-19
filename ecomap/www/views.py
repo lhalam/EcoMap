@@ -4,6 +4,7 @@ This module holds all views controls for
 ecomap project.
 """
 import imghdr
+
 import json
 import functools
 import os
@@ -32,54 +33,10 @@ def load_users():
 def is_admin(f):
     @functools.wraps(f)
     def wrapped(*args, **kwargs):
-        logger.warning(g.user)
-        logger.warning('SIC!')
-        logger.warning(g.user.role)
         if g.user.role != 'admin':
             abort(403)
         return f(*args, **kwargs)
     return wrapped
-
-
-def validate_image_file(file, name):
-    if str(imghdr.what(file)) == 'png':
-        return True
-    else:
-        logger.warning(imghdr.what(file))
-        logger.warning(name[-3:].lower())
-        logger.warning(name[-3:].lower() == str(imghdr.what(file)))
-        return False
-
-
-@app.route('/api/test_photo', methods=['POST'])
-@login_required
-def test_photo():
-    if request.method == 'POST':
-        file = request.files['file']
-        name = request.form['name']
-
-        logger.warning('BEFORE VALIDATION')
-        if file and validate_image_file(file, name):
-            logger.warning("VALID!!")
-
-            extension = os.path.splitext(name)[1]
-            extension = '.png'
-            logger.info(extension)
-            # f_name = str(uuid.uuid4()) + extension
-            f_name = 'profile_id%s' % current_user.uid + extension
-
-            #todo def var UPLOADS in ENV
-
-            f_path = os.environ['PRODROOT']+'/www/uploads/user_profile/userid_%d/' % current_user.uid
-            apache_path = '/uploads/user_profile/userid_%d/' % current_user.uid
-            # f_path = '/uploads/user_profile/userid_%d' % current_user.uid
-            if not os.path.exists(f_path):
-                os.makedirs(os.path.dirname(f_path+f_name))
-            file.save(os.path.join(f_path, f_name))
-            img_path = apache_path+f_name
-            db.insert_user_avatar(current_user.uid, img_path)
-            return json.dumps({'added_file': img_path})
-    return jsonify(error='error with import file'), 400
 
 
 @app.route('/', methods=['GET'])
@@ -260,9 +217,29 @@ def get_user_info(user_id):
 
         if user:
             return jsonify(name=user.first_name, surname=user.last_name,
-                           email=user.email, role=user.role)
+                           email=user.email, role=user.role, avatar=user.avatar)
         else:
             return jsonify(status='There is no user with given email'), 401
+
+
+@app.route('/api/upload_avatar', methods=['POST'])
+@login_required
+def test_photo():
+    if request.method == 'POST':
+        file = request.files['file']
+        extension = '.png'
+        f_name = 'profile_id%s' % current_user.uid + extension
+        static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+        f_path = os.environ['STATICROOT'] + static_url
+        if file and v.validate_image_file(file):
+            if not os.path.exists(f_path):
+                os.makedirs(os.path.dirname(f_path+f_name))
+            file.save(os.path.join(f_path, f_name))
+            img_path = static_url+f_name
+            db.insert_user_avatar(current_user.uid, img_path)
+            return json.dumps({'added_file': img_path})
+    return jsonify(error='error with import file'), 400
+
 
 
 @app.route('/api/getTitles', methods=['GET'])
@@ -681,7 +658,6 @@ def get_all_users():
                                 'last_name': res[2], 'email': res[3],
                                 'role': res[4]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
-
 
 
 if __name__ == '__main__':

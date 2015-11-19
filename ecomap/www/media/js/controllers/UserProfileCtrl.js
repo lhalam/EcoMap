@@ -80,7 +80,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       };
 
  $scope.cancelImg = function(){
-      $scope.photo = false;
+     $scope.photo = false;
      $scope.newImage = '';
      $scope.picFile = ''
       };
@@ -88,7 +88,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
 
  $scope.upload = function (dataUrl, picFile) {
         Upload.upload({
-            url: '/api/test_photo',
+            url: '/api/upload_avatar',
             cache: false,
             data: {
                 file: Upload.dataUrltoBlob(dataUrl), name: picFile.name
@@ -96,7 +96,8 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
         }).then(function (response) {
             $timeout(function () {
                 $scope.result = response.data;
-                $scope.reloadImg($scope.result.added_file)
+                $scope.reloadImg($scope.result.added_file);
+                $scope.photo = false
             });
         }, function (response) {
             if (response.status > 0) $scope.errorMsg = response.status

@@ -1,7 +1,5 @@
 <link rel="stylesheet" href="/css/admin.css">
 
-<toaster-container></toaster-container>
-
 <div class="container" >
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -94,6 +92,29 @@
             <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
             <div class="clear"></div>
         </uib-tab>
+        <uib-tab heading="Користувачі">
+        <table class="table table-stripped">
+        <thead>
+               <tr>
+                 <td>Назва ролі</td>
+                 <td>Редагування</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="(role_name,role_id) in Roles">
+                  <td >{{role_name}}</td>
+                 </td>
+                 <td>
+                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
+                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">права ролі</a>
+                 </td>
+               </tr>
+          
+              </tbody>
+        </table>  
+
+        </uib-tab>
       </uib-tabset>
     </div>
   </div>
@@ -101,13 +122,8 @@
 
 <!-- Modal window for resource creating -->
 <modal title="Права ролі" visible="rolePerm">
-
-<form ng-submit="bindResPerm()" name="rolePerm" novalidate>
-<div class="container">
-
-  
-</div>
-<h3>Вже прив’язані події</h3>  
+<div ng-show="actualPermInRole">
+  <h3>Вже прив’язані події</h3>  
   <table class="table table-stripped">
   <thead>
                <tr>
@@ -128,6 +144,13 @@
               </tbody>
             </table>
   </table>
+</div>
+<form ng-submit="bindResPerm()" name="rolePerm" novalidate>
+<div class="container">
+
+  
+</div>
+
   <h3>Виберіть події для прив’язки</h3> 
    <input type="text" ng-model="searchWord" class="form-control">
   <table class="table table-stripped" id="tablePermRole">
@@ -159,7 +182,7 @@
   <form  ng-submit="addResource()" name="addResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="new_res" ng-model="newResource.name" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
 
     </div>
     <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">

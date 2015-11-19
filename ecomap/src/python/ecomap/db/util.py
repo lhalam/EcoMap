@@ -87,6 +87,7 @@ def get_user_role_by_email(email):
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
+
 def get_all_permissions_for_enter():
     """This query created for Restriction class.
     Restriction class is for lesser entering to DB.

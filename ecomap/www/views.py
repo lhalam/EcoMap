@@ -3,8 +3,10 @@
 This module holds all views controls for
 ecomap project.
 """
+import imghdr
 import json
 import functools
+import os
 
 from flask import render_template, request, jsonify, Response, g, abort
 from flask_login import login_user, logout_user, login_required, current_user
@@ -37,6 +39,47 @@ def is_admin(f):
             abort(403)
         return f(*args, **kwargs)
     return wrapped
+
+
+def validate_image_file(file, name):
+    if str(imghdr.what(file)) == 'png':
+        return True
+    else:
+        logger.warning(imghdr.what(file))
+        logger.warning(name[-3:].lower())
+        logger.warning(name[-3:].lower() == str(imghdr.what(file)))
+        return False
+
+
+@app.route('/api/test_photo', methods=['POST'])
+@login_required
+def test_photo():
+    if request.method == 'POST':
+        file = request.files['file']
+        name = request.form['name']
+
+        logger.warning('BEFORE VALIDATION')
+        if file and validate_image_file(file, name):
+            logger.warning("VALID!!")
+
+            extension = os.path.splitext(name)[1]
+            extension = '.png'
+            logger.info(extension)
+            # f_name = str(uuid.uuid4()) + extension
+            f_name = 'profile_id%s' % current_user.uid + extension
+
+            #todo def var UPLOADS in ENV
+
+            f_path = os.environ['PRODROOT']+'/www/uploads/user_profile/userid_%d/' % current_user.uid
+            apache_path = '/uploads/user_profile/userid_%d/' % current_user.uid
+            # f_path = '/uploads/user_profile/userid_%d' % current_user.uid
+            if not os.path.exists(f_path):
+                os.makedirs(os.path.dirname(f_path+f_name))
+            file.save(os.path.join(f_path, f_name))
+            img_path = apache_path+f_name
+            db.insert_user_avatar(current_user.uid, img_path)
+            return json.dumps({'added_file': img_path})
+    return jsonify(error='error with import file'), 400
 
 
 @app.route('/', methods=['GET'])
@@ -611,8 +654,8 @@ def get_all_permissions():
 
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
-# @login_required
-# @is_admin
+@login_required
+@is_admin
 def get_all_users():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()

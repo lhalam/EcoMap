@@ -464,7 +464,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     //Users
     $scope.changeRole=function(user_obj){
         $scope.Roles.forEach(function (elem,index){
-            if(elem == )
+            if(elem == user_obj.id ){
+
+            }
         })
         $http({
             method:"POST",

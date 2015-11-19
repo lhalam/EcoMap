@@ -1,4 +1,5 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', function($scope, $cookies, $http, toaster){
+app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
+    function($scope, $cookies, $http, toaster, Upload, $timeout){
 
   $scope.user = {};
   $scope.user.id = $cookies.get("id");
@@ -65,5 +66,48 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', fun
   $scope.$on("$destroy", function handler() {
     $scope.body.removeClass("body-scroll-shown");
   });
-  
+
+
+      $scope.reloadImg = function (imgUrl) {
+  $scope.user.data.avatar = imgUrl + '?=new_' + new Date().getTime();
+      return $scope.user.data.avatar;
+  //
+  };
+
+      $scope.photo = false;
+      $scope.showModalPhoto = function(){
+          $scope.photo = true
+      };
+
+ $scope.cancelImg = function(){
+      $scope.photo = false;
+     $scope.newImage = '';
+     $scope.picFile = ''
+      };
+
+
+ $scope.upload = function (dataUrl, picFile) {
+        Upload.upload({
+            url: '/api/test_photo',
+            cache: false,
+            data: {
+                file: Upload.dataUrltoBlob(dataUrl), name: picFile.name
+            }
+        }).then(function (response) {
+            $timeout(function () {
+                $scope.result = response.data;
+                $scope.reloadImg($scope.result.added_file)
+            });
+        }, function (response) {
+            if (response.status > 0) $scope.errorMsg = response.status
+                + ': ' + response.data.error;
+        }, function (evt) {
+            $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
+        });
+    };
+
 }]);
+
+
+
+

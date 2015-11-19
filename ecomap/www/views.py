@@ -17,7 +17,7 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap import validator as v
-
+import ecomap.permission as perm
 
 @app.before_request
 def load_users():
@@ -36,6 +36,7 @@ def is_admin(f):
         if g.user.role != 'admin':
             abort(403)
         return f(*args, **kwargs)
+
     return wrapped
 
 
@@ -233,13 +234,12 @@ def test_photo():
         f_path = os.environ['STATICROOT'] + static_url
         if file and v.validate_image_file(file):
             if not os.path.exists(f_path):
-                os.makedirs(os.path.dirname(f_path+f_name))
+                os.makedirs(os.path.dirname(f_path + f_name))
             file.save(os.path.join(f_path, f_name))
-            img_path = static_url+f_name
+            img_path = static_url + f_name
             db.insert_user_avatar(current_user.uid, img_path)
             return json.dumps({'added_file': img_path})
     return jsonify(error='error with import file'), 400
-
 
 
 @app.route('/api/getTitles', methods=['GET'])
@@ -271,7 +271,7 @@ def resources():
         data = request.get_json()
 
         invalid = v.main_validator([[data, 'resource_name', 2, 100,
-                                    v.validate_key, v.validate_empty]])
+                                     v.validate_key, v.validate_empty]])
 
         if not invalid:
             if db.get_resource_id(data['resource_name']):
@@ -359,8 +359,8 @@ def roles():
         data = request.get_json()
 
         invalid = v.main_validator([[data, 'role_name', 2, 100,
-                                    v.validate_key, v.validate_empty,
-                                    v.validate_string, v.validate_length]])
+                                     v.validate_key, v.validate_empty,
+                                     v.validate_string, v.validate_length]])
 
         if not invalid:
             if db.get_role_id(data['role_name']):
@@ -402,7 +402,7 @@ def roles():
         del_data = request.get_json()
 
         invalid = v.main_validator([[del_data, 'role_id', 1, 1, v.validate_key,
-                                    v.validate_empty]])
+                                     v.validate_empty]])
 
         if not invalid:
             if not db.check_role_deletion(del_data['role_id']):
@@ -659,6 +659,12 @@ def get_all_users():
                                 'role': res[4]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
+
+@app.route("/api/test", methods=['GET'])
+def test():
+    dct = perm.get_perms()
+    logger.warning(dct)
+    return jsonify(dct)
 
 if __name__ == '__main__':
     app.run()

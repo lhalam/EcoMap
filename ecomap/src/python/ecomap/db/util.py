@@ -264,6 +264,7 @@ def get_all_permissions():
         cursor.execute(query)
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_all_permissions_for_enter():
     with db_pool().manager() as conn:
@@ -508,6 +509,25 @@ def get_all_users():
                 """
         cursor.execute(query)
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def select_all():
+    """Gets resources with permissions and role_permissions.
+    :return: list of permissions
+    """
+    parsed_data = {}
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """select r.name, res.resource_name, p.action, p.modifier
+                from role_permission as rp
+                inner join role as r on rp.role_id = r.id
+                inner join permission as p on rp.permission_id = p.id
+                inner join resource as res on p.resource_id = res.id;"""
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+
 
 
 @retry_query(tries=3, delay=1)

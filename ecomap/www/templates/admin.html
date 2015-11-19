@@ -96,19 +96,23 @@
         <table class="table table-stripped">
         <thead>
                <tr>
-                 <td>Назва ролі</td>
-                 <td>Редагування</td>
+                 <td>Ім’я</td>
+                 <td>Прізвище</td>
+                 <td>Роль</td>
+                 <td>Мейл</td>
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="(role_name,role_id) in Roles">
-                  <td >{{role_name}}</td>
-                 </td>
-                 <td>
-                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">права ролі</a>
-                 </td>
+                <tr ng-repeat="(user_name,user_obj) in Users">
+                  <td>{{user_obj.first_name}}</td>
+                  <td>{{user_obj.last_name}}</td>
+                  <td>{{user_obj.email}}</td>
+                  <td>
+                    <select ng-model="user_obj.role" class="form-control" data-ng-options="role_ob as role_ob for (role_id,role_ob) in role_obj"></select>
+                  </td>
+                  <td>
+                    <button class="btn-primary" ng-click="changeRole(user_obj)">Змінити роль</button>
+                  </td>
                </tr>
           
               </tbody>
@@ -211,10 +215,13 @@
 </modal>
 
 <!-- Modal window for adding permissions 
+
 <td>{{permision.resource_name}}</td>
                  <td>{{permision.action}}</td>
                  <td>{{permision.modifier}}</td>
                  <td>{{permision.description}}</td>
+
+
 -->
 <modal title="Додати право" visible="addPermModal">
   <form action="" ng-submit="addPermSubmit()" name="addPerm" novalidate>
@@ -312,3 +319,4 @@
     </div>
   </div>
 </modal>
+

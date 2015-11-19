@@ -11,6 +11,11 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         '2':'Own',
         "3":"Any"
     }
+    $scope.role_obj={
+        "1":"admin",
+        "2":"moderator",
+        "3":"user"
+    }
 
     $scope.loadData=function(){
 
@@ -54,7 +59,14 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         $http({
             method:'GET',
             url:"/api/user_roles"
-        })
+        }).then(function successCallback(data) {
+                //$scope.Roles=data.
+                $scope.Users=data.data
+                console.log("user_roles")
+                console.log(data)
+            },function errorCallback(response) {
+                console.log(response)
+            })
 
     }
 
@@ -450,6 +462,22 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             })
     }
     //Users
-    $scope
-
+    $scope.changeRole=function(user_obj){
+        $scope.Roles.forEach(function (elem,index){
+            if(elem == )
+        })
+        $http({
+            method:"POST",
+            url:"/api/user_roles",
+            data:{
+                "role_id":role_id,
+                "user_id":user_id
+            }
+        }).then(function successCallback(data) {
+                console.log(data)
+            }, function errorCallback(response) {
+                $scope.Eror=response
+                $scope.customEror=true
+            })
+    }
 }]);

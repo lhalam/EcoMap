@@ -51,6 +51,11 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 console.log(response)
             })
 
+        $http({
+            method:'GET',
+            url:"/api/user_roles"
+        })
+
     }
 
     $scope.loadData()
@@ -444,5 +449,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 $scope.customEror=true
             })
     }
+    //Users
+    $scope
 
 }]);

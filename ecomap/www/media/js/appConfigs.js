@@ -16,6 +16,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/admin.html',
       controller: 'AdminCtrl'
     })
+    .state('editFaq', {
+      url: '/faq/edit/:id',
+      templateUrl: 'templates/editFaq.html',
+      controller: 'EditFaqCtrl'
+    })
     .state('login', {
       url: '/login',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {

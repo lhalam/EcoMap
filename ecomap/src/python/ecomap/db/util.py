@@ -87,6 +87,21 @@ def get_user_role_by_email(email):
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
+def get_all_permissions_for_enter():
+    """This query created for Restriction class.
+    Restriction class is for lesser entering to DB.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT r.name , res.resource_name, p.action, p.modifier 
+        FROM `role_permission` AS rp INNER JOIN `permission` AS p ON 
+        rp.permission_id = p.id INNER JOIN `role` AS r 
+        ON rp.role_id = r.id INNER JOIN `resource` AS res 
+        ON p.resource_id = res.id;
+        """
+        cursor.execute(query)
+    return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def get_user_role_by_id(id):
@@ -234,6 +249,23 @@ def get_all_permissions():
                    ON p.resource_id = r.id;"""
         cursor.execute(query)
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_all_permissions_for_enter():
+    with db_pool().manager() as conn:
+        """This query created for Restricting class.
+        Main goal is collecting data for lesser asking DB
+        for entering the resources
+        """
+        cursor = conn.cursor()
+        query = """SELECT r.name , res.resource_name, p.action, p.modifier 
+        FROM `role_permission` AS rp INNER JOIN `permission` AS p ON 
+        rp.permission_id = p.id INNER JOIN `role` AS r 
+        ON rp.role_id = r.id INNER JOIN `resource` AS res 
+        ON p.resource_id = res.id;
+        """
+        cursor.execute(query)
+    return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)
@@ -446,6 +478,22 @@ def delete_role_by_id(role_id):
         query = """DELETE FROM `role` WHERE `id`=%s;"""
         cursor.execute(query, (role_id,))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_users():
+    """Return all registered users from db.
+    :return: tuples with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` as ur
+                   INNER JOIN `user` as u ON ur.user_id = u.id
+                   INNER JOIN `role` as r ON ur.role_id = r.id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)

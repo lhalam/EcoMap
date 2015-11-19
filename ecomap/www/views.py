@@ -222,11 +222,6 @@ def get_user_info(user_id):
             return jsonify(status='There is no user with given email'), 401
 
 
-@app.route('/api/getTitles', methods=['GET'])
-def getTitles():
-    pass
-
-
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 @login_required
 @is_admin
@@ -608,6 +603,25 @@ def get_all_permissions():
                 'description': perm[4]
             })
     return Response(json.dumps(perms_list), mimetype='application/json')
+
+
+@app.route('/api/getTitles', methods=['GET'])
+def get_titles():
+    """This method returns short info about all defined static pages.
+
+      :returns list of dicts with title, id, alias and is_enabled
+      values.
+    """
+    if request.method == 'GET':
+        pages = db.get_pages_titles()
+        result = []
+        for page in pages:
+            result += {'id': page[0],
+                       'title': page[1],
+                       'alias': page[2],
+                       'is_enabled': page[3]
+                       }
+        return Response(json.dumps(result), mimetype="application/json")
 
 
 if __name__ == '__main__':

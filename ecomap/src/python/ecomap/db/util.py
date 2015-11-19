@@ -450,4 +450,8 @@ def delete_role_by_id(role_id):
 
 @retry_query(tries=3, delay=1)
 def get_pages_titles():
-    pass
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `is_enabled` FROM `page`"""
+        cursor.execute(query)
+        return cursor.fetchall()

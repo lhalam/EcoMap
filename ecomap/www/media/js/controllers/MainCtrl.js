@@ -1,4 +1,4 @@
-app.controller('MainCtrl', ['$scope', '$auth', '$cookies', function($scope, $auth, $cookies){
+app.controller('MainCtrl', ['$scope', '$http','$auth', '$cookies', function($scope, $http, $auth, $cookies){
   
   $scope.isAuthenticated = function(){
     return $auth.isAuthenticated();
@@ -20,5 +20,12 @@ app.controller('MainCtrl', ['$scope', '$auth', '$cookies', function($scope, $aut
       return false;
     }
   };
+
+  $http({
+    method: 'GET',
+    url: '/api/getTitles'
+  }).success(function(resp){
+    console.log(resp);
+  });
 
 }]);

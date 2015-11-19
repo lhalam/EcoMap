@@ -381,7 +381,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
             $scope.actualPermInRole.forEach(function(elem,index){
             if(elem.id == perm.id){
-        
+                // delete perm
                 $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
                 delete $scope.actualPermInRole[index]
                

@@ -74,7 +74,7 @@ def change_user_password(user_id, new_password):
 
 @retry_query(tries=3, delay=1)
 def get_user_role_by_email(email):
-    """Get all resources.sad
+    """Get all resources.
     :return: tuple of resources
     """
     with db_pool().manager() as conn:

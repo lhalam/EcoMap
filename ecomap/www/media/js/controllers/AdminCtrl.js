@@ -461,23 +461,23 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 $scope.customEror=true
             })
     }
-    //Users
-    $scope.changeRole=function(user_obj){
-        $scope.Roles.forEach(function (elem,index){
-            if(elem == )
-        })
-        $http({
-            method:"POST",
-            url:"/api/user_roles",
-            data:{
-                "role_id":role_id,
-                "user_id":user_id
-            }
-        }).then(function successCallback(data) {
-                console.log(data)
-            }, function errorCallback(response) {
-                $scope.Eror=response
-                $scope.customEror=true
-            })
-    }
+//     //Users
+//     // $scope.changeRole=function(user_obj){
+//         // $scope.Roles.forEach(function (elem,index){
+//             // if(elem == )
+//         })
+//         $http({
+//             method:"POST",
+//             url:"/api/user_roles",
+//             data:{
+//                 "role_id":role_id,
+//                 "user_id":user_id
+//             }
+//         }).then(function successCallback(data) {
+//                 console.log(data)
+//             }, function errorCallback(response) {
+//                 $scope.Eror=response
+//                 $scope.customEror=true
+//             })
+//     }
 }]);

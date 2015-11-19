@@ -250,6 +250,23 @@ def get_all_permissions():
         cursor.execute(query)
         return cursor.fetchall()
 
+@retry_query(tries=3, delay=1)
+def get_all_permissions_for_enter():
+    with db_pool().manager() as conn:
+        """This query created for Restricting class.
+        Main goal is collecting data for lesser asking DB
+        for entering the resources
+        """
+        cursor = conn.cursor()
+        query = """SELECT r.name , res.resource_name, p.action, p.modifier 
+        FROM `role_permission` AS rp INNER JOIN `permission` AS p ON 
+        rp.permission_id = p.id INNER JOIN `role` AS r 
+        ON rp.role_id = r.id INNER JOIN `resource` AS res 
+        ON p.resource_id = res.id;
+        """
+        cursor.execute(query)
+    return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def insert_permission(resource_id, action, modifier, description):

@@ -17,7 +17,7 @@
 
     <div class="form-group" ng-class="{ 'has-error': registerForm.name.$touched && registerForm.name.$invalid }">
       <label for="name" class="control-label">Ім'я</label>
-      <input type="text"  ng-model="newUser.firstName" name="name" ng-maxlength="100" class="form-control" id="name" placeholder="Ім'я" data-error="Необхідно ввести ім'я!" required/>
+      <input type="text"  ng-model="newUser.first_name" name="name" ng-maxlength="100" class="form-control" id="name" placeholder="Ім'я" data-error="Необхідно ввести ім'я!" required/>
       <div class="help-block" ng-messages="registerForm.name.$error" ng-show="registerForm.name.$touched">
         <p ng-message="maxlength">Занадто довге ім'я!</p>
         <p ng-message="required">Необхідно ввести ім'я!</p>
@@ -26,7 +26,7 @@
 
     <div class="form-group" ng-class="{ 'has-error': registerForm.surname.$touched && registerForm.surname.$invalid }">
       <label for="surname" class="control-label">Прізвище</label>
-      <input type="text"  ng-model="newUser.lastName" name="surname" ng-maxlength="100" class="form-control" id="surname" placeholder="Прізвище" data-error="Необхідно ввести прізвище!" required/>
+      <input type="text"  ng-model="newUser.last_name" name="surname" ng-maxlength="100" class="form-control" id="surname" placeholder="Прізвище" data-error="Необхідно ввести прізвище!" required/>
       <div class="help-block" ng-messages="registerForm.surname.$error" ng-show="registerForm.surname.$touched">
         <p ng-message="maxlength">Занадто довге прізвище!</p>
         <p ng-message="required">Необхідно ввести прізвище!</p>

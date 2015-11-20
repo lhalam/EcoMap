@@ -1,4 +1,4 @@
-app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
+app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http, toaster){
 
     $scope.meth_obj={
         "1":"GET",
@@ -16,6 +16,27 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         "2":"moderator",
         "3":"user"
     }
+
+    $scope.msg = {
+        editSuccess: function(msg){
+            toaster.pop('success', 'Редагування', 'Редагування ' + msg + ' здійснено успішно!');
+        },
+        deleteSuccess: function(msg){
+            toaster.pop('success', 'Видалення', 'Видалення ' + msg + ' здійснено успішно!');
+        },
+        createSuccess: function(msg){
+            toaster.pop('success', 'Додавання', 'Додавання ' + msg + ' здійснено успішно!');
+        },
+        editError: function(msg){
+            toaster.pop('error', 'Редагування', 'При редагуванні ' + msg + ' виникла помилка!');
+        },
+        deleteError: function(msg){
+            toaster.pop('error', 'Видалення', 'При видаленні ' + msg + ' виникла помилка!');
+        },
+        createError: function(msg){
+            toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
+        },
+    };
 
     $scope.loadData=function(){
 
@@ -100,11 +121,10 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
-
+            $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
             $scope.addResModal=false
-            $scope.Eror=response.data.error;
-            $scope.customEror=true;
+            $scope.msg.errorEdit('ресурсу');
         })
     };
 

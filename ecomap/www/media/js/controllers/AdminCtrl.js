@@ -377,7 +377,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                 If listToSend contains it, ng-show return false
             */
             $scope.checkInActual=function(id){
-                console.log($scope.listToSend)
+                //console.log($scope.listToSend)
                 var list=[]
                      $scope.actualPermInRole.forEach(function(elem){
                         list.push(elem.id)
@@ -397,18 +397,21 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
          if($scope.actualPermInRole.length-1 !== 0){
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
             $scope.actualPermInRole.forEach(function(elem,index){
+                console.log("Elem id :"+elem.id)
+                console.log("Perm id :"+perm.id)
             if(elem.id == perm.id){
-                // delete perm
+                $scope.listToSend.splice( index, 1 )
                 $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
-                delete $scope.actualPermInRole[index]
+                //delete $scope.actualPermInRole[index]
                
             }
             console.log($scope.actualPermInRole.length)
          })
-         console.log($scope.actualPermInRole)
+         //console.log($scope.actualPermInRole)
          delete $scope.selectPermObj[perm.id]
          }
          else {
+            $scope.rolePerm=false
             $scope.Eror='at least one bind element'
             $scope.customEror=true
          }
@@ -441,7 +444,8 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             $scope.rolePerm=false
         }
         else {
-            $scope.Eror='response'
+            console.log(" $scope.rolePerm=false")
+            $scope.Eror='Eror'
             $scope.customEror=true
         }
         
@@ -463,15 +467,19 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     }
     //Users
     $scope.changeRole=function(user_obj){
-        $scope.Roles.forEach(function (elem,index){
-            if(elem == )
-        })
+        var role_id;
+        for (role in $scope.role_obj){
+            if($scope.role_obj[role] == user_obj.role){
+                console.log($scope.role_obj[role] )
+                role_id = role
+            }
+        }
         $http({
             method:"POST",
             url:"/api/user_roles",
             data:{
                 "role_id":role_id,
-                "user_id":user_id
+                "user_id":user_obj.user_id
             }
         }).then(function successCallback(data) {
                 console.log(data)

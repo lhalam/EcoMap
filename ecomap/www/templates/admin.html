@@ -131,11 +131,12 @@
 <modal title="Права ролі" visible="rolePerm">
 <div ng-show="actualPermInRole">
   <h3>Вже прив’язані події</h3>  
-  <table class="table table-stripped">
+ <form>
+    <table class="table table-stripped">
   <thead>
                <tr>
                  <td>Назва методу</td>
-                 <td>Modifier</td>
+                 <td>Модифікатор доступу</td>
                  <td>Id</td>
                  <td>Опис</td>
                </tr>
@@ -144,13 +145,14 @@
                 <tr ng-repeat="perm in actualPermInRole" >
                 
                   <td ng-repeat="perm_prop in perm">{{perm_prop}}</td>
-                  <td><button class="btn-danger"  ng-click="deletePermFormRole(perm)">DELETE</button></td>
+                  <td><button class="btn btn-danger"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                 
                </tr>
           
               </tbody>
             </table>
-  </table>
+    </table>
+ </form>
 </div>
 <form ng-submit="bindResPerm()" name="rolePerm" novalidate>
 <div class="container">
@@ -180,7 +182,7 @@
           
               </tbody>
             </table>
-          <button type="submit" class="btn btn-primary">submit</button>
+          <button type="submit" class="btn btn-primary">підтвFрдити</button>
 </form>
 </modal>
 

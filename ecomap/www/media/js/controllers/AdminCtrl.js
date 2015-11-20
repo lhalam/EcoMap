@@ -345,6 +345,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }
         $scope.editRoleObj={}
         $scope.editRole=function(){
+            console.log()
             $http({
                     method:"PUT",
                     url:"/api/roles",
@@ -434,12 +435,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
          if($scope.actualPermInRole.length-1 !== 0){
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
             $scope.actualPermInRole.forEach(function(elem,index){
-                console.log("Elem id :"+elem.id)
-                console.log("Perm id :"+perm.id)
+                //console.log("Elem id :"+elem.id)
+                console.log($scope.actualPermInRole)
             if(elem.id == perm.id){
                 $scope.listToSend.splice( index, 1 )
-                $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
-                //delete $scope.actualPermInRole[index]
+                $scope.actualPermInRole.splice( index, 1 )
                
             }
             console.log($scope.actualPermInRole.length)
@@ -448,8 +448,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
          delete $scope.selectPermObj[perm.id]
          }
          else {
-            $scope.rolePerm=false
-            $scope.msg.deleteError('Прав');
+
+            $scope.msg.deleteError('ОСТАННЬОГО права');
          }
     }
     // data for filter
@@ -472,9 +472,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "permission_id":$scope.listToSend
             }
             }).then(function successCallback(data) {
-                console.log(data)
+                $scope.msg.editSuccess('прав');
             }, function errorCallback(response) {
-                console.log(response)
+                $scope.msg.editError('прав');
             })
 
             $scope.rolePerm=false
@@ -517,10 +517,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "user_id":user_obj.user_id
             }
         }).then(function successCallback(data) {
-                $scope.msg.createSuccess('користувача');
+                $scope.msg.editSuccess('користувача');
             }, function errorCallback(response) {
-                $scope.Eror=response
-                $scope.customEror=true
+                //$scope.Eror=response
+                //$scope.customEror=true
+                $scope.msg.editError('користувача');
             })
     }
 

@@ -227,7 +227,7 @@ def resource_post():
     """
     data = request.get_json()
 
-    valid = validator.validate_resource_post(data)
+    valid = validator.resource_post(data)
 
     if valid['status']:
         if db.get_resource_id(data['resource_name']):
@@ -257,7 +257,7 @@ def resource_put():
     """
     data = request.get_json()
 
-    valid = validator.validate_resource_put(data)
+    valid = validator.resource_put(data)
 
     if valid['status']:
         if db.get_resource_id(data['resource_name']):
@@ -288,7 +288,7 @@ def resource_delete():
     """
     data = request.get_json()
 
-    valid = validator.validate_resource_delete(data)
+    valid = validator.resource_delete(data)
 
     if valid['status']:
         if not db.check_resource_deletion(data['resource_id']):
@@ -332,7 +332,7 @@ def role_post():
     """
     data = request.get_json()
 
-    valid = validator.validate_role_post(data)
+    valid = validator.role_post(data)
 
     if valid['status']:
         if db.get_role_id(data['role_name']):
@@ -363,7 +363,7 @@ def role_put():
     """
     data = request.get_json()
 
-    valid = validator.validate_role_put(data)
+    valid = validator.role_put(data)
 
     if valid['status']:
         if db.get_role_id(data['role_name']):
@@ -386,13 +386,13 @@ def role_delete():
     :return: If role has permissions:
                  {'error': 'Cannot delete!'}
              If request data is invalid:
-                 {'status': False, error: [list of errors]}
+                 {'status': False, error: [list of errors]}, 400
              If all ok:
                  {'status': 'success', 'deleted_role': 'role_id'}
     """
     data = request.get_json()
 
-    valid = validator.validate_role_delete(data)
+    valid = validator.role_delete(data)
 
     if valid['status']:
         if not db.check_role_deletion(data['role_id']):
@@ -421,24 +421,22 @@ def role_get():
     return jsonify(parsed_data)
 
 
-@app.route("/api/permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
+@app.route("/api/permissions", methods=['POST'])
 @login_required
 @is_admin
-def permissions():
-    """Controller used for mange getting and adding actions of
-    server permission options.
-
-       :return:
-            - list of lists with permission data
-                [id,action,modifier,resource)
-            - if no resource in DB
-                return empty json
+def permission_post():
+    """Function which adds new permission into database.
+    :return: If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'added_permission': 'description',
+                  'permission_id': 'permission_id'}
     """
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        valid = validator.validate_permission_post(data)
+        valid = validator.permission_post(data)
 
         if valid['status']:
             db.insert_permission(data['resource_id'],
@@ -455,32 +453,58 @@ def permissions():
                                 mimetype='application/json'), 400
         return response
 
+
+@app.route("/api/permissions", methods=['PUT'])
+@login_required
+@is_admin
+def permission_put():
+    """Function which edits permission.
+    :return: If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'status': 'success',
+                  'edited_perm_id': 'permission_id'}
+    """
     if request.method == 'PUT' and request.get_json():
         edit_data = request.get_json()
 
-        valid = validator.validate_permission_put(edit_data)
+        valid = validator.permission_put(edit_data)
 
         if valid['status']:
             db.edit_permission(edit_data['action'],
                                edit_data['modifier'],
                                edit_data['permission_id'],
                                edit_data['description'])
-            response = jsonify(msg='success',
+            response = jsonify(status='success',
                                edited_perm_id=edit_data['permission_id'])
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
         return response
 
+
+@app.route("/api/permissions", methods=['DELETE'])
+@login_required
+@is_admin
+def permission_delete():
+    """Function which edits permission.
+    :return: If permission is binded with any role:
+                 {'error': 'Cannot delete!'}
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'status': 'success',
+                  'edited_perm_id': 'permission_id'}
+    """
     if request.method == 'DELETE' and request.get_json():
         data = request.get_json()
 
-        valid = validator.validate_permission_delete(data)
+        valid = validator.permission_delete(data)
 
         if valid['status']:
             if not db.check_permission_deletion(data['permission_id']):
                 db.delete_permission_by_id(data['permission_id'])
-                response = jsonify(msg='success',
+                response = jsonify(status='success',
                                    deleted_permission=data['permission_id'])
             else:
                 response = jsonify(error='Cannot delete!')
@@ -489,13 +513,24 @@ def permissions():
                                 mimetype='application/json'), 400
         return response
 
+
+@app.route("/api/permissions", methods=['GET'])
+@login_required
+@is_admin
+def permission_get():
+    """Function which gets all permissions.
+    :return: {'permission_id': 'permission_id', 'action': 'action',
+              'modifier': 'modifier', 'description': 'description'}
+    """
     resource_id = request.args.get('resource_id')
     permission_tuple = db.get_all_permissions_by_resource(resource_id)
     parsed_json = {}
     if permission_tuple:
         for res in permission_tuple:
-            parsed_json.update({'permission_id': res[0], 'action': res[1],
-                                'modifier': res[2], 'description': res[3]})
+            parsed_json.update({'permission_id': res[0],
+                                'action': res[1],
+                                'modifier': res[2],
+                                'description': res[3]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 

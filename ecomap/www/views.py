@@ -290,8 +290,8 @@ def resources():
 
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def roles():
     """NEW!
     get list of roles for server permission control.
@@ -335,7 +335,7 @@ def roles():
         valid = validator.validate_role_put(edit_data)
 
         if valid['status']:
-            if db.get_role_id(edit_data['role_name']):
+            if db.get_role_id(edit_data['new_role_name']):
                 return jsonify(error='this name already exists'), 400
 
             db.edit_role(edit_data['new_role_name'], edit_data['role_id'])

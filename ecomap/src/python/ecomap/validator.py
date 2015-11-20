@@ -433,7 +433,6 @@ def is_not_empty(json, key):
     """Validator function which checks if value in json key is not empty.
        :params: json - JSON dictionary
                 key - JSON key
-                args[0][args[1]] - value we want to check if it is not empty
        :return: True - if json value is not empty
                 False - if it is empty
     """

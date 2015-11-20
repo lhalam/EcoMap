@@ -278,10 +278,13 @@ def resource_put():
 @is_admin
 def resource_delete():
     """Function which deletes resource from database.
-       Before delete checks if resource have any permissions,
-       if it has - returns error with message and code 400,
-       else - deletes this resource.
-       :return:
+       Before delete checks if resource have any permissions.
+    :return: If resource have permissions:
+                 {'error': 'Cannot delete!'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'status': 'success', 'deleted_resource': 'resource_id'}
     """
     data = request.get_json()
 
@@ -290,7 +293,7 @@ def resource_delete():
     if valid['status']:
         if not db.check_resource_deletion(data['resource_id']):
             db.delete_resource_by_id(data['resource_id'])
-            response = jsonify(msg='success',
+            response = jsonify(status='success',
                                deleted_resource=data['resource_id'])
         else:
             response = jsonify(error='Cannot delete!'), 400
@@ -314,80 +317,103 @@ def resource_get():
     return jsonify(parsed_data)
 
 
-@app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/api/roles", methods=['POST'])
 @login_required
 @is_admin
-def roles():
-    """NEW!
-    get list of roles for server permission control.
-    action GET:
-    'role_name' = name of role in db.
-    action POST:
-    'role_name' = name of the role.
-    action PUT:
-    'role_name' = changes to name of the role
-    'role_id' = key to search name of the role in db
-    action DELETE:
-    'role_name' = that has to be Deleted
-    'role_id' = key to search name of resource in db to delete
-       :return:
-            - list of jsons(dicts)
-            - if no resource in DB
-                return empty dict
+def role_post():
+    """Function which adds new role into database.
+    :return: If there is already role with this name:
+                 {'error': 'role already exists'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'added_role': 'role_name',
+                  'added_role_id': 'role_id'}
     """
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
+    data = request.get_json()
 
-        valid = validator.validate_role_post(data)
+    valid = validator.validate_role_post(data)
 
-        if valid['status']:
-            if db.get_role_id(data['role_name']):
-                return jsonify(error='role already exists'), 400
+    if valid['status']:
+        if db.get_role_id(data['role_name']):
+            return jsonify(error='role already exists'), 400
 
-            db.insert_role(data['role_name'])
-            added_role_id = db.get_role_id(data['role_name'])
+        db.insert_role(data['role_name'])
+        added_role_id = db.get_role_id(data['role_name'])
 
-            response = jsonify(added_role=data['role_name'],
-                               added_role_id=added_role_id[0])
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
+        response = jsonify(added_role=data['role_name'],
+                           added_role_id=added_role_id[0])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
 
-    if request.method == 'PUT' and request.get_json():
-        edit_data = request.get_json()
 
-        valid = validator.validate_role_put(edit_data)
+@app.route("/api/roles", methods=['PUT'])
+@login_required
+@is_admin
+def role_put():
+    """Function which edits role name.
+    :return: If there is already resource with this name:
+                 {'error': 'this name already exists'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'status': 'success', 'edited': 'resource_name'}
+    """
+    data = request.get_json()
 
-        if valid['status']:
-            if db.get_role_id(edit_data['role_name']):
-                return jsonify(error='this name already exists'), 400
+    valid = validator.validate_role_put(data)
 
-            db.edit_role(edit_data['role_name'], edit_data['role_id'])
+    if valid['status']:
+        if db.get_role_id(data['role_name']):
+            return jsonify(error='this name already exists'), 400
+
+        db.edit_role(data['role_name'], data['role_id'])
+        response = jsonify(status='success',
+                           edited=data['role_name'])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+
+
+@app.route("/api/roles", methods=['DELETE'])
+@login_required
+@is_admin
+def role_delete():
+    """Function which deletes role from database.
+    :return: If role has permissions:
+                 {'error': 'Cannot delete!'}
+             If request data is invalid:
+                 {'status': False, error: [list of errors]}
+             If all ok:
+                 {'status': 'success', 'deleted_role': 'role_id'}
+    """
+    data = request.get_json()
+
+    valid = validator.validate_role_delete(data)
+
+    if valid['status']:
+        if not db.check_role_deletion(data['role_id']):
+            db.delete_role_by_id(data['role_id'])
             response = jsonify(msg='success',
-                               edited=edit_data['role_name'])
+                                   deleted_role=data['role_id'])
         else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
+            response = jsonify(error='Cannot delete!')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
 
-    if request.method == 'DELETE' and request.get_json():
-        del_data = request.get_json()
 
-        valid = validator.validate_role_delete(del_data)
-
-        if valid['status']:
-            if not db.check_role_deletion(del_data['role_id']):
-                db.delete_role_by_id(del_data['role_id'])
-                response = jsonify(msg='success',
-                                   deleted_role=del_data['role_id'])
-            else:
-                response = jsonify(error='Cannot delete!')
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
-
+@app.route("/api/roles", methods=['GET'])
+@login_required
+@is_admin
+def role_get():
+    """Function which gets all roles from database.
+       :return: {'role_name': 'role_id'}
+    """
     query = db.get_all_roles()
     parsed_data = {}
     if query:

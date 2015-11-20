@@ -118,13 +118,15 @@ def change_password():
         data = request.get_json()
 
         valid = validator.change_password(data)
+        logger.info(valid['error'])
 
         if valid['status']:
             user = usr.get_user_by_id(data['id'])
             if user and user.verify_password(data['old_pass']):
                 user.change_password(data['password'])
                 response = jsonify(), 200
-            response = jsonify(), 400
+            else:
+                response = jsonify(), 400
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400

@@ -127,7 +127,9 @@ def register(first_name, last_name, email, password):
         :returns True if transaction finished successfully.
     """
     salted_pass = hash_pass(password)
-    return util.insert_user(first_name, last_name, email, salted_pass)
+    role_id = util.get_role_id('user')
+    return util.insert_user(first_name, last_name, email, salted_pass,
+                            role_id)
 
 
 @login_manager.user_loader

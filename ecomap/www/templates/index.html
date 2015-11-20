@@ -36,7 +36,8 @@
   <script src='/js/controllers/LoginCtrl.js'></script>
   <script src='/js/controllers/RegisterCtrl.js'></script>
   <script src="/js/controllers/LogoutCtrl.js"></script>
-  <!-- <script src="/js/controllers/StaticPageCtrl.js"></script>-->
+  <script src="/js/controllers/DetailedFaqCtrl.js"></script>
+  <script src="/js/controllers/FaqTableCtrl.js"></script>
   <script src='/js/controllers/EditFaqCtrl.js'></script>
 
   <!-- AngularJS directives -->
@@ -65,10 +66,10 @@
             <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
             <li class="dropdown" >
               <a class="dropdown-toggle"  data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
-              <ul class="dropdown-menu" ng-repeat="(id, page_name) in pages">
-                <li><a href="#">first</a></li>
-                <li><a href="#">second</a></li>
-                <li><a href="#">third</a></li>
+              <ul class="dropdown-menu" >
+                <li ng-show="faqObj.is_enabled" ng-repeat="faqObj in faqTitles">
+                  <a href="/#/faq/{{faqObj.alias|angular}}" ng-bind="faqObj.title"></a>
+                </li>
               </ul>
             </li>
             <li><a href="#">статистика</a></li>

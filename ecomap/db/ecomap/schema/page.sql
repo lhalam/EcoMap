@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `page` (
   `description` text NOT NULL,
   `content` text NOT NULL,
   `meta_keywords` varchar(255) NULL,
-  `meta_desription` varchar(255) NULL,
+  `meta_description` varchar(255) NULL,
   `is_enabled` boolean NOT NULL DEFAULT TRUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

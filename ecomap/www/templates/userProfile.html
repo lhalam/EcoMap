@@ -3,7 +3,7 @@
   <div class="container user-profile">
     <div class="row">
     <div class="panel panel-default">
-      <a href="/#/map" class="close-button">x</a>
+      <a href="/#/map" class="close-button">&#10006;</a>
       <div class="panel-body">
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <div class="list-group">
@@ -71,46 +71,32 @@
           <hr>
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-if="isSelected('faqEdit')">
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-if="isSelected('faqEdit')" ng-controller="FaqTableCtrl">
           <h3>Редагування F.A.Q.</h3>
           <hr>
           <table class="table table-hover">
               <thead>
                <tr>
+                 <td>Номер</td>
                  <td>Назва інструкції</td>
+                 <td>Адреса інструкції</td>
+                 <td>Відображення</td>
                  <td>Редагування</td>
                </tr>
               </thead>
               <tbody>
-                <tr>
-                 <td>Як зберегти своє село від електровітряків?</td> 
+                <tr ng-repeat="page in pages">
+                 <td ng-bind="page.id"></td>
+                 <td ng-bind="page.title"></td> 
+                 <td ng-bind="page.alias"></td>
+                 <td>
+                  <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing(page.id)">
+                 </td>
                  <td>
                   <a href="" >редагувати</a> &nbsp; &nbsp;
-                  <a href="">видалити</a>
+                  <a href="" class="del">видалити</a>
                  </td>
                </tr>
-               <tr>
-                 <td>Як зберегти своє село від електровітряків?</td> 
-                 <td>
-                  <a href="" >редагувати</a> &nbsp; &nbsp;
-                  <a href="">видалити</a>
-                 </td>
-               </tr>
-               <tr>
-                 <td>Як зберегти своє село від електровітряків?</td> 
-                 <td>
-                  <a href="" >редагувати</a> &nbsp; &nbsp;
-                  <a href="">видалити</a>
-                 </td>
-               </tr>
-               <tr>
-                 <td>Як зберегти своє село від електровітряків?</td> 
-                 <td>
-                  <a href="" >редагувати</a> &nbsp; &nbsp;
-                  <a href="">видалити</a>
-                 </td>
-               </tr>
-             
               </tbody>
             </table>
         </div>

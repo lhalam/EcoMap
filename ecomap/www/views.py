@@ -616,11 +616,34 @@ def get_titles():
         pages = db.get_pages_titles()
         result = []
         for page in pages:
-            result += {'id': page[0],
-                       'title': page[1],
-                       'alias': page[2],
-                       'is_enabled': page[3]
-                       }
+            result.append({'id': page[0],
+                           'title': page[1],
+                           'alias': page[2],
+                           'is_enabled': page[3]
+                           })
+        return Response(json.dumps(result), mimetype="application/json")
+
+
+@app.route('/api/resources/<alias>', methods=['GET'])
+def get_faq(alias):
+    """This method retrieves exact faq page(ex-resource) via
+       alias, passed to it.
+
+        :params - alias - url path to exact page.
+
+        :returns object with all page's attributes within a list.
+    """
+    if request.method == 'GET':
+        page = db.get_page_by_alias(alias)
+        result = [{'id': page[0],
+                   'title': page[1],
+                   'alias': page[2],
+                   'description': page[3],
+                   'content': page[4],
+                   'meta_keywords': page[5],
+                   'meta_description': page[6],
+                   'is_enabled': page[7]
+                   }]
         return Response(json.dumps(result), mimetype="application/json")
 
 

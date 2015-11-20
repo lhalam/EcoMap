@@ -18,8 +18,13 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     })
     .state('editFaq', {
       url: '/faq/edit/:id',
-      templateUrl: 'templates/editFaq.html',
+      templateUrl: '/templates/editFaq.html',
       controller: 'EditFaqCtrl'
+    })
+    .state('faq', {
+      url: '/faq/:faqAlias',
+      templateUrl: '/templates/detailedFaq.html',
+      controller: 'DetailedFaqCtrl'
     })
     .state('login', {
       url: '/login',

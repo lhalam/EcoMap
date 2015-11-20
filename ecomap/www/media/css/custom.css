@@ -359,12 +359,20 @@ form{
     position: relative;
 }
 
-.user-profile .close-button{
+.close-button{
     font-size: 30px;
+    color: #444;
     font-weight: 700;
     position: absolute;
     right: 20px;
     top: 0;
     text-decoration: none;
-    color:black;
+}
+.close-button:hover{
+  text-decoration: none;
+  color: #888;
+}
+
+.del, .def:hover{
+    color: red;
 }

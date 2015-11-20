@@ -25,6 +25,7 @@ app.controller('MainCtrl', ['$scope', '$http','$auth', '$cookies', function($sco
     method: 'GET',
     url: '/api/getTitles'
   }).success(function(resp){
+    $scope.faqTitles = resp;
     console.log(resp);
   });
 

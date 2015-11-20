@@ -450,8 +450,58 @@ def delete_role_by_id(role_id):
 
 @retry_query(tries=3, delay=1)
 def get_pages_titles():
+    """This method retrieves brief info from db
+       about all pages(ex-resources).
+    """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `alias`, `is_enabled` FROM `page`"""
+        query = """SELECT `id`, `title`, `alias`, `is_enabled` FROM `page`;"""
         cursor.execute(query)
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_page_by_alias(alias):
+    """This method retrieves all info about exact
+       page from db via it's alias.
+
+       :returns tuple with data.
+    `"""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `description`, `content`,
+                   `meta_keywords`, `meta_description`, `is_enabled`
+                   FROM `page` WHERE `alias`=%s;"""
+        cursor.execute(query, (alias,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def edit_page(page_id, title, alias, descr, content,
+              meta_key, meta_descr, is_enabled):
+    """Updates page(ex-resource).
+
+        :params: page_id - id of pafe
+                 title - new title
+                 alias - new alias
+                 descr - new description
+                 content - new content
+                 meta_key - new meta keywords
+                 meta_descr - new meta_description
+                 is_enabled - changed view option
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `page` SET `title`=%s, `alias`=%s,
+                   `description`=%s, `content`=%s,
+                   `meta_keywords`=%s, `meta_descriton`=%s,
+                   `is_enabled`=%s WHERE `id`=%s;
+                """
+        cursor.execute(query, (title, alias, descr, content,
+                               meta_key, meta_descr, is_enabled, page_id))
+        conn.commit()
+
+if __name__ == '__main__':
+    print edit_page(1, 'How to fight with monsters?(Updated)', 'cleaning',
+                    'small description', 'content', 'keywords',
+                    'meta_description', 0)

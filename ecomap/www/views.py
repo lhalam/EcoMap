@@ -466,17 +466,17 @@ def permission_put():
                   'edited_perm_id': 'permission_id'}
     """
     if request.method == 'PUT' and request.get_json():
-        edit_data = request.get_json()
+        data = request.get_json()
 
-        valid = validator.permission_put(edit_data)
+        valid = validator.permission_put(data)
 
         if valid['status']:
-            db.edit_permission(edit_data['action'],
-                               edit_data['modifier'],
-                               edit_data['permission_id'],
-                               edit_data['description'])
+            db.edit_permission(data['action'],
+                               data['modifier'],
+                               data['permission_id'],
+                               data['description'])
             response = jsonify(status='success',
-                               edited_perm_id=edit_data['permission_id'])
+                               edited_perm_id=data['permission_id'])
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -534,64 +534,87 @@ def permission_get():
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
-@app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
+@app.route("/api/role_permissions", methods=['POST'])
 @login_required
 @is_admin
-def get_role_permission():
+def role_permission_post():
+    """Function which binds permission with role.
+    :return: If request data is not valid:
+                 {'status': False, 'error': [list of errors]}
+             If all ok:
+                 {'added_role_permission_for_role': 'role_id'}
     """
-    Handler for assigning permissions to role.
-    method GET:
-        - returns JSON with all permissions of role
-            and with actual selected permissions.
-    method POST:
+    data = request.get_json()
 
+    valid = validator.validate_role_permission_post(data)
+
+    if valid['status']:
+        db.add_role_permission(data['role_id'],
+                               data['permission_id'])
+        response = jsonify(added_role_permission_for_role=data['role_id'])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+
+
+@app.route("/api/role_permissions", methods=['PUT'])
+@login_required
+@is_admin
+def role_permission_put():
+    """Function which sets list of permission to role. Before sets
+       removes all permissions from role.
+       :return: If request data is not invalid':
+                    {'status': False, 'error': [list of errors]}
+                If all ok:
+                    {'msg': 'edited permission'}
     """
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
+    data = request.get_json()
 
-        valid = validator.validate_role_permission_post(data)
+    valid = validator.validate_role_permission_put(data)
 
-        if valid['status']:
-            db.add_role_permission(data['role_id'],
-                                   data['permission_id'])
-            response = jsonify(added_role_permission_for=data['role_id'])
+    if valid['status']:
+        db.delete_permissions_by_role_id(data['role_id'])
+        for perm_id in data['permission_id']:
+            db.add_role_permission(data['role_id'], perm_id)
+        response = jsonify(msg='edited permission')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+
+
+# WTF?
+@app.route("/api/role_permissions", methods=['DELETE'])
+@login_required
+@is_admin
+def role_permission_delete():
+    data = request.get_json()
+
+    valid = validator.validate_role_permission_delete(data)
+
+    if valid['status']:
+        if not db.check_role_deletion(data['role_id']):
+            db.delete_role_by_id(data['role_id'])
+            response = jsonify(status='success',
+                               deleted_role=data['role_id'])
         else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
+            response = jsonify(error='Cannot delete!')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
 
-    if request.method == 'PUT' and request.get_json():
-        edit_data = request.get_json()
 
-        valid = validator.validate_role_permission_put(edit_data)
-
-        if valid['status']:
-            db.delete_permissions_by_role_id(edit_data['role_id'])
-            for perm_id in edit_data['permission_id']:
-                db.add_role_permission(edit_data['role_id'], perm_id)
-            response = jsonify(msg='edited permission')
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
-
-    if request.method == 'DELETE' and request.get_json():
-        del_data = request.get_json()
-
-        valid = validator.validate_role_permission_delete(del_data)
-
-        if valid['status']:
-            if not db.check_role_deletion(del_data['role_id']):
-                db.delete_role_by_id(del_data['role_id'])
-                response = jsonify(status='success',
-                                   deleted_role=del_data['role_id'])
-            else:
-                response = jsonify(error='Cannot delete!')
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
-
+@app.route("/api/role_permissions", methods=['GET'])
+@login_required
+@is_admin
+def role_permission_get():
+    """Function which gets all permissions from database and all actual
+       permissions for current role.
+       :return: {'actual': [list of actual permissions for role],
+                 'all_permissions': [list of all permissions]}
+    """
     role_id = request.args.get('role_id')
     permissions_of_role = db.get_role_permission(role_id)
     all_permissions = db.get_all_permissions()

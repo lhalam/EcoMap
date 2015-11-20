@@ -290,8 +290,8 @@ def resources():
 
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
-# @login_required
-# @is_admin
+@login_required
+@is_admin
 def roles():
     """NEW!
     get list of roles for server permission control.

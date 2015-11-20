@@ -65,7 +65,7 @@ def login():
     """Login processes handler.
     Log user in or shows error messages.
 
-    return:
+    :return:
         - if log in succeed:
             json with user data from db.
             Status 200 - OK
@@ -81,7 +81,7 @@ def login():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        valid = validator.validate_user_login(data)
+        valid = validator.user_login(data)
 
         if valid['status']:
             user = usr.get_user_by_email(data['email'])
@@ -117,12 +117,12 @@ def change_password():
     if request.method == 'POST':
         data = request.get_json()
 
-        valid = validator.validate_change_password(data)
+        valid = validator.change_password(data)
 
         if valid['status']:
             user = usr.get_user_by_id(data['id'])
             if user and user.verify_password(data['old_pass']):
-                user.change_password(data['new_pass'])
+                user.change_password(data['password'])
                 response = jsonify(), 200
             response = jsonify(), 400
         else:
@@ -136,7 +136,7 @@ def change_password():
 def logout():
     """Method for user's log out.
 
-    return:
+    :return:
         - if logging out was successful:
             json {result:True}
         - in case of problems:
@@ -152,7 +152,7 @@ def register():
     Method checks if user is not exists and handle
     registration processes.
 
-    return:
+    :return:
         - if one of the field is incorrect or empty:
             json {'error':'Unauthorized'}
             Status 401 - Unauthorized
@@ -167,16 +167,16 @@ def register():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        valid = validator.validate_user_registration(data)
+        valid = validator.user_registration(data)
 
         if valid['status']:
             if not usr.get_user_by_email(data['email']):
-                usr.register(data['firstName'],
-                             data['lastName'],
+                usr.register(data['first_name'],
+                             data['last_name'],
                              data['email'],
                              data['password'])
-                msg = 'added %s %s' % (data['firstName'],
-                                       data['lastName'])
+                msg = 'added %s %s' % (data['first_name'],
+                                       data['last_name'])
                 response = jsonify({'status_message': msg}), 201
             else:
                 msg = 'user with this email already exists'
@@ -212,79 +212,101 @@ def get_user_info(user_id):
             return jsonify(status='There is no user with given email'), 401
 
 
-@app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/api/resources", methods=['POST'])
 @login_required
 @is_admin
-def resources():
-    """Get list of site resources needed for administration
-    and server permission control.
-    method PUT:
-    'resource_name' = changes to name of the resource.
-    'resource_id' = key to search name of the resource in db.
-    method POST:
-    'resource_name' = adds a new resource with this name.
-    method DELETE:
-    'resource_name' = that has to be Deleted.
-    'resource_id' = key to search name of resource in db to delete.
-
-       :return:
-            - list of jsons
-            - if no such resource in DB
-                return empty json
+def resource_post():
+    """Function which edits resource name.
+    :return: If there is already resource with this name:
+                 {'error': 'resource already exists'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'added_resource': 'resource_name',
+                  'resource_id': 'resource_id'}
     """
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
+    data = request.get_json()
 
-        valid = validator.validate_resource_post(data)
+    valid = validator.validate_resource_post(data)
 
-        if valid['status']:
-            if db.get_resource_id(data['resource_name']):
-                return jsonify(error='Resource already exists'), 400
+    if valid['status']:
+        if db.get_resource_id(data['resource_name']):
+            return jsonify(error='Resource already exists'), 400
 
-            db.add_resource(data['resource_name'])
-            added_res_id = db.get_resource_id(data['resource_name'])
-            response = jsonify(added_resource=data['resource_name'],
-                               resource_id=added_res_id[0])
+        db.add_resource(data['resource_name'])
+        added_res_id = db.get_resource_id(data['resource_name'])
+        response = jsonify(added_resource=data['resource_name'],
+                           resource_id=added_res_id[0])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+
+
+@app.route("/api/resources", methods=['PUT'])
+@login_required
+@is_admin
+def resource_put():
+    """Function which edits resource name.
+    :return: If there is already resource with this name:
+                 {'error': 'this name already exists'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'status': 'success', 'edited': 'resource_name'}
+    """
+    data = request.get_json()
+
+    valid = validator.validate_resource_put(data)
+
+    if valid['status']:
+        if db.get_resource_id(data['resource_name']):
+            return jsonify(error='this name already exists'), 400
+
+        db.edit_resource_name(data['resource_name'],
+                              data['resource_id'])
+        response = jsonify(status='success',
+                           edited=data['resource_name'])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+
+
+@app.route("/api/resources", methods=['DELETE'])
+@login_required
+@is_admin
+def resource_delete():
+    """Function which deletes resource from database.
+       Before delete checks if resource have any permissions,
+       if it has - returns error with message and code 400,
+       else - deletes this resource.
+       :return:
+    """
+    data = request.get_json()
+
+    valid = validator.validate_resource_delete(data)
+
+    if valid['status']:
+        if not db.check_resource_deletion(data['resource_id']):
+            db.delete_resource_by_id(data['resource_id'])
+            response = jsonify(msg='success',
+                               deleted_resource=data['resource_id'])
         else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
+            response = jsonify(error='Cannot delete!'), 400
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
 
-    if request.method == 'PUT' and request.get_json():
-        data = request.get_json()
 
-        valid = validator.validate_resource_put(data)
-
-        if valid['status']:
-            if db.get_resource_id(data['resource_name']):
-                return jsonify(error='this name already exists'), 400
-
-            db.edit_resource_name(data['resource_name'],
-                                  data['resource_id'])
-            response = jsonify(status='success',
-                               edited=data['resource_name'])
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
-
-    if request.method == 'DELETE' and request.get_json():
-        del_data = request.get_json()
-
-        valid = validator.validate_resource_delete(del_data)
-
-        if valid['status']:
-            if not db.check_resource_deletion(del_data['resource_id']):
-                db.delete_resource_by_id(del_data['resource_id'])
-                response = jsonify(msg='success',
-                                   deleted_resource=del_data['resource_id'])
-            else:
-                response = jsonify(error='Cannot delete!')
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-        return response
-
+@app.route("/api/resources", methods=['GET'])
+@login_required
+@is_admin
+def resource_get():
+    """Function which returns all resources from database.
+       :return: {'resource_name': 'resource_id'}
+    """
     query = db.get_all_resources()
     parsed_data = {}
     if query:

@@ -647,5 +647,23 @@ def get_faq(alias):
         return Response(json.dumps(result), mimetype="application/json")
 
 
+@app.route('/api/editResource/<int:page_id>', methods=['PUT'])
+@login_required
+@is_admin
+def edit_page(page_id):
+    """This method makes changes to given page(ex-resource).
+
+        :returns confirmation.
+    """
+    if request.method == 'PUT':
+        data = request.get_json()
+        logger.info(data)
+        db.edit_page(page_id, data['title'], data['alias'],
+                     data['description'], data['content'],
+                     data['meta_keywords'], data['meta_description'],
+                     data['is_enabled'])
+        return jsonify(result=True)
+
+
 if __name__ == '__main__':
     app.run()

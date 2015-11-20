@@ -494,8 +494,9 @@ def edit_page(page_id, title, alias, descr, content,
         cursor = conn.cursor()
         query = """UPDATE `page` SET `title`=%s, `alias`=%s,
                    `description`=%s, `content`=%s,
-                   `meta_keywords`=%s, `meta_descriton`=%s,
-                   `is_enabled`=%s WHERE `id`=%s;
+                   `meta_keywords`=%s, `meta_description`=%s,
+                   `is_enabled`=%s
+                   WHERE `id`=%s;
                 """
         cursor.execute(query, (title, alias, descr, content,
                                meta_key, meta_descr, is_enabled, page_id))
@@ -504,4 +505,4 @@ def edit_page(page_id, title, alias, descr, content,
 if __name__ == '__main__':
     print edit_page(1, 'How to fight with monsters?(Updated)', 'cleaning',
                     'small description', 'content', 'keywords',
-                    'meta_description', 0)
+                    'meta_description', 1)

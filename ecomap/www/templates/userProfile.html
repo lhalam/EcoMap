@@ -85,12 +85,12 @@
                </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="page in pages">
+                <tr ng-repeat="page in pages track by $index">
                  <td ng-bind="page.id"></td>
                  <td ng-bind="page.title"></td> 
                  <td ng-bind="page.alias"></td>
                  <td>
-                  <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing(page.id)">
+                  <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
                  </td>
                  <td>
                   <a href="" >редагувати</a> &nbsp; &nbsp;

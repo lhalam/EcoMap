@@ -33,7 +33,7 @@ def get_user_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def insert_user(first_name, last_name, email, password):
+def insert_user(first_name, last_name, email, password, role_id):
     """Adds new user into db.
     :params: first_name - first name of user
              last_name - last name of user
@@ -49,9 +49,24 @@ def insert_user(first_name, last_name, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s);
                    INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), 2);
+                   values (LAST_INSERT_ID(), %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password))
+        cursor.execute(query, (first_name, last_name, email, password,
+                               role_id))
+
+
+@retry_query(tries=3, delay=1)
+def get_role_id(name='user'):
+    """Gets role id by it's name.
+       :params: name - name of role, default - 'user'
+       :return: tuple with id of role
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `role`
+                   WHERE `name`=%s;"""
+        cursor.execute(query, (name,))
+        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)

@@ -371,17 +371,14 @@ def change_password(data):
                 and error key saves error message
     """
     status = {'status': True, 'error': []}
-    keys = ['user_id', 'password']
+    key = 'password'
 
-    for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message and key == 'password':
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
-
-    if len(status['error']):
+    error_message = validate_int(data, key)
+    if not error_message:
+        error_message = validate_string(data, key, LENGTHS[key][0],
+                                        LENGTHS[key][1])
+    if error_message:
+        status['error'].append(error_message)
         status['status'] = False
 
     return status

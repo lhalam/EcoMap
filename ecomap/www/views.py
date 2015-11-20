@@ -171,9 +171,12 @@ def register():
 
         if valid['status']:
             if not usr.get_user_by_email(data['email']):
-                usr.register(data['firstName'], data['lastName'],
-                             data['email'], data['password'])
-                msg = 'added %s %s' % (data['firstName'], data['lastName'])
+                usr.register(data['firstName'],
+                             data['lastName'],
+                             data['email'],
+                             data['password'])
+                msg = 'added %s %s' % (data['firstName'],
+                                       data['lastName'])
                 response = jsonify({'status_message': msg}), 201
             else:
                 msg = 'user with this email already exists'
@@ -253,13 +256,13 @@ def resources():
         valid = validator.validate_resource_put(data)
 
         if valid['status']:
-            if db.get_resource_id(data['new_resource_name']):
+            if db.get_resource_id(data['resource_name']):
                 return jsonify(error='this name already exists'), 400
 
-            db.edit_resource_name(data['new_resource_name'],
+            db.edit_resource_name(data['resource_name'],
                                   data['resource_id'])
             response = jsonify(status='success',
-                               edited=data['new_resource_name'])
+                               edited=data['resource_name'])
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -335,12 +338,12 @@ def roles():
         valid = validator.validate_role_put(edit_data)
 
         if valid['status']:
-            if db.get_role_id(edit_data['new_role_name']):
+            if db.get_role_id(edit_data['role_name']):
                 return jsonify(error='this name already exists'), 400
 
-            db.edit_role(edit_data['new_role_name'], edit_data['role_id'])
+            db.edit_role(edit_data['role_name'], edit_data['role_id'])
             response = jsonify(msg='success',
-                               edited=edit_data['new_role_name'])
+                               edited=edit_data['role_name'])
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -410,10 +413,10 @@ def permissions():
         valid = validator.validate_permission_put(edit_data)
 
         if valid['status']:
-            db.edit_permission(edit_data['new_action'],
-                               edit_data['new_modifier'],
+            db.edit_permission(edit_data['action'],
+                               edit_data['modifier'],
                                edit_data['permission_id'],
-                               edit_data['new_description'])
+                               edit_data['description'])
             response = jsonify(msg='success',
                                edited_perm_id=edit_data['permission_id'])
         else:
@@ -514,7 +517,7 @@ def get_role_permission():
         parsed_json['all_permissions'] = []
         parsed_json['actual'] = []
         for res in all_permissions:
-            parsed_json['all_permissions'].append({'id': res[0],
+            parsed_json['all_permissions'].append({'resource_id': res[0],
                                                    'action': res[2],
                                                    'modifier': res[3],
                                                    'description': res[4]})

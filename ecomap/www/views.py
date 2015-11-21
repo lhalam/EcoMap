@@ -114,22 +114,20 @@ def change_password():
        :return: response - json object.
     """
     response = jsonify(), 401
-    if request.method == 'POST':
-        data = request.get_json()
+    data = request.get_json()
 
-        valid = validator.change_password(data)
-        logger.info(valid['error'])
+    valid = validator.change_password(data)
 
-        if valid['status']:
-            user = usr.get_user_by_id(data['id'])
-            if user and user.verify_password(data['old_pass']):
-                user.change_password(data['password'])
-                response = jsonify(), 200
-            else:
-                response = jsonify(), 400
+    if valid['status']:
+        user = usr.get_user_by_id(data['id'])
+        if user and user.verify_password(data['old_pass']):
+            user.change_password(data['password'])
+            response = jsonify(), 200
         else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
+            response = jsonify(), 400
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
     return response
 
 
@@ -548,7 +546,7 @@ def role_permission_post():
     """
     data = request.get_json()
 
-    valid = validator.validate_role_permission_post(data)
+    valid = validator.role_permission_post(data)
 
     if valid['status']:
         db.add_role_permission(data['role_id'],
@@ -572,17 +570,18 @@ def role_permission_put():
                     {'msg': 'edited permission'}
     """
     data = request.get_json()
+    logger.info('Role permission put')
 
-    valid = validator.validate_role_permission_put(data)
+    # valid = validator.role_permission_put(data)
 
-    if valid['status']:
-        db.delete_permissions_by_role_id(data['role_id'])
-        for perm_id in data['permission_id']:
-            db.add_role_permission(data['role_id'], perm_id)
-        response = jsonify(msg='edited permission')
-    else:
-        response = Response(json.dumps(valid),
-                            mimetype='application/json'), 400
+    # if valid['status']:
+    db.delete_permissions_by_role_id(data['role_id'])
+    for perm_id in data['permission_id']:
+        db.add_role_permission(data['role_id'], perm_id)
+    response = jsonify(msg='edited permission')
+    # else:
+    #     response = Response(json.dumps(valid),
+    #                         mimetype='application/json'), 400
     return response
 
 
@@ -593,7 +592,7 @@ def role_permission_put():
 def role_permission_delete():
     data = request.get_json()
 
-    valid = validator.validate_role_permission_delete(data)
+    valid = validator.role_permission_delete(data)
 
     if valid['status']:
         if not db.check_role_deletion(data['role_id']):
@@ -670,7 +669,7 @@ def get_all_users():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        valid = validator.validate_user_role_post(data)
+        valid = validator.user_role_post(data)
 
         if valid['status']:
             db.change_user_role(data['role_id'],

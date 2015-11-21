@@ -676,7 +676,7 @@ def edit_page(page_id):
         else:
             result = False
             status_code = 404
-        return jsonify(result), status_code
+        return jsonify(result=result), status_code
 
 
 @app.route('/api/addResource', methods=['POST'])
@@ -713,7 +713,7 @@ def delete_page(page_id):
     if request.method == 'DELETE':
         msg = None
         result = None
-        db.delete_page(page_id)
+        db.delete_page_by_id(page_id)
         if not db.get_page_by_id(page_id):
             result = True
             msg = 'Page was deleted successfully!'

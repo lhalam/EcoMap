@@ -1,4 +1,4 @@
-app.controller('FaqTableCtrl', ['$scope', '$http', function($scope, $http){
+app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', function($scope, $http, toaster){
     $scope.loadData = function(){
         $http({
             url: '/api/getTitles',
@@ -31,7 +31,19 @@ app.controller('FaqTableCtrl', ['$scope', '$http', function($scope, $http){
                 function errorCallback(){}
             );
         },
-            function errorCallback(){});
+        function errorCallback(){});
     };
+
+    $scope.deletePage = function(page_id){
+        $http({
+            method: 'DELETE',
+            url: '/api/deleteResource/' + page_id
+        }).then(function successCallback(responce){
+            console.log(responce);
+            toaster.pop('success', 'Інструкцію видалено', 'Інструкцію було успішно видалено!');
+            $scope.loadData();
+        },
+            function errorCallback(){})
+    }
 
 }])

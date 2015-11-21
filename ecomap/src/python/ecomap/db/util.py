@@ -529,7 +529,7 @@ def add_page(title, alias, descr, content,
 
 
 @retry_query(tries=3, delay=1)
-def delete_page_by_alias(page_id):
+def delete_page_by_id(page_id):
     """This method deletes page by it's id from db.
         :params: id - id of the page, which needs to be
         deleted.

@@ -1,3 +1,3 @@
-app.controller('EditFaqCtrl', ['', function(){
+app.controller('EditFaqCtrl', ['$scope', function($scope){
     
 }]);

@@ -16,15 +16,20 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/admin.html',
       controller: 'AdminCtrl'
     })
-    .state('editFaq', {
-      url: '/faq/edit/:id',
-      templateUrl: '/templates/editFaq.html',
-      controller: 'EditFaqCtrl'
-    })
     .state('faq', {
       url: '/faq/:faqAlias',
       templateUrl: '/templates/detailedFaq.html',
       controller: 'DetailedFaqCtrl'
+    })
+    .state('addFaq', {
+      url: '/addFaq',
+      templateUrl: '/templates/addFaq.html',
+      controller: 'AddFaqCtrl'
+    })
+    .state('editFaq', {
+      url: '/editFaq/:id',
+      templateUrl: '/templates/editFaq.html',
+      controller: 'EditFaqCtrl'
     })
     .state('login', {
       url: '/login',

@@ -14,5 +14,6 @@ CREATE TABLE IF NOT EXISTS `page` (
   `meta_keywords` varchar(255) NULL,
   `meta_description` varchar(255) NULL,
   `is_enabled` boolean NOT NULL DEFAULT TRUE,
+  UNIQUE (`alias`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

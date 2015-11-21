@@ -679,5 +679,48 @@ def edit_page(page_id):
         return jsonify(result), status_code
 
 
+@app.route('/api/addResource', methods=['POST'])
+@login_required
+@is_admin
+def add_page():
+    """This method adds new page to db."""
+    if request.method == 'POST':
+        data = request.get_json()
+        result = None
+        msg = None
+        if not db.get_page_by_alias(data['alias']):
+            db.add_page(data['title'], data['alias'],
+                        data['description'], data['content'],
+                        data['meta_keywords'], data['meta_description'],
+                        data['is_enabled'])
+            if db.get_page_by_alias(data['alias']):
+                result = True
+                msg = 'Succesfully added!'
+            else:
+                result = False
+                msg = "Couldn't add new page!"
+        else:
+            result = False
+            msg = 'Page already exists!'
+    return jsonify(result=result, msg=msg)
+
+
+@app.route('/api/deleteResource/<page_id>', methods=['DELETE'])
+@login_required
+@is_admin
+def delete_page(page_id):
+    """This method deletes page by it's id."""
+    if request.method == 'DELETE':
+        msg = None
+        result = None
+        db.delete_page(page_id)
+        if not db.get_page_by_id(page_id):
+            result = True
+            msg = 'Page was deleted successfully!'
+        else:
+            result = False
+            msg = "Couldn't delete the page!"
+    return jsonify(result=result, msg=msg)
+
 if __name__ == '__main__':
     app.run()

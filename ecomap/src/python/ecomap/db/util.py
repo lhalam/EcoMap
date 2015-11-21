@@ -464,7 +464,6 @@ def get_pages_titles():
 def get_page_by_alias(alias):
     """This method retrieves all info about exact
        page from db via it's alias.
-
        :returns tuple with data.
     `"""
     with db_pool().manager() as conn:
@@ -482,7 +481,6 @@ def get_page_by_alias(alias):
 def edit_page(page_id, title, alias, descr, content,
               meta_key, meta_descr, is_enabled):
     """Updates page(ex-resource).
-
         :params: page_id - id of pafe
                  title - new title
                  alias - new alias
@@ -505,7 +503,56 @@ def edit_page(page_id, title, alias, descr, content,
                                meta_key, meta_descr, is_enabled, page_id))
         conn.commit()
 
-if __name__ == '__main__':
-    print edit_page(1, 'How to fight with monsters?(Updated)', 'cleaning',
-                    'small description', 'content', 'keywords',
-                    'meta_description', 1)
+
+@retry_query(tries=3, delay=1)
+def add_page(title, alias, descr, content,
+             meta_key, meta_descr, is_enabled):
+    """This method adds page(ex-resource) into db.
+        :params: title - new title
+                 alias - new alias
+                 descr - new description
+                 content - new content
+                 meta_key - new meta keywords
+                 meta_descr - new meta_description
+                 is_enabled - changed view option
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `page` (`title`, `alias`, `description`,
+                                       `content`, `meta_keywords`,
+                                       `meta_description`, `is_enabled`)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s);
+                """
+        cursor.execute(query, (title, alias, descr, content,
+                               meta_key, meta_descr, is_enabled))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def delete_page_by_alias(page_id):
+    """This method deletes page by it's id from db.
+        :params: id - id of the page, which needs to be
+        deleted.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `page` WHERE `id`=%s;"""
+        cursor.execute(query, (page_id,))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_page_by_id(page_id):
+    """This method retrieves all info about exact
+       page from db via it's id.
+       :returns tuple with data.
+    `"""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `description`, `content`,
+                   `meta_keywords`, `meta_description`, `is_enabled`
+                   FROM `page`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (page_id,))
+        return cursor.fetchone()

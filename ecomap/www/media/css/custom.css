@@ -376,3 +376,11 @@ form{
 .del, .def:hover{
     color: red;
 }
+
+.fl-right{
+  float: right;
+}
+
+.clear{
+  clear: both;
+}

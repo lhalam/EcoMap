@@ -294,7 +294,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     }
     // new role object
     $scope.role = {};
-    
+
     $scope.addRoleSubmit = function(){
          $http({
                 method:"POST",
@@ -433,7 +433,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     }
     $scope.deletePermFormRole=function(perm){
-         if($scope.actualPermInRole.length-1 !== 0){
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
             $scope.actualPermInRole.forEach(function(elem,index){
                 //console.log("Elem id :"+elem.id)
@@ -447,11 +446,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
          })
          //console.log($scope.actualPermInRole)
          delete $scope.selectPermObj[perm.id]
-         }
-         else {
-
-            $scope.msg.deleteError('ОСТАННЬОГО права');
-         }
+         
     }
     // data for filter
     $scope.searchWord=""
@@ -459,7 +454,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
 
-        if($scope.actualPermInRole.length !== 0 ){
         $scope.listToSend=[]
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
@@ -479,10 +473,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             })
 
             $scope.rolePerm=false
-        }
-        else {
-          $scope.msg.deleteError('ролі');
-        }
         
     }
 

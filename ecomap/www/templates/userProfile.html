@@ -91,13 +91,16 @@
                   <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
                  </td>
                  <td>
-                  <a href="" >редагувати</a> &nbsp; &nbsp;
+                  <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
                   <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
                  </td>
                </tr>
               </tbody>
             </table>
             <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
+            <div class="clear"></div>
+            <hr>
+            <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
             <div class="clear"></div>
         </div>
 

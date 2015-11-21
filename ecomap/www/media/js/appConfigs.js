@@ -27,7 +27,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       controller: 'AddFaqCtrl'
     })
     .state('editFaq', {
-      url: '/editFaq/:id',
+      url: '/editFaq/:alias',
       templateUrl: '/templates/editFaq.html',
       controller: 'EditFaqCtrl'
     })

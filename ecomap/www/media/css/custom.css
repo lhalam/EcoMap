@@ -384,3 +384,11 @@ form{
 .clear{
   clear: both;
 }
+
+.page-edit-form{
+  background-color: #fff;  
+}
+
+.page-edit-form input{
+  width: 100%;
+}

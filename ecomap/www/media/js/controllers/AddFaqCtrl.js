@@ -8,11 +8,8 @@ app.controller('AddFaqCtrl', ['$scope','$state', '$http','toaster','$timeout', f
             url: '/api/addResource',
             data: newPage
         }).then(function successCallback(response){
-            console.log(response);
             toaster.pop('success', 'Інструкцію додано', 'Інструкцію було успішно додано!');
-            // $timeout(function(){
             $state.go('user_profile');
-            // }, 1000);
         },
             function errorCallback(){})
     }

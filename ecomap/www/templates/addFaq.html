@@ -2,7 +2,7 @@
     <div class="row">
         <h3>Створення інструкції</h3>
         <hr>
-        <form name="addPageForm" ng-submit="addPage(page)" novalidate>
+        <form name="addPageForm" ng-submit="addPage(page)" class="page-edit-form" novalidate>
             <div class="form-group" ng-class="{ 'has-error': addPageForm.title.$touched && addPageForm.title.$invalid }">
                 <label for="title" class="control-label">Заголовок інструкції</label>
                 <input type="text" class="form-control" name="title" id="title" ng-model="page.title" ng-max-length="255" required>

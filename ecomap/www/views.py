@@ -666,7 +666,7 @@ def edit_page(page_id):
         data = request.get_json()
         status_code = None
         result = None
-        if db.get_page_by_alias(data['alias']):
+        if db.get_page_by_id(data['id']):
             db.edit_page(page_id, data['title'], data['alias'],
                          data['description'], data['content'],
                          data['meta_keywords'], data['meta_description'],

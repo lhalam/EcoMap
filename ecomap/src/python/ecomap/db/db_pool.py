@@ -86,7 +86,7 @@ class DBPool(object):
         """
         conn = MySQLdb.connect(user=self._user, host=self._host,
                                port=self._port, passwd=self._passwd,
-                               db=self._db_name)
+                               db=self._db_name, charset='utf8', init_command='SET NAMES UTF8')
         self.log.info('Created connection object: %s.', conn)
         return {'connection': conn,
                 'last_update': 0,

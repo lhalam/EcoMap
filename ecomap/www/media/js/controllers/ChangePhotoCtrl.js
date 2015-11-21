@@ -1,7 +1,8 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
+app.controller('ChangePhotoCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
     function($scope, $cookies, $http, toaster, Upload, $timeout){
 
-  $scope.user = {};
+
+$scope.user = {};
   $scope.user.id = $cookies.get("id");
 
   $scope.body = angular.element(document.body);
@@ -16,59 +17,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       });
   }
 
-  $scope.selectedTab = "userInfo";
-  $scope.setTab = function(tabName){
-    $scope.selectedTab = tabName;
-  };
-  $scope.isSelected = function(tabName){
-    return $scope.selectedTab == tabName;
-  };
 
-  console.log($scope);
-  $scope.changePassword = function(){
-    var data = {};
-    data.id = $cookies.get('id');
-    data.old_pass = $scope.password.old_pass;
-    data.new_pass = $scope.password.new_pass;
-    console.log(data);
-    $http({
-        method: 'POST',
-        url: '/api/change_password',
-        data: data
-    }).then(function successCallback(responce){
-        $scope.password = {};
-        toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
-        $scope.changePasswordForm.$setUntouched();
-    },
-      function errorCallback(responce){
-        if(responce.status == 401){
-          $scope.wrongOldPass = true;
-        }
-      });
-  };
-
-  $scope.wrongOldPass = false;
-  $scope.getWrongPass = function(){
-    return $scope.wrongOldPass;
-  };
-  $scope.changeWrongPass = function(){
-    $scope.wrongOldPass = false;
-  };
-
-  $scope.alert = false;
-  $scope.closeAlert = function() {
-    $scope.alert = false;
-  };
-  $scope.showAlert = function(){
-    return $scope.alert;
-  };
-
-  $scope.$on("$destroy", function handler() {
-    $scope.body.removeClass("body-scroll-shown");
-  });
-
-
-    // User Change Avatar
     $scope.reloadImg = function (imgUrl) {
         $scope.user.data.avatar = imgUrl + '?=new_' + new Date().getTime();
         return $scope.user.data.avatar;
@@ -84,12 +33,11 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
     $scope.showStatus = true;
     $scope.uploadButtuon = false;
 
-    $scope.cancelImg = function(picFile){
+    $scope.cancelImg = function(){
         $scope.photo = false;
         $scope.showStatus = false;
         $scope.uploadButtuon = false;
         $scope.result = '';
-        picFile = null;
         return $scope.showStatus = false;
       };
 
@@ -101,11 +49,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
      $scope.showStatus = true;
         $scope.uploadButtuon = true;
       };
-
-        $scope.setDefaultPhoto = function () {
-            $scope.user.data.avatar = 'http://placehold.it/150x150';
-        return $scope.user.data.avatar;
-        }
 
   $scope.clearCanvas = function(picFile){
      var cnv = angular.element(document.getElementsByTagName('canvas'));
@@ -147,10 +90,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
             $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
         });
     };
+  //$scope.photo = false;
 
 
 }]);
-
-
-
-

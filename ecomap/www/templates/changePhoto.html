@@ -1,0 +1,35 @@
+<form name="uploadPhoto">
+
+        <button class="btn btn-info photo-btn" ngf-select ng-model="picFile"
+                name="file" accept="image/*" ngf-pattern="'image/*'"
+                ng-click="showCanvas()" ngf-max-size="5MB" required="">
+            Оберіть фото</button>
+
+        <span class="image-info"
+              ng-show="uploadPhoto.file.$error.required">*розмір фотографії не повинен перевищувати 5Mb</span>
+        <span class="image-err" ng-show="uploadPhoto.file.$error.maxSize">
+            Розмір файлу перевищує максимальний! "{{picFile.size}}"</span>
+        <span class="image-err" ng-show="uploadPhoto.file.$error.pattern">
+
+            Оберіть .JPG або .PNG! {{picFile.pattern }}</span>
+        <div class="cropArea" ngf-drop
+             ng-model="picFile" ngf-pattern="image/*">
+            <img-crop image="picFile  | ngfDataUrl" area-type="square"
+                      filename = "picFile.filename"
+            result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
+            </img-crop>
+        </div>
+    <button class ='btn btn-info photo-btn bottom' ng-click="picFile = null" ng-show="picFile">Remove</button>
+        <button class="btn btn-success photo-btn bottom" ng-show="uploadButtuon"
+                ng-disabled="!uploadPhoto.$valid"
+                ng-click="upload(newImage, picFile)">Завантажити</button>
+        <button class="btn btn-danger photo-btn bottom" type="reset" ng-click="cancelImg()">Закрити</button>
+        <button class="btn btn-danger photo-btn bottom" ng-click="clearCanvas(picFile)">CNV</button>
+
+        <br>
+
+        <span ng-show="result">Фото успішно завантажено!</span>
+
+        <span class="err" ng-show="errorMsg">{{errorMsg}} </span>
+    </form>
+

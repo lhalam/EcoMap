@@ -516,7 +516,6 @@ def select_all():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
     """
-    parsed_data = {}
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """select r.name, res.resource_name, p.action, p.modifier

@@ -19,16 +19,36 @@ from ecomap.db import util as db
 from ecomap import validator as v
 import ecomap.permission as perm
 
+
 @app.before_request
 def load_users():
     if current_user.is_authenticated:
         g.user = current_user
-        logger.warning(g.user)
+        # logger.warning(g.user)
     else:
         anon = usr.Anonymous()
         g.user = anon.username
-        logger.warning(g.user)
+        # logger.warning(g.user)
 
+
+# @app.before_request
+# def try_request():
+#     per_dict = perm.control_dict
+#     logger.warning('============================================================')
+#     logger.info('request url_rule %s' % request.url_rule)
+#     logger.info('request method %s' % request.method)
+#     logger.info('dict %s' % per_dict)
+#     logger.info('cur user role %s' % current_user.role)
+#     logger.warning('*************************************************************')
+#     route = str(request.url_rule)
+#     if '<int' in route:
+#         # route = str(route.split('<')[0] + str(current_user.uid))
+#         route = str(route.split('<')[0])
+#     logger.warning(route)
+#     perm.check(current_user.role, route, request.method, per_dict)
+#     logger.warning('============================================================')
+#     logger.warning(perm.check(current_user.role, route, request.method, per_dict))
+#     logger.warning('============================================================')
 
 def is_admin(f):
     @functools.wraps(f)
@@ -248,8 +268,8 @@ def getTitles():
 
 
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def resources():
     """Get list of site resources needed for administration
     and server permission control.
@@ -335,8 +355,8 @@ def resources():
 
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def roles():
     """NEW!
     get list of roles for server permission control.
@@ -424,8 +444,8 @@ def roles():
 
 
 @app.route("/api/permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def permissions():
     """Controller used for mange getting and adding actions of
     server permission options.
@@ -523,8 +543,8 @@ def permissions():
 
 
 @app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def get_role_permission():
     """
     Handler for assigning permissions to role.
@@ -609,8 +629,8 @@ def get_role_permission():
 
 
 @app.route("/api/all_permissions", methods=['GET'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 
@@ -631,8 +651,8 @@ def get_all_permissions():
 
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
-@login_required
-@is_admin
+# @login_required
+# @is_admin
 def get_all_users():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()

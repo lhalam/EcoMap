@@ -18,7 +18,10 @@
             <div class="profile">
             <img src="http://placehold.it/150x150"
                  class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
-              <span class="text-content" ng-click = "showModalPhoto()"><span>змінити фото</span></span>
+
+                    <span class="text-content" ng-click = "showModalPhoto()"><span>змінити фото</span></span>
+
+
             </div>
           <div class="user-info">
             <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
@@ -77,29 +80,41 @@
     </div>
   </div>
 
-  <modal title="Додати фотографію профілю" visible="photo">
-    <form name="myForm">
+  <div ui-view></div>
+<modal title="Додати фотографію профілю" visible="photo">
+<form name="uploadPhoto">
         <div class="modal-resize">
-        <button class="btn btn-info photo-btn" ngf-select ng-model="picFile" name="file" accept="image/*" ngf-pattern="'image/*'"
-                ngf-max-size="5MB">
+
+        <button class="btn btn-info photo-btn" ngf-select ng-model="picFile"
+                name="file" accept="image/*" ngf-pattern="'image/*'"
+                ng-click="showCanvas()" ngf-max-size="5MB" required="">
             Оберіть фото</button>
-        <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
-        <span class="image-err" ng-show="myForm.file.$error.maxSize">
-            Розмір файлу перевищує максимальний! {{picFile.size }}</span>
-        <span class="image-err" ng-show="myForm.file.$error.pattern">
+
+        <span class="image-info"
+              ng-show="uploadPhoto.file.$error.required">*розмір фотографії не повинен перевищувати 5Mb</span>
+        <span class="image-err" ng-show="uploadPhoto.file.$error.maxSize">
+            Розмір файлу перевищує максимальний! "{{picFile.size}}"</span>
+        <span class="image-err" ng-show="uploadPhoto.file.$error.pattern">
+
             Оберіть .JPG або .PNG! {{picFile.pattern }}</span>
-        <div class="cropArea" ngf-drop ng-model="picFile" ngf-pattern="image/*">
+        <div class="cropArea" ngf-drop
+             ng-model="picFile" ngf-pattern="image/*">
             <img-crop image="picFile  | ngfDataUrl" area-type="square"
                       filename = "picFile.filename"
-            result-image="newImage" ng-init="newImage=''">
+            result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
             </img-crop>
         </div>
 
-        <button class="btn btn-success photo-btn bottom" ng-click="upload(newImage, picFile)">Завантажити</button>
-        <button class="btn btn-danger photo-btn bottom" ng-click="cancelImg()">Закрити</button>
+        <button class="btn btn-success photo-btn bottom" ng-show="uploadButtuon"
+                ng-disabled="!uploadPhoto.$valid"
+                ng-click="upload(newImage, picFile)">Завантажити</button>
+        <button class="btn btn-danger photo-btn bottom" ng-click="picFile = null || cancelImg(picFile)"  ng-show="picFile">Закрити</button>
+        <button class ='btn btn-info photo-btn bottom' ng-click="picFile = null" ng-show="picFile">Оновити</button>
+        <button class="btn btn-danger photo-btn bottom" ng-click="setDefaultPhoto()">Видалити фото</button>
+
         <br>
 
-        <span ng-show="result">Фото успішно завантажено!</span>
+        <!--<span ng-show="result">Фото успішно завантажено!</span>-->
 
         <span class="err" ng-show="errorMsg">{{errorMsg}} </span>
             </div>

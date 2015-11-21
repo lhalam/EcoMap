@@ -96,7 +96,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
         method:"PUT",
         url:"/api/resources",
         data:{
-          "new_resource_name":$scope.editResObj['name'],
+          "resource_name":$scope.editResObj['name'],
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
@@ -212,9 +212,9 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             url:"/api/permissions",
             data:{
                 "permission_id":$scope.editPerm.permission_id,
-                "new_action":$scope.editPerm['action'],
-                "new_modifier":$scope.editPerm.modifier, 
-                "new_description":$scope.editPerm['description']
+                "action":$scope.editPerm['action'],
+                "modifier":$scope.editPerm.modifier, 
+                "description":$scope.editPerm['description']
             }
         }).then(function successCallback(data) {
 
@@ -312,7 +312,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
                     method:"PUT",
                     url:"/api/roles",
                     data:{
-                    "new_role_name":$scope.editRoleObj['name'],
+                    "role_name":$scope.editRoleObj['name'],
                     "role_id" : $scope.editRoleObj['id']
                     }
                 }).then(function successCallback(data) {
@@ -354,7 +354,7 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             "name":name,
             "id":id
         }
-
+        console.log($scope.rolePermObj.id)
         $scope.selectPermObj={}
         $scope.listToSend=[]
 
@@ -394,24 +394,18 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
 
     }
     $scope.deletePermFormRole=function(perm){
-         if($scope.actualPermInRole.length-1 !== 0){
-            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
-            $scope.actualPermInRole.forEach(function(elem,index){
-            if(elem.id == perm.id){
-                // delete perm
-                $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
-                delete $scope.actualPermInRole[index]
+        $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
+        $scope.actualPermInRole.forEach(function(elem,index){
+        if(elem.id == perm.id){
+            // delete perm
+            $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
+            delete $scope.actualPermInRole[index]
                
-            }
-            console.log($scope.actualPermInRole.length)
-         })
-         console.log($scope.actualPermInRole)
-         delete $scope.selectPermObj[perm.id]
-         }
-         else {
-            $scope.Eror='at least one bind element'
-            $scope.customEror=true
-         }
+        }
+        console.log($scope.actualPermInRole.length)
+     })
+     console.log($scope.actualPermInRole)
+     delete $scope.selectPermObj[perm.id]
     }
     // data for filter
     $scope.searchWord=""
@@ -419,12 +413,13 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
 
-        if($scope.actualPermInRole.length !== 0 ){
+        // if($scope.actualPermInRole.length !== 0 ){
         $scope.listToSend=[]
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
         }
-        console.log($scope.listToSend);
+        // console.log($scope.listToSend);
+        console.log($scope.rolePermObj.id)
          $http({
             method:"PUT",
             url:"/api/role_permissions",
@@ -439,11 +434,11 @@ app.controller('AdminCtrl', ['$scope','$http', function($scope,$http){
             })
 
             $scope.rolePerm=false
-        }
-        else {
-            $scope.Eror='response'
-            $scope.customEror=true
-        }
+        // }
+        // else {
+        //     $scope.Error='response'
+        //     $scope.customEror=true
+        // }
         
     }
 

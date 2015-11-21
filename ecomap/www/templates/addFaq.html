@@ -28,7 +28,8 @@
 
             <div class="form-group" ng-class="{ 'has-error': addPageForm.content.$touched && addPageForm.content.$invalid }">
                 <label for="content" class="control-label">Контент інструкції</label>
-                <textarea name="content" name="content" id="content" cols="30" rows="20" class="form-control" ng-model="page.content"required></textarea>
+                <!-- <textarea name="content" name="content" id="content" cols="30" rows="20" class="form-control" ng-model="page.content"required></textarea> -->
+                <text-angular ng-model="page.content"></text-angular>
                 <div class="help-block" ng-messages="addPageForm.content.$error" ng-show="addPageForm.content.$touched">
                   <p ng-message="required">Необхідно ввести контент!</p>
                 </div>

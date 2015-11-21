@@ -1,5 +1,5 @@
 """This module contains functions for interacting with Database."""
-from db_pool import db_pool, retry_query
+from ecomap.db.db_pool import db_pool, retry_query
 
 
 @retry_query(tries=3, delay=1)
@@ -487,8 +487,9 @@ def get_all_problems():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`,`title`,`latitude`,`longtitude`,`problem_type_id`,
-                   `status`,`created_date` FROM `problem`;
+        query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
+                    `problem_type_id`,`status`,`created_date` 
+                    FROM `problem`;
                 """
         cursor.execute(query)
         return cursor.fetchall()

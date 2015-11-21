@@ -579,21 +579,22 @@ def get_all_users():
                                 'role': res[4]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
-@app.route("/api/problems",methods=['GET'])
+@app.route("/api/problems", methods=['GET'])
 def problems():
-    """Function, used to get all problems.
-       :return: list of problems with id, title, latitude, longtitude, 
-       problem type , status and date of creation
+    """
+    Function, used to get all problems.
+    :return: list of problems with id, title, latitude, longtitude,
+    problem type, status and date of creation
     """
     problem_tuple = db.get_all_problems()
     parsed_json = []
     if problem_tuple:
-            for problem in problem_tuple:
-                parsed_json.append({
-                    'problem_id':problem[0],'title':problem[1],
-                    'latitude':problem[2],'longtitude':problem[3],
-                    'problem_type_Id':problem[4],'status':problem[5],
-                    'date':problem[6]})
+        for problem in problem_tuple:
+            parsed_json.append({
+                'problem_id':problem[0], 'title':problem[1],
+                'latitude':problem[2], 'longtitude':problem[3],
+                'problem_type_Id':problem[4], 'status':problem[5],
+                'date':problem[6]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 

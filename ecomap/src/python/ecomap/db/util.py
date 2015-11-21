@@ -479,3 +479,16 @@ def get_all_users():
                 """
         cursor.execute(query)
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_all_problems():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`,`title`,`latitude`,`longtitude`,`problem_type_id`,
+                   `status`,`created_date` FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()

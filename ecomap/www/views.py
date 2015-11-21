@@ -615,12 +615,12 @@ def get_titles():
     if request.method == 'GET':
         pages = db.get_pages_titles()
         result = []
-        for page in pages:
-            result.append({'id': page[0],
-                           'title': page[1],
-                           'alias': page[2],
-                           'is_enabled': page[3]
-                           })
+        if pages:
+            for page in pages:
+                result.append({'id': page[0],
+                               'title': page[1],
+                               'alias': page[2],
+                               'is_enabled': page[3]})
         return Response(json.dumps(result), mimetype="application/json")
 
 
@@ -635,16 +635,23 @@ def get_faq(alias):
     """
     if request.method == 'GET':
         page = db.get_page_by_alias(alias)
-        result = [{'id': page[0],
-                   'title': page[1],
-                   'alias': page[2],
-                   'description': page[3],
-                   'content': page[4],
-                   'meta_keywords': page[5],
-                   'meta_description': page[6],
-                   'is_enabled': page[7]
-                   }]
-        return Response(json.dumps(result), mimetype="application/json")
+        status_code = None
+        result = None
+        if page:
+            result = [{'id': page[0],
+                       'title': page[1],
+                       'alias': page[2],
+                       'description': page[3],
+                       'content': page[4],
+                       'meta_keywords': page[5],
+                       'meta_description': page[6],
+                       'is_enabled': page[7]}]
+            status_code = 200
+        else:
+            result = []
+            status_code = 404
+        return Response(json.dumps(result), mimetype="application/json",
+                        status=status_code)
 
 
 @app.route('/api/editResource/<int:page_id>', methods=['PUT'])
@@ -657,12 +664,19 @@ def edit_page(page_id):
     """
     if request.method == 'PUT':
         data = request.get_json()
-        logger.info(data)
-        db.edit_page(page_id, data['title'], data['alias'],
-                     data['description'], data['content'],
-                     data['meta_keywords'], data['meta_description'],
-                     data['is_enabled'])
-        return jsonify(result=True)
+        status_code = None
+        result = None
+        if db.get_page_by_alias(data['alias']):
+            db.edit_page(page_id, data['title'], data['alias'],
+                         data['description'], data['content'],
+                         data['meta_keywords'], data['meta_description'],
+                         data['is_enabled'])
+            result = True
+            status_code = 200
+        else:
+            result = False
+            status_code = 404
+        return jsonify(result), status_code
 
 
 if __name__ == '__main__':

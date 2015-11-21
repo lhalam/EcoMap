@@ -471,7 +471,9 @@ def get_page_by_alias(alias):
         cursor = conn.cursor()
         query = """SELECT `id`, `title`, `alias`, `description`, `content`,
                    `meta_keywords`, `meta_description`, `is_enabled`
-                   FROM `page` WHERE `alias`=%s;"""
+                   FROM `page`
+                   WHERE `alias`=%s;
+                """
         cursor.execute(query, (alias,))
         return cursor.fetchone()
 
@@ -492,7 +494,8 @@ def edit_page(page_id, title, alias, descr, content,
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `page` SET `title`=%s, `alias`=%s,
+        query = """UPDATE `page`
+                   SET `title`=%s, `alias`=%s,
                    `description`=%s, `content`=%s,
                    `meta_keywords`=%s, `meta_description`=%s,
                    `is_enabled`=%s

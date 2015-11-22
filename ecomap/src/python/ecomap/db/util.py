@@ -1,10 +1,5 @@
 """This module contains functions for interacting with Database."""
-import logging
-
-from db_pool import db_pool, retry_query
-
-
-logger = logging.getLogger('db_util')
+from ecomap.db.db_pool import db_pool, retry_query
 
 
 @retry_query(tries=3, delay=1)
@@ -88,8 +83,24 @@ def get_user_role_by_email(email):
         return cursor.fetchone()
 
 
+def get_all_permissions_by_role():
+    """This query created for Restriction class.
+    Restriction class is for lesser entering to DB.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT r.name , res.resource_name, p.action, p.modifier
+                   FROM `role_permission` AS rp INNER JOIN `permission` AS p ON
+                   rp.permission_id = p.id INNER JOIN `role` AS r
+                   ON rp.role_id = r.id INNER JOIN `resource` AS res
+                   ON p.resource_id = res.id;
+                """
+        cursor.execute(query)
+    return cursor.fetchall()
+
+
 @retry_query(tries=3, delay=1)
-def get_user_role_by_id(id):
+def get_user_role_by_id(user_id):
     """Get all resources.
     :return: tuple of resources
     """
@@ -99,7 +110,7 @@ def get_user_role_by_id(id):
                    INNER JOIN `user_role` AS ur ON r.id=ur.role_id
                    WHERE ur.user_id=%s;
                 """
-        cursor.execute(query, (id,))
+        cursor.execute(query, (user_id,))
         return cursor.fetchone()
 
 
@@ -143,7 +154,7 @@ def add_resource(resource_name):
 
 
 @retry_query(tries=3, delay=1)
-def edit_resource_name(newResourceource_name, resource_id):
+def edit_resource_name(new_resource_name, resource_id):
     """Edit resource name.
     :params: newResourceource_name - new name of resource
              resource_id - id of  resource we change name
@@ -151,7 +162,7 @@ def edit_resource_name(newResourceource_name, resource_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `resource` SET `resource_name`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (newResourceource_name, resource_id))
+        cursor.execute(query, (new_resource_name, resource_id))
         conn.commit()
 
 
@@ -206,7 +217,7 @@ def edit_role(new_role_name, role_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_permissions_from_resource(resource_id):
+def get_all_permissions_by_resource(resource_id):
     """Find all permissions by resource.
     :params: resource_id - id of resource
     :return: tuple, containing permissions
@@ -228,7 +239,8 @@ def get_all_permissions():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, r.resource_name, p.action, p.modifier, p.description
+        query = """SELECT p.id, r.resource_name, p.action, p.modifier,
+                   p.description
                    FROM `permission` as p
                    INNER JOIN `resource` as r
                    ON p.resource_id = r.id;"""
@@ -335,6 +347,11 @@ def add_role_permission(role_id, permission_id):
 
 @retry_query(tries=3, delay=1)
 def get_role_permission(role_id):
+    """Get all permission of role.
+       :params: role_id - id of role
+       :return: tuple, containing tuples with permission id,
+                action, modifier and description
+    """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.action, p.modifier, p.description
@@ -556,3 +573,33 @@ def get_page_by_id(page_id):
                 """
         cursor.execute(query, (page_id,))
         return cursor.fetchone()
+
+
+def get_all_users():
+    """Return all registered users from db.
+    :return: tuples with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` as ur
+                   INNER JOIN `user` as u ON ur.user_id = u.id
+                   INNER JOIN `role` as r ON ur.role_id = r.id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_problems():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
+                    `problem_type_id`,`status`,`created_date`
+                    FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()

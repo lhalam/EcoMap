@@ -33,11 +33,20 @@ class DBPoolError(MySQLdb.Error):
 def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
     """Decorator function handling reconnection issues to DB."""
     def retry_wrapper(func):
+        """Wrapper function.
+           :params: func - function to call
+           :return: wrapper function
+        """
         @functools.wraps(func)
         def inner(*args, **kwargs):
+            """Inner wrapper function
+               :params: *args - list of different arguments
+                        *kwargs - dictionary of different arguments
+            """
             mtries, mdelay = tries, delay
             while True:
                 mtries -= 1
+
                 try:
                     return func(*args, **kwargs)
                 except MySQLPoolSizeError:
@@ -45,13 +54,13 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                                                     exc_info=True)
                 except MySQLdb.Error:
                     logging.getLogger('retry').warn('Error', exc_info=True)
+
                 if mtries:
                     time.sleep(mdelay)
                 else:
-                    raise DBPoolError('Error message: Got error with '
-                                      'connection to database. '
-                                      'Possibly caused by wrong sql or '
-                                      'database pool is out of connections.')
+                    raise DBPoolError('Error message: Got error: '
+                                      'wrong sql or database pool is out of '
+                                      'connections.')
         return inner
     return retry_wrapper
 

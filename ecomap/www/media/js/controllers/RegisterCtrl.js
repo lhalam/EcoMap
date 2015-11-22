@@ -6,8 +6,8 @@ app.controller('RegisterCtrl', ['$scope','$http','$cookies', '$auth', function($
 
   $scope.newUser = {};
   $scope.Register = function(user){
-    if(!user.email || !user.firstName ||
-      !user.lastName || !user.password ||
+    if(!user.email || !user.first_name ||
+      !user.last_name || !user.password ||
       !user.pass_confirm){
       return null;
     }

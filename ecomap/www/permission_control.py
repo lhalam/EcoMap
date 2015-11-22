@@ -1,4 +1,5 @@
-from pprint import pprint
+from flask import abort
+from flask_login import current_user
 
 sql_tuple = [['user', '/', 'GET', 'any'],
              ['admin', '/', 'GET', 'any'],
@@ -36,7 +37,7 @@ def get_id_problem_owner(problem_id):
     """
     print 'input problem_id %s' % problem_id
     print 'DO STUFF'
-    print 'current user in request %s' % current_user_uid
+    print 'current user in request %s' % current_user.uid
     result = 5
     return result
 
@@ -48,8 +49,8 @@ def get_current_user_id(user_id):
     :return: id of problem owner
     """
     print user_id
-    print current_user_uid
-    return current_user_uid if int(user_id) == int(current_user_uid) else False
+    print current_user.uid
+    return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 
 def get_id_photo_owner(photo_id):
@@ -60,7 +61,7 @@ def get_id_photo_owner(photo_id):
     """
     pass
 
-current_user_uid = 5
+# current_user.uid = 5
 
 d = {':idUser': get_current_user_id,
      ':idProblem': get_id_problem_owner
@@ -75,31 +76,11 @@ TESTJSON = {'admin': {'/api/roles/': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any',
                      '/': {'GET': 'Any', 'PUT': 'None'}}}
 
 ROLE = 'user'
-REQUEST_RESOURCE = '/api/user_detailed_info/5'
+REQUEST_RESOURCE = '/'
 REQUEST_METHOD = 'GET'
 
 
-# def run_dynamic_check(pattern, query_arg, url_rules, perm_dct, role, method):
-#     if pattern in url_rules:
-#                         if ":idUser" == pattern:
-#                             pass
-#
-#                         if ":idProblem" == pattern:
-#                             id = get_id_problem_owner(query_arg)
-#                             if perm_dct[role][permission_res][method] == 'Any':
-#                                 permission['status'] = 'ok any'
-#                                 # return True
-#                             if perm_dct[role][permission_res][method] == 'Own':
-#                                 # print id
-#                                 if current_user_uid == id:
-#                                     permission['status'] = 'ok own'
-#                                     # return True
-#                                 else:
-#                                     permission['error'] = 'YOU HAVE ACCESS ONLY TO OWN'
-#                                     # return permission['error']
-#
-
-def check3(role, resource, method, dct):
+def check_permissions(role, resource, method, dct):
     permission = {'status': None, 'error': None}
     if role in dct:
         xpath = dct[role]
@@ -148,12 +129,11 @@ def check3(role, resource, method, dct):
                                     return True
                                 if dct[role][permission_res][method] == 'Own':
                                     # print owner_id
-                                    if current_user_uid == owner_id:
+                                    if current_user.uid == owner_id:
                                         permission['status'] = 'ok own'
                                         return True
                                     else:
                                         permission['error'] = 'YOU HAVE ACCESS ONLY TO YOUR OWN %s' % request_res_host
-                                        return permission['error']
                 else:
                     permission['error'] = 'NO SUCH RESOURCE FOR ROLE'
     else:
@@ -163,42 +143,10 @@ def check3(role, resource, method, dct):
     if not permission['error']:
         return True
     else:
+        abort(403)
         return permission['error']
 
 print 80*'*'
-print check3(ROLE, REQUEST_RESOURCE, REQUEST_METHOD, TESTJSON)
+print check_permissions(ROLE, REQUEST_RESOURCE, REQUEST_METHOD, TESTJSON)
 
 
-pprint(make_json(sql_tuple))
-# route = '/api/user_detailed_info/<int:user_id>'
-# if '<int' in route:
-#     route = route.split('<')[0] + '3'
-#     print route
-
-TESTJSON = {'admin': {'/api/roles/': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'None'},
-                      '/': {'GET': 'Any'},
-                      '/api/user_detailed_info/:idUser': {'GET': 'Any', 'PUT': 'Own', 'DELETE': 'None'},
-                      '/api/problem/:idProblem': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'Any'}},
-            'user': {'/api/roles': {'POST': 'Any'},
-                     '/api/user_detailed_info/:idUser': {'GET': 'Own', 'PUT': 'Own', 'DELETE': 'None'},
-                     '/': {'GET': 'Any', 'PUT': 'None'}}}
-
-#
-# def parse_json(js):
-#     res_list = []
-#     for roles in js:
-#         res_list.append([roles])
-#         for role in res_list:
-#             print role
-#         # for res in js[roles]:
-#             # print res
-#             # for role_list in res_list:
-#             #     role_list.append(res[0])
-#     return res_list
-#
-# # def parse_json(js):
-# #     res_list = []
-# #     res_list.append([js])
-# #     return res_list
-#
-# print parse_json(TESTJSON)

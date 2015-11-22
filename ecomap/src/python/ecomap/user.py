@@ -16,10 +16,13 @@ login_manager.login_view = "login"
 class Anonymous(AnonymousUserMixin):
     def __init__(self):
         self.username = u'ANON'
+        self.role = 'user'
+        self.uid = 1
 
     def __repr__(self):
         return self.username
 
+login_manager.anonymous_user = Anonymous
 
 class User(UserMixin):
 

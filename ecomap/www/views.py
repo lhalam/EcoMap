@@ -17,38 +17,70 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap import validator as v
-import ecomap.permission as perm
+from permission_control import check_permissions
+from ecomap.permission import p_instance
 
 
 @app.before_request
 def load_users():
     if current_user.is_authenticated:
         g.user = current_user
-        # logger.warning(g.user)
+        logger.warning(g.user)
     else:
         anon = usr.Anonymous()
-        g.user = anon.username
-        # logger.warning(g.user)
+        g.user = anon
+        logger.warning(g.user.role)
+        logger.warning(current_user)
+
+
+def make_json(sql_list):
+    dct = {}
+    for (role, resource, method, perm) in sql_list:
+        if role not in dct:
+            dct[role] = {}
+        if resource not in dct[role]:
+            dct[role][resource] = {}
+        if method not in dct[role][resource]:
+            dct[role][resource].update({method: perm})
+    return dct
 
 
 # @app.before_request
-# def try_request():
-#     per_dict = perm.control_dict
-#     logger.warning('============================================================')
-#     logger.info('request url_rule %s' % request.url_rule)
-#     logger.info('request method %s' % request.method)
-#     logger.info('dict %s' % per_dict)
-#     logger.info('cur user role %s' % current_user.role)
-#     logger.warning('*************************************************************')
-#     route = str(request.url_rule)
-#     if '<int' in route:
-#         # route = str(route.split('<')[0] + str(current_user.uid))
-#         route = str(route.split('<')[0])
-#     logger.warning(route)
-#     perm.check(current_user.role, route, request.method, per_dict)
-#     logger.warning('============================================================')
-#     logger.warning(perm.check(current_user.role, route, request.method, per_dict))
-#     logger.warning('============================================================')
+def try_request():
+    # logger.info(type(p_instance))
+    # logger.warning(p_instance.dct)
+    per_dict = p_instance.get_dct()
+    per_dict = p_instance.dct
+    # logger.warning(p_instance.get_dct())
+    # logger.warning(p_instance.dct)
+    # logger.warning(p_instance.get_dct())
+    # per_dict = {'admin': {'/api/roles/': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'None'},
+    #                   '/': {'GET': 'Any'},
+    #                   '/api/login': {'GET': 'Any'},
+    #                   '/api/register': {'GET': 'Any'},
+    #                   '/api/logout': {'GET': 'Any', 'POST': 'Any'},
+    #                   '/api/user_detailed_info/:idUser': {'GET': 'Any', 'PUT': 'Own', 'DELETE': 'None'},
+    #                   '/api/problem/:idProblem': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'Any'}},
+    #         'user': {'/api/roles': {'POST': 'Any'},
+    #                  '/api/login': {'GET': 'Any', 'POST': 'Any'},
+    #                   '/api/register': {'GET': 'Any'},
+    #                   '/api/logout': {'GET': 'Any', 'POST': 'Any'},
+    #                  '/api/user_detailed_info/:idUser': {'GET': 'Own', 'PUT': 'Own', 'DELETE': 'None'},
+    #                  '/': {'GET': 'Any', 'PUT': 'None'}}}
+    logger.debug('============================================================')
+    logger.info('request url %s' % request.url)
+    logger.info('request method %s' % request.method)
+    logger.info('dict %s' % per_dict)
+    logger.info('cur user role %s' % current_user.role)
+    logger.info('cur user ID %s' % current_user.uid)
+
+    logger.debug('*************************************************************')
+    route = '/' + '/'.join(str(request.url).split('/')[3:])
+    check_permissions(str(current_user.role), route, str(request.method), per_dict)
+    logger.debug('============================================================')
+    logger.warning(check_permissions(current_user.role, route, request.method, per_dict))
+    logger.debug('============================================================')
+
 
 def is_admin(f):
     @functools.wraps(f)
@@ -682,7 +714,7 @@ def get_all_users():
 
 @app.route("/api/test", methods=['GET'])
 def test():
-    dct = perm.get_perms()
+    dct = permissions.get_perms()
     logger.warning(dct)
     return jsonify(dct)
 

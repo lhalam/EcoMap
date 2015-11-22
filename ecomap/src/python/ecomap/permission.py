@@ -1,9 +1,9 @@
 import ecomap.utils
 import db.util as util
+import logging
 
-from flask import abort
-
-from ecomap.app import app
+from ecomap.app import logger
+# logger = logging.getLogger('ololo')
 
 
 def make_json(sql_list):
@@ -21,20 +21,34 @@ def make_json(sql_list):
 class Permission(object):
     __metaclass__ = ecomap.utils.Singleton
 
-    def __init__(self ):
-        pass
+    def __init__(self):
+        self.dct = None
+        self.logger = logging.getLogger('perm_control_class')
 
     def create_dct(self):
         parsed_data = {}
+        logger.warning('<<<<<<<<<<<<<<<<<<<<GOTO DB>>>>>>>>>>>>>>>>>>>>')
         all_perms_list = util.select_all()
         if all_perms_list:
             parsed_data = [x for x in all_perms_list]
-            app.logger.warning(parsed_data)
-        return make_json(parsed_data)
+            # logger.warning(parsed_data)
+        self.dct = make_json(parsed_data)
+        return self.dct
 
+    def get_dct(self):
+        if self.dct is None:
+            self.dct = self.create_dct()
+        return self.dct
 
-p = Permission()
-control_dict = p.create_dct()
+    def reload_dct(self):
+        self.dct = self.create_dct()
+        return self.dct
+
+p_instance = Permission()
+# pddd = p_instance.get_dct()
+# p_inst2 = Permission()
+# logger.warning(p_instance is p_inst2)
+# dct = permissions.create_dct()
 
 
 def get_perms():
@@ -42,54 +56,6 @@ def get_perms():
     all_perms_list = util.select_all()
     if all_perms_list:
         parsed_data = [x for x in all_perms_list]
-        app.logger.warning(parsed_data)
+        # logger.warning(parsed_data)
     return make_json(parsed_data)
-
-
-# def check(role, resource, method, dct):
-#     permission = {'status': None, 'error': None}
-#     if role in dct:
-#         if resource in dct[role]:
-#             resource_methods = []
-#             for perms in dct[role][resource]:
-#                 resource_methods.append(perms.keys()[0])
-#             if method in resource_methods:
-#                 app.logger(method)
-#                 permission['status'] = 'ok'
-#             else:
-#                 permission['error'] = 'METHOD FORBIDDEN'
-#         else:
-#             permission['error'] = 'NO SUCH RESOURCE FOR ROLE'
-#     else:
-#         permission['error'] = 'NOT ALLOWED FOR THIS ROLE'
-#
-#     app.logger.info(permission)
-#     if not permission['error']:
-#             return True
-#     else:
-#         return permission['error']
-
-# print check(ROLE, REQUEST_RESOURCE, REQUEST_METHOD, dct3)
-
-
-def check(role, resource, method, dct):
-    permission = {'status': None, 'error': None}
-    if role in dct:
-        if resource in dct[role]:
-            for perms in dct[role][resource]:
-                if method in dct[role][resource] and dct[role][resource][method] is not 'None':
-                    permission['status'] = 'ok'
-                else:
-                    permission['error'] = 'METHOD FORBIDDEN'
-        else:
-            permission['error'] = 'NO SUCH RESOURCE FOR ROLE'
-    else:
-        permission['error'] = 'NOT ALLOWED FOR THIS ROLE'
-
-    print permission
-    if not permission['error']:
-            return True
-    else:
-        abort(403)
-        return permission['error']
 

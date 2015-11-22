@@ -15,4 +15,4 @@ app.controller('AddFaqCtrl', ['$scope','$state', '$http','toaster','$timeout', f
             toaster.pop('error', 'Помилка при додаванні', 'При спробі створення нової інструкції виникла помилка!');
         })
     }
-}])
+}]);

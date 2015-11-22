@@ -47,4 +47,4 @@ app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', function($scope, $
         })
     }
 
-}])
+}]);

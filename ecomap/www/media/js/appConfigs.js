@@ -31,6 +31,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/editFaq.html',
       controller: 'EditFaqCtrl'
     })
+    .state('error404', {
+      url: '/error404',
+      templateUrl: '/templates/404.html'
+    })
     .state('login', {
       url: '/login',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {

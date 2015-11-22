@@ -11,7 +11,9 @@ app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$s
             toaster.pop('success', 'Інструкцію відредаговано', 'Інструкцію відредаговано успішно!');
             $state.go('user_profile');
         },
-            function errorCallback(){});
+        function errorCallback(){
+            toaster.pop('error', 'Помилка', 'Інструкцію не вдалось відредагувати через помилку!');
+        });
     };
 
     $scope.loadPage = function(alias){

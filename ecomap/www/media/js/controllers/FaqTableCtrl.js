@@ -42,7 +42,9 @@ app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', function($scope, $
             toaster.pop('success', 'Інструкцію видалено', 'Інструкцію було успішно видалено!');
             $scope.loadData();
         },
-            function errorCallback(){})
+        function errorCallback(){
+            toaster.pop('error', 'Помилка при видаленні', 'Інструкцію не було видалено через помилку!');
+        })
     }
 
 }])

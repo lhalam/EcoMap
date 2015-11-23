@@ -5,15 +5,18 @@ ecomap project.
 """
 import json
 import functools
+import time
 
 from flask import render_template, request, jsonify, Response, g, abort
+from flask import redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 
 import ecomap.user as usr
 
+from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
-from ecomap import validator
+from ecomap.oauth import facebook
 
 
 @app.before_request
@@ -170,17 +173,13 @@ def register():
         valid = validator.user_registration(data)
 
         if valid['status']:
-            if not usr.get_user_by_email(data['email']):
-                usr.register(data['first_name'],
-                             data['last_name'],
-                             data['email'],
-                             data['password'])
-                msg = 'added %s %s' % (data['first_name'],
-                                       data['last_name'])
-                response = jsonify({'status_message': msg}), 201
-            else:
-                msg = 'user with this email already exists'
-                response = jsonify({'status_message': msg}), 401
+            usr.register(data['first_name'],
+                         data['last_name'],
+                         data['email'],
+                         data['password'])
+            msg = 'added %s %s' % (data['first_name'],
+                                   data['last_name'])
+            response = jsonify({'status_message': msg}), 201
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -635,6 +634,58 @@ def role_permission_get():
                                      permissions_of_role]
 
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/authorize/facebook', methods=['POST', 'GET'])
+def login_with_facebook():
+
+    redirect_uri = url_for('oauth_callback', provider='facebook',
+                           _external=True)
+
+    params = {'scope': 'public_profile',
+              'response_type': 'code',
+              'redirect_uri': redirect_uri}
+
+    logger.info(url_for('oauth_callback', provider='facebook',
+                        _external=True))
+
+    url = facebook.get_authorize_url(**params)
+    return redirect(url)
+
+
+@app.route('/api/callback/<provider>', methods=['POST', 'GET'])
+def oauth_callback(provider):
+    logger.info(request.args['code'])
+
+    redirect_uri = url_for('oauth_callback', provider='facebook',
+                           _external=True)
+
+    session = facebook.get_auth_session(data={'code': request.args['code'],
+                                        'grant_type': 'authorization_code',
+                                              'redirect_uri': redirect_uri})
+
+    logger.info('Got session token.')
+    data = session.get('me?fields=id,email,first_name,last_name').json()
+    logger.info(data['email'])
+    logger.info(data['id'])
+    logger.info(data['first_name'])
+    logger.info(data['last_name'])
+    data['password'] = time.ctime()
+
+    if not usr.get_user_by_email(data['email']):
+        usr.facebook_register(data['first_name'],
+                              data['last_name'],
+                              data['email'],
+                              data['password'],
+                              'facebook',
+                              data['id'])
+        msg = 'added %s %s' % (data['first_name'],
+                               data['last_name'])
+        response = jsonify({'status_message': msg}), 201
+    else:
+        msg = 'user with this email already exists'
+        response = jsonify({'status_message': msg}), 401
+    return response
 
 
 @app.route("/api/all_permissions", methods=['GET'])

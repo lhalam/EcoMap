@@ -132,6 +132,18 @@ def register(first_name, last_name, email, password):
                             role_id)
 
 
+def facebook_register(first_name, last_name, email, password, provider, uid):
+    """This function registres user through facebook.
+    It will insert user's data via insert_user function
+    from util.
+        :returns True if transaction finished successfully.
+    """
+    salted_pass = hash_pass(password)
+    role_id = util.get_role_id('user')
+    return util.facebook_insert(first_name, last_name, email, salted_pass,
+                                role_id, provider, uid)
+
+
 @login_manager.user_loader
 def load_user(uid):
     """This method is callback, which is used in

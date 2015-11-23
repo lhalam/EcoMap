@@ -47,7 +47,7 @@ def make_json(sql_list):
     return dct
 
 
-@app.before_request
+# @app.before_request
 def try_request():
     # logger.info(type(p_instance))
     # logger.warning(p_instance.dct)
@@ -279,11 +279,6 @@ def test_photo():
             db.insert_user_avatar(current_user.uid, img_path)
             return json.dumps({'added_file': img_path})
     return jsonify(error='error with import file'), 400
-
-
-@app.route('/api/getTitles', methods=['GET'])
-def getTitles():
-    pass
 
 
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])

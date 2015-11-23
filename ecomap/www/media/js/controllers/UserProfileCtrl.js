@@ -105,7 +105,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
         $scope.setDefaultPhoto = function () {
             $scope.user.data.avatar = 'http://placehold.it/150x150';
         return $scope.user.data.avatar;
-        }
+        };
 
   $scope.clearCanvas = function(picFile){
      var cnv = angular.element(document.getElementsByTagName('canvas'));

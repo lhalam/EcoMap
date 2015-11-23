@@ -15,17 +15,17 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
 <ol>
     <li>Clone this repository to your local machine</li>
     <li>Open file /etc/mysql/my.conf with following command: <code>nano /etc/mysql/my.cnf</code></li>
-    <li>Add following options to this file:
-        <code>
-            [mysqld]
-            default-character-set = utf8
-            init_connect=‘SET collation_connection = utf8_unicode_ci’
-            character-set-server = utf8
-            collation-server = utf8_unicode_ci
-
-            [client]
-            default-character-set = utf8
-        </code>
+    <li>Add following options to this file: <br>
+    <pre>
+    [mysqld]
+    default-character-set = utf8
+    init_connect=‘SET collation_connection = utf8_unicode_ci’
+    character-set-server = utf8
+    collation-server = utf8_unicode_ci
+    
+    [client]
+    default-character-set = utf8
+    </pre>
     </li>
     <li>Go to 'path/to/repo/ecomap/DB/ecomap/' directory</li>
     <li>Run mysql shell: <code>mysql -u -p</code></li>

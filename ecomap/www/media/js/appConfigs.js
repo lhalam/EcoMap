@@ -6,18 +6,6 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/userProfile.html',
       controller: 'UserProfileCtrl'
     })
-
-      .state('user_profile/change_photo', {
-      url: '/user_profile/change_photo',
-      onEnter: ['$state', '$uibModal', function( $state, $uibModal){
-        $uibModal.open({
-        templateUrl: '/templates/changePhoto.html',
-          controller: 'ChangePhotoCtrl'
-          }).result.finally(function(){
-                $state.go('user_profile');
-              });
-        }]
-      })
     .state('map', {
       url: '/map',
       templateUrl: '/templates/map.html',
@@ -28,7 +16,25 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/admin.html',
       controller: 'AdminCtrl'
     })
-
+    .state('faq', {
+      url: '/faq/:faqAlias',
+      templateUrl: '/templates/detailedFaq.html',
+      controller: 'DetailedFaqCtrl'
+    })
+    .state('addFaq', {
+      url: '/addFaq',
+      templateUrl: '/templates/addFaq.html',
+      controller: 'AddFaqCtrl'
+    })
+    .state('editFaq', {
+      url: '/editFaq/:alias',
+      templateUrl: '/templates/editFaq.html',
+      controller: 'EditFaqCtrl'
+    })
+    .state('error404', {
+      url: '/error404',
+      templateUrl: '/templates/404.html'
+    })
     .state('login', {
       url: '/login',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
@@ -45,7 +51,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
         $uibModal.open({
             templateUrl: '/templates/register.html',
-            controller: 'RegisterCtrl'
+            controller: 'RegisterCtrl',
         }).result.finally(function() {
             $state.go('map');
         });

@@ -626,6 +626,124 @@ def get_all_permissions():
     return Response(json.dumps(perms_list), mimetype='application/json')
 
 
+@app.route('/api/getTitles', methods=['GET'])
+def get_titles():
+    """This method returns short info about all defined static pages.
+
+      :returns list of dicts with title, id, alias and is_enabled
+      values.
+    """
+    if request.method == 'GET':
+        pages = db.get_pages_titles()
+        result = []
+        if pages:
+            for page in pages:
+                result.append({'id': page[0],
+                               'title': page[1],
+                               'alias': page[2],
+                               'is_enabled': page[3]})
+        return Response(json.dumps(result), mimetype="application/json")
+
+
+@app.route('/api/resources/<alias>', methods=['GET'])
+def get_faq(alias):
+    """This method retrieves exact faq page(ex-resource) via
+       alias, passed to it.
+
+        :params - alias - url path to exact page.
+
+        :returns object with all page's attributes within a list.
+    """
+    if request.method == 'GET':
+        page = db.get_page_by_alias(alias)
+        status_code = None
+        result = None
+        if page:
+            result = [{'id': page[0],
+                       'title': page[1],
+                       'alias': page[2],
+                       'description': page[3],
+                       'content': page[4],
+                       'meta_keywords': page[5],
+                       'meta_description': page[6],
+                       'is_enabled': page[7]}]
+            status_code = 200
+        else:
+            result = []
+            status_code = 404
+        return Response(json.dumps(result), mimetype="application/json",
+                        status=status_code)
+
+
+@app.route('/api/editResource/<int:page_id>', methods=['PUT'])
+@login_required
+@is_admin
+def edit_page(page_id):
+    """This method makes changes to given page(ex-resource).
+
+        :returns confirmation.
+    """
+    if request.method == 'PUT':
+        data = request.get_json()
+        status_code = None
+        result = None
+        if db.get_page_by_id(data['id']):
+            db.edit_page(page_id, data['title'], data['alias'],
+                         data['description'], data['content'],
+                         data['meta_keywords'], data['meta_description'],
+                         data['is_enabled'])
+            result = True
+            status_code = 200
+        else:
+            result = False
+            status_code = 404
+        return jsonify(result=result), status_code
+
+
+@app.route('/api/addResource', methods=['POST'])
+@login_required
+@is_admin
+def add_page():
+    """This method adds new page to db."""
+    if request.method == 'POST':
+        data = request.get_json()
+        result = None
+        msg = None
+        if not db.get_page_by_alias(data['alias']):
+            db.add_page(data['title'], data['alias'],
+                        data['description'], data['content'],
+                        data['meta_keywords'], data['meta_description'],
+                        data['is_enabled'])
+            if db.get_page_by_alias(data['alias']):
+                result = True
+                msg = 'Succesfully added!'
+            else:
+                result = False
+                msg = "Couldn't add new page!"
+        else:
+            result = False
+            msg = 'Page already exists!'
+    return jsonify(result=result, msg=msg)
+
+
+@app.route('/api/deleteResource/<page_id>', methods=['DELETE'])
+@login_required
+@is_admin
+def delete_page(page_id):
+    """This method deletes page by it's id."""
+    if request.method == 'DELETE':
+        msg = None
+        result = None
+        db.delete_page_by_id(page_id)
+        if not db.get_page_by_id(page_id):
+            result = True
+            msg = 'Page was deleted successfully!'
+        else:
+            result = False
+            msg = "Couldn't delete the page!"
+    return jsonify(result=result, msg=msg)
+
+
 @app.route("/api/user_roles", methods=['GET', 'POST'])
 @login_required
 @is_admin
@@ -656,6 +774,7 @@ def get_all_users():
                                 'role': res[4]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
+
 @app.route("/api/problems", methods=['GET'])
 def problems():
     """
@@ -668,10 +787,10 @@ def problems():
     if problem_tuple:
         for problem in problem_tuple:
             parsed_json.append({
-                'problem_id':problem[0], 'title':problem[1],
-                'latitude':problem[2], 'longtitude':problem[3],
-                'problem_type_Id':problem[4], 'status':problem[5],
-                'date':problem[6]})
+                'problem_id': problem[0], 'title': problem[1],
+                'latitude': problem[2], 'longtitude': problem[3],
+                'problem_type_Id': problem[4], 'status': problem[5],
+                'date': problem[6]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 @app.route("/api/test", methods=['GET'])
@@ -679,6 +798,39 @@ def test():
     dct = p_instance.get_dct()
     logger.warning(dct)
     return jsonify(dct)
+
+@app.route('/api/problem_detailed_info/<int:problem_id>', methods=['GET'])
+def detailed_problem(problem_id):
+    """
+    This method returns json object with detailed problem data.
+    :params problem_id - id of selected problem
+    :return json with detailed info about problem
+    """
+    problem_tuple = db.get_problem_by_id(problem_id)
+    activity_tuple = db.get_activity_by_problem_id(problem_id)
+    parsed_json = []
+    problem_info = []
+    activity_info = []
+    photo_info = []
+    parsed_json.append(problem_info)
+    parsed_json.append(activity_info)
+    parsed_json.append(photo_info)
+    if problem_tuple:
+        problem_info.append({
+            'problem_id': problem_tuple[0], 'title': problem_tuple[1],
+            'content': problem_tuple[2], 'proposal': problem_tuple[3],
+            'severity': problem_tuple[4], 'status': problem_tuple[5],
+            'latitude': problem_tuple[6], 'longtitude': problem_tuple[7],
+            'problem_type_id': problem_tuple[8]
+            })
+
+    if activity_tuple:
+        activity_info.append({
+            'created_date': activity_tuple[0], ' problem_id': activity_tuple[1],
+            'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
+            })
+
+    return Response(json.dumps(parsed_json), mimetype='application/json')
 
 if __name__ == '__main__':
     app.run()

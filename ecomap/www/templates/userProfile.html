@@ -1,7 +1,7 @@
   <div class="container user-profile">
     <div class="row">
     <div class="panel panel-default">
-      <a href="/#/map" class="close-button">x</a>
+      <a href="/#/map" class="close-button">&#10006;</a>
       <div class="panel-body">
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <div class="list-group">
@@ -9,6 +9,7 @@
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userProblems') }" ng-click="setTab('userProblems')">Проблеми користувача</a>
             <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userComments') }" ng-click="setTab('userComments')">Коментарі користувача</a>
             <a href="/#/admin" class="list-group-item" ng-show="isAdmin()">Адміністрування</a>
+            <a href="" class="list-group-item" ng-show="isAdmin()" ng-class="{ 'active': isSelected('faqEdit') }" ng-click="setTab('faqEdit')">Редагування F.A.Q.</a>
           </div>
         </div>
 
@@ -73,6 +74,41 @@
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userComments')">
           <h3>Коментарі користувача</h3>
           <hr>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-if="isSelected('faqEdit')" ng-controller="FaqTableCtrl">
+          <h3>Редагування F.A.Q.</h3>
+          <hr>
+          <table class="table table-hover">
+              <thead>
+               <tr>
+                 <td>Номер</td>
+                 <td>Назва інструкції</td>
+                 <td>Адреса інструкції</td>
+                 <td>Відображення</td>
+                 <td>Редагування</td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="page in pages track by $index">
+                 <td ng-bind="page.id"></td>
+                 <td ng-bind="page.title"></td> 
+                 <td ng-bind="page.alias"></td>
+                 <td>
+                  <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
+                 </td>
+                 <td>
+                  <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
+                 </td>
+               </tr>
+              </tbody>
+            </table>
+            <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
+            <div class="clear"></div>
+            <hr>
+            <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
+            <div class="clear"></div>
         </div>
 
       </div>

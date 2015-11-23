@@ -16,6 +16,25 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/admin.html',
       controller: 'AdminCtrl'
     })
+    .state('faq', {
+      url: '/faq/:faqAlias',
+      templateUrl: '/templates/detailedFaq.html',
+      controller: 'DetailedFaqCtrl'
+    })
+    .state('addFaq', {
+      url: '/addFaq',
+      templateUrl: '/templates/addFaq.html',
+      controller: 'AddFaqCtrl'
+    })
+    .state('editFaq', {
+      url: '/editFaq/:alias',
+      templateUrl: '/templates/editFaq.html',
+      controller: 'EditFaqCtrl'
+    })
+    .state('error404', {
+      url: '/error404',
+      templateUrl: '/templates/404.html'
+    })
     .state('login', {
       url: '/login',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {

@@ -610,8 +610,10 @@ def detailed_problem(problem_id):
     parsed_json = []
     problem_info = []
     activity_info = []
+    photo_info = []
     parsed_json.append(problem_info)
     parsed_json.append(activity_info)
+    parsed_json.append(photo_info)
     if problem_tuple:
         problem_info.append({
             'problem_id': problem_tuple[0], 'title': problem_tuple[1],

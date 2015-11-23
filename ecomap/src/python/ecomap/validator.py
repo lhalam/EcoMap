@@ -3,6 +3,8 @@
 """
 import re
 
+from ecomap.db import util as db
+
 ENUM = {'action': ['post', 'get', 'put', 'delete'],
         'modifier': ['any', 'own', 'none']}
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
@@ -20,7 +22,9 @@ MESSAGE = {'is_in_dictionary': 'not contain %s key.',
            'is_not_empty': '%s field is empty.',
            'is_string': '%s value is not string.',
            'is_email': '%s value does not look like email.',
-           'is_in_enum': 'invalid %s value'}
+           'is_in_enum': 'invalid %s value.',
+           'email_free': 'email allready exists.',
+           'name_exists': '"%s" name allready exists'}
 
 
 def user_registration(data):
@@ -46,6 +50,9 @@ def user_registration(data):
             status['error'].append({key: MESSAGE['is_enough_length'] % key})
         elif key == 'email' and not is_email(data, key):
             status['error'].append({key: MESSAGE['is_email'] % key})
+        elif key == 'email' and email_free(data, key):
+            print 'not free'
+            status['error'].append({key: MESSAGE['email_free']})
 
     if len(status['error']):
         status['status'] = False
@@ -101,6 +108,8 @@ def resource_post(data):
         status['error'].append({key: MESSAGE['is_string'] % key})
     elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
         status['error'].append({key: MESSAGE['is_enough_length'] % key})
+    elif resource_name_exists(data, key):
+        status['error'].append({key: MESSAGE['name_exists'] % data[key]})
 
     if len(status['error']):
         status['status'] = False
@@ -131,6 +140,8 @@ def resource_put(data):
                                                              LENGTHS[key][0],
                                                              LENGTHS[key][1]):
             status['error'].append({key: MESSAGE['is_enough_length'] % key})
+        elif resource_name_exists(data, key):
+            status['error'].append({key: MESSAGE['name_exists'] % data[key]})
 
     if len(status['error']):
         status['status'] = False
@@ -179,6 +190,8 @@ def role_post(data):
         status['error'].append({key: MESSAGE['is_string'] % key})
     elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
         status['error'].append({key: MESSAGE['is_enough_length'] % key})
+    elif role_name_exists(data, key):
+        status['error'].append({key: MESSAGE['name_exists'] % data[key]})
 
     if len(status['error']):
         status['status'] = False
@@ -208,6 +221,8 @@ def role_put(data):
                                                          LENGTHS[key][0],
                                                          LENGTHS[key][1]):
             status['error'].append({key: MESSAGE['is_enough_length'] % key})
+        elif key == 'role_name' and role_name_exists(data, key):
+            status['error'].append({key: MESSAGE['name_exists'] % data[key]})
 
     if len(status['error']):
         status['status'] = False
@@ -507,6 +522,31 @@ def is_in_enum(json, key, enum):
     return json[key].lower() in enum
 
 
-if __name__ == '__main__':
-    json = {'resource_id': 2, 'action': 'pot', 'modifier': 'ay', 'description': 'hello'}
-    print permission_post(json)
+def email_free(json, key):
+    """Validator function which checks if email is allready in database.
+       :params: json - JSON dictionary
+                key - JSON key (email)
+       :return: True - if email is free not in database
+                False - if it is in database
+    """
+    return db.get_user_by_email(json[key])
+
+
+def role_name_exists(json, key):
+    """Validator function which checks if role name is allready in database.
+       :params: json - JSON dictionary
+                key - JSON key (email)
+       :return: True - if name is free not in database
+                False - if it is in database
+    """
+    return db.get_role_id(json[key])
+
+
+def resource_name_exists(json, key):
+    """Validator function which checks if resource name is allready in database.
+       :params: json - JSON dictionary
+                key - JSON key (email)
+       :return: True - if resource is free not in database
+                False - if it is in database
+    """
+    return db.get_resource_id(json[key])

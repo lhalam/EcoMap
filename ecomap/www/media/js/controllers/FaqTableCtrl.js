@@ -15,8 +15,7 @@ app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', function($scope, $
         $http({
             url: '/api/resources/'+$scope.pages[index].alias,
             method: 'GET'
-        })
-        .then(function successCallback(response){
+        }).then(function successCallback(response){
             data = response.data[0];
             data.is_enabled = $scope.pages[index].is_enabled;
             

@@ -1,6 +1,7 @@
 """Validator module.
    Contains function to validate different forms in browser.
 """
+import imghdr
 import re
 
 MODIFIERS = ['any', 'own', 'none']
@@ -458,3 +459,7 @@ def is_in_enum(json, key, enum):
                 False - if it is not
     """
     return json[key].lower() in enum
+
+
+def validate_image_file(file):
+    return True if str(imghdr.what(file)) == 'png' else False

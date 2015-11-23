@@ -58,9 +58,9 @@ class Permission(object):
 
 p1 = Permission()
 # print p1
-# p2 = Permission()
+p2 = Permission()
 # print p2
-# print p1 is p2
+print p1 is p2
 
 # print p1.get_dct()
 # print p1.get_dct()

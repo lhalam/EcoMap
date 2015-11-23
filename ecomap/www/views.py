@@ -3,8 +3,6 @@
 This module holds all views controls for
 ecomap project.
 """
-import imghdr
-
 import json
 import functools
 import os
@@ -49,7 +47,7 @@ def make_json(sql_list):
     return dct
 
 
-# @app.before_request
+@app.before_request
 def try_request():
     # logger.info(type(p_instance))
     # logger.warning(p_instance.dct)
@@ -273,7 +271,7 @@ def test_photo():
         f_name = 'profile_id%s' % current_user.uid + extension
         static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
         f_path = os.environ['STATICROOT'] + static_url
-        if file and v.validate_image_file(file):
+        if file and validator.validate_image_file(file):
             if not os.path.exists(f_path):
                 os.makedirs(os.path.dirname(f_path + f_name))
             file.save(os.path.join(f_path, f_name))
@@ -678,7 +676,7 @@ def problems():
 
 @app.route("/api/test", methods=['GET'])
 def test():
-    dct = permissions.get_perms()
+    dct = p_instance.get_dct()
     logger.warning(dct)
     return jsonify(dct)
 

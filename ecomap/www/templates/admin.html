@@ -1,5 +1,8 @@
 <link rel="stylesheet" href="/css/admin.css">
 
+<toaster-container></toaster-container>
+
+
 <div class="container" >
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -98,8 +101,8 @@
                <tr>
                  <td>Ім’я</td>
                  <td>Прізвище</td>
+                 <td>e-mail</td>
                  <td>Роль</td>
-                 <td>Мейл</td>
                </tr>
               </thead>
               <tbody>
@@ -111,7 +114,7 @@
                     <select ng-model="user_obj.role" class="form-control" data-ng-options="role_ob as role_ob for (role_id,role_ob) in role_obj"></select>
                   </td>
                   <td>
-                    <button class="btn-primary" ng-click="changeRole(user_obj)">Змінити роль</button>
+                    <button class="btn btn-primary" ng-click="changeRole(user_obj)">Змінити роль</button>
                   </td>
                </tr>
           
@@ -128,11 +131,12 @@
 <modal title="Права ролі" visible="rolePerm">
 <div ng-show="actualPermInRole">
   <h3>Вже прив’язані події</h3>  
-  <table class="table table-stripped">
+ <form>
+    <table class="table table-stripped">
   <thead>
                <tr>
                  <td>Назва методу</td>
-                 <td>Modifier</td>
+                 <td>Модифікатор доступу</td>
                  <td>Id</td>
                  <td>Опис</td>
                </tr>
@@ -141,13 +145,14 @@
                 <tr ng-repeat="perm in actualPermInRole" >
                 
                   <td ng-repeat="perm_prop in perm">{{perm_prop}}</td>
-                  <td><button class="btn-danger"  ng-click="deletePermFormRole(perm)">DELETE</button></td>
+                  <td><button class="btn btn-danger"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                 
                </tr>
           
               </tbody>
             </table>
-  </table>
+    </table>
+ </form>
 </div>
 <form ng-submit="bindResPerm()" name="rolePerm" novalidate>
 <div class="container">
@@ -177,7 +182,7 @@
           
               </tbody>
             </table>
-          <button type="submit" class="btn btn-primary">Додати</button>
+          <button type="submit" class="btn btn-primary">підтвFрдити</button>
 </form>
 </modal>
 
@@ -299,7 +304,7 @@
   <form action="" ng-submit="editRole()" name="editRoleForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
       <label for="" class="control-label" >Назва ролі</label>
-      <input type="text" class="form-control" name="roleName" ng-model="editRoleObj.name" ng-maxlength="255" required>
+      <input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required>
     </div>
     
     <button type="submit" class="btn btn-primary">Змінити</button>

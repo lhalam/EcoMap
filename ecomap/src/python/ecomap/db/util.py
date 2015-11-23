@@ -33,6 +33,32 @@ def get_user_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
+def facebook_insert(first_name, last_name, email, password, role_id,
+                    provider, uid):
+    """Adds new user into db through facebook.
+    :params: first_name - first name of user
+             last_name - last name of user
+             email - email of user
+             password - hashed password of user
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `user` (`first_name`,
+                                       `last_name`,
+                                       `email`,
+                                       `password`,
+                                       `oauth_provider`,
+                                       `oauth_uid`)
+                   VALUES (%s, %s, %s, %s, %s, %s);
+                   INSERT INTO `user_role` (`user_id`, `role_id`)
+                   values (LAST_INSERT_ID(), %s);
+                """
+        cursor.execute(query, (first_name, last_name, email, password,
+                               provider, uid, role_id))
+
+
+@retry_query(tries=3, delay=1)
 def insert_user(first_name, last_name, email, password, role_id):
     """Adds new user into db.
     :params: first_name - first name of user

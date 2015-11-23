@@ -16,7 +16,7 @@ LENGTHS = {'email': [5, 100],
            'description': [2, 255]}
 
 MESSAGE = {'is_in_dictionary': 'not contain %s key.',
-           'is_enough_length': '%s value it too long or short.',
+           'is_enough_length': '%s value is too long or short.',
            'is_not_empty': '%s field is empty.',
            'is_string': '%s value is not string.',
            'is_email': '%s value does not look like email.',
@@ -36,12 +36,16 @@ def user_registration(data):
     keys = ['email', 'first_name', 'last_name', 'password', 'pass_confirm']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message:
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
+        elif key == 'email' and not is_email(data, key):
+            status['error'].append({key: MESSAGE['is_email'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -61,12 +65,16 @@ def user_login(data):
     keys = ['email', 'password']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message:
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
+        elif key == 'email' and not is_email(data, key):
+            status['error'].append({key: MESSAGE['is_email'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -85,12 +93,16 @@ def resource_post(data):
     status = {'status': True, 'error': []}
     key = 'resource_name'
 
-    error_message = validate_int(data, key)
-    if not error_message:
-        error_message = validate_string(data, key, LENGTHS[key][0],
-                                        LENGTHS[key][1])
-    if error_message:
-        status['error'].append(error_message)
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+    elif not is_string(data, key):
+        status['error'].append({key: MESSAGE['is_string'] % key})
+    elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
+        status['error'].append({key: MESSAGE['is_enough_length'] % key})
+
+    if len(status['error']):
         status['status'] = False
 
     return status
@@ -109,12 +121,16 @@ def resource_put(data):
     keys = ['resource_name', 'resource_id']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message and key == 'resource_name':
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif key == 'resource_name' and not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif key == 'resource_name' and not is_enough_length(data, key,
+                                                             LENGTHS[key][0],
+                                                             LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -133,9 +149,12 @@ def resource_delete(data):
     status = {'status': True, 'error': []}
     key = 'resource_id'
 
-    error_message = validate_int(data, key)
-    if error_message:
-        status['error'].append(error_message)
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+
+    if len(status['error']):
         status['status'] = False
 
     return status
@@ -152,13 +171,17 @@ def role_post(data):
     status = {'status': True, 'error': []}
     key = 'role_name'
 
-    error_message = validate_int(data, key)
-    if not error_message:
-        error_message = validate_string(data, key, LENGTHS[key][0],
-                                        LENGTHS[key][1])
-    if error_message:
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+    elif not is_string(data, key):
+        status['error'].append({key: MESSAGE['is_string'] % key})
+    elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
+        status['error'].append({key: MESSAGE['is_enough_length'] % key})
+
+    if len(status['error']):
         status['status'] = False
-        status['error'].append(error_message)
 
     return status
 
@@ -175,12 +198,16 @@ def role_put(data):
     keys = ['role_id', 'role_name']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message and key == 'role_name':
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif key == 'role_name' and not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif key == 'role_name' and not is_enough_length(data, key,
+                                                         LENGTHS[key][0],
+                                                         LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -199,10 +226,13 @@ def role_delete(data):
     status = {'status': True, 'error': []}
     key = 'role_id'
 
-    error_message = validate_int(data, key)
-    if error_message:
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+
+    if len(status['error']):
         status['status'] = False
-        status['error'].append(error_message)
 
     return status
 
@@ -221,14 +251,19 @@ def permission_post(data):
     keys = ['resource_id', 'action', 'modifier', 'description']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message and key in ['action', 'modifier']:
-            error_message = validate_enum(data, key, ENUM[key])
-        if not error_message and key == 'description':
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif (key in ['action', 'modifier'] and not
+                is_in_enum(data, key, ENUM[key])):
+            status['error'].append({key: MESSAGE['is_in_enum'] % key})
+        elif key == 'description' and not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif key == 'description' and not is_enough_length(data, key,
+                                                           LENGTHS[key][0],
+                                                           LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -250,14 +285,19 @@ def permission_put(data):
     keys = ['permission_id', 'action', 'modifier', 'description']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if not error_message and key in ['action', 'modifier']:
-            error_message = validate_enum(data, key, ENUM[key])
-        if not error_message and key == 'description':
-            error_message = validate_string(data, key, LENGTHS[key][0],
-                                            LENGTHS[key][1])
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
+        elif (key in ['action', 'modifier'] and not
+                is_in_enum(data, key, ENUM[key])):
+            status['error'].append({key: MESSAGE['is_in_enum'] % key})
+        elif key == 'description' and not is_string(data, key):
+            status['error'].append({key: MESSAGE['is_string'] % key})
+        elif key == 'description' and not is_enough_length(data, key,
+                                                           LENGTHS[key][0],
+                                                           LENGTHS[key][1]):
+            status['error'].append({key: MESSAGE['is_enough_length'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -276,10 +316,13 @@ def permission_delete(data):
     status = {'status': True, 'error': []}
     key = 'permission_id'
 
-    error_message = validate_int(data, key)
-    if error_message:
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+
+    if len(status['error']):
         status['status'] = False
-        status['error'].append(error_message)
 
     return status
 
@@ -297,9 +340,10 @@ def role_permission_post(data):
     keys = ['role_id', 'permission_id']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -330,10 +374,13 @@ def role_permission_delete(data):
     status = {'status': True, 'error': []}
     key = 'role_id'
 
-    error_message = validate_int(data, key)
-    if error_message:
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+
+    if len(status['error']):
         status['status'] = False
-        status['error'].append(error_message)
 
     return status
 
@@ -351,9 +398,10 @@ def user_role_put(data):
     keys = ['role_id', 'user_id']
 
     for key in keys:
-        error_message = validate_int(data, key)
-        if error_message:
-            status['error'].append(error_message)
+        if not is_in_dictionary(data, key):
+            status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+        elif not is_not_empty(data, key):
+            status['error'].append({key: MESSAGE['is_not_empty'] % key})
 
     if len(status['error']):
         status['status'] = False
@@ -373,67 +421,19 @@ def change_password(data):
     status = {'status': True, 'error': []}
     key = 'password'
 
-    error_message = validate_int(data, key)
-    if not error_message:
-        error_message = validate_string(data, key, LENGTHS[key][0],
-                                        LENGTHS[key][1])
-    if error_message:
-        status['error'].append(error_message)
+    if not is_in_dictionary(data, key):
+        status['error'].append({key: MESSAGE['is_in_dictionary'] % key})
+    elif not is_not_empty(data, key):
+        status['error'].append({key: MESSAGE['is_not_empty'] % key})
+    elif not is_string(data, key):
+        status['error'].append({key: MESSAGE['is_string'] % key})
+    elif not is_enough_length(data, key, LENGTHS[key][0], LENGTHS[key][1]):
+        status['error'].append({key: MESSAGE['is_enough_length'] % key})
+
+    if len(status['error']):
         status['status'] = False
 
     return status
-
-
-def validate_string(data, key, minimum=0, maximum=0):
-    """Function to validate string values.
-       :params: data - json object
-                key - json key
-                min - minimal length of value
-                max - maximum length of value
-       :return: error message - if not passed validation
-                None - if passed
-    """
-    result = None
-    if not is_string(data, key):
-        result = MESSAGE['is_string'] % key
-    elif not is_enough_length(data, key, minimum, maximum):
-        result = MESSAGE['is_enough_length'] % key
-    elif key == 'email' and not is_email(data, key):
-        result = MESSAGE['is_email'] % key
-    return result
-
-
-def validate_enum(data, key, enum):
-    """Function to validate enum values.
-       :params: data - json object
-                key - json key
-                enum - list of allowed values
-       :return: error message - if not passed validation
-                None - if passed
-    """
-    result = None
-    if not is_in_dictionary(data, key):
-        result = MESSAGE['is_in_dictionary'] % key
-    elif not is_not_empty(data, key):
-        result = MESSAGE['is_not_empty'] % key
-    elif not is_in_enum(data, key, enum):
-        result = MESSAGE['is_in_enum'] % key
-    return result
-
-
-def validate_int(data, key):
-    """Function to validate id values.
-       :params: data - json object
-                key - json key
-       :return: error message - if not passed validation
-                None - if passed
-    """
-    result = None
-    if not is_in_dictionary(data, key):
-        result = MESSAGE['is_in_dictionary'] % key
-    elif not is_not_empty(data, key):
-        result = MESSAGE['is_not_empty'] % key
-    return result
 
 
 def is_in_dictionary(json, key):
@@ -505,3 +505,8 @@ def is_in_enum(json, key, enum):
                 False - if it is not
     """
     return json[key].lower() in enum
+
+
+if __name__ == '__main__':
+    json = {'resource_id': 2, 'action': 'pot', 'modifier': 'ay', 'description': 'hello'}
+    print permission_post(json)

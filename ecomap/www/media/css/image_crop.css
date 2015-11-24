@@ -33,9 +33,8 @@ img-crop canvas {
 
 .cropArea {
     position: relative;
-    background: #e3e3e3;
+    background: #f9f9f9;
     overflow: hidden;
-    width:500px;
     height:350px;
 }
 
@@ -85,10 +84,31 @@ img-crop canvas {
 
 .photo-btn{
     margin: 10px 0;
-    width: 33%;
+    width: 49.5%;
 }
+
+.photo-btn.add {
+    color: #337ab7;
+    background: rgb(255, 255, 255);
+}
+
+.photo-btn.remove {
+    color: red;
+    background: white;
+}
+
+.photo-btn.add:hover {
+    color: whitesmoke;
+    background: #337ab7;
+}
+
+.photo-btn.remove:hover {
+    color: whitesmoke;
+    background: #C9302C;
+}
+
 .photo-btn.bottom{
-    margin: 2% 0 0px 10%;
+    margin: 2% 0 0 10%;
 }
 span.image-err{
     float: right;
@@ -100,3 +120,4 @@ span.image-err{
     border-radius: 5%;
 
 }
+

@@ -14,8 +14,10 @@ login_manager.login_view = "login"
 
 
 class Anonymous(AnonymousUserMixin):
+    """Class for providing guest sessions in app.
+    """
     def __init__(self):
-        self.username = u'ANON'
+        self.username = u'GUEST'
         self.role = 'user'
         self.uid = 2
 
@@ -27,7 +29,7 @@ login_manager.anonymous_user = Anonymous
 
 class User(UserMixin):
 
-    """Class which describes User entity"""
+    """Class which describes User entity."""
 
     def __init__(self, uid, first_name, last_name, email, password, role, avatar):
         self.uid = uid
@@ -74,6 +76,10 @@ class User(UserMixin):
         return True
 
     def get_id(self):
+        """
+        Method for getting id of current user
+        :return: id in unicode string
+        """
         return unicode(self.uid)
 
 

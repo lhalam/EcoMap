@@ -68,6 +68,20 @@ def insert_user_avatar(user_id, img_path):
 
 
 @retry_query(tries=3, delay=1)
+def delete_user_avatar(user_id):
+    """Deletes user profile photo from db.
+    :params: user_id - unique id user
+
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `avatar` = '' WHERE `id`=%s;"""
+        cursor.execute(query, (user_id,))
+        conn.commit()
+
+
+
+@retry_query(tries=3, delay=1)
 def change_user_password(user_id, new_password):
     """Change password to user account.
     :params: new_password - new password
@@ -604,7 +618,7 @@ def get_all_users():
 
 
 @retry_query(tries=3, delay=1)
-def select_all():
+def get_permission_control_data():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
     """
@@ -617,8 +631,6 @@ def select_all():
                 inner join resource as res on p.resource_id = res.id;"""
         cursor.execute(sql)
         return cursor.fetchall()
-
-
 
 
 @retry_query(tries=3, delay=1)
@@ -635,6 +647,7 @@ def get_all_problems():
         cursor.execute(query)
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_problem_by_id(problem_id):
     """Return problem, found by id.
@@ -650,6 +663,7 @@ def get_problem_by_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def get_activity_by_problem_id(problem_id):
     """Return problem, found by id.
@@ -664,4 +678,3 @@ def get_activity_by_problem_id(problem_id):
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
-        

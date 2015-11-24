@@ -5,6 +5,7 @@ import os
 # CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 CONF_PATH = '/home/padalko/ss_projects/Lv-164.UI/ecomap/etc/log.conf'
 
+
 def get_logger():
     """function for configuring default logger object
     from standard logging library

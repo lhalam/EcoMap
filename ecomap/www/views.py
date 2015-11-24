@@ -4,10 +4,9 @@ This module holds all views controls for
 ecomap project.
 """
 import json
-import functools
 import os
 
-from flask import render_template, request, jsonify, Response, g, abort
+from flask import render_template, request, jsonify, Response, g
 from flask_login import login_user, logout_user, login_required, current_user
 
 import ecomap.user as usr
@@ -15,8 +14,7 @@ import ecomap.user as usr
 from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap import validator
-from permission_control import check_permissions
-from ecomap.permission import p_instance
+from ecomap.permission import permission_control, check_permissions
 
 
 @app.before_request
@@ -27,82 +25,49 @@ def load_users():
     """
     if current_user.is_authenticated:
         g.user = current_user
-        logger.warning(g.user)
+        logger.info(g.user)
     else:
         anon = usr.Anonymous()
         g.user = anon
-        logger.warning(g.user.role)
-        logger.warning(current_user)
+        logger.info(g.user.role)
+        logger.info(current_user)
 
 
-def make_json(sql_list):
-    dct = {}
-    for (role, resource, method, perm) in sql_list:
-        if role not in dct:
-            dct[role] = {}
-        if resource not in dct[role]:
-            dct[role][resource] = {}
-        if method not in dct[role][resource]:
-            dct[role][resource].update({method: perm})
-    return dct
-
-
-# @app.before_request
-def try_request():
-    # logger.info(type(p_instance))
-    # logger.warning(p_instance.dct)
-    per_dict = p_instance.get_dct()
-    per_dict = p_instance.dct
-    # logger.warning(p_instance.get_dct())
-    # logger.warning(p_instance.dct)
-    # logger.warning(p_instance.get_dct())
-    # per_dict = {'admin': {'/api/roles/': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'None'},
-    #                   '/': {'GET': 'Any'},
-    #                   '/api/login': {'GET': 'Any'},
-    #                   '/api/register': {'GET': 'Any'},
-    #                   '/api/logout': {'GET': 'Any', 'POST': 'Any'},
-    #                   '/api/user_detailed_info/:idUser': {'GET': 'Any', 'PUT': 'Own', 'DELETE': 'None'},
-    #                   '/api/problem/:idProblem': {'PUT': 'Own', 'POST': 'Any', 'GET': 'Any', 'DELETE': 'Any'}},
-    #         'user': {'/api/roles': {'POST': 'Any'},
-    #                  '/api/login': {'GET': 'Any', 'POST': 'Any'},
-    #                   '/api/register': {'GET': 'Any'},
-    #                   '/api/logout': {'GET': 'Any', 'POST': 'Any'},
-    #                  '/api/user_detailed_info/:idUser': {'GET': 'Own', 'PUT': 'Own', 'DELETE': 'None'},
-    #                  '/': {'GET': 'Any', 'PUT': 'None'}}}
-    logger.debug('============================================================')
-    logger.info('request url %s' % request.url)
-    logger.info('request method %s' % request.method)
-    logger.info('dict %s' % per_dict)
-    logger.info('cur user role %s' % current_user.role)
-    logger.info('cur user ID %s' % current_user.uid)
-
-    logger.debug('*************************************************************')
-    route = '/' + '/'.join(str(request.url).split('/')[3:])
-    check_permissions(str(current_user.role), route, str(request.method), per_dict)
-    logger.debug('============================================================')
-    logger.warning(check_permissions(current_user.role, route, request.method, per_dict))
-    logger.debug('============================================================')
-
-
-def is_admin(func):
-    """Decorator function to protect routes from non admin users.
-       :params: func - function we want to protect from non admin users
-       :return: wrapper function
+@app.before_request
+def check_access():
+    """Global decorator for each view.
+    Checks permissions to access app resources by each user's request.
+    Gets dynamic user info(user role, url, request method)from request context.
+    :return: nested function returns true or 403
     """
-    @functools.wraps(func)
-    def wrapped(*args, **kwargs):
-        """Wrapper function to give arguments to func.
-           :params: *args - list of arguments
-                    **kwargs - dictionary of arguments
-           :return: function with given arguments
-        """
-        logger.warning(g.user)
-        logger.warning('SIC!')
-        logger.warning(g.user.role)
-        if g.user.role != 'admin':
-            abort(403)
-        return func(*args, **kwargs)
-    return wrapped
+    access_info = permission_control.get_dct()
+
+    route = '/' + '/'.join(request.url.split('/')[3:])
+    logger.debug('CHECK REQUEST: (url = %s [ %s ], user ID %s as %s )'
+                 % (route, request.method, current_user.uid, current_user.role))
+    check_permissions(current_user.role, route,
+                      request.method, access_info)
+    # logger.debug(check_permissions(current_user.role, route,
+    #                                request.method, access_info))
+
+# def is_admin(func):
+#     """Decorator function to protect routes from non admin users.
+#        :params: func - function we want to protect from non admin users
+#        :return: wrapper function
+#     """
+#     @functools.wraps(func)
+#     def wrapped(*args, **kwargs):
+#         """Wrapper function to give arguments to func.
+#            :params: *args - list of arguments
+#                     **kwargs - dictionary of arguments
+#            :return: function with given arguments
+#         """
+#         logger.warning(g.user)
+#         logger.warning(g.user.role)
+#         if g.user.role != 'admin':
+#             abort(403)
+#         return func(*args, **kwargs)
+#     return wrapped
 
 
 @app.route('/', methods=['GET'])
@@ -262,28 +227,48 @@ def get_user_info(user_id):
             return jsonify(status='There is no user with given email'), 401
 
 
-@app.route('/api/upload_avatar', methods=['POST'])
+@app.route('/api/user_avatar', methods=['POST', 'DELETE'])
 @login_required
-def test_photo():
+def profile_photo():
+    """Controller for handling editing user's profile photo.
+    :return:
+    """
+    response = {}
     if request.method == 'POST':
-        file = request.files['file']
+        img_file = request.files['file']
         extension = '.png'
         f_name = 'profile_id%s' % current_user.uid + extension
         static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
         f_path = os.environ['STATICROOT'] + static_url
-        if file and validator.validate_image_file(file):
+
+        if img_file and validator.validate_image_file(img_file):
             if not os.path.exists(f_path):
                 os.makedirs(os.path.dirname(f_path + f_name))
-            file.save(os.path.join(f_path, f_name))
+            img_file.save(os.path.join(f_path, f_name))
             img_path = static_url + f_name
             db.insert_user_avatar(current_user.uid, img_path)
             return json.dumps({'added_file': img_path})
-    return jsonify(error='error with import file'), 400
+        return jsonify(error='error with import file'), 400
+
+    if request.method == 'DELETE' and request.get_json():
+        data = request.get_json()
+
+        # valid = validator.validate_photo_delete(data)
+
+        # if valid['status']:
+        # if os.path.exists(f_path):
+        #     os.remove(f_path + f_name)
+        db.delete_user_avatar(data['user_id'])
+        response = jsonify(msg='success', deleted_avatar=data['user_id'])
+        # else:
+        #     response = Response(json.dumps(valid),
+        #                         mimetype='application/json'), 400
+        return response
+    return jsonify(response)
 
 
 @app.route("/api/resources", methods=['GET', 'POST', 'PUT', 'DELETE'])
 @login_required
-@is_admin
 def resources():
     """Get list of site resources needed for administration
     and server permission control.
@@ -363,7 +348,6 @@ def resources():
 
 @app.route("/api/roles", methods=['GET', 'POST', 'PUT', 'DELETE'])
 @login_required
-@is_admin
 def roles():
     """NEW!
     get list of roles for server permission control.
@@ -444,7 +428,6 @@ def roles():
 
 @app.route("/api/permissions", methods=['GET', 'PUT', 'POST', 'DELETE'])
 @login_required
-@is_admin
 def permissions():
     """Controller used for mange getting and adding actions of
     server permission options.
@@ -522,7 +505,6 @@ def permissions():
 
 @app.route("/api/role_permissions", methods=['GET', 'PUT', 'POST'])
 @login_required
-@is_admin
 def get_role_permission():
     """
     Handler for assigning permissions to role.
@@ -601,7 +583,6 @@ def get_role_permission():
 
 @app.route("/api/all_permissions", methods=['GET'])
 @login_required
-@is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 
@@ -672,7 +653,6 @@ def get_faq(alias):
 
 @app.route('/api/editResource/<int:page_id>', methods=['PUT'])
 @login_required
-@is_admin
 def edit_page(page_id):
     """This method makes changes to given page(ex-resource).
 
@@ -697,13 +677,12 @@ def edit_page(page_id):
 
 @app.route('/api/addResource', methods=['POST'])
 @login_required
-@is_admin
 def add_page():
     """This method adds new page to db."""
+    result = None
+    msg = None
     if request.method == 'POST':
         data = request.get_json()
-        result = None
-        msg = None
         if not db.get_page_by_alias(data['alias']):
             db.add_page(data['title'], data['alias'],
                         data['description'], data['content'],
@@ -723,12 +702,11 @@ def add_page():
 
 @app.route('/api/deleteResource/<page_id>', methods=['DELETE'])
 @login_required
-@is_admin
 def delete_page(page_id):
     """This method deletes page by it's id."""
+    msg = None
+    result = None
     if request.method == 'DELETE':
-        msg = None
-        result = None
         db.delete_page_by_id(page_id)
         if not db.get_page_by_id(page_id):
             result = True
@@ -741,7 +719,6 @@ def delete_page(page_id):
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
 @login_required
-@is_admin
 def get_all_users():
     """Function, used to get all users.
        :return: list of users with id, first name, last name, email and role
@@ -788,11 +765,6 @@ def problems():
                 'date': problem[6]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
-@app.route("/api/test", methods=['GET'])
-def test():
-    dct = p_instance.get_dct()
-    logger.warning(dct)
-    return jsonify(dct)
 
 @app.route('/api/problem_detailed_info/<int:problem_id>', methods=['GET'])
 def detailed_problem(problem_id):

@@ -33,7 +33,7 @@ def load_users():
         logger.info(current_user)
 
 
-@app.before_request
+# @app.before_request
 def check_access():
     """Global decorator for each view.
     Checks permissions to access app resources by each user's request.
@@ -47,27 +47,8 @@ def check_access():
                  % (route, request.method, current_user.uid, current_user.role))
     check_permissions(current_user.role, route,
                       request.method, access_info)
-    # logger.debug(check_permissions(current_user.role, route,
-    #                                request.method, access_info))
-
-# def is_admin(func):
-#     """Decorator function to protect routes from non admin users.
-#        :params: func - function we want to protect from non admin users
-#        :return: wrapper function
-#     """
-#     @functools.wraps(func)
-#     def wrapped(*args, **kwargs):
-#         """Wrapper function to give arguments to func.
-#            :params: *args - list of arguments
-#                     **kwargs - dictionary of arguments
-#            :return: function with given arguments
-#         """
-#         logger.warning(g.user)
-#         logger.warning(g.user.role)
-#         if g.user.role != 'admin':
-#             abort(403)
-#         return func(*args, **kwargs)
-#     return wrapped
+    logger.debug(check_permissions(current_user.role, route,
+                                   request.method, access_info))
 
 
 @app.route('/', methods=['GET'])

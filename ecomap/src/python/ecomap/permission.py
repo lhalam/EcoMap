@@ -6,7 +6,7 @@ and compares it with dynamic permission App JSON object.
 
 """
 import ecomap.utils
-import db.util as util
+import db.util as db
 
 from flask import abort
 from flask_login import current_user
@@ -36,7 +36,8 @@ def get_id_problem_owner(problem_id):
     :param problem_id - problem id
     :return: id of problem owner
     """
-    pass
+    user_owner_id = db.get_problem_owner(problem_id)
+    return user_owner_id
 
 
 def get_current_user_id(user_id):
@@ -47,26 +48,21 @@ def get_current_user_id(user_id):
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 
-def get_id_photo_owner(photo_id):
-    """Method for checking custom dynamic url pattern.
-    :param photo_id - photo id
-    :return: id_user
-    """
-    pass
-
-
-dynamic_url_rules = {':idUser': get_current_user_id,
-                     ':idProblem': get_id_problem_owner
-                     }
+rules_dct = {':idUser': get_current_user_id,
+             ':idProblem': get_id_problem_owner}
 
 
 def check_permissions(role, resource, method, dct):
     """Main module's function. Handles permission control.
-    :param role:
-    :param resource:
-    :param method:
-    :param dct:
-    :return:
+    Makes checking dynamic data from each request context with static
+    permission rules created by administrator.
+    :param role: current user role in request context
+    :param resource: request url in absolute format with dynamic args.
+    :param method: request method from context.
+    :param dct: permission data from app db
+    formatted into json-like object
+    :return: True if access is allowed or status 403
+    and error message otherwise
     """
     perm = {'status': None, 'error': None}
     if role in dct:
@@ -85,50 +81,31 @@ def check_permissions(role, resource, method, dct):
                         perm['error'] = 'METHOD FORBIDDEN'
             else:
                 if ':' in perm_res:  # checking dynamic path
-                    dynamic_res_pattern = perm_res.split('/')[-1]
+                    pattern = perm_res.split('/')[-1]
                     dynamic_res_host = '/'.join(perm_res.split('/')[:-1])
                     request_res_arg = resource.split('/')[-1]
                     request_res_host = '/'.join(resource.split('/')[:-1])
                     if request_res_host == dynamic_res_host \
-                            and dynamic_res_pattern in dynamic_url_rules:
-                        owner_id = dynamic_url_rules \
-                            [dynamic_res_pattern](request_res_arg)
+                            and pattern in rules_dct:
+                        owner_id = rules_dct[pattern](request_res_arg)
                         if dct[role][perm_res][method] == 'Any':
                             perm['status'] = 'ok'
                             return True
-
-                        if dct[role][perm_res][method] == 'Own':
-                            if current_user.uid == owner_id:
-                                perm['status'] = 'ok own'
-                                return True
-                            else:
-                                perm['error'] = 'YOU HAVE ACCESS ONLY TO YOUR OWN %s' % request_res_host
-
-                        # if dct[role][perm_res][method] == 'Own' \
-                        #         and current_user.uid == owner_id:
-                        #     perm['status'] = 'ok'
-                        #     return True
-                        # else:
-                        #     perm['error'] = 'YOU CAN ACCESS ONLY YOUR OWN %s' \
-                        #                     % request_res_host
+                        if dct[role][perm_res][method] == 'Own' \
+                                and current_user.uid == owner_id:
+                            perm['status'] = 'ok own'
+                            return True
+                        else:
+                            perm['error'] = 'YOU CAN ACCESS ONLY YOUR' \
+                                            ' OWN %s' % request_res_host
+                            logger.warning(perm['error'])
+                            logger.warning('UNABLE TO ACCESS to %s '
+                                           'with user id %s',
+                                           resource, current_user.uid)
+                            abort(403)
+                            return perm['error']
                 else:
                     perm['error'] = 'NO SUCH RESOURCE FOR ROLE'
-
-                    #
-                    # if request_res_host == dynamic_res_host:
-                    #     print 'MATCH %s = %s' % (request_res_host, dynamic_res_host)
-                    #     print dynamic_res_pattern
-                    #     if dynamic_res_pattern in d:
-                    #             owner_id = d[dynamic_res_pattern](request_res_arg)
-                    #             if dct[role][permission_res][method] == 'Any':
-                    #                 permission['status'] = 'ok any'
-                    #                 return True
-                    #             if dct[role][permission_res][method] == 'Own':
-                    #                 if current_user.uid == owner_id:
-                    #                     permission['status'] = 'ok own'
-                    #                     return True
-                    #                 else:
-                    #                     permission['error'] = 'YOU HAVE ACCESS ONLY TO YOUR OWN %s' % request_res_host
     else:
         perm['error'] = 'NOT ALLOWED FOR THIS ROLE'
     if not perm['error']:
@@ -143,33 +120,32 @@ def check_permissions(role, resource, method, dct):
 
 class Permission(object):
     """
-    Singleton class for store actual info abou permissions.
+    Singleton class for store actual info about permissions.
     """
     __metaclass__ = ecomap.utils.Singleton
 
     def __init__(self):
-        """
-        init
+        """init instance variables
         :return:
         """
         self.permissions_dict = None
 
     def create_dct(self):
-        """
-
+        """Creates initial instance of permission rules.
+        Call sql query and transform it into a json-like object.
         :return:
         """
         parsed_data = {}
         logger.info('__Permission Control Initialization__')
-        all_perms_list = util.get_permission_control_data()
+        all_perms_list = db.get_permission_control_data()
         if all_perms_list:
             parsed_data = [x for x in all_perms_list]
         self.permissions_dict = make_json(parsed_data)
         return self.permissions_dict
 
     def get_dct(self):
-        """
-
+        """Implement singleton logic by creating data if it
+        already not exist.
         :return:
         """
         if self.permissions_dict is None:
@@ -177,9 +153,9 @@ class Permission(object):
         return self.permissions_dict
 
     def reload_dct(self):
-        """
-
-        :return:
+        """Providing reloading function
+         which updates rules dictionary if needed.
+        :return: new json-like object
         """
         self.permissions_dict = self.create_dct()
         return self.permissions_dict

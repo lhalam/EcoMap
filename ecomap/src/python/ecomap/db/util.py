@@ -678,3 +678,19 @@ def get_activity_by_problem_id(problem_id):
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_id_problem_owner(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `created_date`, `problem_id`, `user_id`,
+                    `activity_type` FROM `problem_activity`
+                    WHERE `problem_id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()

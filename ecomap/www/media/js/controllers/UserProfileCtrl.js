@@ -101,22 +101,21 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
         $scope.deleteButtuon = false;
     };
 
-    $scope.showCanvas = function(formFile){
+        $scope.check = function (formFile) {
+            if (formFile.$error.maxSize) {
+                console.log(formFile.$error);
+                return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
+            }
+        }
+
+
+    $scope.showCanvas = function(formFile, check){
 
         $scope.showStatus = true;
         $scope.uploadButtuon = true;
-        //alert($scope.uploadPhoto.file.$error.maxSize)
         var uploadForm = angular.element(document.getElementsByName('uploadPhoto'))[0];
         //console.log(uploadForm.file.error)
 
-        if (formFile.$error.maxSize){
-            //alert(formFile)
-            //console.log(formFile)
-            console.log(formFile.$error);
-            toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
-            //console.log(formFile.$error.maxSize)
-            //alert(formFile.$error.maxSize)
-        }
 
         //alert(uploadPhoto.file.$error)
         //console.log(uploadPhoto.file.$error)
@@ -124,8 +123,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
         //alert(uploadForm.file.error)
 
 };
-
-
 
         $scope.setDefaultPhoto = function () {
             $scope.user.data.avatar = 'http://placehold.it/150x150';

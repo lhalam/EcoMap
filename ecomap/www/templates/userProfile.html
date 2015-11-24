@@ -117,7 +117,7 @@
 <modal title="Додати фотографію профілю" visible="photo">
 <form name="uploadPhoto">
         <div class="modal-resize">
-    <span class="image-err" ng-show="uploadPhoto.file.$error.maxSize">
+    <span class="image-err" ng-show="check(uploadPhoto.file)">
             Розмір файлу перевищує максимальний!</span>
         <span class="image-err" ng-show="uploadPhoto.file.$error.pattern">
 

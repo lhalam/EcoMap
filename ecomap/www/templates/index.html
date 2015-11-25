@@ -6,23 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/css/custom.css">
   <link rel="stylesheet" href="/css/toaster.min.css">
+  <link rel="stylesheet" href="/css/textAngular.css">
+  <link rel="stylesheet" href="/css/font-awesome.min.css">
 
   <!-- Non-angularJS scripts -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="/js/libs/jquery.min.js"></script>
+  <script src="/js/libs/bootstrap.min.js"></script>
 
   <!-- AngularJS modules -->
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-cookies.js" type="text/javascript"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
-  <script src="/js/angular-animate.min.js"></script>
-  <script src="/js/angular-ui-router.min.js"></script>
-  <script src="/js/satellizer.min.js"></script>
-  <script src="/js/toaster.min.js"></script>
+  <script src="/js/libs/angular.min.js"></script>
+  <script src="/js/libs/ui-bootstrap-tpls.min.js"></script>
+  <script src="/js/libs/angular-cookies.min.js" type="text/javascript"></script>
+  <script src="/js/libs/angular-messages.min.js"></script>
+  <script src="/js/libs/angular-animate.min.js"></script>
+  <script src="/js/libs/angular-ui-router.min.js"></script>
+  <script src="/js/libs/satellizer.min.js"></script>
+  <script src="/js/libs/toaster.min.js"></script>
+  <script src="/js/libs/textAngular-rangy.min.js"></script>
+  <script src="/js/libs/textAngular-sanitize.min.js"></script>
+  <script src="/js/libs/textAngular.min.js"></script>
 
   <!-- AngularJS app -->
   <script src="/js/angular_app.js"></script>
@@ -36,7 +41,11 @@
   <script src='/js/controllers/LoginCtrl.js'></script>
   <script src='/js/controllers/RegisterCtrl.js'></script>
   <script src="/js/controllers/LogoutCtrl.js"></script>
-  <script src="/js/controllers/StaticPageCtrl.js"></script>
+  <script src="/js/controllers/DetailedFaqCtrl.js"></script>
+  <script src="/js/controllers/FaqTableCtrl.js"></script>
+  <script src="/js/controllers/AddFaqCtrl.js"></script>
+  <script src='/js/controllers/EditFaqCtrl.js'></script>
+
 
   <!-- AngularJS directives -->
   <script src="/js/directives/ModalWindow.js"></script>
@@ -142,12 +151,12 @@
         <div class="navbar-collapse collapse" id="navMenu">
           <ul class="nav navbar-nav">
             <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
-            <li class="dropdown" ng-controller="StaticPageCtrl">
-              <a class="dropdown-toggle"  data-toggle="dropdown" href="#">ресурси <span class="caret"></span></a>
-              <ul class="dropdown-menu" ng-repeat="(id, page_name) in pages">
-                <li><a href="#">first</a></li>
-                <li><a href="#">second</a></li>
-                <li><a href="#">third</a></li>
+            <li class="dropdown" >
+              <a class="dropdown-toggle"  data-toggle="dropdown" ng-show="faqTitles">ресурси <span class="caret"></span></a>
+              <ul class="dropdown-menu" >
+                <li ng-show="faqObj.is_enabled" ng-repeat="faqObj in faqTitles">
+                  <a href="/#/faq/{{faqObj.alias|angular}}" ng-bind="faqObj.title"></a>
+                </li>
               </ul>
             </li>
             <li><a href="#">статистика</a></li>
@@ -174,7 +183,7 @@
         </div>
       </div>
     </nav> 
-    
+    <toaster-container></toaster-container>
     <div ui-view class="map-div"></div>
     
   </div>

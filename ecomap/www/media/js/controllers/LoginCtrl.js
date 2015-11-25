@@ -18,8 +18,7 @@ app.controller('LoginCtrl', ['$scope','$http','$cookies', '$auth', function($sco
     if(!credentials.email || !credentials.password){
       return null;
     }
-    $auth.login(credentials)
-      .then(function successCallback(responce){
+    $auth.login(credentials).then(function successCallback(responce){
         $scope.dismiss();
         $cookies.put('name', responce.data.name);
         $cookies.put('surname', responce.data.surname);

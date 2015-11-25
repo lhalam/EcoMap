@@ -33,6 +33,38 @@ def get_user_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_user_by_oauth_id(user_id):
+    """Return user, found by id.
+    :params: user_id - id of user
+    :return: tuple with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                   FROM `user` WHERE `oauth_uid`=%s;
+                """
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
+    """Adds oauth id and provider name to user.
+       This grants authentication within oauth to user.
+       :params: user_id - id of user
+                oauth_provider - provider name
+                oauth_uid - user id from provider
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `oauth_provider`=%s,
+                   `oauth_uid`=%s WHERE `id`=%s;
+                """
+        cursor.execute(query, oauth_provider, oauth_uid, user_id)
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
 def facebook_insert(first_name, last_name, email, password, role_id,
                     provider, uid):
     """Adds new user into db through facebook.
@@ -521,6 +553,7 @@ def get_all_users():
         cursor.execute(query)
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_all_problems():
     """Return all problems in db.
@@ -529,7 +562,7 @@ def get_all_problems():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
-                    `problem_type_id`,`status`,`created_date` 
+                    `problem_type_id`,`status`,`created_date`
                     FROM `problem`;
                 """
         cursor.execute(query)

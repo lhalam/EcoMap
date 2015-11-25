@@ -5,18 +5,18 @@ ecomap project.
 """
 import json
 import functools
-import time
+import requests
 
 from flask import render_template, request, jsonify, Response, g, abort
-from flask import redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
+
+from urlparse import parse_qsl
 
 import ecomap.user as usr
 
 from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
-from ecomap.oauth import facebook
 
 
 @app.before_request
@@ -636,55 +636,62 @@ def role_permission_get():
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
-@app.route('/api/authorize/facebook', methods=['POST', 'GET'])
-def login_with_facebook():
+@app.route('/api/authorize/<provider>', methods=['POST', 'GET'])
+def oauth_login(provider):
+    """Provides facebook authorization.
+       Retrieves user info from facebook, check if there is
+       user with retrieved from facebook user id,
+       if yes:
+           skips to next step
+       if not:
+           checks if there is user with retrieved email
+           if yes:
+               adds oauth credentials to this user
+           if not:
+               creates new user
+       After all function loggins user and return it's params
+    """
 
-    redirect_uri = url_for('oauth_callback', provider='facebook',
-                           _external=True)
+    access_token_url = 'https://graph.facebook.com/oauth/access_token'
+    graph_api_url = 'https://graph.facebook.com/v2.5/me?fields=email,'\
+                    'first_name,last_name,id'
 
-    params = {'scope': 'public_profile',
-              'response_type': 'code',
-              'redirect_uri': redirect_uri}
+    params = {
+        'client_id': request.json['clientId'],
+        'redirect_uri': request.json['redirectUri'],
+        'client_secret': app.config['OAUTH_CREDENTIALS']['facebook']['secret'],
+        'code': request.json['code']
+    }
 
-    logger.info(url_for('oauth_callback', provider='facebook',
-                        _external=True))
+    resource = requests.get(access_token_url, params=params)
+    access_token = dict(parse_qsl(resource.text))
+    resource = requests.get(graph_api_url, params=access_token)
+    profile = json.loads(resource.text)
+    logger.info(profile)
 
-    url = facebook.get_authorize_url(**params)
-    return redirect(url)
+    user = usr.get_user_by_oauth_id(profile['id'])
+    if not user:
+        user = usr.get_user_by_email(profile['email'])
+        if not user:
+            usr.facebook_register(profile['first_name'],
+                                  profile['last_name'],
+                                  profile['email'],
+                                  provider,
+                                  profile['id'])
+        else:
+            db.add_oauth_to_user(user[0], provider, profile['id'])
+        user = usr.get_user_by_oauth_id(profile['id'])
 
+    logger.info(user)
+    login_user(user, remember=True)
 
-@app.route('/api/callback/<provider>', methods=['POST', 'GET'])
-def oauth_callback(provider):
-    logger.info(request.args['code'])
+    response = jsonify(id=user.uid,
+                       name=user.first_name,
+                       surname=user.last_name,
+                       role=user.role, iat="???",
+                       token=user.get_auth_token(),
+                       email=user.email)
 
-    redirect_uri = url_for('oauth_callback', provider='facebook',
-                           _external=True)
-
-    session = facebook.get_auth_session(data={'code': request.args['code'],
-                                        'grant_type': 'authorization_code',
-                                              'redirect_uri': redirect_uri})
-
-    logger.info('Got session token.')
-    data = session.get('me?fields=id,email,first_name,last_name').json()
-    logger.info(data['email'])
-    logger.info(data['id'])
-    logger.info(data['first_name'])
-    logger.info(data['last_name'])
-    data['password'] = time.ctime()
-
-    if not usr.get_user_by_email(data['email']):
-        usr.facebook_register(data['first_name'],
-                              data['last_name'],
-                              data['email'],
-                              data['password'],
-                              'facebook',
-                              data['id'])
-        msg = 'added %s %s' % (data['first_name'],
-                               data['last_name'])
-        response = jsonify({'status_message': msg}), 201
-    else:
-        msg = 'user with this email already exists'
-        response = jsonify({'status_message': msg}), 401
     return response
 
 
@@ -720,7 +727,7 @@ def get_all_users():
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 
-        valid = validator.user_role_post(data)
+        valid = validator.user_role_put(data)
 
         if valid['status']:
             db.change_user_role(data['role_id'],
@@ -739,6 +746,7 @@ def get_all_users():
                                 'last_name': res[2], 'email': res[3],
                                 'role': res[4]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
 
 @app.route("/api/problems", methods=['GET'])
 def problems():

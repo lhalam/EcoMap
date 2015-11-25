@@ -1,3 +1,4 @@
+"""Module contains routes for user page."""
 import json
 
 from flask import request, jsonify, Response
@@ -7,8 +8,6 @@ import ecomap.user as usr
 
 from ecomap import validator
 from ecomap.app import app
-from authorize_views import *
-from admin_views import *
 
 
 @app.route('/api/change_password', methods=['POST'])

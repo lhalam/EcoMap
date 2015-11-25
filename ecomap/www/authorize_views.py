@@ -1,3 +1,6 @@
+"""Module contains routes for user authorization,
+   registering and logout.
+"""
 import json
 import requests
 

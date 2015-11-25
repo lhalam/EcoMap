@@ -1,3 +1,4 @@
+"""Module contains routes, used for admin page."""
 import functools
 import json
 
@@ -404,11 +405,11 @@ def role_permission_put():
     return response
 
 
-# WTF?
 @app.route("/api/role_permissions", methods=['DELETE'])
 @login_required
 @is_admin
 def role_permission_delete():
+    """Function to delete permissions."""
     data = request.get_json()
 
     valid = validator.role_permission_delete(data)

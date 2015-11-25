@@ -5,7 +5,6 @@ import json
 from flask import request, jsonify, Response, g, abort
 from flask_login import login_required
 
-
 from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
@@ -390,18 +389,13 @@ def role_permission_put():
                     {'msg': 'edited permission'}
     """
     data = request.get_json()
+
     logger.info('Role permission put')
 
-    # valid = validator.role_permission_put(data)
-
-    # if valid['status']:
     db.delete_permissions_by_role_id(data['role_id'])
     for perm_id in data['permission_id']:
         db.add_role_permission(data['role_id'], perm_id)
     response = jsonify(msg='edited permission')
-    # else:
-    #     response = Response(json.dumps(valid),
-    #                         mimetype='application/json'), 400
     return response
 
 

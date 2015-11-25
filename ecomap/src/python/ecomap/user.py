@@ -5,13 +5,13 @@ import time
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
-import db.util as util
+from ecomap.db import util
 
 from ecomap.app import app
 
-login_serializer = URLSafeTimedSerializer(app.secret_key)
-login_manager = LoginManager(app)
-login_manager.login_view = "login"
+LOGIN_SERIALIZER = URLSafeTimedSerializer(app.secret_key)
+LOGIN_MANAGER = LoginManager(app)
+LOGIN_MANAGER.login_view = "login"
 
 
 class Anonymous(AnonymousUserMixin):
@@ -43,7 +43,7 @@ class User(UserMixin):
         """
 
         data = [str(self.uid), self.password]
-        return login_serializer.dumps(data)
+        return LOGIN_SERIALIZER.dumps(data)
 
     def verify_password(self, password):
         """This method compares passwords from db and passed password
@@ -70,6 +70,7 @@ class User(UserMixin):
         return True
 
     def get_id(self):
+        """Returns current user id."""
         return unicode(self.uid)
 
 
@@ -163,7 +164,7 @@ def facebook_register(first_name, last_name, email, provider, uid):
                                 role_id, provider, uid)
 
 
-@login_manager.user_loader
+@LOGIN_MANAGER.user_loader
 def load_user(uid):
     """This method is callback, which is used in
     Login Manager inner logic for loading User
@@ -174,7 +175,7 @@ def load_user(uid):
     return get_user_by_id(int(uid))
 
 
-@login_manager.token_loader
+@LOGIN_MANAGER.token_loader
 def load_token(token):
     """This metod is callback, which is used in
     the Login Manager inner logic for retrieving
@@ -184,7 +185,7 @@ def load_token(token):
         is invalid.
     """
     max_age = app.config["REMEMBER_COOKIE_DURATION"].total_seconds()
-    data = login_serializer.loads(token, max_age=max_age)
+    data = LOGIN_SERIALIZER.loads(token, max_age=max_age)
 
     user = get_user_by_id(data[0])
 

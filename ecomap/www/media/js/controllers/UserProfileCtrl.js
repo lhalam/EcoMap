@@ -28,7 +28,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', fun
     var data = {};
     data.id = $cookies.get('id');
     data.old_pass = $scope.password.old_pass;
-    data.new_pass = $scope.password.new_pass;
+    data.password = $scope.password.new_pass;
     console.log(data);
     $http({
         method: 'POST',

@@ -33,7 +33,65 @@ def get_user_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def insert_user(first_name, last_name, email, password):
+def get_user_by_oauth_id(user_id):
+    """Return user, found by id.
+    :params: user_id - id of user
+    :return: tuple with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                   FROM `user` WHERE `oauth_uid`=%s;
+                """
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
+    """Adds oauth id and provider name to user.
+       This grants authentication within oauth to user.
+       :params: user_id - id of user
+                oauth_provider - provider name
+                oauth_uid - user id from provider
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `oauth_provider`=%s,
+                   `oauth_uid`=%s WHERE `id`=%s;
+                """
+        cursor.execute(query, oauth_provider, oauth_uid, user_id)
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def facebook_insert(first_name, last_name, email, password, role_id,
+                    provider, uid):
+    """Adds new user into db through facebook.
+    :params: first_name - first name of user
+             last_name - last name of user
+             email - email of user
+             password - hashed password of user
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `user` (`first_name`,
+                                       `last_name`,
+                                       `email`,
+                                       `password`,
+                                       `oauth_provider`,
+                                       `oauth_uid`)
+                   VALUES (%s, %s, %s, %s, %s, %s);
+                   INSERT INTO `user_role` (`user_id`, `role_id`)
+                   values (LAST_INSERT_ID(), %s);
+                """
+        cursor.execute(query, (first_name, last_name, email, password,
+                               provider, uid, role_id))
+
+
+@retry_query(tries=3, delay=1)
+def insert_user(first_name, last_name, email, password, role_id):
     """Adds new user into db.
     :params: first_name - first name of user
              last_name - last name of user
@@ -49,9 +107,24 @@ def insert_user(first_name, last_name, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s);
                    INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), 2);
+                   values (LAST_INSERT_ID(), %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password))
+        cursor.execute(query, (first_name, last_name, email, password,
+                               role_id))
+
+
+@retry_query(tries=3, delay=1)
+def get_role_id(name='user'):
+    """Gets role id by it's name.
+       :params: name - name of role, default - 'user'
+       :return: tuple with id of role
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `role`
+                   WHERE `name`=%s;"""
+        cursor.execute(query, (name,))
+        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)

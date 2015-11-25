@@ -83,13 +83,13 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
     };
 
     $scope.showStatus = true;
-    $scope.uploadButtuon = false;
-    $scope.deleteButtuon = true;
+    $scope.uploadButton = false;
+    $scope.deleteButton = true;
 
     $scope.cancelImg = function(picFile){
         $scope.photo = false;
         $scope.showStatus = false;
-        $scope.uploadButtuon = false;
+        $scope.uploadButton = false;
         $scope.result = '';
         picFile = null;
         $scope.picFile = null;
@@ -97,26 +97,28 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       };
 
     $scope.showUploadButton = function(){
-        $scope.uploadButtuon = true;
-        $scope.deleteButtuon = false;
+        $scope.uploadButton = true;
+        $scope.deleteButton = false;
     };
 
         $scope.check = function (formFile) {
+            console.log(formFile);
+            console.log(formFile.$invalid);
+            console.log(formFile.$error);
+            console.log(formFile.$error['maxSize']);
             if (formFile.$error.maxSize) {
                 console.log(formFile.$error);
                 return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
             }
-        }
+        };
 
 
-    $scope.showCanvas = function(formFile, check){
-
+    $scope.showCanvas = function(formFile){
         $scope.showStatus = true;
-        $scope.uploadButtuon = true;
+        $scope.uploadButton = true;
         var uploadForm = angular.element(document.getElementsByName('uploadPhoto'))[0];
         //console.log(uploadForm.file.error)
-
-
+        $scope.check(formFile);
         //alert(uploadPhoto.file.$error)
         //console.log(uploadPhoto.file.$error)
         //console.log(uploadPhoto.file.$error.maxSize)
@@ -137,7 +139,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       var ctx = cnv2.getContext('2d');
       ctx.clearRect(0, 0, cnv2.width, cnv2.height);
       $scope.showStatus = false;
-      $scope.uploadButtuon = false;
+      $scope.uploadButton = false;
       $scope.result = '';
       console.log(picFile);
       uploadForm.file = null;

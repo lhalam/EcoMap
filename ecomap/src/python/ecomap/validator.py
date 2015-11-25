@@ -125,7 +125,7 @@ def validate_role_post(data):
     """
     status = {'status': True, 'error': ''}
 
-    result = validate_string(data, 'name', 2, 255)
+    result = validate_string(data, 'role_name', 2, 255)
     if result:
         status['status'] = False
         status['error'] = result

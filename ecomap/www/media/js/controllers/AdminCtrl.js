@@ -117,7 +117,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         method:"PUT",
         url:"/api/resources",
         data:{
-          "new_resource_name":$scope.editResObj['name'],
+          "resource_name":$scope.editResObj['name'],
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
@@ -239,9 +239,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             url:"/api/permissions",
             data:{
                 "permission_id":$scope.editPerm.permission_id,
-                "new_action":$scope.editPerm['action'],
-                "new_modifier":$scope.editPerm.modifier, 
-                "new_description":$scope.editPerm['description']
+                "action":$scope.editPerm['action'],
+                "modifier":$scope.editPerm.modifier,
+                "description":$scope.editPerm['description']
             }
         }).then(function successCallback(data) {
                 $scope.editPermModal = false;
@@ -351,7 +351,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                     method:"PUT",
                     url:"/api/roles",
                     data:{
-                    "new_role_name":$scope.editRoleObj['name'],
+                    "role_name":$scope.editRoleObj['name'],
                     "role_id" : $scope.editRoleObj['id']
                     }
                 }).then(function successCallback(data) {
@@ -394,7 +394,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             "name":name,
             "id":id
         }
-
+        console.log($scope.rolePermObj.id)
         $scope.selectPermObj={}
         $scope.listToSend=[]
 
@@ -433,6 +433,20 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     }
     $scope.deletePermFormRole=function(perm){
+
+        $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
+        $scope.actualPermInRole.forEach(function(elem,index){
+        if(elem.id == perm.id){
+            // delete perm
+            $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
+            delete $scope.actualPermInRole[index]
+
+        }
+        console.log($scope.actualPermInRole.length)
+     })
+     console.log($scope.actualPermInRole)
+     delete $scope.selectPermObj[perm.id]
+
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
             $scope.actualPermInRole.forEach(function(elem,index){
                 //console.log("Elem id :"+elem.id)
@@ -440,7 +454,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             if(elem.id == perm.id){
                 $scope.listToSend.splice( index, 1 )
                 $scope.actualPermInRole.splice( index, 1 )
-               
+
             }
             console.log($scope.actualPermInRole.length)
          })
@@ -458,7 +472,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
         }
-        console.log($scope.listToSend);
+        // console.log($scope.listToSend);
+        console.log($scope.rolePermObj.id)
          $http({
             method:"PUT",
             url:"/api/role_permissions",

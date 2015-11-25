@@ -117,16 +117,16 @@
 <modal title="Додати фотографію профілю" visible="photo">
 <form name="uploadPhoto">
         <div class="modal-resize">
-    <span class="image-err" ng-show="check(uploadPhoto.file)">
+    <!-- <span class="image-err" ng-show="uploadPhoto.file.$error.maxSize">
             Розмір файлу перевищує максимальний!</span>
         <span class="image-err" ng-show="uploadPhoto.file.$error.pattern">
 
-            Оберіть .JPG або .PNG! {{picFile.pattern }}</span>
+            Оберіть .JPG або .PNG! {{picFile.pattern }}</span> -->
         <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
                 name="file" accept="image/*" ngf-pattern="'image/*'"
                 ng-click="showCanvas(uploadPhoto.file)" ngf-max-size="5MB" required="">
             Оберіть фото</button>
-        <button class="btn btn-danger photo-btn remove" ng-show="deleteButtuon" ng-click="setDefaultPhoto()">Видалити фото</button>
+        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
         <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
 
         <div class="cropArea" ngf-drop
@@ -138,9 +138,9 @@
         </div>
         <button class="btn btn-success photo-btn "
                 ng-disabled="!uploadPhoto.$valid"
-                ng-click="upload(newImage, picFile)" ng-show="uploadButtuon">Завантажити</button>
+                ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
 
-        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButtuon">Закрити</button>
+        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
         </div>
     </form>
 

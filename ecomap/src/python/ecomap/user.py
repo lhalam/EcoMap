@@ -1,5 +1,6 @@
 """This module holds User class"""
 import hashlib
+import time
 
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -119,6 +120,24 @@ def get_user_by_id(uid):
     return None
 
 
+def get_user_by_oauth_id(uid):
+    """This function gets user data from db by oauth id
+    and creates User instance if data was retrieved.
+
+        :returns User instance or None if user doesn't
+        exist.
+    """
+    user = None
+    if uid:
+        user = util.get_user_by_oauth_id(uid)
+    if user:
+        user_role = util.get_user_role_by_id(user[0])
+        return User(user[0], user[1], user[2],
+                    user[3], user[4], user_role[0])
+
+    return None
+
+
 def register(first_name, last_name, email, password):
     """This function registrates user.
     It will insert user's data via insert_user function
@@ -132,13 +151,13 @@ def register(first_name, last_name, email, password):
                             role_id)
 
 
-def facebook_register(first_name, last_name, email, password, provider, uid):
+def facebook_register(first_name, last_name, email, provider, uid):
     """This function registres user through facebook.
     It will insert user's data via insert_user function
     from util.
         :returns True if transaction finished successfully.
     """
-    salted_pass = hash_pass(password)
+    salted_pass = hash_pass(time.ctime())
     role_id = util.get_role_id('user')
     return util.facebook_insert(first_name, last_name, email, salted_pass,
                                 role_id, provider, uid)

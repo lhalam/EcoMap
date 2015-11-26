@@ -1,7 +1,6 @@
-  <div class="container user-profile">
-    <div class="row">
+<div class="container user-profile">
+  <div class="row">
     <div class="panel panel-default">
-      <a href="/#/map" class="close-button">&#10006;</a>
       <div class="panel-body">
         <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
           <div class="list-group">
@@ -12,23 +11,21 @@
             <a href="" class="list-group-item" ng-show="isAdmin()" ng-class="{ 'active': isSelected('faqEdit') }" ng-click="setTab('faqEdit')">Редагування F.A.Q.</a>
           </div>
         </div>
-
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userInfo')">
           <h3>Відомості про аккаунт</h3>
           <hr>
-            <div class="profile">
+          <div class="profile">
             <img
-                 class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
-                    <span class="text-content" ng-click = "showModalPhoto()"><span>змінити фото</span></span>
-            </div>
+            class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
+            <span class="text-content" ng-click = "showModalPhoto()"><span>змінити фото</span></span>
+          </div>
           <div class="user-info">
             <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
             <p><strong>Прізвище: </strong><span ng-bind="user.data.surname"></span></p>
             <p><strong>Електронна пошта: </strong> <span ng-bind="user.data.email"></span></p>
             <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>
-            </div>
+          </div>
           <br>
-
           <h3>Зміна пароля</h3>
           <hr>
           <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>
@@ -62,86 +59,74 @@
             <button class="btn btn-default" type='submit'>Змінити</button>
           </form>
         </div>
-
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userProblems')">
           <h3>Проблеми користувача</h3>
           <hr>
         </div>
-
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userComments')">
           <h3>Коментарі користувача</h3>
           <hr>
         </div>
-
         <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-if="isSelected('faqEdit')" ng-controller="FaqTableCtrl">
           <h3>Редагування F.A.Q.</h3>
           <hr>
           <table class="table table-hover">
-              <thead>
-               <tr>
-                 <td>Номер</td>
-                 <td>Назва інструкції</td>
-                 <td>Адреса інструкції</td>
-                 <td>Відображення</td>
-                 <td>Редагування</td>
-               </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="page in pages track by $index">
-                 <td ng-bind="page.id"></td>
-                 <td ng-bind="page.title"></td> 
-                 <td ng-bind="page.alias"></td>
-                 <td>
+            <thead>
+              <tr>
+                <td>Номер</td>
+                <td>Назва інструкції</td>
+                <td>Адреса інструкції</td>
+                <td>Відображення</td>
+                <td>Редагування</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="page in pages track by $index">
+                <td ng-bind="page.id"></td>
+                <td ng-bind="page.title"></td>
+                <td ng-bind="page.alias"></td>
+                <td>
                   <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
-                 </td>
-                 <td>
+                </td>
+                <td>
                   <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
                   <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
-                 </td>
-               </tr>
-              </tbody>
-            </table>
-            <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
-            <div class="clear"></div>
-            <hr>
-            <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
-            <div class="clear"></div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
+          <div class="clear"></div>
+          <hr>
+          <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
+          <div class="clear"></div>
         </div>
-
       </div>
     </div>
-    </div>
   </div>
+</div>
 
-  <div ui-view></div>
+
 <modal title="Додати фотографію профілю" visible="photo">
 <form name="uploadPhoto">
-        <div class="modal-resize">
-     <!--<span class="image-err" ng-show="uploadPhoto.file.$error.maxSize">
-            Розмір файлу перевищує максимальний!</span>
-        <span class="image-err" ng-show="uploadPhoto.file.$error.pattern">
-
-            Оберіть .JPG або .PNG! {{picFile.pattern }}</span> -->
-        <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
-                name="file" accept="image/*" ngf-pattern="'image/*'"
-                ngf-max-size="5MB" ngf-change="showCanvas(uploadPhoto)" required="">
-            Оберіть фото</button>
-        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
-        <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
-
-        <div class="cropArea" ngf-drop
-             ng-model="picFile" ngf-pattern="image/*">
-            <img-crop image="picFile  | ngfDataUrl" area-type="square"
-                      filename = "picFile.filename"
-            result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
-            </img-crop>
-        </div>
-        <button class="btn btn-success photo-btn "
-                ng-disabled="!uploadPhoto.$valid"
-                ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
-
-        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
-        </div>
-    </form>
-
+  <div class="modal-resize">
+    <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
+    name="file" accept="image/*" ngf-pattern="'image/*'"
+    ngf-max-size="5MB" ngf-change="showCanvas(uploadPhoto)" required="">
+    Оберіть фото</button>
+    <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
+    <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
+    <div class="cropArea" ngf-drop
+      ng-model="picFile" ngf-pattern="image/*">
+      <img-crop image="picFile  | ngfDataUrl" area-type="square"
+      filename = "picFile.filename"
+      result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
+      </img-crop>
+    </div>
+    <button class="btn btn-success photo-btn "
+    ng-disabled="!uploadPhoto.$valid"
+    ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
+    <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
+  </div>
+</form>
 </modal>

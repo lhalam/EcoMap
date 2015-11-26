@@ -23,7 +23,7 @@ def load_users():
     """
     if current_user.is_authenticated:
         g.user = current_user
-        logger.warning(g.user)
+        logger.info(g.user)
     else:
         anon = usr.Anonymous()
         g.user = anon.username

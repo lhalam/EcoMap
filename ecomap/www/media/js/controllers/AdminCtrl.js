@@ -440,11 +440,13 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             if(elem.id == perm.id){
                 $scope.listToSend.splice( index, 1 )
                 $scope.actualPermInRole.splice( index, 1 )
+               
             }
             console.log($scope.actualPermInRole.length)
          })
          //console.log($scope.actualPermInRole)
          delete $scope.selectPermObj[perm.id]
+         
     }
     // data for filter
     $scope.searchWord=""

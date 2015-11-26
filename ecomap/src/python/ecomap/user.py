@@ -28,10 +28,9 @@ class Anonymous(AnonymousUserMixin):
 LOGIN_MANAGER.anonymous_user = Anonymous
 
 
-
 class User(UserMixin):
 
-    """Class which describes User entity"""
+    """Class which describes User entity."""
 
     def __init__(self, uid, first_name, last_name, email, password, role, avatar):
         self.uid = uid

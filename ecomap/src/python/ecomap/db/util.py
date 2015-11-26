@@ -1,4 +1,4 @@
-"""This module contains functions for interacting with Database. validator"""
+"""This module contains functions for interacting with Database."""
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -752,7 +752,7 @@ def get_activity_by_problem_id(problem_id):
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
-        
+
 
 @retry_query(tries=3, delay=1)
 def get_id_problem_owner(problem_id):

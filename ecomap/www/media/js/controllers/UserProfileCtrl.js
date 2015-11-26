@@ -17,6 +17,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       });
   }
 
+
   $scope.selectedTab = "userInfo";
   $scope.setTab = function(tabName){
     $scope.selectedTab = tabName;
@@ -82,13 +83,13 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
     };
 
     $scope.showStatus = true;
-    $scope.uploadButtuon = false;
-    $scope.deleteButtuon = true;
+    $scope.uploadButton = false;
+    $scope.deleteButton = true;
 
     $scope.cancelImg = function(picFile){
         $scope.photo = false;
         $scope.showStatus = false;
-        $scope.uploadButtuon = false;
+        $scope.uploadButton = false;
         $scope.result = '';
         picFile = null;
         $scope.picFile = null;
@@ -96,41 +97,35 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       };
 
     $scope.showUploadButton = function(){
-        $scope.uploadButtuon = true;
-        $scope.deleteButtuon = false;
+        $scope.uploadButton = true;
+        $scope.deleteButton = false;
     };
 
+        $scope.check = function (formFile) {
+            if (formFile.$error.maxSize) {
+                return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
+            }
+            else if (formFile.$error.pattern) {
+                return toaster.pop('error', 'Фото профілю', 'Оберіть зображення в форматі .jpg або .png!');
+            } else {
+                return 'valid'
+            }
+        };
+
     $scope.showCanvas = function(formFile){
-
-        $scope.showStatus = true;
-        $scope.uploadButtuon = true;
-        //alert($scope.uploadPhoto.file.$error.maxSize)
-        var uploadForm = angular.element(document.getElementsByName('uploadPhoto'))[0];
-        //console.log(uploadForm.file.error)
-
-        if (formFile.$error.maxSize){
-            //alert(formFile)
-            //console.log(formFile)
-            console.log(formFile.$error);
-            toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
-            //console.log(formFile.$error.maxSize)
-            //alert(formFile.$error.maxSize)
+        $scope.uploadButton = false;
+            $scope.showStatus = false;
+        if ($scope.check(formFile) == 'valid') {
+            $scope.uploadButton = true;
+            $scope.showStatus = true;
         }
 
-        //alert(uploadPhoto.file.$error)
-        //console.log(uploadPhoto.file.$error)
-        //console.log(uploadPhoto.file.$error.maxSize)
-        //alert(uploadForm.file.error)
-
 };
-
-
-
-        $scope.setDefaultPhoto = function () {
-            $scope.user.data.avatar = 'http://placehold.it/150x150';
-            $scope.deletePhoto($scope.user.id);
-        return $scope.user.data.avatar;
-        };
+    $scope.setDefaultPhoto = function () {
+        $scope.user.data.avatar = 'http://placehold.it/150x150';
+        $scope.deletePhoto($scope.user.id);
+    return $scope.user.data.avatar;
+    };
 
   $scope.clearCanvas = function(picFile){
      var cnv = angular.element(document.getElementsByTagName('canvas'));
@@ -139,7 +134,7 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       var ctx = cnv2.getContext('2d');
       ctx.clearRect(0, 0, cnv2.width, cnv2.height);
       $scope.showStatus = false;
-      $scope.uploadButtuon = false;
+      $scope.uploadButton = false;
       $scope.result = '';
       console.log(picFile);
       uploadForm.file = null;
@@ -204,6 +199,8 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
         })
    	};
 
-
-
 }]);
+
+
+
+

@@ -613,3 +613,6 @@ def resource_name_exists(dictionary, keyname):
                 False - if it is in database
     """
     return db.get_resource_id(dictionary[keyname])
+
+def validate_image_file(file):
+    return True if str(imghdr.what(file)) == 'png' else False

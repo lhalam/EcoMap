@@ -1,4 +1,4 @@
-"""This module contains functions for interacting with Database."""
+"""This module contains functions for interacting with Database. validator"""
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -10,7 +10,7 @@ def get_user_by_email(email):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
                    FROM `user` WHERE `email`=%s;
                 """
         cursor.execute(query, (email,))
@@ -25,7 +25,7 @@ def get_user_by_id(user_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -125,6 +125,34 @@ def get_role_id(name='user'):
                    WHERE `name`=%s;"""
         cursor.execute(query, (name,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def insert_user_avatar(user_id, img_path):
+    """Insert new user  avatar into db.
+    :params: user_id - unique id user
+             img_path - path to avatar image
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `avatar` = %s WHERE id = %s;"""
+        cursor.execute(query, (img_path, user_id))
+        conn.commit()
+
+
+
+@retry_query(tries=3, delay=1)
+def delete_user_avatar(user_id):
+    """Deletes user profile photo from db.
+    :params: user_id - unique id user
+
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `avatar` = '' WHERE `id`=%s;"""
+        cursor.execute(query, (user_id,))
+        conn.commit()
+
 
 
 @retry_query(tries=3, delay=1)
@@ -229,7 +257,7 @@ def add_resource(resource_name):
 @retry_query(tries=3, delay=1)
 def edit_resource_name(new_resource_name, resource_id):
     """Edit resource name.
-    :params: newResourceource_name - new name of resource
+    :params: new_resource_name - new name of resource
              resource_id - id of  resource we change name
     """
     with db_pool().manager() as conn:
@@ -664,6 +692,22 @@ def get_all_users():
 
 
 @retry_query(tries=3, delay=1)
+def get_permission_control_data():
+    """Gets resources with permissions and role_permissions.
+    :return: list of permissions
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        sql = """SELECT r.name, res.resource_name, p.action, p.modifier
+                FROM role_permission AS rp
+                INNER JOIN role AS r ON rp.role_id = r.id
+                INNER JOIN permission AS p ON rp.permission_id = p.id
+                INNER JOIN resource AS res ON p.resource_id = res.id;"""
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def get_all_problems():
     """Return all problems in db.
     :return: tuple, containing all problems
@@ -676,6 +720,7 @@ def get_all_problems():
                 """
         cursor.execute(query)
         return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def get_problem_by_id(problem_id):
@@ -692,6 +737,7 @@ def get_problem_by_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def get_activity_by_problem_id(problem_id):
     """Return problem, found by id.
@@ -707,3 +753,68 @@ def get_activity_by_problem_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
         
+
+@retry_query(tries=3, delay=1)
+def get_id_problem_owner(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `created_date`, `problem_id`, `user_id`,
+                    `activity_type` FROM `problem_activity`
+                    WHERE `problem_id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_users_pagination(offset, per_page):
+    """Users per page
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` AS ur
+                   INNER JOIN `user` AS u ON ur.user_id = u.id
+                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   ORDER BY `id` LIMIT %s,%s;
+                """
+        cursor.execute(query % (offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def pagination_test(page, per_page, count):
+    """Users per page
+    """
+    if page == 1:
+        offset = 0
+    else:
+        offset = (page-1) * per_page
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` AS ur
+                   INNER JOIN `user` AS u ON ur.user_id = u.id
+                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   ORDER BY `id` LIMIT %s,%s;
+                """
+        cursor.execute(query % (offset, per_page))
+        return cursor.fetchall()
+
+
+
+
+@retry_query(tries=3, delay=1)
+def count_users():
+    """Users per page
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(*) FROM `user`;"""
+        cursor.execute(query)
+        return cursor.fetchone()

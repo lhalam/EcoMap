@@ -56,7 +56,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             $scope.Resources = data.data
 
         }, function errorCallback(response) {
-            console.log(response)
+            //console.log(response)
         });
 
         //load permisions
@@ -391,6 +391,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.rolePerm=false
 
     $scope.selectPerm=function(ev,perm){
+        console.log(perm)
         // Define all permision,wich already bind
         if(ev.currentTarget.classList.contains("selected")){
             ev.currentTarget.classList.remove("selected")
@@ -418,6 +419,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
        }
 
 
+    }
+
+    $scope.backToRole=function(){
+        $scope.rolePermTable = true
+        $scope.rolePermBlock = false
     }
     $scope.rolePermTable = true
     $scope.rolePermBlock = false

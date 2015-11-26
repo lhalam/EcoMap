@@ -98,6 +98,13 @@
              <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
           </div>
           </div>
+          <br>
+          <br>
+          <div class="row">
+            <div class="col-md-3 col-md-offset-9">
+              <button class="btn btn-info" ng-click="backToRole()">Повернутись до ролейі</button>
+            </div>
+          </div>
           <div class="row" ng-show="rolePermBlock">
 
              <div class="col-md-6">
@@ -118,7 +125,7 @@
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.id || perm.permission_id}}</td>
-                  <td>{{perm.descriprion}}</td>
+                  <td>{{perm.description}}</td>
                   <td><button class="btn btn-danger"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                </tr>
               </tbody>
@@ -192,7 +199,7 @@
 
               </tbody>
         </table>
-    <dsiv class="row">
+    <div class="row">
       <div class="col-md-8 col-md-offset-4">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
         </div>

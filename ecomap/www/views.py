@@ -33,7 +33,7 @@ def load_users():
         logger.info(current_user)
 
 
-@app.before_request
+# @app.before_request
 def check_access():
     """Global decorator for each view.
     Checks permissions to access app resources by each user's request.

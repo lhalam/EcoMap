@@ -6,14 +6,14 @@ import re
 
 from ecomap.db import util as db
 
-# variable, contains all possible enum in database
+# Variable, contains all possible enum in database.
 ENUM = {'action': ['POST', 'GET', 'PUT', 'DELETE'],
         'modifier': ['Any', 'Own', 'None']}
 
-# pattern to validate email is email
+# Pattern to validate email is email.
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
 
-# dictionary, contains all mininum and maximum lengths for keys
+# Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
            'first_name': [2, 255],
            'last_name': [2, 255],
@@ -23,7 +23,7 @@ LENGTHS = {'email': [5, 100],
            'role_name': [2, 255],
            'description': [2, 255]}
 
-# dictionary of error messages
+# Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_minimum_length': '%s value is too short.',
              'check_maximum_length': '%s value is too long.',
@@ -50,20 +50,23 @@ def user_registration(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_string(data, keyname):
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif not check_string(data[keyname]):
             status['error'].append({keyname: ERROR_MSG['check_string']
                                     % keyname})
-        elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
             status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                     % keyname})
-        elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
             status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                     % keyname})
-        elif keyname == 'email':
-            if not check_email(data, keyname):
+        elif keyname is 'email':
+            if not check_email(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_email']
                                         % keyname})
-            elif check_email_exist(data, keyname):
+            elif check_email_exist(data[keyname]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_email_exist']})
 
@@ -87,16 +90,19 @@ def user_login(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_string(data, keyname):
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif not check_string(data[keyname]):
             status['error'].append({keyname: ERROR_MSG['check_string']
                                     % keyname})
-        elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
             status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                     % keyname})
-        elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
             status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                     % keyname})
-        elif keyname == 'email' and not check_email(data, keyname):
+        elif keyname is 'email' and not check_email(data[keyname]):
             status['error'].append({keyname: ERROR_MSG['check_email']
                                     % keyname})
 
@@ -119,12 +125,14 @@ def resource_post(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_string(data, keyname):
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+    elif not check_string(data[keyname]):
         status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-    elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+    elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
         status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                 % keyname})
-    elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+    elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
         status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                 % keyname})
 
@@ -150,22 +158,22 @@ def resource_put(data):
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key']
                                     % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
-        elif keyname == 'resource_name':
-            if not check_string(data, keyname):
+        elif keyname is 'resource_name':
+            if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
                                         % keyname})
-            elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_minimum_length']
                                         % keyname})
-            elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
-            elif resource_name_exists(data, keyname):
+            elif resource_name_exists(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['name_exists']
                                         % data[keyname]})
 
@@ -188,7 +196,7 @@ def resource_delete(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty']
                                 % keyname})
 
@@ -211,17 +219,17 @@ def role_post(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
-    elif not check_string(data, keyname):
+    elif not check_string(data[keyname]):
         status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-    elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+    elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
         status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                 % keyname})
-    elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+    elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
         status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                 % keyname})
-    elif role_name_exists(data, keyname):
+    elif role_name_exists(data[keyname]):
         status['error'].append({keyname: ERROR_MSG['name_exists']
                                 % data[keyname]})
 
@@ -245,22 +253,22 @@ def role_put(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
-        elif keyname == 'role_name':
-            if not check_string(data, keyname):
+        elif keyname is 'role_name':
+            if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
                                         % keyname})
-            elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_minimum_length']
                                         % keyname})
-            elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
-            elif role_name_exists(data, keyname):
+            elif role_name_exists(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['name_exists']
                                         % data[keyname]})
 
@@ -283,7 +291,7 @@ def role_delete(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
 
     if status['error']:
@@ -308,22 +316,22 @@ def permission_post(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
         elif (keyname in ['action', 'modifier']):
-            if not check_enum_value(data, keyname, ENUM[keyname]):
+            if not check_enum_value(data[keyname], ENUM[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_enum_value']
                                         % keyname})
-        elif keyname == 'description':
-            if not check_string(data, keyname):
+        elif keyname is 'description':
+            if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
                                         % keyname})
-            elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_minimum_length']
                                         % keyname})
-            elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
@@ -350,22 +358,22 @@ def permission_put(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
         elif keyname in ['action', 'modifier']:
-            if not check_enum_value(data, keyname, ENUM[keyname]):
+            if not check_enum_value(data[keyname], ENUM[keyname]):
                 status['error'].append({keyname: ERROR_MSG['is_in_enum']
                                         % keyname})
-        elif keyname == 'description':
-            if not check_string(data, keyname):
+        elif keyname is 'description':
+            if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
                                         % keyname})
-            elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_minimum_length']
                                         % keyname})
-            elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
@@ -389,7 +397,7 @@ def permission_delete(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
 
     if status['error']:
@@ -413,7 +421,7 @@ def role_permission_post(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
 
@@ -448,7 +456,7 @@ def role_permission_delete(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
 
     if status['error']:
@@ -472,7 +480,7 @@ def user_role_put(data):
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not check_empty(data, keyname):
+        elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
 
@@ -496,14 +504,14 @@ def change_password(data):
 
     if not has_key(data, keyname):
         status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not check_empty(data, keyname):
+    elif not data[keyname]:
         status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
-    elif not check_string(data, keyname):
+    elif not check_string(data[keyname]):
         status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-    elif not check_minimum_length(data, keyname, LENGTHS[keyname][0]):
+    elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
         status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                 % keyname})
-    elif not check_maximum_length(data, keyname, LENGTHS[keyname][1]):
+    elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
         status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                 % keyname})
 
@@ -524,96 +532,78 @@ def has_key(dictionary, keyname):
     return keyname in dictionary
 
 
-def check_minimum_length(dictionary, keyname, minimum):
+def check_minimum_length(string, minimum):
     """Validator function which checks if string is bigger than
        minimum value.
-       :params: dictionary - dictionary
-                keyname - key
+       :params: string - string to check
                 minimum - minimal length
     """
-    return len(dictionary[keyname]) >= minimum
+    return len(string) >= minimum
 
 
-def check_maximum_length(dictionary, keyname, maximum):
+def check_maximum_length(string, maximum):
     """Validator function which checks if string is smaller than
        minimum value.
-       :params: dict - json dictionary
-                keyname - dictionary key we want to check
+       :params: string - string to check
                 minimum - minimal length
     """
-    return len(dictionary[keyname]) <= maximum
+    return len(string) <= maximum
 
 
-def check_email(dictionary, keyname):
+def check_email(email):
     """Validator function, which checks if string is similar to email.
        Uses regular expression pattern, declared above.
-       :params: dictionary - dictionary
-                keyname - key
+       :params: email - string to check
        :return: True - if string is similar to pattern
                 False - if not
     """
-    return EMAIL_PATTERN.match(dictionary[keyname])
+    return EMAIL_PATTERN.match(email)
 
 
-def check_string(dictionary, keyname):
+def check_string(value):
     """Validator function which checks if json value is string.
-       :params: dictionary - dictionary
-                keyname - key
+       :params: value - string to check
        :return: True - if value is string
                 False - if it is not
     """
-    return isinstance(dictionary[keyname], basestring)
+    return isinstance(value, basestring)
 
 
-def check_enum_value(dictionary, keyname, enum):
+def check_enum_value(value, enum):
     """Validator function which checks if json value is in enum.
-       :params: dictionary - dictionary
-                keyname - key
-                enum - list of values
+       :params: value - string to check
        :return: True - if value in enum
                 False - if it is not
     """
-    return dictionary[keyname] in enum
+    return value in enum
 
 
-def check_email_exist(dictionary, keyname):
+def check_email_exist(email):
     """Validator function which checks if email is allready in database.
        :params: dictionary - dictionary
                 keyname - key (email)
        :return: True - if email is free not in database
                 False - if it is in database
     """
-    return db.get_user_by_email(dictionary[keyname])
+    return db.get_user_by_email(email)
 
 
-def check_empty(dictionary, keyname):
-    """Validator function to check if dictionary key is not empty.
-       :params: dictionary - dictionary
-                keyname - key
-       :return: True - if value is not empty
-                False - if it is empty
-    """
-    return dictionary[keyname]
-
-
-def role_name_exists(dictionary, keyname):
+def role_name_exists(role_name):
     """Validator function which checks if role name is allready in database.
-       :params: dictionary - dictionary
-                keyname - key
+       :params: role_name - string to check
        :return: True - if name is free not in database
                 False - if it is in database
     """
-    return db.get_role_id(dictionary[keyname])
+    return db.get_role_by_name(role_name)
 
 
-def resource_name_exists(dictionary, keyname):
+def resource_name_exists(resource_name):
     """Validator function which checks if resource name is allready in database.
-       :params: dictionary - dictionary
-                keyname - key
+       :params: resource_name - string to check
        :return: True - if resource is free not in database
                 False - if it is in database
     """
-    return db.get_resource_id(dictionary[keyname])
+    return db.get_resource_id(resource_name)
 
 
 def validate_image_file(img_file):
@@ -622,4 +612,4 @@ def validate_image_file(img_file):
     :return: True - if if extension is valid
                 False - if file not in png format
     """
-    return True if str(imghdr.what(img_file)) == 'png' else False
+    return True if str(imghdr.what(img_file)) is 'png' else False

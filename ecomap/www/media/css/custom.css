@@ -196,7 +196,7 @@ body{
 }
 
 form{
-  background:#f0f0f0;
+  /*background:#f0f0f0;*/
   padding:6% 4%;
 }
 
@@ -359,18 +359,14 @@ form{
     position: relative;
 }
 
-.close-button{
+.user-profile .close-button{
     font-size: 30px;
-    color: #444;
     font-weight: 700;
     position: absolute;
     right: 20px;
     top: 0;
     text-decoration: none;
-}
-.close-button:hover{
-  text-decoration: none;
-  color: #888;
+    color:black;
 }
 
 .del, .def:hover{
@@ -400,4 +396,15 @@ form{
 .error-404 .video-fluid{
   width: 100%;
   height: 600px;
+}
+
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: url('http://bradsknutson.com/wp-content/uploads/2013/04/page-loader.gif') 50% 50% no-repeat rgb(249,249,249);
 }

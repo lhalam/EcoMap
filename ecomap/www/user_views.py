@@ -1,11 +1,15 @@
 """Module contains routes for user page."""
-import json
 
-from flask import request, jsonify, Response
-from flask_login import login_required
+import imghdr
+import json
+import os
 
 import ecomap.user as usr
 
+from flask import request, jsonify, Response
+from flask_login import login_required, current_user
+
+from ecomap.db import util as db
 from ecomap import validator
 from ecomap.app import app
 

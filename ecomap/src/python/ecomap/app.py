@@ -16,20 +16,11 @@ get_logger()
 logger = logging.getLogger('flask_app')
 app.config['SECRET_KEY'] = 'a7c268ab01141868811c070274413ea3c588733241659fcb'
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)     # user time lib
-# app.config['OAUTH_CREDENTIALS'] = {
-#     'facebook': {
-#         'id': '399515533592508',
-#         'secret': '554d6845d39693ccf43f93a01f6d1149'
-#     }
-# }
 
 FACEBOOK_APP_ID = '399515533592508'
 FACEBOOK_APP_SECRET = '554d6845d39693ccf43f93a01f6d1149'
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
-# app = Flask(__name__)
-# app.debug = True
-# app.secret_key = 'development'
 oauth = OAuth(app)
 
 facebook = oauth.remote_app(
@@ -39,8 +30,6 @@ facebook = oauth.remote_app(
     request_token_params={'return_scopes': 'true', 'scope': ['public_profile', 'email', 'user_likes']},
     base_url='https://graph.facebook.com',
     request_token_url=None,
-
-    # access_token_params = {'email'},
     access_token_url='/oauth/access_token',
     access_token_method='GET',
     authorize_url='https://www.facebook.com/dialog/oauth'

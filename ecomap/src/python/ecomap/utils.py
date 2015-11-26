@@ -2,8 +2,7 @@ import logging
 import logging.config
 import os
 
-# CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
-CONF_PATH = '/home/padalko/ss_projects/Lv-164.UI/ecomap/etc/log.conf'
+CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 
 
 def get_logger():

@@ -1,6 +1,7 @@
 """Validator module.
    Contains function to validate different forms in browser.
 """
+import imghdr
 import re
 
 from ecomap.db import util as db
@@ -614,5 +615,11 @@ def resource_name_exists(dictionary, keyname):
     """
     return db.get_resource_id(dictionary[keyname])
 
-def validate_image_file(file):
-    return True if str(imghdr.what(file)) == 'png' else False
+
+def validate_image_file(img_file):
+    """Custom validation by file type.
+    :parems: img_file - file uploaded by user in base64
+    :return: True - if if extension is valid
+                False - if file not in png format
+    """
+    return True if str(imghdr.what(img_file)) == 'png' else False

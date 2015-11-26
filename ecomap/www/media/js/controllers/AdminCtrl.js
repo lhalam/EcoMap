@@ -16,6 +16,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         "2":"moderator",
         "3":"user"
     }
+    $scope.selectCountObj={
+        "1":'5',
+        "2":"10",
+        "3":"15"
+    }
+    $scope.selectCount={
+        'selected':"5"
+    }
 
     $scope.msg = {
         editSuccess: function(msg){
@@ -58,10 +66,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
-                console.log($scope.Permisions)
+                //console.log($scope.Permisions)
                 
             }, function errorCallback(response) {
-                console.log(response)
+                //console.log(response)
             })
 
         // load roles
@@ -72,9 +80,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                console.log($scope.Roles)
+                //console.log($scope.Roles)
             },function errorCallback(response) {
-                console.log(response)
+                //console.log(response)
             })
 
         $http({
@@ -83,10 +91,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
                 //$scope.Roles=data.
                 $scope.Users=data.data
-                console.log("user_roles")
-                console.log(data)
+                //console.log("user_roles")
+
             },function errorCallback(response) {
-                console.log(response)
+                //console.log(response)
             })
 
     }
@@ -117,16 +125,18 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         method:"PUT",
         url:"/api/resources",
         data:{
-          "resource_name":$scope.editResObj['name'],
+          "new_resource_name":$scope.editResObj['name'],
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
+            $scope.editResModal = false;
             $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
-            console.log("response")
+            //console.log("response")
             $scope.msg.editError('ресурсу');
             //$scope.addResModal=false
         })
+
     };
 
 
@@ -177,17 +187,19 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             }
         }).then(function successCallback(data) {
         // add resource to scope
-        console.log($scope.newResource.name)
+        //console.log($scope.newResource.name)
+        $scope.addResModal = false;
         $scope.Resources[data.data.added_resource]=data.data.resource_id
         $scope.addResModal=false
         $scope.msg.createSuccess('ресурсу');
         }, function errorCallback(response) {
-            console.log($scope.newResource.name)
+            //console.log($scope.newResource.name)
             $scope.addResModal=false
             //$scope.Eror=response.data.error
             //$scope.customEror=true
             $scope.msg.createError('ресурсу');
         });
+
     };
 
 
@@ -218,6 +230,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             "description":$scope.perm['description']
             } 
         }).then(function successCallback(data) {
+            $scope.addPermModal = false;
             $scope.msg.createSuccess('права');
         }, function errorCallback(response) {
             $scope.msg.createError('права');
@@ -246,9 +259,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
                 $scope.editPermModal = false;
                 $scope.msg.editSuccess('права');
+
             }, function errorCallback(response) {
                 $scope.msg.editError('права');
-                console.log(response)
+                //console.log(response)
             })
     };
     $scope.deletePerm=function(perm){
@@ -296,6 +310,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.role = {};
 
     $scope.addRoleSubmit = function(){
+        console.log($scope.role['name'])
          $http({
                 method:"POST",
                 url:"/api/roles",
@@ -305,6 +320,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             }).then(function successCallback(data) {
                 $scope.msg.createSuccess('ролі');
                 $scope.Roles[data.data.added_role]=data.data.added_role_id;
+                $scope.addRoleModal = false;
             }, function errorCallback(response) {
                 //try {
                 //    $scope.Eror=response.data[0].validation_error;
@@ -337,7 +353,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 //$scope.customEror=true
                 $scope.msg.deleteError('ролі');
                 }
-                console.log(data)
+                //console.log(data)
             }, function errorCallback(response) {
                 //$scope.Eror=response
                 //$scope.customEror=true
@@ -346,7 +362,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }
         $scope.editRoleObj={}
         $scope.editRole=function(){
-            console.log()
+            //console.log()
             $http({
                     method:"PUT",
                     url:"/api/roles",
@@ -356,6 +372,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                     }
                 }).then(function successCallback(data) {
                 $scope.msg.editSuccess('ролі');
+                $scope.editRoleModal=false
                 },function errorCallback(response) {
                 //$scope.Eror=response
                 //$scope.customEror=true
@@ -377,24 +394,41 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         // Define all permision,wich already bind
         if(ev.currentTarget.classList.contains("selected")){
             ev.currentTarget.classList.remove("selected")
+            $scope.actualPermInRole.splice($scope.actualPermInRole.indexOf(perm.permission_id),1)
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
-            delete $scope.selectPermObj[perm.permission_id]     
+            //$scope.actualPermList.splice($scope.actualPermList.indexOf(perm.permission_id), 1 )
+            delete $scope.selectPermObj[perm.permission_id]
         }
         else{
             ev.currentTarget.classList.add("selected")
             $scope.listToSend.push(perm.permission_id)
             $scope.selectPermObj[perm.permission_id]=perm
+            console.log(perm)
+            $scope.actualPermInRole.push(perm)
+            $scope.actualPermList.push(perm.permission_id)
+            console.log($scope.actualPermInRole)
 
         }
 }
-    
+    $scope.isChecked=function(perm){
+       if($scope.listToSend){
+         if($scope.listToSend.indexOf(perm.permission_id) !== -1){
+                return true
+        }
+       }
+
+
+    }
+    $scope.rolePermTable = true
+    $scope.rolePermBlock = false
     $scope.showRolePerm=function(name,id){
-        $scope.rolePerm=true
+        $scope.rolePermTable = false
+        $scope.rolePermBlock = true
         $scope.rolePermObj={
             "name":name,
             "id":id
         }
-        console.log($scope.rolePermObj.id)
+
         $scope.selectPermObj={}
         $scope.listToSend=[]
 
@@ -405,11 +439,13 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 role_id:$scope.rolePermObj.id
             }
         }).then(function successCallback(data) {
+                console.log(data)
                 $scope.actualPermInRole = data.data.actual
                 for(var i=0;i < $scope.actualPermInRole.length;i++){
                 if($scope.listToSend.indexOf($scope.actualPermInRole[i].id) == -1){
                 $scope.listToSend.push($scope.actualPermInRole[i].id)
                 $scope.selectPermObj[$scope.actualPermInRole[i].id]=$scope.actualPermInRole[i]
+                $scope.rolePerm=false
             }
             
         }
@@ -417,12 +453,12 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 If listToSend contains it, ng-show return false
             */
             $scope.checkInActual=function(id){
-                //console.log($scope.listToSend)
-                var list=[]
+                ////console.log($scope.listToSend)
+                $scope.actualPermList=[]
                      $scope.actualPermInRole.forEach(function(elem){
-                        list.push(elem.id)
+                        $scope.actualPermList.push(elem.id)
                      })
-                if(list.indexOf(id) !=-1){
+                if($scope.actualPermList.indexOf(id) !==-1){
                     return false
                     }
                 else return true
@@ -432,19 +468,21 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             })
 
     }
+
+
     $scope.deletePermFormRole=function(perm){
-        $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
-        $scope.actualPermInRole.forEach(function(elem,index){
-            //console.log("Elem id :"+elem.id)
-            console.log($scope.actualPermInRole)
+            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
+            $scope.actualPermInRole.forEach(function(elem,index){
+                ////console.log("Elem id :"+elem.id)
+                //console.log($scope.actualPermInRole)
             if(elem.id == perm.id){
                 $scope.listToSend.splice( index, 1 )
                 $scope.actualPermInRole.splice( index, 1 )
                
             }
-            console.log($scope.actualPermInRole.length)
+            //console.log($scope.actualPermInRole.length)
          })
-         //console.log($scope.actualPermInRole)
+         ////console.log($scope.actualPermInRole)
          delete $scope.selectPermObj[perm.id]
          
     }
@@ -458,8 +496,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
         }
-        // console.log($scope.listToSend);
-        console.log($scope.rolePermObj.id)
+        //console.log($scope.listToSend);
          $http({
             method:"PUT",
             url:"/api/role_permissions",
@@ -468,7 +505,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "permission_id":$scope.listToSend
             }
             }).then(function successCallback(data) {
+
+
+
+                //$scope.actualPermInRole.push()
+                //console.log($scope.actualPermInRole)
                 $scope.msg.editSuccess('прав');
+                 $scope.rolePermTable = true
+                $scope.rolePermBlock = false
             }, function errorCallback(response) {
                 $scope.msg.editError('прав');
             })
@@ -494,10 +538,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     //Users
     $scope.changeRole=function(user_obj){
+        console.log(user_obj)
         var role_id;
         for (role in $scope.role_obj){
-            if($scope.role_obj[role] == user_obj.role){
-                console.log($scope.role_obj[role] )
+            if($scope.role_obj[role] == user_obj.role_name){
+                //console.log($scope.role_obj[role] )
                 role_id = role
             }
         }
@@ -506,7 +551,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             url:"/api/user_roles",
             data:{
                 "role_id":role_id,
-                "user_id":user_obj.user_id
+                "user_id":user_obj.id
             }
         }).then(function successCallback(data) {
                 $scope.msg.editSuccess('користувача');
@@ -516,5 +561,81 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.msg.editError('користувача');
             })
     }
+   // Pagination
+   $scope.loadPagination=function(){
+
+    $http({
+        method:"GET",
+        url:"/api/user_page",
+        params:{
+            per_page:4,
+            offset:0,
+        }
+    }).then(function successCallback(data) {
+                console.log(data)
+            }, function errorCallback(response) {
+                //$scope.Eror=response
+                //$scope.customEror=true
+                $scope.msg.editError('користувача');
+    })
+
+
+  $scope.totalItems = 62;
+  $scope.currentPage = 3;
+  $scope.fromPage = 1;
+  $scope.bigCurrentPage = 1;
+  $scope.bigTotalItems = $scope.Users.length / $scope.selectCount['selected']*10;
+  if($scope.bigCurrentPage === 1){
+    $http({
+        method:"GET",
+        url:"/api/user_page",
+        params:{
+            per_page:$scope.selectCount['selected'],
+            offset:0,
+        }
+        }).then(function successCallback(data) {
+            $scope.selectedUsers = data.data
+                console.log(data)
+            }, function errorCallback(response) {
+                //$scope.Eror=response
+                //$scope.customEror=true
+                $scope.msg.editError('користувача');
+    })
+  }
+
+
+  $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
+
+    $scope.bigTotalItems = $scope.Users.length / $scope.selectCount['selected']*10;
+    var stepCount =$scope.selectCount['selected']
+    console.log("new :"+$scope.selectCount['selected']*newValue)
+    console.log($scope.selectCount['selected']*newValue - stepCount)
+        $http({
+        method:"GET",
+        url:"/api/user_page",
+        params:{
+            per_page:$scope.selectCount['selected'],
+            offset:$scope.selectCount['selected']*newValue -stepCount,
+        }
+        }).then(function successCallback(data) {
+            $scope.selectedUsers = data.data
+                console.log(data)
+            }, function errorCallback(response) {
+                //$scope.Eror=response
+                //$scope.customEror=true
+                $scope.msg.editError('користувача');
+    })
+    });
+   $scope.change=function(currPage){
+        $scope.bigCurrentPage = currPage
+
+
+    }
+
+  $scope.maxSize = 6;
+
+  console.log($scope.bigTotalItems)
+   }
+
 
 }]);

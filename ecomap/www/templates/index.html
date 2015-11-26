@@ -57,7 +57,10 @@
   <!-- AngularJS directives -->
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
-
+  <script type="text/javascript">
+  $(window).load(function() {
+  $(".loader").fadeOut("slow");
+  })</script>
 </head>
 <body ng-controller="MainCtrl">
   <div id="fb-root"></div>

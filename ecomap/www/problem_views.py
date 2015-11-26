@@ -61,3 +61,52 @@ def detailed_problem(problem_id):
             })
 
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+# @app.route('/api/problem_post', methods=['POST'])
+# def post_problem():
+# 	"""Function which adds data from problem form to DB.
+# 	:return: If request data is invalid:
+# 			 	{'status': False, 'error': [list of errors]}, 400
+# 			 If all ok:
+# 			 	{'added_problem': 'problem_title'
+# 			 	 'problem_id': 'problem_id'}
+
+# 	"""
+# 	data = request.get_json()
+
+# 	valid = validator.problem_post(data)
+
+# 	if valid['status']:
+# 		if 
+
+
+
+
+
+
+ """Function which edits resource name.
+    :return: If there is already resource with this name:
+                 {'error': 'resource already exists'}, 400
+             If request data is invalid:
+                 {'status': False, 'error': [list of errors]}, 400
+             If all ok:
+                 {'added_resource': 'resource_name',
+                  'resource_id': 'resource_id'}
+    """
+    # data = request.get_json()
+
+    # valid = validator.resource_post(data)
+
+    # if valid['status']:
+    #     if db.get_resource_id(data['resource_name']):
+    #         return jsonify(error='Resource already exists'), 400
+
+    #     db.add_resource(data['resource_name'])
+    #     added_res_id = db.get_resource_id(data['resource_name'])
+    #     response = jsonify(added_resource=data['resource_name'],
+    #                        resource_id=added_res_id[0])
+    # else:
+    #     response = Response(json.dumps(valid),
+    #                         mimetype='application/json'), 400
+    # return response

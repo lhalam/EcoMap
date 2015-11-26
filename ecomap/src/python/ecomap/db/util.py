@@ -755,9 +755,9 @@ def get_activity_by_problem_id(problem_id):
         return cursor.fetchone()
 
 @retry_query(tries=3, delay=1)
-def post_problem_into_problem_table(title,content,proposal,latitude,
-                                    latitude,longitude,created_date,
-                                    problem_type_id,user_id):
+def post_problem_into_problem_table(title, content, proposal, latitude,
+                                    longitude, created_date,
+                                    problem_type_id, user_id):
     """Inserts problem data into "problem" table from form which user
     have filled in.
     :params: title - title of problem
@@ -768,7 +768,17 @@ def post_problem_into_problem_table(title,content,proposal,latitude,
             problem_type_id - type of problem in our system
             user_id - id of user who have created problem
     """
-    pass
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ INSERT INTO `problem` (`title`,`content`,`proposal`,
+                    `latitude`,`longtitude`,`created_date`,
+                    `problem_type_id`,`user_id`) VALUES (%s, %s, %s, %s,
+                    %s, %s, %s, %s);
+                """
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longitude, created_date,
+                               problem_type_id, user_id))
+        conn.commit()
 
 @retry_query(tries=3, delay=1)
 def post_problem_into_problem_activity_table(problem_id,user_id):

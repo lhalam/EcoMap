@@ -32,7 +32,8 @@ class User(UserMixin):
 
     """Class which describes User entity."""
 
-    def __init__(self, uid, first_name, last_name, email, password, role, avatar):
+    def __init__(self, uid, first_name, last_name, email, password, role,
+                 avatar=None):
         self.uid = uid
         self.first_name = first_name
         self.last_name = last_name

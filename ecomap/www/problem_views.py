@@ -65,38 +65,46 @@ def detailed_problem(problem_id):
 
 @app.route('/api/problem_post', methods=['POST'])
 def post_problem():
-	"""Function which adds data from problem form to DB.
+    """Function which adds data from problem form to DB.
 	:return: If request data is invalid:
 			 	{'status': False, 'error': [list of errors]}, 400
 			 If all ok:
 			 	{'added_problem': 'problem_title'
 			 	 'problem_id': 'problem_id'}
-
 	"""
-	data = request.get_json()
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        
+        valid = validator.problem_post(data)
 
-	valid = validator.problem_post(data)
+        if valid['status']:
+            logger.warning('!!!problem')
+            logger.warning(data)
+            db.post_problem_into_problem_table(data['title'],
+                                               data['content'],
+                                               data['proposal'],
+                                               data['latitude'],
+                                               data['longtitude'],
+                                               data['created_date'],
+                                               data['problem_type_id'],
+                                               data['user_id'])
+            response = jsonify(added_problem=data['title'])
+        else:
+            response = Response(json.dumps(valid),
+                                mimetype='application/json'), 400
+        return response
 
-	logger.warning("!!!!!!!!!!!!!!!Problem data")
-	logger.warning(data)
-	return True
-
-	# if valid['status']:
-	# 	if db.post_problem_into_problem_table
 
 
 
-
-
-
- 	"""Function which edits resource name.
-    	:return: If there is already resource with this name:
-                 {'error': 'resource already exists'}, 400
-             If request data is invalid:
-                 {'status': False, 'error': [list of errors]}, 400
-             If all ok:
-                 {'added_resource': 'resource_name',
-                  'resource_id': 'resource_id'}
+"""Function which edits resource name.
+:return: If there is already resource with this name:
+{'error': 'resource already exists'}, 400
+If request data is invalid:
+{'status': False, 'error': [list of errors]}, 400
+If all ok:
+{'added_resource': 'resource_name',
+'resource_id': 'resource_id'}
     """
     # data = request.get_json()
 

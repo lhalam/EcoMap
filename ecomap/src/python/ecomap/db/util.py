@@ -369,7 +369,7 @@ def insert_permission(resource_id, action, modifier, description):
         cursor.execute(query, (resource_id, action, modifier, description))
         conn.commit()
 
-
+@retry_query(tries=3, delay=1)
 def edit_permission(action, modifier, permission_id, description):
     """Edit permission.
     :params: action - action (POST, GET, DELETE, PUT)

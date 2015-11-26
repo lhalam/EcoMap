@@ -71,7 +71,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     }
     $scope.loadRole=function(){
-        $http({
+         $http({
                 method:"GET",
                 url:"/api/roles",
 
@@ -81,6 +81,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             },function errorCallback(response) {
                 //console.log(response)
             })
+
     }
 
     $scope.loadData=function(){
@@ -144,7 +145,30 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.addResModal = false;
     $scope.triggerAddResModal = function(){
         $scope.addResModal = true;
+        $scope.newResource = {};
     };
+
+     $scope.addResource = function(){
+         
+         console.log($scope.newResource)
+         $http({
+            method: "POST",
+            url: "/api/resources",
+            data:{
+                'resource_name': $scope.newResource.name
+            }
+        }).then(function successCallback(data) {
+        $scope.loadRes()
+        $scope.addResModal=false
+        $scope.msg.createSuccess('ресурсу');
+        }, function errorCallback(response) {
+            $scope.addResModal=false
+            $scope.msg.createError('ресурсу');
+        });
+
+    };
+
+
 
     $scope.editResModal = false;
 
@@ -190,23 +214,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
             //if accepted data has attribute  'deleted_resource',delete prop
             $scope.loadRes()
-            /*if(data.data['deleted_resource']){
-                deletedResId=data.data['deleted_resource']
-                for (name in $scope.Resources) {
-                    if ($scope.Resources[name] === deletedResId){
-                        delete $scope.Resources[name]
-                        $scope.msg.deleteSuccess('ресурсу');
-                    }
-                }
-            }
-            else {
-                    //$scope.Eror=data.data['error']
-                    //$scope.customEror=true
-                    $scope.msg.deleteError('ресурсу');
-                }*/        
+            $scope.msg.deleteSuccess('ресурсу');
         }, function errorCallback(response) {
-            //$scope.Eror=response.statusText
-            //$scope.customEror=true
             $scope.msg.deleteError('ресурсу');
         })
    	};
@@ -214,32 +223,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     //Create new resource object 
 
    
-    $scope.newResource = {};
-    $scope.addResource = function(){
-         $http({
-            method: "POST",
-            url: "/api/resources",
-            data:{
-                'resource_name': $scope.newResource.name
-            }
-        }).then(function successCallback(data) {
-        // add resource to scope
-        //console.log($scope.newResource.name)
-        $scope.addResModal = false;
-        //$scope.Resources[data.data.added_resource]=data.data.resource_id
-        //delete $scope.newResource['name']
-        $scope.addResModal=false
-        $scope.msg.createSuccess('ресурсу');
-        }, function errorCallback(response) {
-            //console.log($scope.newResource.name)
-            $scope.addResModal=false
-            //$scope.Eror=response.data.error
-            //$scope.customEror=true
-            $scope.msg.createError('ресурсу');
-        });
-
-    };
-
 
     //permission section
 
@@ -247,12 +230,12 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.addPermModal = false;
     $scope.showAddPermModal = function(){
     	$scope.addPermModal = true;
+        $scope.perm = {};
     };
     $scope.show=function(){
        var name= $scope.perm.resource_name
     }
     // create obj for new permision
-    $scope.perm = {};
     $scope.addPermSubmit = function(){
         // get resorce id  from client chose in front end
         var id= $scope.Resources[$scope.perm.resource_name]
@@ -298,6 +281,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
                 $scope.editPermModal = false;
                 $scope.msg.editSuccess('права');
+                $scope.loadPerm()
 
             }, function errorCallback(response) {
                 $scope.msg.editError('права');
@@ -315,6 +299,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
             $scope.loadPerm()
             $scope.msg.deleteSuccess('права');
+            console.log(data)
+            
             console.log(data)
             }, function errorCallback(response) {
                  $scope.msg.deleteError('права');

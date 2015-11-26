@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="/css/admin.css">
 
-<toaster-container></toaster-container>
 
 
 <div class="container" >
@@ -29,8 +28,10 @@
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
                   <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
                   <td>
-                    <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
-                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a>
+                  <button class="btn btn-primary edit_btn" ng-click="showEditResModal(resource_name,resource_id)">редагувати</button>
+                  <button class="btn btn-danger edit_btn" ng-click="deleteResource(resource_id)">видалити</button>
+                    <!-- <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
+                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a> -->
                   </td>
                 </tr>
                 
@@ -60,8 +61,10 @@
                  <td>{{permision.modifier}}</td>
                  <td>{{permision.description}}</td> 
                  <td>
-                  <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a>
+                  <button class="btn btn-primary edit_btn" ng-click="showEditPermModal(permision)">редагувати</button>
+                  <button class="btn btn-danger edit_btn" ng-click="deletePerm(permision)">видалити</button>
+                  <!-- <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a> -->
                  </td>
                </tr>
              

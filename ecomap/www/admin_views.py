@@ -219,7 +219,7 @@ def role_delete():
             response = jsonify(msg='success',
                                    deleted_role=data['role_id'])
         else:
-            response = jsonify(error='Cannot delete!')
+            response = jsonify(error='Cannot delete!') ,400 
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

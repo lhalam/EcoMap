@@ -10,7 +10,8 @@ def get_user_by_email(email):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`,
+                   `password`, `avatar`
                    FROM `user` WHERE `email`=%s;
                 """
         cursor.execute(query, (email,))
@@ -25,7 +26,8 @@ def get_user_by_id(user_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `email`,
+                   `password`, `avatar`
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -154,7 +156,6 @@ def insert_user_avatar(user_id, img_path):
         conn.commit()
 
 
-
 @retry_query(tries=3, delay=1)
 def delete_user_avatar(user_id):
     """Deletes user profile photo from db.
@@ -166,7 +167,6 @@ def delete_user_avatar(user_id):
         query = """UPDATE `user` SET `avatar` = '' WHERE `id`=%s;"""
         cursor.execute(query, (user_id,))
         conn.commit()
-
 
 
 @retry_query(tries=3, delay=1)
@@ -291,19 +291,6 @@ def get_all_roles():
         query = """SELECT `id`, `name` FROM `role`;"""
         cursor.execute(query)
         return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def get_role_id(role_name):
-    """Return role id.
-    :params: role_name - name of role
-    :return: tuple, containing role id
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `id` FROM `role` WHERE `name`=%s;"""
-        cursor.execute(query, (role_name,))
-        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)
@@ -801,7 +788,7 @@ def get_users_pagination(offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
-def pagination_test(page, per_page, count):
+def pagination_test(page, per_page):
     """Users per page
     """
     if page == 1:

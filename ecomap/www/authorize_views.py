@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user, login_required
 
 from urlparse import parse_qsl
 
-import ecomap.user as usr
+import ecomap.user as ecomap_usr
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -55,10 +55,10 @@ def register():
         valid = validator.user_registration(data)
 
         if valid['status']:
-            usr.register(data['first_name'],
-                         data['last_name'],
-                         data['email'],
-                         data['password'])
+            ecomap_usr.register(data['first_name'],
+                                data['last_name'],
+                                data['email'],
+                                data['password'])
             msg = 'added %s %s' % (data['first_name'],
                                    data['last_name'])
             response = jsonify({'status_message': msg}), 201
@@ -92,7 +92,7 @@ def login():
         valid = validator.user_login(data)
 
         if valid['status']:
-            user = usr.get_user_by_email(data['email'])
+            user = ecomap_usr.get_user_by_email(data['email'])
             if user and user.verify_password(data['password']):
                 login_user(user, remember=True)
                 response = jsonify(id=user.uid,
@@ -148,18 +148,18 @@ def oauth_login(provider):
     profile = json.loads(resource.text)
     logger.info(profile)
 
-    user = usr.get_user_by_oauth_id(profile['id'])
+    user = ecomap_usr.get_user_by_oauth_id(profile['id'])
     if not user:
-        user = usr.get_user_by_email(profile['email'])
+        user = ecomap_usr.get_user_by_email(profile['email'])
         if not user:
-            usr.facebook_register(profile['first_name'],
-                                  profile['last_name'],
-                                  profile['email'],
-                                  provider,
-                                  profile['id'])
+            ecomap_usr.facebook_register(profile['first_name'],
+                                         profile['last_name'],
+                                         profile['email'],
+                                         provider,
+                                         profile['id'])
         else:
             db.add_oauth_to_user(user[0], provider, profile['id'])
-        user = usr.get_user_by_oauth_id(profile['id'])
+        user = ecomap_usr.get_user_by_oauth_id(profile['id'])
 
     logger.info(user)
     login_user(user, remember=True)

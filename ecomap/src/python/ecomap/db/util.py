@@ -128,6 +128,20 @@ def get_role_id(name='user'):
 
 
 @retry_query(tries=3, delay=1)
+def get_role_by_name(name='user'):
+    """Gets role id by it's name.
+       :params: name - name of role, default - 'user'
+       :return: tuple with id of role
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `role`
+                   WHERE `name`=%s;"""
+        cursor.execute(query, (name,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def insert_user_avatar(user_id, img_path):
     """Insert new user  avatar into db.
     :params: user_id - unique id user

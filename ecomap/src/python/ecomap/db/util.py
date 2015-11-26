@@ -807,8 +807,6 @@ def pagination_test(page, per_page, count):
         return cursor.fetchall()
 
 
-
-
 @retry_query(tries=3, delay=1)
 def count_users():
     """Users per page

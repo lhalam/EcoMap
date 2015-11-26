@@ -1,10 +1,8 @@
 """Module contains routes for user page."""
-
-import imghdr
 import json
 import os
 
-import ecomap.user as usr
+import ecomap.user as ecomap_usr
 
 from flask import request, jsonify, Response
 from flask_login import login_required, current_user
@@ -26,7 +24,7 @@ def change_password():
     valid = validator.change_password(data)
 
     if valid['status']:
-        user = usr.get_user_by_id(data['id'])
+        user = ecomap_usr.get_user_by_id(data['id'])
         if user and user.verify_password(data['old_pass']):
             user.change_password(data['password'])
             response = jsonify(), 200
@@ -42,10 +40,13 @@ def change_password():
 def get_user_info(user_id):
     """This method returns json object with user data."""
     if request.method == 'GET':
-        user = usr.get_user_by_id(user_id)
+        user = ecomap_usr.get_user_by_id(user_id)
         if user:
-            return jsonify(name=user.first_name, surname=user.last_name,
-                           email=user.email, role=user.role, avatar=user.avatar)
+            return jsonify(name=user.first_name,
+                           surname=user.last_name,
+                           email=user.email,
+                           role=user.role,
+                           avatar=user.avatar)
         else:
             return jsonify(status='There is no user with given email'), 401
 

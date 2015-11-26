@@ -125,7 +125,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         method:"PUT",
         url:"/api/resources",
         data:{
-          "new_resource_name":$scope.editResObj['name'],
+          "resource_name":$scope.editResObj['name'],
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {

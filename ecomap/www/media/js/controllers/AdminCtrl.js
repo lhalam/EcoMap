@@ -45,6 +45,43 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
         },
     };
+    $scope.loadRes=function(){
+        $http({
+            method: 'GET',
+            url: '/api/resources'
+        }).then(function successCallback(data) {
+            $scope.Resources = data.data
+
+        }, function errorCallback(response) {
+            //console.log(response)
+        });
+    }
+    $scope.loadPerm=function(){
+        $http({
+                method: "GET",
+                url: '/api/all_permissions',
+               
+            }).then(function successCallback(data) {
+                $scope.Permisions=data.data;
+                //console.log($scope.Permisions)
+                
+            }, function errorCallback(response) {
+                //console.log(response)
+            })
+
+    }
+    $scope.loadRole=function(){
+        $http({
+                method:"GET",
+                url:"/api/roles",
+
+            }).then(function successCallback(data) {
+                $scope.Roles=data.data
+                //console.log($scope.Roles)
+            },function errorCallback(response) {
+                //console.log(response)
+            })
+    }
 
     $scope.loadData=function(){
 
@@ -121,6 +158,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     }
 
     $scope.editResource = function(){
+        console.log($scope.editResObj)
         $http({
         method:"PUT",
         url:"/api/resources",
@@ -129,6 +167,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
           "resource_id" : $scope.editResObj['id']
         }
         }).then(function successCallback(data) {
+            $scope.loadRes()
             $scope.editResModal = false;
             $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
@@ -150,7 +189,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
           }
         }).then(function successCallback(data) {
             //if accepted data has attribute  'deleted_resource',delete prop
-            if(data.data['deleted_resource']){
+            $scope.loadRes()
+            /*if(data.data['deleted_resource']){
                 deletedResId=data.data['deleted_resource']
                 for (name in $scope.Resources) {
                     if ($scope.Resources[name] === deletedResId){
@@ -163,7 +203,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                     //$scope.Eror=data.data['error']
                     //$scope.customEror=true
                     $scope.msg.deleteError('ресурсу');
-                }        
+                }*/        
         }, function errorCallback(response) {
             //$scope.Eror=response.statusText
             //$scope.customEror=true
@@ -173,11 +213,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     //Create new resource object 
 
+   
     $scope.newResource = {};
-    var data = {
-        'resource_name': $scope.newResource['name']
-
-    }
     $scope.addResource = function(){
          $http({
             method: "POST",
@@ -189,7 +226,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         // add resource to scope
         //console.log($scope.newResource.name)
         $scope.addResModal = false;
-        $scope.Resources[data.data.added_resource]=data.data.resource_id
+        //$scope.Resources[data.data.added_resource]=data.data.resource_id
+        //delete $scope.newResource['name']
         $scope.addResModal=false
         $scope.msg.createSuccess('ресурсу');
         }, function errorCallback(response) {
@@ -230,6 +268,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             "description":$scope.perm['description']
             } 
         }).then(function successCallback(data) {
+            $scope.loadPerm()
             $scope.addPermModal = false;
             $scope.msg.createSuccess('права');
         }, function errorCallback(response) {
@@ -274,27 +313,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "permission_id":perm.permission_id
             }
         }).then(function successCallback(data) {
-                if(data.data.deleted_permission){
-                    deletedResId=data.data['deleted_permission']
-                    /* if permision success deleted , delete it from 
-                       all local Permisions database*/
-                    for (name in $scope.Permisions){
-                        if ($scope.Permisions[name]['permission_id'] === perm.permission_id){
-                        $scope.Permisions.length = $scope.Permisions.length-1
-                        delete $scope.Permisions[name]
-                        $scope.msg.deleteSuccess('права');
-                        }
-
-                    }   
-                }
-            else if(data.data['error']){
-                    //$scope.Eror=data.data['error']
-                    //$scope.customEror=true
-                    $scope.msg.deleteError('права');
-                }
+            $scope.loadPerm()
+            $scope.msg.deleteSuccess('права');
+            console.log(data)
             }, function errorCallback(response) {
-                //$scope.Eror=response.statusText
-                //$scope.customEror=true
                  $scope.msg.deleteError('права');
         })
     }
@@ -322,13 +344,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.Roles[data.data.added_role]=data.data.added_role_id;
                 $scope.addRoleModal = false;
             }, function errorCallback(response) {
-                //try {
-                //    $scope.Eror=response.data[0].validation_error;
-                //}
-                //catch (err) {
-                //    $scope.Eror=response.data.error;
-                //}
-                //$scope.customEror=true;
                 $scope.msg.createError('ролі');
             })
     };
@@ -371,6 +386,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                     "role_id" : $scope.editRoleObj['id']
                     }
                 }).then(function successCallback(data) {
+                $scope.loadRole()
                 $scope.msg.editSuccess('ролі');
                 $scope.editRoleModal=false
                 },function errorCallback(response) {

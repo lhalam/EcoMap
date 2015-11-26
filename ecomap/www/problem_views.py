@@ -10,7 +10,7 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
-@app.route("/api/problems", methods=['GET'])
+@app.route('/api/problems', methods=['GET'])
 def problems():
     """
     Function, used to get all problems.
@@ -63,30 +63,34 @@ def detailed_problem(problem_id):
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
-# @app.route('/api/problem_post', methods=['POST'])
-# def post_problem():
-# 	"""Function which adds data from problem form to DB.
-# 	:return: If request data is invalid:
-# 			 	{'status': False, 'error': [list of errors]}, 400
-# 			 If all ok:
-# 			 	{'added_problem': 'problem_title'
-# 			 	 'problem_id': 'problem_id'}
+@app.route('/api/problem_post', methods=['POST'])
+def post_problem():
+	"""Function which adds data from problem form to DB.
+	:return: If request data is invalid:
+			 	{'status': False, 'error': [list of errors]}, 400
+			 If all ok:
+			 	{'added_problem': 'problem_title'
+			 	 'problem_id': 'problem_id'}
 
-# 	"""
-# 	data = request.get_json()
+	"""
+	data = request.get_json()
 
-# 	valid = validator.problem_post(data)
+	valid = validator.problem_post(data)
 
-# 	if valid['status']:
-# 		if 
+	logger.warning("!!!!!!!!!!!!!!!Problem data")
+	logger.warning(data)
+	return True
+
+	# if valid['status']:
+	# 	if db.post_problem_into_problem_table
 
 
 
 
 
 
- """Function which edits resource name.
-    :return: If there is already resource with this name:
+ 	"""Function which edits resource name.
+    	:return: If there is already resource with this name:
                  {'error': 'resource already exists'}, 400
              If request data is invalid:
                  {'status': False, 'error': [list of errors]}, 400

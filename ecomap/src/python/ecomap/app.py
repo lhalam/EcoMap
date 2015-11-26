@@ -1,3 +1,4 @@
+"""Head application module."""
 import logging
 import os
 from datetime import timedelta
@@ -7,8 +8,8 @@ from flask.ext.triangle import Triangle
 
 from ecomap.utils import get_logger
 
-template_folder = os.path.join(os.environ['PRODROOT'], 'www/templates/')
-app = Flask(__name__, template_folder=template_folder)
+TEMPLATE_FOLDER = os.path.join(os.environ['PRODROOT'], 'www/templates/')
+app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 Triangle(app)
 
 get_logger()

@@ -629,8 +629,7 @@ def detailed_problem(problem_id):
 
 @app.route("/api/user_page", methods=['GET'])
 def pagination():
-    """
-    """
+    """Returns a limit of users."""
     offset = int(request.args.get('offset'))
     per_page = int(request.args.get('per_page'))
     query = db.get_users_pagination(offset, per_page)

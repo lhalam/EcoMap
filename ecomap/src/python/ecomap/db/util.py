@@ -624,11 +624,11 @@ def get_permission_control_data():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """select r.name, res.resource_name, p.action, p.modifier
-                from role_permission as rp
-                inner join role as r on rp.role_id = r.id
-                inner join permission as p on rp.permission_id = p.id
-                inner join resource as res on p.resource_id = res.id;"""
+        sql = """SELECT r.name, res.resource_name, p.action, p.modifier
+                FROM role_permission AS rp
+                INNER JOIN role AS r ON rp.role_id = r.id
+                INNER JOIN permission AS p ON rp.permission_id = p.id
+                INNER JOIN resource AS res ON p.resource_id = res.id;"""
         cursor.execute(sql)
         return cursor.fetchall()
 
@@ -693,4 +693,54 @@ def get_id_problem_owner(problem_id):
                     WHERE `problem_id` = %s;
                 """
         cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_users_pagination(offset, per_page):
+    """Users per page
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` AS ur
+                   INNER JOIN `user` AS u ON ur.user_id = u.id
+                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   ORDER BY `id` LIMIT %s,%s;
+                """
+        cursor.execute(query % (offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def pagination_test(page, per_page, count):
+    """Users per page
+    """
+    if page == 1:
+        offset = 0
+    else:
+        offset = (page-1) * per_page
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+                   FROM  `user_role` AS ur
+                   INNER JOIN `user` AS u ON ur.user_id = u.id
+                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   ORDER BY `id` LIMIT %s,%s;
+                """
+        cursor.execute(query % (offset, per_page))
+        return cursor.fetchall()
+
+
+
+
+@retry_query(tries=3, delay=1)
+def count_users():
+    """Users per page
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(*) FROM `user`;"""
+        cursor.execute(query)
         return cursor.fetchone()

@@ -6,7 +6,7 @@ ecomap project.
 import json
 import os
 
-from flask import render_template, request, jsonify, Response, g
+from flask import render_template, request, jsonify, Response, g, abort
 from flask_login import login_user, logout_user, login_required, current_user
 
 import ecomap.user as usr
@@ -15,7 +15,7 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 from ecomap import validator
 from ecomap.permission import permission_control, check_permissions
-
+from ecomap.pagination import paginate, Pagination
 
 @app.before_request
 def load_users():
@@ -779,6 +779,75 @@ def detailed_problem(problem_id):
             })
 
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route("/api/user_page", methods=['GET'])
+# @paginate('users')
+def pagination():
+    """
+    """
+    offset = int(request.args.get('offset'))
+    per_page = int(request.args.get('per_page'))
+    query = db.get_users_pagination(offset, per_page)
+    parsed_json = []
+    if query:
+        for user_data in query:
+            parsed_json.append({'id': user_data[0], 'first_name': user_data[1],
+                                'last_name': user_data[2],
+                                'email': user_data[3],
+                                'role_name': user_data[4]})
+    return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+PER_PAGE = 5
+
+
+@app.route('/users/', defaults={'page': 1})
+@app.route('/users/page/<int:page>')
+def show_users(page):
+    count = db.count_users()[0]
+    users = db.pagination_test(page, PER_PAGE, count)
+    logger.warning('**************************')
+    if not users and page != 1:
+        abort(404)
+    pagination_ = Pagination(page, PER_PAGE, count, users)
+
+    logger.warning(pagination_.per_page)
+    # logger.warning(pagination_.prev)
+    logger.warning(pagination_.prev_num)
+    logger.warning(pagination_.total)
+    # logger.warning(pagination_.query)
+    logger.warning(pagination_.next_num)
+    logger.warning(pagination_.page)
+    logger.warning(pagination_.pages)
+    logger.warning(pagination_.has_prev)
+    logger.warning(pagination_.items)
+    logger.warning(pagination_.iter_pages)
+    # logger.warning(pagination_.next)
+    return Response(json.dumps(({'total_pages': pagination_.pages,
+                                 'page': pagination_.page,
+                                 'total': pagination_.total,
+                                 'per_page': pagination_.per_page,
+                                 'data': pagination_.items}),
+                               indent=1), mimetype='application/json')
+
+
+@app.route("/api/users_p", methods=['GET', 'POST'])
+@login_required
+# @paginate('users')
+def get_all_users_p():
+    """Function, used to get all users.
+    """
+    users_tuple = db.get_all_users()
+    parsed_json = []
+    if users_tuple:
+        for res in users_tuple:
+            parsed_json.append({'user_id': res[0], 'first_name': res[1],
+                                'last_name': res[2], 'email': res[3],
+                                'role': res[4]})
+    return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
 
 if __name__ == '__main__':
     app.run()

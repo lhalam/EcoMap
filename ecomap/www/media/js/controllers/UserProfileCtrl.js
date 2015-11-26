@@ -102,35 +102,30 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
     };
 
         $scope.check = function (formFile) {
-            console.log(formFile);
-            console.log(formFile.$invalid);
-            console.log(formFile.$error);
-            console.log(formFile.$error['maxSize']);
             if (formFile.$error.maxSize) {
-                console.log(formFile.$error);
                 return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
+            }
+            else if (formFile.$error.pattern) {
+                return toaster.pop('error', 'Фото профілю', 'Оберіть зображення в форматі .jpg або .png!');
+            } else {
+                return 'valid'
             }
         };
 
-
     $scope.showCanvas = function(formFile){
-        $scope.showStatus = true;
-        $scope.uploadButton = true;
-        var uploadForm = angular.element(document.getElementsByName('uploadPhoto'))[0];
-        //console.log(uploadForm.file.error)
-        $scope.check(formFile);
-        //alert(uploadPhoto.file.$error)
-        //console.log(uploadPhoto.file.$error)
-        //console.log(uploadPhoto.file.$error.maxSize)
-        //alert(uploadForm.file.error)
+        $scope.uploadButton = false;
+            $scope.showStatus = false;
+        if ($scope.check(formFile) == 'valid') {
+            $scope.uploadButton = true;
+            $scope.showStatus = true;
+        }
 
 };
-
-        $scope.setDefaultPhoto = function () {
-            $scope.user.data.avatar = 'http://placehold.it/150x150';
-            $scope.deletePhoto($scope.user.id);
-        return $scope.user.data.avatar;
-        };
+    $scope.setDefaultPhoto = function () {
+        $scope.user.data.avatar = 'http://placehold.it/150x150';
+        $scope.deletePhoto($scope.user.id);
+    return $scope.user.data.avatar;
+    };
 
   $scope.clearCanvas = function(picFile){
      var cnv = angular.element(document.getElementsByTagName('canvas'));
@@ -203,8 +198,6 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
             console.log(response)
         })
    	};
-
-
 
 }]);
 

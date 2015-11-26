@@ -23,7 +23,7 @@ class Anonymous(AnonymousUserMixin):
         self.uid = 2
 
     def __repr__(self):
-        return self.username
+        return unicode(self.username)
 
 LOGIN_MANAGER.anonymous_user = Anonymous
 

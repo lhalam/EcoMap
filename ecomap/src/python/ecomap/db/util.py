@@ -33,6 +33,38 @@ def get_user_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_user_by_oauth_id(user_id):
+    """Return user, found by id.
+    :params: user_id - id of user
+    :return: tuple with user info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+                   FROM `user` WHERE `oauth_uid`=%s;
+                """
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
+    """Adds oauth id and provider name to user.
+       This grants authentication within oauth to user.
+       :params: user_id - id of user
+                oauth_provider - provider name
+                oauth_uid - user id from provider
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `oauth_provider`=%s,
+                   `oauth_uid`=%s WHERE `id`=%s;
+                """
+        cursor.execute(query, oauth_provider, oauth_uid, user_id)
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
 def facebook_insert(first_name, last_name, email, password, role_id,
                     provider, uid):
     """Adds new user into db through facebook.
@@ -507,6 +539,115 @@ def delete_role_by_id(role_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_pages_titles():
+    """This method retrieves brief info from db
+       about all pages(ex-resources).
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `is_enabled` FROM `page`;"""
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_page_by_alias(alias):
+    """This method retrieves all info about exact
+       page from db via it's alias.
+       :returns tuple with data.
+    `"""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `description`, `content`,
+                   `meta_keywords`, `meta_description`, `is_enabled`
+                   FROM `page`
+                   WHERE `alias`=%s;
+                """
+        cursor.execute(query, (alias,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def edit_page(page_id, title, alias, descr, content,
+              meta_key, meta_descr, is_enabled):
+    """Updates page(ex-resource).
+       :params: page_id - id of pafe
+                title - new title
+                alias - new alias
+                descr - new description
+                content - new content
+                meta_key - new meta keywords
+                meta_descr - new meta_description
+                is_enabled - changed view option
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `page`
+                   SET `title`=%s, `alias`=%s,
+                   `description`=%s, `content`=%s,
+                   `meta_keywords`=%s, `meta_description`=%s,
+                   `is_enabled`=%s
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (title, alias, descr, content,
+                               meta_key, meta_descr, is_enabled, page_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def add_page(title, alias, descr, content,
+             meta_key, meta_descr, is_enabled):
+    """This method adds page(ex-resource) into db.
+       :params: title - new title
+                alias - new alias
+                descr - new description
+                content - new content
+                meta_key - new meta keywords
+                meta_descr - new meta_description
+                is_enabled - changed view option
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `page` (`title`, `alias`, `description`,
+                                       `content`, `meta_keywords`,
+                                       `meta_description`, `is_enabled`)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s);
+                """
+        cursor.execute(query, (title, alias, descr, content,
+                               meta_key, meta_descr, is_enabled))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def delete_page_by_id(page_id):
+    """This method deletes page by it's id from db.
+       :params: id - id of the page, which needs to be
+       deleted.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `page` WHERE `id`=%s;"""
+        cursor.execute(query, (page_id,))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_page_by_id(page_id):
+    """This method retrieves all info about exact
+       page from db via it's id.
+       :returns tuple with data.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `alias`, `description`, `content`,
+                   `meta_keywords`, `meta_description`, `is_enabled`
+                   FROM `page`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (page_id,))
+        return cursor.fetchone()
+
+
 def get_all_users():
     """Return all registered users from db.
     :return: tuples with user info
@@ -521,6 +662,7 @@ def get_all_users():
         cursor.execute(query)
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_all_problems():
     """Return all problems in db.
@@ -529,8 +671,39 @@ def get_all_problems():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
-                    `problem_type_id`,`status`,`created_date` 
+                    `problem_type_id`,`status`,`created_date`
                     FROM `problem`;
                 """
         cursor.execute(query)
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_problem_by_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: list with lists where located dictionary
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `id`, `title`, `content`, `proposal`,
+                `severity`, `status`, `latitude`,`longtitude`,
+                `problem_type_id` FROM `problem` WHERE `id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def get_activity_by_problem_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `created_date`, `problem_id`, `user_id`,
+                    `activity_type` FROM `problem_activity`
+                    WHERE `problem_id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+        

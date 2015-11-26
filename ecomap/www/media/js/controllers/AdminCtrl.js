@@ -433,35 +433,18 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     }
     $scope.deletePermFormRole=function(perm){
-<<<<<<< HEAD
         $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
         $scope.actualPermInRole.forEach(function(elem,index){
-        if(elem.id == perm.id){
-            // delete perm
-            $scope.actualPermInRole.length= $scope.actualPermInRole.length-1
-            delete $scope.actualPermInRole[index]
-               
-        }
-        console.log($scope.actualPermInRole.length)
-     })
-     console.log($scope.actualPermInRole)
-     delete $scope.selectPermObj[perm.id]
-=======
-            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
-            $scope.actualPermInRole.forEach(function(elem,index){
-                //console.log("Elem id :"+elem.id)
-                console.log($scope.actualPermInRole)
+            //console.log("Elem id :"+elem.id)
+            console.log($scope.actualPermInRole)
             if(elem.id == perm.id){
                 $scope.listToSend.splice( index, 1 )
                 $scope.actualPermInRole.splice( index, 1 )
-               
             }
             console.log($scope.actualPermInRole.length)
          })
          //console.log($scope.actualPermInRole)
          delete $scope.selectPermObj[perm.id]
-         
->>>>>>> c3d6e459cd8e79051c114ba8082164a24f048857
     }
     // data for filter
     $scope.searchWord=""
@@ -469,10 +452,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
 
-<<<<<<< HEAD
-        // if($scope.actualPermInRole.length !== 0 ){
-=======
->>>>>>> c3d6e459cd8e79051c114ba8082164a24f048857
         $scope.listToSend=[]
         for(id in $scope.selectPermObj){
             $scope.listToSend.push(id)
@@ -493,14 +472,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             })
 
             $scope.rolePerm=false
-<<<<<<< HEAD
-        // }
-        // else {
-        //     $scope.Error='response'
-        //     $scope.customEror=true
-        // }
-=======
->>>>>>> c3d6e459cd8e79051c114ba8082164a24f048857
         
     }
 

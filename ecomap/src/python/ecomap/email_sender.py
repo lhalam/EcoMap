@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Module contains functionality to send email to user."""
 import smtplib
 import os
 

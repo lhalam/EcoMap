@@ -1,6 +1,5 @@
 <link rel="stylesheet" href="/css/admin.css">
 
-<toaster-container></toaster-container>
 
 
 <div class="container" >
@@ -13,32 +12,34 @@
       <uib-tabset justified="true">
 
         <uib-tab heading="Ресурси">
-          <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+          <div class="row">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
             <table class="table table-hover">
               <thead>
                 <tr>
                   <td>
                     Назва ресурсу
                   </td>
-                  <td>
-                    Редагування
-                  </td>
+                 
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
                   <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
                   <td>
-                    <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
-                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a>
+                  <button class="btn btn-primary edit_btn" ng-click="showEditResModal(resource_name,resource_id)">редагувати</button>
+                  <button class="btn btn-danger edit_btn" ng-click="deleteResource(resource_id)">видалити</button>
+                    <!-- <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
+                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a> -->
                   </td>
                 </tr>
                 
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати ресурс</button>
-            <div class="clear"></div>
+            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати </button>
           </div>
+          </div>
+          
         </uib-tab>
 
         <uib-tab heading="Права">
@@ -50,7 +51,6 @@
                  <td>Метод</td>
                  <td>Модифікатор доступу</td>
                  <td>Опис права</td>
-                 <td>Редагування</td>
                </tr>
               </thead>
               <tbody>
@@ -60,8 +60,10 @@
                  <td>{{permision.modifier}}</td>
                  <td>{{permision.description}}</td> 
                  <td>
-                  <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a>
+                  <button class="btn btn-primary edit_btn" ng-click="showEditPermModal(permision)">редагувати</button>
+                  <button class="btn btn-danger edit_btn" ng-click="deletePerm(permision)">видалити</button>
+                  <!-- <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
+                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a> -->
                  </td>
                </tr>
              
@@ -73,6 +75,7 @@
 
         <uib-tab heading="Ролі">
         <div class="container" >
+        
           <div class="row" ng-show="rolePermTable">
             <div class="col-md-9 col-md-offset-1">
              <table class="table table-stripped" >
@@ -100,18 +103,18 @@
           </div>
           <br>
           <br>
-          <div class="row">
+          
+          <div class="row" ng-show="rolePermBlock">
+            <div class="row">
             <div class="col-md-3 col-md-offset-9">
-              <button class="btn btn-info" ng-click="backToRole()">Повернутись до ролейі</button>
+              <button class="btn btn-info" ng-click="backToRole()">Повернутись до ролей</button>
             </div>
           </div>
-          <div class="row" ng-show="rolePermBlock">
-
              <div class="col-md-6">
              <!-- Actual permision -->
-              <form >
+              <form>
               <h4>Актуальні права для {{rolePermObj.name}}</h4>
-              <table class="table table-stripped">
+              <table class="table table-stripped"  ng-if="listToSend.length !== 0">
               <thead>
                <tr>
                  <td>Назва методу</td>
@@ -130,8 +133,8 @@
                </tr>
               </tbody>
             </table>
-            </table>
- </form>
+            </form>
+
             </div>
              <div class="col-md-6">
                <!-- All permis -->
@@ -238,7 +241,10 @@
       <div ng-messages-include="/templates/error_msgs.html"></div>
 
     </div>
+
+
     <button type="submit" class="btn btn-primary" ng-click="editResSub=true">Змінити</button>
+
   </form>
 </modal>
 

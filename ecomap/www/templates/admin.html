@@ -154,7 +154,7 @@
                 </tr>
                 </thead>
                <tbody>
-                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-class="selectPermObj.hasOwnProperty(perm.permission_id) ? 'selected' : ''" ng-show="checkInActual(perm.permission_id)">
+                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.permission_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
                   <td ng-repeat="perm_prop in perm" > {{perm_prop}}</td>
                </tr>

@@ -406,8 +406,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     $scope.selectPerm=function(ev,perm){
         //$scope.actualPermInRole.push(perm)
-        $scope.selectPermObj[perm.permission_id]=perm
-        $scope.listToSend.push(perm.permission_id)
+        if($scope.listToSend.indexOf(perm.permission_id)===-1){
+            //$scope.selectPermObj[perm.permission_id]=perm
+            $scope.listToSend.push(perm.permission_id)
+        }
+        else{
+            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
+        }
+        
         // Define all permision,wich already bind
         console.log($scope.listToSend)
         

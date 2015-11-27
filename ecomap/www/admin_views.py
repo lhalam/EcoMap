@@ -22,6 +22,7 @@ def is_admin(func):
                     **kwargs - dictionary of arguments
            :return: function with given arguments
         """
+        logger.warning(g.user)
         logger.warning('SIC!')
         logger.warning(g.user.role)
         if g.user.role != 'admin':

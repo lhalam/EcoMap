@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user, login_required
 
 from urlparse import parse_qsl
 
-import ecomap.user as ecomap_usr
+import ecomap.user as ecomap_user
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -55,10 +55,10 @@ def register():
         valid = validator.user_registration(data)
 
         if valid['status']:
-            ecomap_usr.register(data['first_name'],
-                                data['last_name'],
-                                data['email'],
-                                data['password'])
+            ecomap_user.register(data['first_name'],
+                                 data['last_name'],
+                                 data['email'],
+                                 data['password'])
             msg = 'added %s %s' % (data['first_name'],
                                    data['last_name'])
             response = jsonify({'status_message': msg}), 201
@@ -66,6 +66,18 @@ def register():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
     return response
+
+
+@app.route('/api/email_exist', methods=['POST'])
+def email_exist():
+    """Function for AJAX call from frontend.
+    Validates unique email identifier before registering a new user
+    :return: json with status 200 or 400
+    """
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        user = ecomap_user.get_user_by_email(data['email'])
+        return jsonify(isValid=bool(user))
 
 
 @app.route('/api/login', methods=['POST'])
@@ -92,7 +104,7 @@ def login():
         valid = validator.user_login(data)
 
         if valid['status']:
-            user = ecomap_usr.get_user_by_email(data['email'])
+            user = ecomap_user.get_user_by_email(data['email'])
             if user and user.verify_password(data['password']):
                 login_user(user, remember=True)
                 response = jsonify(id=user.uid,
@@ -148,18 +160,18 @@ def oauth_login(provider):
     profile = json.loads(resource.text)
     logger.info(profile)
 
-    user = ecomap_usr.get_user_by_oauth_id(profile['id'])
+    user = ecomap_user.get_user_by_oauth_id(profile['id'])
     if not user:
-        user = ecomap_usr.get_user_by_email(profile['email'])
+        user = ecomap_user.get_user_by_email(profile['email'])
         if not user:
-            ecomap_usr.facebook_register(profile['first_name'],
-                                         profile['last_name'],
-                                         profile['email'],
-                                         provider,
-                                         profile['id'])
+            ecomap_user.facebook_register(profile['first_name'],
+                                          profile['last_name'],
+                                          profile['email'],
+                                          provider,
+                                          profile['id'])
         else:
             db.add_oauth_to_user(user[0], provider, profile['id'])
-        user = ecomap_usr.get_user_by_oauth_id(profile['id'])
+        user = ecomap_user.get_user_by_oauth_id(profile['id'])
 
     logger.info(user)
     login_user(user, remember=True)

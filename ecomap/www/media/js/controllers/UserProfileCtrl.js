@@ -3,8 +3,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
-    $scope.body = angular.element(document.body);
-    $scope.body.addClass("body-scroll-shown");
 
     if ($scope.user.id) {
       $http({
@@ -59,10 +57,5 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
     $scope.changeWrongPass = function() {
       $scope.wrongOldPass = false;
     };
-
-    $scope.$on("$destroy", function handler() {
-      $scope.body.removeClass("body-scroll-shown");
-    });
-
   }
 ]);

@@ -781,12 +781,14 @@ def post_problem_into_problem_table(title, content, proposal, latitude,
         conn.commit()
 
 @retry_query(tries=3, delay=1)
-def post_problem_into_problem_activity_table(problem_id,user_id):
+def post_problem_into_problem_activity_table(problem_id,user_id, 
+                                             activity_type):
     """Inserts activity data into "problem_activity" table from form which
     user filled in. Created for doing connection between "problem" 
     and "User" tables.
     :params: problem_id - id of problem that have been created
             user_id - id of user that created problem
+            activity_type - type of activity (ENUM 'Added')
     """
     pass
 

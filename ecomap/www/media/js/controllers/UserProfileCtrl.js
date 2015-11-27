@@ -16,28 +16,28 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
       });
     }
 
-    $scope.selectedTab = "userInfo";
-    $scope.setTab = function(tabName) {
-      $scope.selectedTab = tabName;
+    $scope.password = {
+      old_pass: "",
+      new_pass: "",
+      new_pass_confirm: ""
     };
+    $scope.changePassword = function(passwd) {
+      console.log(passwd);
+      if(!passwd.old_pass || !passwd.new_pass || !passwd.new_pass_confirm){
+        return;
+      }
 
-    $scope.isSelected = function(tabName) {
-      return $scope.selectedTab == tabName;
-    };
-
-    console.log($scope);
-    $scope.changePassword = function() {
       var data = {};
       data.id = $cookies.get('id');
-      data.old_pass = $scope.password.old_pass;
-      data.password = $scope.password.new_pass;
+      data.old_pass = passwd.old_pass;
+      data.password = passwd.new_pass;
       console.log(data);
       $http({
         method: 'POST',
         url: '/api/change_password',
         data: data
       }).then(function successCallback(responce) {
-        $scope.password = {};
+        passwd = {};
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
         $scope.changePasswordForm.$setUntouched();
       }, function errorCallback(responce) {
@@ -58,15 +58,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
 
     $scope.changeWrongPass = function() {
       $scope.wrongOldPass = false;
-    };
-
-    $scope.alert = false;
-    $scope.closeAlert = function() {
-      $scope.alert = false;
-    };
-
-    $scope.showAlert = function() {
-      return $scope.alert;
     };
 
     $scope.$on("$destroy", function handler() {

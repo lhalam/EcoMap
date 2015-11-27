@@ -52,32 +52,34 @@
               <hr>
               <div class="row">
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                  <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>
-                    <div class="form-group" ng-class="{ 'has-error': changePasswordForm.old_pass.$touched && changePasswordForm.old_pass.$invalid || getWrongPass()}">
+                  <form  class="change-password" ng-submit='changePassword(password)' name="changePasswordForm" novalidate>
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.old_pass.$touched || submitted) && changePasswordForm.old_pass.$invalid || getWrongPass()}">
                       <label for="old_pass" class="control-label">Старий пароль:</label>
                       <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>
-                      <div class="help-block" ng-messages="changePasswordForm.old_pass.$error" ng-show="changePasswordForm.old_pass.$touched">
+                      <div class="help-block" ng-messages="changePasswordForm.old_pass.$error" ng-show="changePasswordForm.old_pass.$touched || submitted">
                         <div ng-messages-include="/templates/error_msgs.html"></div>
                       </div>
                       <div class="help-block">
                         <p ng-show="getWrongPass()">Невірний пароль!</p>
                       </div>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-error': changePasswordForm.new_pass.$touched && changePasswordForm.new_pass.$invalid }">
+
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.new_pass.$touched || submitted) && changePasswordForm.new_pass.$invalid }">
                       <label for="new_pass" class="control-label">Новий пароль:</label>
                       <input type="password" id="new_pass" name="new_pass" ng-model='password.new_pass' class="form-control" ng-minlength="6" ng-maxlength="40" required>
-                      <div class="help-block" ng-messages="changePasswordForm.new_pass.$error" ng-show="changePasswordForm.new_pass.$touched">
+                      <div class="help-block" ng-messages="changePasswordForm.new_pass.$error" ng-show="changePasswordForm.new_pass.$touched || submitted">
                         <div ng-messages-include="/templates/error_msgs.html"></div>
                       </div>
                     </div>
-                    <div class="form-group" ng-class="{ 'has-error': changePasswordForm.new_pass_confirm.$touched && changePasswordForm.new_pass_confirm.$invalid }">
+
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.new_pass_confirm.$touched || submitted) && changePasswordForm.new_pass_confirm.$invalid }">
                       <label for="new_pass_confirm" class="control-label">Підтвердіть новий пароль:</label>
                       <input type="password" id="new_pass_confirm" name="new_pass_confirm" ng-model='password.newRepeat' class="form-control" compare-to="password.new_pass" required>
-                      <div class="help-block" ng-messages="changePasswordForm.new_pass_confirm.$error" ng-show="changePasswordForm.new_pass_confirm.$touched" >
+                      <div class="help-block" ng-messages="changePasswordForm.new_pass_confirm.$error" ng-show="changePasswordForm.new_pass_confirm.$touched || submitted" >
                         <div ng-messages-include="/templates/error_msgs.html"></div>
                       </div>
                     </div>
-                    <button class="btn btn-default" type='submit'>Змінити</button>
+                    <button class="btn btn-default" type='submit' ng-click="submitted=true">Змінити</button>
                   </form>
                   
                 </div>

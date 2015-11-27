@@ -447,7 +447,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 role_id:$scope.rolePermObj.id
             }
         }).then(function successCallback(data) {
-                console.log(data)
+                //console.log(data)
                 $scope.actualPermInRole = data.data.actual
                 for(var i=0;i < $scope.actualPermInRole.length;i++){
                 if($scope.listToSend.indexOf($scope.actualPermInRole[i].id) === -1){
@@ -464,15 +464,17 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 ////console.log($scope.listToSend)
                 $scope.actualPermList=[]
                      $scope.actualPermInRole.forEach(function(elem){
-                        /*if(elem.id === id){
-                            return true
-                            console.log(id)
-                        }
-                        else return false*/
+                        console.log(elem)
                         $scope.actualPermList.push(elem.id)
                      })
-                     if($scope.actualPermList.indexOf(id)!== -1){
+                     console.log($scope.actualPermList)
+                     if($scope.actualPermList.indexOf(id)!== 1){
+                        console.log("true id :"+id)
                         return true
+                     }
+                     else{
+                        console.log("false id :"+id)
+                        return false
                      }
                 
                 }

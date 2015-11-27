@@ -197,7 +197,7 @@ def get_user_role_by_email(email):
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
-
+@retry_query(tries=3, delay=1)
 def get_all_permissions_by_role():
     """This query created for Restriction class.
     Restriction class is for lesser entering to DB.
@@ -781,18 +781,6 @@ def post_problem_into_problem_table(title, content, proposal, latitude,
         conn.commit()
 
 @retry_query(tries=3, delay=1)
-def post_problem_into_problem_activity_table(problem_id,user_id, 
-                                             activity_type):
-    """Inserts activity data into "problem_activity" table from form which
-    user filled in. Created for doing connection between "problem" 
-    and "User" tables.
-    :params: problem_id - id of problem that have been created
-            user_id - id of user that created problem
-            activity_type - type of activity (ENUM 'Added')
-    """
-    pass
-
-@retry_query(tries=3, delay=1)
 def select_results_after_adding_problem(problem_id,user_id):
     """Selects filled in data of problem if inserting is success
     for sending it to user.
@@ -800,7 +788,36 @@ def select_results_after_adding_problem(problem_id,user_id):
             user_id - id of user that created problem
     :return:tuple of info about recenty posted problem
     """
-    pass
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `problem_id`, `user_id`,
+                    FROM `problem`
+                    WHERE `title` = %s,`content` = %s,`proposal` = %s,
+                    `latitude` = %s,`longtitude` = %s,`created_date` = %s,
+                    `problem_type_id` = %s;
+                """
+        cursor.execute(query, (problem_id, user_id))
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def post_problem_into_problem_activity_table(problem_id,user_id,
+                                            created_date):
+    """Inserts activity data into "problem_activity" table from form which
+    user filled in. Created for doing connection between "problem" 
+    and "User" tables.
+    :params: problem_id - id of problem that have been created
+            user_id - id of user that created problem
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ INSERT INTO `problem_activity` (`problem_id`,
+            `       user_id`,`activity_type`) 
+                    VALUES (%s, %s, "Added");
+                """
+        cursor.execute(query, (problem_id,user_id))
+        conn.commit()
+
+
 
 @retry_query(tries=3, delay=1)
 def get_users_pagination(offset, per_page):

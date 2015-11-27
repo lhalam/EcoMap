@@ -8,8 +8,7 @@
         <label for="title" class="control-label">Заголовок інструкції</label>
         <input type="text" class="form-control" name="title" id="title" ng-model="page.title" ng-max-length="255" required>
         <div class="help-block" ng-messages="editPageForm.title.$error" ng-show="editPageForm.title.$touched">
-          <p ng-message="maxlength">Занадто довгий заголовок!</p>
-          <p ng-message="required">Необхідно ввести заголовок!</p>
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
       
@@ -17,8 +16,7 @@
         <label for="alias" class="control-label">Назва інструкції в адресній стрічці</label>
         <input type="text" class="form-control" name="alias" id="alias" ng-model="page.alias" ng-max-length="100" required>
         <div class="help-block" ng-messages="editPageForm.alias.$error" ng-show="editPageForm.alias.$touched">
-          <p ng-message="maxlength">Занадто довга назва!</p>
-          <p ng-message="required">Необхідно ввести назву!</p>
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
@@ -29,10 +27,9 @@
 
       <div class="form-group" ng-class="{ 'has-error': editPageForm.content.$touched && editPageForm.content.$invalid }">
         <label for="content" class="control-label">Контент інструкції</label>
-        <!-- <textarea name="content" name="content" id="content" cols="30" rows="20" class="form-control" ng-model="page.content"required></textarea> -->
         <text-angular ng-model="page.content"></text-angular>
         <div class="help-block" ng-messages="editPageForm.content.$error" ng-show="editPageForm.content.$touched">
-          <p ng-message="required">Необхідно ввести контент!</p>
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
@@ -40,7 +37,7 @@
         <label for="meta_keywords" class="control-label">Кілька слів, які описують суть інстуркції</label>
         <input type="text" class="form-control" name="meta_keywords" id="meta_keywords" ng-max-length="255" ng-model="page.meta_keywords">
         <div class="help-block" ng-messages="editPageForm.meta_keywords.$error" ng-show="editPageForm.meta_keywords.$touched">
-          <p ng-message="maxlength">Занадто довгий рядок!</p>
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
@@ -48,7 +45,7 @@
         <label for="meta_description" class="control-label">Мета опис інструкції</label>
         <input type="text" class="form-control" name="meta_decription" id="meta_description" ng-max-length="255" ng-model="page.meta_description">
         <div class="help-block" ng-messages="editPageForm.meta_decription.$error" ng-show="editPageForm.meta_decription.$touched">
-          <p ng-message="maxlength">Занадто довгий опис!</p>
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
       <button class="btn btn-primary fl-right" type="submit">Редагувати сторінку</button>

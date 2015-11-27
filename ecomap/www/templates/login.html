@@ -9,9 +9,7 @@
       <label for="email" class="control-label">Електронна адреса</label>
       <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
       <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched || submitted">
-        <p ng-message="maxlength">Занадто довга електронна пошта!</p>
-        <p ng-message="required">Необхідно ввести електронну пошту!</p>
-        <p ng-message="email">Некоректна електронна пошта!</p>
+        <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
     </div>
 
@@ -19,8 +17,7 @@
       <label for="password" class="control-label">Пароль</label>
       <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
       <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched || submitted">
-        <p ng-message="minlength">Пароль не може бути коротшим, ніж 6 символів!</p>
-        <p ng-message="required">Необхідно ввести пароль!</p>
+        <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
       <div class="help-block">
         <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>

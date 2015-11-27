@@ -1,5 +1,5 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
-  function($scope, $cookies, $http, toaster, Upload, $timeout) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
+  function($scope, $state, $cookies, $http, toaster, Upload, $timeout) {
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
@@ -45,6 +45,10 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
           $scope.wrongOldPass = true;
         }
       });
+    };
+
+    $scope.redirect = function(state){
+      $state.go(state);
     };
 
     $scope.wrongOldPass = false;

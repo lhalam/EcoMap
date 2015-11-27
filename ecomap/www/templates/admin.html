@@ -53,6 +53,7 @@
                  <td>Метод</td>
                  <td>Модифікатор доступу</td>
                  <td>Опис права</td>
+                 <td>  <button class="btn btn-primary btn-border" ng-click="showAddPermModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати право</button></td>
                </tr>
               </thead>
               <tbody>
@@ -71,7 +72,7 @@
              
               </tbody>
             </table>
-            <button class="btn btn-primary btn-border" ng-click="showAddPermModal()">додати право</button>
+           
             <div class="clear"></div>
         </uib-tab>
 
@@ -84,7 +85,7 @@
               <thead>
                <tr>
                  <td>Назва ролі</td>
-                 <td>Редагування</td>
+                
                </tr>
               </thead>
               <tbody>
@@ -198,7 +199,7 @@
                 <td>{{user.email}}</td>
                 <td>{{user.id}}</td>
                   <td>
-                    <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_id,role_ob) in role_obj"></select>
+                    <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles"></select>
                   </td>
                   <td>
                     <button class="btn btn-primary btn-border" ng-click="changeRole(user)">Змінити роль</button>
@@ -223,15 +224,25 @@
 
 <modal title="Додати ресурс" visible="addResModal">
   <form  ng-submit="addResource(newResource)" name="addResForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
+   <div class="row">
+     <div class="col-md-12 ">
+        <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+
       <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
         <div ng-messages-include="/templates/error_msgs.html"></div>
+
       </div>
 
     </div>
-    <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button>
+     </div>
+   </div>
+    <div class="row">
+      <div class="col-md-9 col-md-offset-2">
+        <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button>
+      </div>
+    </div>
   </form>
 </modal>
 
@@ -256,7 +267,8 @@
 <modal title="Додати право" visible="addPermModal">
   <form  ng-submit="addPermSubmit()" name="addPerm" novalidate>
     <div class="form-group">
-      <label for="" class="control-label" >Назва ресурса</label>
+      <label for="" class="control-label" >Назва ресурса : </label >
+
       <select ng-model="perm.resource_name" class="form-control" data-ng-options="resource_name as resource_name for (resource_name,resource_id) in Resources"></select>
     </div>
     <div class="form-group">
@@ -282,8 +294,8 @@
 <modal title="Редагувати право" visible="editPermModal">
   <form  ng-submit="editPermSubmit()" name="editPermition" novalidate>
     <div class="form-group">
-      <label for="" class="control-label" >Назва ресурса</label>
-      <select ng-model="editPerm.resource_name" class="form-control" data-ng-options="resource_name as resource_name for (resource_name,resource_id) in Resources"></select>
+      <label for="" class="control-label" >Назва ресурса :</label><label>  {{editPerm.resource_name}}</label>
+      
     </div>
     <div class="form-group">
       <label class="control-label">Метод</label>

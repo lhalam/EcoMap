@@ -77,7 +77,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                //console.log($scope.Roles)
+                console.log($scope.Roles)
             },function errorCallback(response) {
                 //console.log(response)
             })
@@ -210,6 +210,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.newResource = {};
 
     $scope.addResource = function(newResource){
+        console.log($scope.Roles)
         if(!newResource.name){
             return;
         }

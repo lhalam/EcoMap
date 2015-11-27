@@ -279,6 +279,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "description":$scope.editPerm['description']
             }
         }).then(function successCallback(data) {
+                console.log(data)
                 $scope.editPermModal = false;
                 $scope.msg.editSuccess('права');
                 $scope.loadPerm()
@@ -297,9 +298,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 "permission_id":perm.permission_id
             }
         }).then(function successCallback(data) {
-            $scope.loadPerm()
-            $scope.msg.deleteSuccess('права');
-            console.log(data)
+           if(!data.data.error){
+             $scope.loadPerm()
+             $scope.msg.deleteSuccess('права');
+             console.log(data)
+           }
+           else{
+                $scope.msg.deleteError('права');
+           }
             
             console.log(data)
             }, function errorCallback(response) {
@@ -312,10 +318,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.addRoleModal = false;
     $scope.showAddRoleModal = function(){
     	$scope.addRoleModal = true;
+        $scope.role = {};
 
     }
     // new role object
-    $scope.role = {};
+    
 
     $scope.addRoleSubmit = function(){
         console.log($scope.role['name'])
@@ -350,14 +357,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                     }
                 }
                 if(data.data.error){
-                //$scope.Eror=data.data.error
-                //$scope.customEror=true
                 $scope.msg.deleteError('ролі');
                 }
-                //console.log(data)
+               
             }, function errorCallback(response) {
-                //$scope.Eror=response
-                //$scope.customEror=true
                 $scope.msg.deleteError('ролі');
             })
         }
@@ -393,25 +396,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.rolePerm=false
 
     $scope.selectPerm=function(ev,perm){
-        console.log(perm)
+        $scope.actualPermInRole.push(perm)
+        $scope.listToSend.push(perm.permission_id)
         // Define all permision,wich already bind
-        if(ev.currentTarget.classList.contains("selected")){
-            ev.currentTarget.classList.remove("selected")
-            $scope.actualPermInRole.splice($scope.actualPermInRole.indexOf(perm.permission_id),1)
-            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
-            //$scope.actualPermList.splice($scope.actualPermList.indexOf(perm.permission_id), 1 )
-            delete $scope.selectPermObj[perm.permission_id]
-        }
-        else{
-            ev.currentTarget.classList.add("selected")
-            $scope.listToSend.push(perm.permission_id)
-            $scope.selectPermObj[perm.permission_id]=perm
-            console.log(perm)
-            $scope.actualPermInRole.push(perm)
-            $scope.actualPermList.push(perm.permission_id)
-            console.log($scope.actualPermInRole)
-
-        }
+       
+        
+        console.log($scope.actualPermInRole)
+        console.log(perm)
+        
 }
     $scope.isChecked=function(perm){
        if($scope.listToSend){
@@ -450,10 +442,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 console.log(data)
                 $scope.actualPermInRole = data.data.actual
                 for(var i=0;i < $scope.actualPermInRole.length;i++){
-                if($scope.listToSend.indexOf($scope.actualPermInRole[i].id) == -1){
+                if($scope.listToSend.indexOf($scope.actualPermInRole[i].id) === -1){
                 $scope.listToSend.push($scope.actualPermInRole[i].id)
                 $scope.selectPermObj[$scope.actualPermInRole[i].id]=$scope.actualPermInRole[i]
-                $scope.rolePerm=false
+               
             }
             
         }
@@ -464,12 +456,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 ////console.log($scope.listToSend)
                 $scope.actualPermList=[]
                      $scope.actualPermInRole.forEach(function(elem){
-                        $scope.actualPermList.push(elem.id)
+                        if(elem.id === id){
+                            return true
+                            console.log(id)
+                        }
+                        else return false
+                        //$scope.actualPermList.push(elem.id)
                      })
-                if($scope.actualPermList.indexOf(id) !==-1){
-                    return false
-                    }
-                else return true
+                
                 }
             }, function errorCallback(response) {
                 $scope.msg.deleteError('ролі');
@@ -480,19 +474,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     $scope.deletePermFormRole=function(perm){
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.id), 1 )
-            $scope.actualPermInRole.forEach(function(elem,index){
-                ////console.log("Elem id :"+elem.id)
-                //console.log($scope.actualPermInRole)
-            if(elem.id == perm.id){
-                $scope.listToSend.splice( index, 1 )
-                $scope.actualPermInRole.splice( index, 1 )
-               
-            }
-            //console.log($scope.actualPermInRole.length)
-         })
-         ////console.log($scope.actualPermInRole)
-         delete $scope.selectPermObj[perm.id]
-         
+            $scope.actualPermInRole.forEach(function(actual_perm){
+                if(actual_perm.permission_id === permission_id){
+                    $scope.actualPermInRole.splice( $scope.actualPermInRole.indexOf(perm.permission_id), 1 )
+                }
+            })
+            console.log(perm)
+          
+        
     }
     // data for filter
     $scope.searchWord=""
@@ -525,7 +514,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.msg.editError('прав');
             })
 
-            $scope.rolePerm=false
+
         
     }
 

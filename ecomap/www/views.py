@@ -23,12 +23,10 @@ def load_users():
     """
     if current_user.is_authenticated:
         g.user = current_user
-        logger.info(g.user)
     else:
         anon = ecomap_usr.Anonymous()
         g.user = anon
         logger.info(g.user.role)
-        logger.info(current_user)
 
 
 # @app.before_request

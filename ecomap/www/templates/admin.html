@@ -221,10 +221,10 @@
     <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+      <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
+      </div>
 
-    </div>
-    <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
-      <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
     <button type="submit" class="btn btn-primary" ng-click="addResSub=true">Додати</button>
   </form>
@@ -236,10 +236,10 @@
     <div class="form-group" ng-class="{ 'has-error': (editResForm.resName.$touched || editResSub) && editResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required>
-    </div>
-    <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
-      <div ng-messages-include="/templates/error_msgs.html"></div>
+      <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
 
+      </div>
     </div>
 
 

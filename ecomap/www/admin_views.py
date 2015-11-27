@@ -443,7 +443,7 @@ def role_permission_get():
                                                    'modifier': res[3],
                                                    'description': res[4]})
 
-            parsed_json['actual'] = [({'id': x[0], 'action': x[1],
+            parsed_json['actual'] = [({'permission_id': x[0], 'action': x[1],
                                        'modifier': x[2],
                                        'description': x[3]}) for x in
                                      permissions_of_role]

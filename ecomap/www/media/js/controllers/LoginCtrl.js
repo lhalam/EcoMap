@@ -14,6 +14,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$cookies', '$auth', function($s
 
   $scope.user = {};
   $scope.Login = function(credentials) {
+    $scope.submitted = true;
     if (!credentials.email || !credentials.password) {
       return null;
     }

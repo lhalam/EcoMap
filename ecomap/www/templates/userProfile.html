@@ -2,134 +2,143 @@
   <div class="row">
     <div class="panel panel-default">
       <div class="panel-body">
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-          <div class="list-group">
-            <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userInfo') }" ng-click="setTab('userInfo')">Відомості про користувача</a>
-            <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userProblems') }" ng-click="setTab('userProblems')">Проблеми користувача</a>
-            <a href="" class="list-group-item" ng-class="{ 'active': isSelected('userComments') }" ng-click="setTab('userComments')">Коментарі користувача</a>
-            <a href="/#/admin" class="list-group-item" ng-show="isAdmin()">Адміністрування</a>
-            <a href="" class="list-group-item" ng-show="isAdmin()" ng-class="{ 'active': isSelected('faqEdit') }" ng-click="setTab('faqEdit')">Редагування F.A.Q.</a>
-          </div>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userInfo')">
-          <h3>Відомості про аккаунт</h3>
-          <hr>
-          <div class="profile" >
-            <img
-            class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
-            <div ng-controller="ChangePhotoCtrl">
-              <span class="text-content" ng-click = "showModalPhoto()" >
-                <span>змінити фото</span>
-              </span>
-                            
-              <modal title="Додати фотографію профілю" visible="photo"  >
-                <form name="uploadPhoto">
-                  <div class="modal-resize">
-                    <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
-                    name="file" accept="image/*" ngf-pattern="'image/*'"
-                    ngf-max-size="5MB" ngf-change="showCanvas(uploadPhoto)" required="">
-                    Оберіть фото</button>
-                    <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
-                    <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
-                    <div class="cropArea" ngf-drop
-                      ng-model="picFile" ngf-pattern="image/*">
-                      <img-crop image="picFile  | ngfDataUrl" area-type="square"
-                      filename = "picFile.filename"
-                      result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
-                      </img-crop>
-                    </div>
-                    <button class="btn btn-success photo-btn "
-                    ng-disabled="!uploadPhoto.$valid"
-                    ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
-                    <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
-                  </div>
-                </form>
-              </modal>
-            </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <uib-tabset justified="True">
+            <uib-tab heading="Відомості про аккаунт">
+              <h3>Відомості про аккаунт</h3>
+              <hr>
+              <div class="profile" >
+                <img
+                class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
+                <div ng-controller="ChangePhotoCtrl">
+                  <span class="text-content" ng-click = "showModalPhoto()" >
+                    <span>змінити фото</span>
+                  </span>
+                                
+                  <modal title="Додати фотографію профілю" visible="photo"  >
+                    <form name="uploadPhoto">
+                      <div class="modal-resize">
+                        <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
+                        name="file" accept="image/*" ngf-pattern="'image/*'"
+                        ngf-max-size="5MB" ngf-change="showCanvas(uploadPhoto)" required="">
+                        Оберіть фото</button>
+                        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
+                        <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
+                        <div class="cropArea" ngf-drop
+                          ng-model="picFile" ngf-pattern="image/*">
+                          <img-crop image="picFile  | ngfDataUrl" area-type="square"
+                          filename = "picFile.filename"
+                          result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
+                          </img-crop>
+                        </div>
+                        <button class="btn btn-success photo-btn "
+                        ng-disabled="!uploadPhoto.$valid"
+                        ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
+                        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
+                      </div>
+                    </form>
+                  </modal>
+                </div>
 
-          </div>
-          <div class="user-info">
-            <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
-            <p><strong>Прізвище: </strong><span ng-bind="user.data.surname"></span></p>
-            <p><strong>Електронна пошта: </strong> <span ng-bind="user.data.email"></span></p>
-            <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>
-          </div>
-          <br>
-          <h3>Зміна пароля</h3>
-          <hr>
-          <form  class="change-password" ng-submit='changePassword()' name="changePasswordForm" novalidate>
-            <div class="form-group" ng-class="{ 'has-error': changePasswordForm.old_pass.$touched && changePasswordForm.old_pass.$invalid || getWrongPass()}">
-              <label for="old_pass" class="control-label">Старий пароль:</label>
-              <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>
-              <div class="help-block" ng-messages="changePasswordForm.old_pass.$error" ng-show="changePasswordForm.old_pass.$touched">
-                <p ng-message="required">Необхідно ввести старий пароль!</p>
               </div>
-              <div class="help-block">
-                <p ng-show="getWrongPass()">Невірний пароль!</p>
+              <div class="user-info">
+                <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
+                <p><strong>Прізвище: </strong><span ng-bind="user.data.surname"></span></p>
+                <p><strong>Електронна пошта: </strong> <span ng-bind="user.data.email"></span></p>
+                <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>
               </div>
-            </div>
-            <div class="form-group" ng-class="{ 'has-error': changePasswordForm.new_pass.$touched && changePasswordForm.new_pass.$invalid }">
-              <label for="new_pass" class="control-label">Новий пароль:</label>
-              <input type="password" id="new_pass" name="new_pass" ng-model='password.new_pass' class="form-control" ng-minlength="6" ng-maxlength="40" required>
-              <div class="help-block" ng-messages="changePasswordForm.new_pass.$error" ng-show="changePasswordForm.new_pass.$touched">
-                <p ng-message="maxlength">Занадто довгий пароль!</p>
-                <p ng-message="required">Необхідно ввести пароль!</p>
-                <p ng-message="minlength">Занадто короткий пароль!</p>
+              <br>
+              <h3>Зміна пароля</h3>
+              <hr>
+              <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                  <form  class="change-password" ng-submit='changePassword(password)' name="changePasswordForm" novalidate>
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.old_pass.$touched || submitted) && changePasswordForm.old_pass.$invalid || getWrongPass()}">
+                      <label for="old_pass" class="control-label">Старий пароль:</label>
+                      <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>
+                      <div class="help-block" ng-messages="changePasswordForm.old_pass.$error" ng-show="changePasswordForm.old_pass.$touched || submitted">
+                        <div ng-messages-include="/templates/error_msgs.html"></div>
+                      </div>
+                      <div class="help-block">
+                        <p ng-show="getWrongPass()">Невірний пароль!</p>
+                      </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.new_pass.$touched || submitted) && changePasswordForm.new_pass.$invalid }">
+                      <label for="new_pass" class="control-label">Новий пароль:</label>
+                      <input type="password" id="new_pass" name="new_pass" ng-model='password.new_pass' class="form-control" ng-minlength="6" ng-maxlength="40" required>
+                      <div class="help-block" ng-messages="changePasswordForm.new_pass.$error" ng-show="changePasswordForm.new_pass.$touched || submitted">
+                        <div ng-messages-include="/templates/error_msgs.html"></div>
+                      </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.new_pass_confirm.$touched || submitted) && changePasswordForm.new_pass_confirm.$invalid }">
+                      <label for="new_pass_confirm" class="control-label">Підтвердіть новий пароль:</label>
+                      <input type="password" id="new_pass_confirm" name="new_pass_confirm" ng-model='password.newRepeat' class="form-control" compare-to="password.new_pass" required>
+                      <div class="help-block" ng-messages="changePasswordForm.new_pass_confirm.$error" ng-show="changePasswordForm.new_pass_confirm.$touched || submitted" >
+                        <div ng-messages-include="/templates/error_msgs.html"></div>
+                      </div>
+                    </div>
+                    <button class="btn btn-default" type='submit' ng-click="submitted=true">Змінити</button>
+                  </form>
+                  
+                </div>
               </div>
-            </div>
-            <div class="form-group" ng-class="{ 'has-error': changePasswordForm.new_pass_confirm.$touched && changePasswordForm.new_pass_confirm.$invalid }">
-              <label for="new_pass_confirm" class="control-label">Підтвердіть новий пароль:</label>
-              <input type="password" id="new_pass_confirm" name="new_pass_confirm" ng-model='password.newRepeat' class="form-control" compare-to="password.new_pass" required>
-              <div class="help-block" ng-messages="changePasswordForm.new_pass_confirm.$error" ng-show="changePasswordForm.new_pass_confirm.$touched" >
-                <p ng-message="compareTo">Паролі не співпадають!</p>
-                <p ng-message="required">Необхідно підтвердити пароль!</p>
+              
+            </uib-tab>
+            <uib-tab heading="Проблеми користувача">
+              <h3>Проблеми користувача</h3>
+              <hr>
+              
+            </uib-tab>
+            <uib-tab heading="Коментарі користувача">
+              <h3>Коментарі користувача</h3>
+              <hr>
+              
+            </uib-tab>
+            <uib-tab heading="Редагування F.A.Q." ng-show="isAdmin()">
+              <div ng-controller="FaqTableCtrl">
+                <h3>Редагування F.A.Q.</h3>
+                <hr>
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <td>Номер</td>
+                      <td>Назва інструкції</td>
+                      <td>Адреса інструкції</td>
+                      <td>Відображення</td>
+                      <td>Редагування</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="page in pages track by $index">
+                      <td ng-bind="page.id"></td>
+                      <td ng-bind="page.title"></td>
+                      <td ng-bind="page.alias"></td>
+                      <td>
+                        <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
+                      </td>
+                      <td>
+                        <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
+                        <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
+                <div class="clear"></div>
+                <hr>
+                <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
+                <div class="clear"></div>
+                
               </div>
-            </div>
-            <button class="btn btn-default" type='submit'>Змінити</button>
-          </form>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userProblems')">
-          <h3>Проблеми користувача</h3>
-          <hr>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-show="isSelected('userComments')">
-          <h3>Коментарі користувача</h3>
-          <hr>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" ng-if="isSelected('faqEdit')" ng-controller="FaqTableCtrl">
-          <h3>Редагування F.A.Q.</h3>
-          <hr>
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <td>Номер</td>
-                <td>Назва інструкції</td>
-                <td>Адреса інструкції</td>
-                <td>Відображення</td>
-                <td>Редагування</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="page in pages track by $index">
-                <td ng-bind="page.id"></td>
-                <td ng-bind="page.title"></td>
-                <td ng-bind="page.alias"></td>
-                <td>
-                  <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
-                </td>
-                <td>
-                  <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
-          <div class="clear"></div>
-          <hr>
-          <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
-          <div class="clear"></div>
-        </div>
+              
+            </uib-tab>
+            <uib-tab ng-show="isAdmin()" select="redirect('admin')">
+              <uib-tab-heading>Адміністрування <i class="fa fa-link"></i></uib-tab-heading>
+            </uib-tab>
+              
+          </uib-tabset>
       </div>
     </div>
   </div>

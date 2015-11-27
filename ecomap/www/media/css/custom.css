@@ -446,3 +446,11 @@ form {
   z-index: 9999;
   background: url('http://bradsknutson.com/wp-content/uploads/2013/04/page-loader.gif') 50% 50% no-repeat rgb(249, 249, 249);
 }
+
+.facebook{
+  background-color: #3b5998;
+  border-color: #335190;
+}
+.facebook:hover, .facebook:active, .facebook:focus{
+  background-color: #335190;
+}

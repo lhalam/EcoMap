@@ -148,32 +148,13 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $scope.newResource = {};
     };
 
-     $scope.addResource = function(){
-         
-         console.log($scope.newResource)
-         $http({
-            method: "POST",
-            url: "/api/resources",
-            data:{
-                'resource_name': $scope.newResource.name
-            }
-        }).then(function successCallback(data) {
-        $scope.loadRes()
-        $scope.addResModal=false
-        $scope.msg.createSuccess('ресурсу');
-        }, function errorCallback(response) {
-            $scope.addResModal=false
-            $scope.msg.createError('ресурсу');
-        });
 
-    };
 
 
 
     $scope.editResModal = false;
 
     $scope.showEditResModal = function(name,id){
-        //create edit object for modal window
     	$scope.editResObj={
             'name':name,
     		'id':id
@@ -181,23 +162,25 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     	$scope.editResModal = true;
     }
 
-    $scope.editResource = function(){
-        console.log($scope.editResObj)
+
+    $scope.editResource = function(editResObj){
+        if(!editResObj.name || !editResObj.id){
+            return;
+        }
+
         $http({
         method:"PUT",
         url:"/api/resources",
         data:{
-          "resource_name":$scope.editResObj['name'],
-          "resource_id" : $scope.editResObj['id']
+          "resource_name": editResObj['name'],
+          "resource_id" :  editResObj['id']
         }
         }).then(function successCallback(data) {
             $scope.loadRes()
             $scope.editResModal = false;
             $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
-            //console.log("response")
             $scope.msg.editError('ресурсу');
-            //$scope.addResModal=false
         })
 
     };
@@ -222,7 +205,32 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     //Create new resource object 
 
-   
+
+    $scope.newResource = {};
+
+    $scope.addResource = function(newResource){
+        if(!newResource.name){
+            return;
+        }
+
+         $http({
+            method: "POST",
+            url: "/api/resources",
+            data:{
+                'resource_name': $scope.newResource.name
+            }
+        }).then(function successCallback(data) {
+        $scope.addResModal = false;
+        $scope.Resources[data.data.added_resource]=data.data.resource_id
+        $scope.addResModal=false
+        $scope.msg.createSuccess('ресурсу');
+        }, function errorCallback(response) {
+            $scope.addResModal=false
+            $scope.msg.createError('ресурсу');
+        });
+
+    };
+
 
     //permission section
 

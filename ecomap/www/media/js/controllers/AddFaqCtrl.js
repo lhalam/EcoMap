@@ -1,7 +1,20 @@
 app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout', function($scope, $state, $http, toaster, $timeout) {
   
-  $scope.page = {};
-  $scope.addPage = function(newPage) {
+  $scope.page = {
+    // "title": null,
+    // "alias": null,
+    "description": "",
+    // "content": null,
+    "meta_keywords": "",
+    "meta_description": ""
+  };
+  $scope.addPage = function(newPage, form) {
+    $scope.submitted = true;
+
+    if(form.$invalid){
+      return;
+    }
+
     newPage['is_enabled'] = 1;
     $http({
       method: 'POST',

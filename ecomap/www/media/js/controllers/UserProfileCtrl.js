@@ -1,5 +1,5 @@
-app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
-  function($scope, $cookies, $http, toaster, Upload, $timeout) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
+  function($scope, $state, $cookies, $http, toaster, Upload, $timeout) {
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
@@ -16,28 +16,28 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       });
     }
 
-    $scope.selectedTab = "userInfo";
-    $scope.setTab = function(tabName) {
-      $scope.selectedTab = tabName;
+    $scope.password = {
+      old_pass: "",
+      new_pass: "",
+      new_pass_confirm: ""
     };
+    $scope.changePassword = function(passwd) {
+      console.log(passwd);
+      if(!passwd.old_pass || !passwd.new_pass || !passwd.new_pass_confirm){
+        return;
+      }
 
-    $scope.isSelected = function(tabName) {
-      return $scope.selectedTab == tabName;
-    };
-
-    console.log($scope);
-    $scope.changePassword = function() {
       var data = {};
       data.id = $cookies.get('id');
-      data.old_pass = $scope.password.old_pass;
-      data.password = $scope.password.new_pass;
+      data.old_pass = passwd.old_pass;
+      data.password = passwd.new_pass;
       console.log(data);
       $http({
         method: 'POST',
         url: '/api/change_password',
         data: data
       }).then(function successCallback(responce) {
-        $scope.password = {};
+        passwd = {};
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
         $scope.changePasswordForm.$setUntouched();
       }, function errorCallback(responce) {
@@ -45,6 +45,10 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
           $scope.wrongOldPass = true;
         }
       });
+    };
+
+    $scope.redirect = function(state){
+      $state.go(state);
     };
 
     $scope.wrongOldPass = false;
@@ -56,146 +60,9 @@ app.controller('UserProfileCtrl', ['$scope', '$cookies', '$http', 'toaster', 'Up
       $scope.wrongOldPass = false;
     };
 
-    $scope.alert = false;
-    $scope.closeAlert = function() {
-      $scope.alert = false;
-    };
-
-    $scope.showAlert = function() {
-      return $scope.alert;
-    };
-
     $scope.$on("$destroy", function handler() {
       $scope.body.removeClass("body-scroll-shown");
     });
 
-    // User Change Avatar
-    $scope.reloadImg = function(imgUrl) {
-      $scope.user.data.avatar = imgUrl + '?=new_' + new Date().getTime();
-      return $scope.user.data.avatar;
-    };
-
-    $scope.photo = false;
-    $scope.result = '';
-    $scope.showModalPhoto = function() {
-      $scope.photo = true
-    };
-
-    $scope.showStatus = true;
-    $scope.uploadButton = false;
-    $scope.deleteButton = true;
-    $scope.cancelImg = function(picFile) {
-      $scope.photo = false;
-      $scope.showStatus = false;
-      $scope.uploadButton = false;
-      $scope.result = '';
-      picFile = null;
-      $scope.picFile = null;
-      return $scope.picFile = null;
-    };
-
-    $scope.showUploadButton = function() {
-      $scope.uploadButton = true;
-      $scope.deleteButton = false;
-    };
-
-    $scope.check = function(formFile) {
-      if (formFile.$error.maxSize) {
-        return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
-      } else if (formFile.$error.pattern) {
-        return toaster.pop('error', 'Фото профілю', 'Оберіть зображення в форматі .jpg або .png!');
-      } else {
-        return 'valid'
-      }
-    };
-
-    $scope.showCanvas = function(formFile) {
-      $scope.uploadButton = false;
-      $scope.showStatus = false;
-      if ($scope.check(formFile) == 'valid') {
-        $scope.uploadButton = true;
-        $scope.showStatus = true;
-      }
-    };
-
-    $scope.setDefaultPhoto = function() {
-      $scope.user.data.avatar = 'http://placehold.it/150x150';
-      $scope.deletePhoto($scope.user.id);
-      return $scope.user.data.avatar;
-    };
-
-    $scope.clearCanvas = function(picFile) {
-      var cnv = angular.element(document.getElementsByTagName('canvas'));
-      var uploadForm = angular.element(document.getElementsByName('uploadPhoto'))[0];
-      var cnv2 = cnv[0];
-      var ctx = cnv2.getContext('2d');
-      ctx.clearRect(0, 0, cnv2.width, cnv2.height);
-      $scope.showStatus = false;
-      $scope.uploadButton = false;
-      $scope.result = '';
-      console.log(picFile);
-      uploadForm.file = null;
-      picFile = null;
-      return ctx.clearRect(0, 0, cnv2.width, cnv2.height);
-    };
-
-    $scope.upload = function(dataUrl, picFile) {
-      Upload.upload({
-        url: '/api/user_avatar',
-        method: "POST",
-        cache: false,
-        headers: {
-          'Cache-Control': 'no-cache'
-        },
-        data: {
-          file: Upload.dataUrltoBlob(dataUrl),
-          name: picFile.name
-        }
-      }).then(function(response, picFile) {
-        $timeout(function() {
-          $scope.result = response.data;
-          $scope.reloadImg($scope.result.added_file);
-          $scope.photo = false;
-          $scope.file = false;
-          var cnv = angular.element(document.getElementsByTagName('canvas'));
-          var cnv2 = cnv[0];
-          var ctx = cnv2.getContext('2d');
-          ctx.clearRect(0, 0, cnv2.width, cnv2.height);
-          $scope.cancelImg(picFile);
-          $scope.clearCanvas(picFile);
-          picFile = null;
-          toaster.pop('success', 'Фото профілю', 'Фото було успішно змінено!');
-        });
-      }, function(response) {
-        if (response.status > 0) $scope.errorMsg = response.status + ': ' + response.data.error;
-        toaster.pop('error', 'Фото профілю', 'Виникла помилка при завантаженні фото');
-        if (response.status == 403) {
-          toaster.pop('error', 'Немає доступу', 'Дія заборонена адміністратором!');
-        }
-      }, function(evt) {
-        $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
-      });
-    };
-
-    $scope.deletePhoto = function(id) {
-      $http({
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8"
-        },
-        url: "/api/user_avatar",
-        data: {
-          "user_id": id
-        }
-      }).then(function successCallback(data) {
-        if (data) {
-          toaster.pop('info', 'Фото', 'Фото профілю видалено!');
-        } else {
-          toaster.pop('error', 'Фото', 'Виникла помилка!');
-        }
-      }, function errorCallback(response) {
-        console.log(response)
-      })
-    };
   }
 ]);

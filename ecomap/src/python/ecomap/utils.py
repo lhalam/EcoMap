@@ -1,8 +1,14 @@
 import logging
 import logging.config
 import os
+import random
+import string
 
 CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
+
+
+def random_password(length):
+    return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
 
 def get_logger():

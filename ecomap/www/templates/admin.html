@@ -217,34 +217,34 @@
 
 
 <modal title="Додати ресурс" visible="addResModal">
-  <form  ng-submit="addResource()" name="addResForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': addResForm.resName.$touched && addResForm.resName.$invalid }">
+  <form  ng-submit="addResource(newResource)" name="addResForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
 
     </div>
-    <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched">
-      <p ng-message="maxlength">Занадто довге імя ресурсу!</p>
-      <p ng-message="required">Необхідно ввести нове імя ресурсу!</p>
-      <!-- custom error: name already exists -->
+    <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
+      <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="submit" class="btn btn-primary">Додати</button>
+    <button type="submit" class="btn btn-primary" ng-click="addResSub=true">Додати</button>
   </form>
 </modal>
 
 <!-- Modal window for editing resource -->
 <modal title="Редагувати ресурс" visible="editResModal">
-  <form  ng-submit="editResource()" name="editResForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': editResForm.resName.$touched && editResForm.resName.$invalid }">
+  <form  ng-submit="editResource(editResObj)" name="editResForm" novalidate>
+    <div class="form-group" ng-class="{ 'has-error': (editResForm.resName.$touched || editResSub) && editResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
       <input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required>
     </div>
-    <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched">
-      <p ng-message="maxlength">Занадто довге імя ресурсу!</p>
-      <p ng-message="required">Необхідно ввести нове імя ресурсу!</p>
-      <!-- custom error: name already exists -->
+    <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
+      <div ng-messages-include="/templates/error_msgs.html"></div>
+
     </div>
-    <button type="submit"  class="btn btn-primary">Змінити</button>
+
+
+    <button type="submit" class="btn btn-primary" ng-click="editResSub=true">Змінити</button>
+
   </form>
 </modal>
 
@@ -267,8 +267,7 @@
       <input type="text" class="form-control" name="descr" ng-model="perm.description" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
-      <p ng-message="maxlength">Занадто довгий опис!</p>
-      <p ng-message="required">Необхідно ввести опис!</p>
+      <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
     <button type="sumbit" class="btn btn-primary">Додати право</button>
   </form>
@@ -294,8 +293,7 @@
       <input type="text" class="form-control" name="descr" ng-model="editPerm.description" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="editPerm.descr.$error" ng-show="editPerm.descr.$touched">
-      <p ng-message="maxlength">Занадто довгий опис!</p>
-      <p ng-message="required">Необхідно ввести опис!</p>
+      <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
     <button type="submit" class="btn btn-primary">Змінити право</button>
   </form>
@@ -309,9 +307,7 @@
       <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required>
     </div>
     <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched">
-      <p ng-message="maxlength">Занадто довге імя ролі!</p>
-      <p ng-message="required">Необхідно ввести нове імя ролі!</p>
-      <!-- custom error: name already exists -->
+      <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
 
     <button type="submit" class="btn btn-primary">Додати</button>
@@ -323,8 +319,7 @@
     <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
       <label for="" class="control-label" >Назва ролі</label>
       <input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required>
-    </div>
-    
+    </div>    
     <button type="submit" class="btn btn-primary">Змінити</button>
   </form>
 </modal>

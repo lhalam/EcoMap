@@ -369,7 +369,7 @@ def insert_permission(resource_id, action, modifier, description):
         cursor.execute(query, (resource_id, action, modifier, description))
         conn.commit()
 
-
+@retry_query(tries=3, delay=1)
 def edit_permission(action, modifier, permission_id, description):
     """Edit permission.
     :params: action - action (POST, GET, DELETE, PUT)
@@ -754,22 +754,51 @@ def get_activity_by_problem_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
 
-
 @retry_query(tries=3, delay=1)
-def get_id_problem_owner(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: tuple with problem_activity info
+def post_problem_into_problem_table(title, content, proposal, latitude,
+                                    longitude, created_date,
+                                    problem_type_id, user_id):
+    """Inserts problem data into "problem" table from form which user
+    have filled in.
+    :params: title - title of problem
+            content - info text about problem
+            proposal - proposal what to do with problem
+            latitude and longtitude - coordinates where is problem located
+            created_date - date and time of creation
+            problem_type_id - type of problem in our system
+            user_id - id of user who have created problem
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `created_date`, `problem_id`, `user_id`,
-                    `activity_type` FROM `problem_activity`
-                    WHERE `problem_id` = %s;
+        query = """ INSERT INTO `problem` (`title`,`content`,`proposal`,
+                    `latitude`,`longtitude`,`created_date`,
+                    `problem_type_id`,`user_id`) VALUES (%s, %s, %s, %s,
+                    %s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longitude, created_date,
+                               problem_type_id, user_id))
+        conn.commit()
 
+@retry_query(tries=3, delay=1)
+def post_problem_into_problem_activity_table(problem_id,user_id):
+    """Inserts activity data into "problem_activity" table from form which
+    user filled in. Created for doing connection between "problem" 
+    and "User" tables.
+    :params: problem_id - id of problem that have been created
+            user_id - id of user that created problem
+    """
+    pass
+
+@retry_query(tries=3, delay=1)
+def select_results_after_adding_problem(problem_id,user_id):
+    """Selects filled in data of problem if inserting is success
+    for sending it to user.
+    :params: problem_id - id of problem that have been created
+            user_id - id of user that created problem
+    :return:tuple of info about recenty posted problem
+    """
+    pass
 
 @retry_query(tries=3, delay=1)
 def get_users_pagination(offset, per_page):
@@ -785,7 +814,6 @@ def get_users_pagination(offset, per_page):
                 """
         cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
-
 
 @retry_query(tries=3, delay=1)
 def pagination_test(page, per_page):

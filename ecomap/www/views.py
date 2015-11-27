@@ -10,6 +10,7 @@ from ecomap.app import app, logger
 from authorize_views import *
 from admin_views import *
 from user_views import *
+from problem_views import *
 
 from ecomap.db import util as db
 from ecomap.permission import permission_control, check_permissions

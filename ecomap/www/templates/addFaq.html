@@ -3,22 +3,20 @@
     <h3>Створення інструкції</h3>
     <hr>
     
-    <form name="addPageForm" ng-submit="addPage(page)" class="page-edit-form" novalidate>
-      <div class="form-group" ng-class="{ 'has-error': addPageForm.title.$touched && addPageForm.title.$invalid }">
+    <form name="addPageForm" ng-submit="addPage(page, addPageForm)" class="page-edit-form" novalidate>
+      <div class="form-group" ng-class="{ 'has-error': (addPageForm.title.$touched || submitted) && addPageForm.title.$invalid}">
         <label for="title" class="control-label">Заголовок інструкції</label>
         <input type="text" class="form-control" name="title" id="title" ng-model="page.title" ng-max-length="255" required>
-        <div class="help-block" ng-messages="addPageForm.title.$error" ng-show="addPageForm.title.$touched">
-          <p ng-message="maxlength">Занадто довгий заголовок!</p>
-          <p ng-message="required">Необхідно ввести заголовок!</p>
+        <div class="help-block" ng-messages="addPageForm.title.$error" ng-show="addPageForm.title.$touched || submitted">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
-      <div class="form-group" ng-class="{ 'has-error': addPageForm.alias.$touched && addPageForm.alias.$invalid }">
+      <div class="form-group" ng-class="{ 'has-error': (addPageForm.alias.$touched || submitted) && addPageForm.alias.$invalid }">
         <label for="alias" class="control-label">Назва інструкції в адресній стрічці</label>
         <input type="text" class="form-control" name="alias" id="alias" ng-model="page.alias" ng-max-length="100" required>
-        <div class="help-block" ng-messages="addPageForm.alias.$error" ng-show="addPageForm.alias.$touched">
-          <p ng-message="maxlength">Занадто довга назва!</p>
-          <p ng-message="required">Необхідно ввести назву!</p>
+        <div class="help-block" ng-messages="addPageForm.alias.$error" ng-show="addPageForm.alias.$touched || submitted">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
@@ -27,32 +25,31 @@
         <textarea name="description" name="description" id="description" cols="30" rows="4" class="form-control" ng-model="page.description"></textarea>
       </div>
 
-      <div class="form-group" ng-class="{ 'has-error': addPageForm.content.$touched && addPageForm.content.$invalid }">
+      <div class="form-group" ng-class="{ 'has-error': (addPageForm.content.$touched || submitted) && addPageForm.content.$invalid }">
         <label for="content" class="control-label">Контент інструкції</label>
-        <!-- <textarea name="content" name="content" id="content" cols="30" rows="20" class="form-control" ng-model="page.content"required></textarea> -->
-        <text-angular ng-model="page.content"></text-angular>
-        <div class="help-block" ng-messages="addPageForm.content.$error" ng-show="addPageForm.content.$touched">
-          <p ng-message="required">Необхідно ввести контент!</p>
+        <text-angular ng-model="page.content" name="content" required></text-angular>
+        <div class="help-block" ng-messages="addPageForm.content.$error" ng-show="addPageForm.content.$touched || submitted">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
-      <div class="form-group" ng-class="{ 'has-error': addPageForm.meta_keywords.$touched && addPageForm.meta_keywords.$invalid }">
+      <div class="form-group" ng-class="{ 'has-error': (addPageForm.meta_keywords.$touched || submitted) && addPageForm.meta_keywords.$invalid }">
         <label for="meta_keywords" class="control-label">Кілька слів, які описують суть інстуркції</label>
         <input type="text" class="form-control" name="meta_keywords" id="meta_keywords" ng-max-length="255" ng-model="page.meta_keywords">
-        <div class="help-block" ng-messages="addPageForm.meta_keywords.$error" ng-show="addPageForm.meta_keywords.$touched">
-          <p ng-message="maxlength">Занадто довгий рядок!</p>
+        <div class="help-block" ng-messages="addPageForm.meta_keywords.$error" ng-show="addPageForm.meta_keywords.$touched || submitted">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
-      <div class="form-group" ng-class="{ 'has-error': addPageForm.meta_decription.$touched && addPageForm.meta_decription.$invalid }">
+      <div class="form-group" ng-class="{ 'has-error': (addPageForm.meta_decription.$touched || submitted) && addPageForm.meta_decription.$invalid }">
         <label for="meta_description" class="control-label">Мета опис інструкції</label>
         <input type="text" class="form-control" name="meta_decription" id="meta_description" ng-max-length="255" ng-model="page.meta_description">
-        <div class="help-block" ng-messages="addPageForm.meta_decription.$error" ng-show="addPageForm.meta_decription.$touched">
-          <p ng-message="maxlength">Занадто довгий опис!</p>
+        <div class="help-block" ng-messages="addPageForm.meta_decription.$error" ng-show="addPageForm.meta_decription.$touched || submitted">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
 
-      <button class="btn btn-primary fl-right" type="submit">Додати сторінку</button>
+      <button class="btn btn-primary fl-right" type="submit" >Додати сторінку</button>
       <div class="clear"></div>
     </form>
 

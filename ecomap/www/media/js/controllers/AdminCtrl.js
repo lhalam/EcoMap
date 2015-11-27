@@ -129,6 +129,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
                 //$scope.Roles=data.
                 $scope.Users=data.data
+                console.log(data)
                 //console.log("user_roles")
 
             },function errorCallback(response) {
@@ -405,7 +406,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.rolePerm=false
 
     $scope.selectPerm=function(ev,perm){
-        //$scope.actualPermInRole.push(perm)
+        
         if($scope.listToSend.indexOf(perm.permission_id)===-1){
             //$scope.selectPermObj[perm.permission_id]=perm
             $scope.listToSend.push(perm.permission_id)
@@ -488,7 +489,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.msg.deleteError('ролі');
             })
 
+
     }
+
 
 
     $scope.deletePermFormRole=function(perm){

@@ -27,8 +27,8 @@
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
                   <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
                   <td>
-                  <button class="btn btn-primary edit_btn" ng-click="showEditResModal(resource_name,resource_id)">редагувати</button>
-                  <button class="btn btn-danger edit_btn" ng-click="deleteResource(resource_id)">видалити</button>
+                  <button class="btn btn-primary edit_btn btn-border" ng-click="showEditResModal(resource_name,resource_id)">редагувати</button>
+                  <button class="btn btn-danger edit_btn btn-border" ng-click="deleteResource(resource_id)">видалити</button>
                     <!-- <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
                     <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a> -->
                   </td>
@@ -36,7 +36,7 @@
                 
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click="triggerAddResModal()">Додати </button>
+            <button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">Додати </button>
           </div>
           </div>
           
@@ -60,8 +60,8 @@
                  <td>{{permision.modifier}}</td>
                  <td>{{permision.description}}</td> 
                  <td>
-                  <button class="btn btn-primary edit_btn" ng-click="showEditPermModal(permision)">редагувати</button>
-                  <button class="btn btn-danger edit_btn" ng-click="deletePerm(permision)">видалити</button>
+                  <button class="btn btn-primary edit_btn btn-border" ng-click="showEditPermModal(permision)">редагувати</button>
+                  <button class="btn btn-danger edit_btn btn-border" ng-click="deletePerm(permision)">видалити</button>
                   <!-- <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
                   <a href="" class="del" ng-click="deletePerm(permision)">видалити</a> -->
                  </td>
@@ -69,7 +69,7 @@
              
               </tbody>
             </table>
-            <button class="btn btn-primary" ng-click="showAddPermModal()">Додати право</button>
+            <button class="btn btn-primary btn-border" ng-click="showAddPermModal()">Додати право</button>
             <div class="clear"></div>
         </uib-tab>
 
@@ -90,15 +90,17 @@
                   <td >{{role_name}}</td>
 
                  <td>
-                   <a href="" ng-click="showEditRoleModal(role_name,role_id)">редагувати</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deleteRole(role_id)">видалити</a>&nbsp; &nbsp;
-                  <a href="" class="del" ng-click="showRolePerm(role_name,role_id)">права ролі</a>
+                 <button class="btn btn-danger edit_btn btn-border" ng-click="deleteRole(role_id)">видалити</button>
+                 
+                 <button class="btn btn-warning edit_btn btn-border" ng-click="showEditRoleModal(role_name,role_id)">редагувати</button>
+                 <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">права ролі</button>
+                 
                  </td>
                </tr>
           
               </tbody>
              </table>
-             <button class="btn btn-primary" ng-click=" showAddRoleModal()">Додати роль</button>
+             <button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()">Додати роль</button>
           </div>
           </div>
           <br>
@@ -107,7 +109,7 @@
           <div class="row" ng-show="rolePermBlock">
             <div class="row">
             <div class="col-md-3 col-md-offset-9">
-              <button class="btn btn-info" ng-click="backToRole()">Повернутись до ролей</button>
+              <button class="btn btn-primary btn-border" ng-click="backToRole()">Повернутись до ролей</button>
             </div>
           </div>
              <div class="col-md-6">
@@ -121,6 +123,7 @@
                  <td>Модифікатор доступу</td>
                  <td>Id</td>
                  <td>Опис</td>
+                
                </tr>
               </thead>
               <tbody>
@@ -129,7 +132,7 @@
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.id || perm.permission_id}}</td>
                   <td>{{perm.description}}</td>
-                  <td><button class="btn btn-danger"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
+                  <td><button class="btn btn-danger btn-border"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                </tr>
               </tbody>
             </table>
@@ -161,7 +164,7 @@
           
               </tbody>
             </table>
-          <button type="submit" class="btn btn-primary">Підтвердити</button>
+          <button type="submit" class="btn btn-primary btn-border">Підтвердити</button>
 </form>
              </div>
           </div>
@@ -196,7 +199,7 @@
                     <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_id,role_ob) in role_obj"></select>
                   </td>
                   <td>
-                    <button class="btn btn-primary" ng-click="changeRole(user)">Змінити роль</button>
+                    <button class="btn btn-primary btn-border" ng-click="changeRole(user)">Змінити роль</button>
                   </td>
                </tr>
 
@@ -226,7 +229,7 @@
       </div>
 
     </div>
-    <button type="submit" class="btn btn-primary" ng-click="addResSub=true">Додати</button>
+    <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">Додати</button>
   </form>
 </modal>
 
@@ -243,7 +246,7 @@
     </div>
 
 
-    <button type="submit" class="btn btn-primary" ng-click="editResSub=true">Змінити</button>
+    <button type="submit" class="btn btn-primary btn-border" ng-click="editResSub=true">Змінити</button>
 
   </form>
 </modal>
@@ -269,7 +272,7 @@
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="sumbit" class="btn btn-primary">Додати право</button>
+    <button type="sumbit" class="btn btn-primary btn-border">Додати право</button>
   </form>
 </modal>
 
@@ -295,7 +298,7 @@
     <div class="help-block" ng-messages="editPerm.descr.$error" ng-show="editPerm.descr.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="submit" class="btn btn-primary">Змінити право</button>
+    <button type="submit" class="btn btn-primary btn-border">Змінити право</button>
   </form>
 </modal>
 
@@ -310,7 +313,7 @@
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Додати</button>
+    <button type="submit" class="btn btn-primary btn-border">Додати</button>
   </form>
 </modal>
 
@@ -320,6 +323,6 @@
       <label for="" class="control-label" >Назва ролі</label>
       <input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required>
     </div>    
-    <button type="submit" class="btn btn-primary">Змінити</button>
+    <button type="submit" class="btn btn-primary btn-border">Змінити</button>
   </form>
 </modal>

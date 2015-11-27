@@ -756,7 +756,7 @@ def get_activity_by_problem_id(problem_id):
 
 @retry_query(tries=3, delay=1)
 def post_problem_into_problem_table(title, content, proposal, latitude,
-                                    longitude, created_date,
+                                    longtitude, created_date,
                                     problem_type_id, user_id):
     """Inserts problem data into "problem" table from form which user
     have filled in.
@@ -776,28 +776,54 @@ def post_problem_into_problem_table(title, content, proposal, latitude,
                     %s, %s, %s, %s);
                 """
         cursor.execute(query, (title, content, proposal, latitude,
-                               longitude, created_date,
+                               longtitude, created_date,
                                problem_type_id, user_id))
         conn.commit()
 
 @retry_query(tries=3, delay=1)
-def select_results_after_adding_problem(problem_id,user_id):
+def select_results_after_adding_problem(title, content, proposal, latitude,
+                               longtitude, created_date,
+                               problem_type_id):
     """Selects filled in data of problem if inserting is success
     for sending it to user.
-    :params: problem_id - id of problem that have been created
-            user_id - id of user that created problem
-    :return:tuple of info about recenty posted problem
+    :params: title - title of problem
+            content - info text about problem
+            proposal - proposal what to do with problem
+            latitude and longtitude - coordinates where is problem located
+            created_date - date and time of creation
+            problem_type_id - type of problem in our system
+    :return:tuple of problem_id, user_id
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `problem_id`, `user_id`,
-                    FROM `problem`
-                    WHERE `title` = %s,`content` = %s,`proposal` = %s,
-                    `latitude` = %s,`longtitude` = %s,`created_date` = %s,
-                    `problem_type_id` = %s;
+        query = """SELECT `id`,`user_id` ,`created_date`
+                FROM `problem` 
+                WHERE `title` = %s AND `content` = %s 
+                AND `proposal` = %s AND `latitude`= %s 
+                AND `longtitude`= %s AND `created_date`= %s
+                AND `problem_type_id`= %s;
                 """
-        cursor.execute(query, (problem_id, user_id))
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longtitude, created_date,
+                               problem_type_id))
         return cursor.fetchone()
+
+
+
+# @retry_query(tries=3, delay=1)
+# def get_permission_id(resource_id, action, modifier):
+#     """Return permission id.
+#     :params: resource_id - id of resource
+#              action - action (POST, GET, DELETE, PUT)
+#              modifier - modifier (Own, Any, None)
+#     :return: tuple, containing permission id"""
+#     with db_pool().manager() as conn:
+#         cursor = conn.cursor()
+#         query = """SELECT `id` FROM `permission` WHERE `resource_id`=%s AND
+#                    `action`=%s AND `modifier`=%s;
+#                 """
+#         cursor.execute(query, (resource_id, action, modifier))
+#         return cursor.fetchone()
 
 @retry_query(tries=3, delay=1)
 def post_problem_into_problem_activity_table(problem_id,user_id,
@@ -807,14 +833,15 @@ def post_problem_into_problem_activity_table(problem_id,user_id,
     and "User" tables.
     :params: problem_id - id of problem that have been created
             user_id - id of user that created problem
+            created_date - time when problem was created
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ INSERT INTO `problem_activity` (`problem_id`,
-            `       user_id`,`activity_type`) 
-                    VALUES (%s, %s, "Added");
+            `       user_id`,`created_date`,`activity_type`) 
+                    VALUES (%s, %s, %s, "Added");
                 """
-        cursor.execute(query, (problem_id,user_id))
+        cursor.execute(query, (problem_id,user_id,created_date))
         conn.commit()
 
 

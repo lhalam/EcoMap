@@ -88,7 +88,17 @@ def post_problem():
                                                data['created_date'],
                                                data['problem_type_id'],
                                                data['user_id'])
-            response = jsonify(added_problem=data['title'])
+            results_for_import = db.select_results_after_adding_problem(data['title'],
+                                                data['content'],
+                                                data['proposal'],
+                                                data['latitude'],
+                                                data['longtitude'],
+                                                data['created_date'],
+                                                data['problem_type_id'])
+            logger.warning("!!!!!!!!!!!!!!!!DATA for ressssss!!")
+            logger.warning(results_for_import)
+            response = jsonify(added_problem=data['title'],
+                                problem_id=results_for_import[1])
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -97,28 +107,34 @@ def post_problem():
 
 
 
-"""Function which edits resource name.
-:return: If there is already resource with this name:
-{'error': 'resource already exists'}, 400
-If request data is invalid:
-{'status': False, 'error': [list of errors]}, 400
-If all ok:
-{'added_resource': 'resource_name',
-'resource_id': 'resource_id'}
-    """
-    # data = request.get_json()
+# @app.route("/api/permissions", methods=['POST'])
+# @login_required
+# @is_admin
+# def permission_post():
+#     """Function which adds new permission into database.
+#     :return: If request data is invalid:
+#                  {'status': False, 'error': [list of errors]}, 400
+#              If all ok:
+#                  {'added_permission': 'description',
+#                   'permission_id': 'permission_id'}
+#     """
 
-    # valid = validator.resource_post(data)
+#     if request.method == 'POST' and request.get_json():
+#         data = request.get_json()
 
-    # if valid['status']:
-    #     if db.get_resource_id(data['resource_name']):
-    #         return jsonify(error='Resource already exists'), 400
+#         valid = validator.permission_post(data)
 
-    #     db.add_resource(data['resource_name'])
-    #     added_res_id = db.get_resource_id(data['resource_name'])
-    #     response = jsonify(added_resource=data['resource_name'],
-    #                        resource_id=added_res_id[0])
-    # else:
-    #     response = Response(json.dumps(valid),
-    #                         mimetype='application/json'), 400
-    # return response
+#         if valid['status']:
+#             db.insert_permission(data['resource_id'],
+#                                  data['action'],
+#                                  data['modifier'],
+#                                  data['description'])
+#             added_perm_id = db.get_permission_id(data['resource_id'],
+#                                                  data['action'],
+#                                                  data['modifier'])
+#             response = jsonify(added_permission_for=data['description'],
+#                                permission_id=added_perm_id[0])
+#         else:
+#             response = Response(json.dumps(valid),
+#                                 mimetype='application/json'), 400
+#         return response

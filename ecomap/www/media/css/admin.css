@@ -33,31 +33,3 @@ button{
   background-color: #eee;
 }
 /*buttons*/
-.btn.btn-default.btn-border {
-  border-color: #ffffff;
-  color: #fff;
-}
-.btn.btn-primary.btn-border {
-  border-color: #bedef3;
-  color: #3498db;
-}
-.btn.btn-success.btn-border {
-  border-color: #2ecc71;
-  color: #2ecc71;
-}
-.btn.btn-info.btn-border {
-  border-color: #81cfe0;
-  color: #81cfe0;
-}
-.btn.btn-warning.btn-border {
-  border-color: #f39c12;
-  color: #f39c12;
-}
-.btn.btn-danger.btn-border {
-  border-color: #c0392b;
-  color: #c0392b;
-}
-.btn.btn-border {
-  border: 2px solid;
-  background: transparent;
-}

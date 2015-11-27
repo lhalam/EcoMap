@@ -476,8 +476,8 @@ form {
   color: #81cfe0;
 }
 .btn.btn-warning.btn-border {
-  border-color: #FFE966;
-  color: #FFE966;
+  border-color: #EDD95F;
+  color: #D1C054;
 }
 .btn.btn-danger.btn-border {
   border-color: #F04848;
@@ -500,10 +500,15 @@ form {
   color: #fff;
 }
 .btn.btn-warning:hover {
-  background-color: #FFE966;
+  background-color: #F5E062;
   color: #fff;
 }
 .btn.btn-danger:hover {
-  background-color: #F04848;
+  background-color: #EB4646;
   color: #fff;
+}
+.fa{
+  line-height: 40px;
+  vertical-align: middle;
+  font-size: 2.7em
 }

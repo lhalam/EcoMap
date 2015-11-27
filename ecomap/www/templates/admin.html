@@ -20,6 +20,8 @@
                   <td>
                     Назва ресурсу
                   </td>
+                  <td><button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
+                  <i class="fa fa-plus "></i>&nbsp;&nbsp;додати роль  </button></td>
                  
                 </tr>
               </thead>
@@ -36,7 +38,7 @@
                 
               </tbody>
             </table>
-            <button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">Додати </button>
+            
           </div>
           </div>
           
@@ -69,7 +71,7 @@
              
               </tbody>
             </table>
-            <button class="btn btn-primary btn-border" ng-click="showAddPermModal()">Додати право</button>
+            <button class="btn btn-primary btn-border" ng-click="showAddPermModal()">додати право</button>
             <div class="clear"></div>
         </uib-tab>
 
@@ -100,7 +102,7 @@
           
               </tbody>
              </table>
-             <button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()">Додати роль</button>
+             <button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()">додати роль</button>
           </div>
           </div>
           <br>
@@ -229,7 +231,7 @@
       </div>
 
     </div>
-    <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">Додати</button>
+    <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button>
   </form>
 </modal>
 
@@ -272,7 +274,7 @@
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="sumbit" class="btn btn-primary btn-border">Додати право</button>
+    <button type="sumbit" class="btn btn-primary btn-border">додати право</button>
   </form>
 </modal>
 

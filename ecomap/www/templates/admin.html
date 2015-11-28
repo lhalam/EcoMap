@@ -13,7 +13,7 @@
 
         <uib-tab heading="Ресурси">
           <div class="row">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2">
             <table class="table table-hover">
               <thead>
                 <tr>
@@ -21,7 +21,7 @@
                     Назва ресурсу
                   </td>
                   <td><button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
-                  <i class="fa fa-plus "></i>&nbsp;&nbsp;додати роль  </button></td>
+                  <i class="fa fa-plus "></i>&nbsp;&nbsp;додати ресурс</button></td>
                  
                 </tr>
               </thead>
@@ -85,7 +85,7 @@
               <thead>
                <tr>
                  <td>Назва ролі</td>
-                
+                 <td><button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати роль</button></td>
                </tr>
               </thead>
               <tbody>
@@ -103,7 +103,7 @@
           
               </tbody>
              </table>
-             <button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()">додати роль</button>
+             
           </div>
           </div>
           <br>
@@ -111,15 +111,19 @@
           
           <div class="row" ng-show="rolePermBlock">
             <div class="row">
-            <div class="col-md-3 col-md-offset-9">
-              <button class="btn btn-primary btn-border" ng-click="backToRole()">Повернутись до ролей</button>
+            <div class="col-md-8">
+              <div class="well"><h4>Роль : {{rolePermObj.name}}</h4></div>
+              </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
             </div>
           </div>
              <div class="col-md-6">
              <!-- Actual permision -->
+             <div class="row">
+             <div class="col-md-12">
               <form>
-              <h4>Актуальні права для {{rolePermObj.name}}</h4>
-              <table class="table table-stripped"  ng-if="listToSend.length !== 0">
+              <table class="table table-stripped"  >
               <thead>
                <tr>
                  <td>Назва методу</td>
@@ -129,7 +133,7 @@
                 
                </tr>
               </thead>
-              <tbody>
+              <tbody ng-if="listToSend.length !== 0">
                 <tr ng-repeat="perm in actualPermInRole" >
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
@@ -140,12 +144,17 @@
               </tbody>
             </table>
             </form>
+               </div>
+             </div>
+
 
             </div>
              <div class="col-md-6">
                <!-- All permis -->
+               <div class="row">
+                <div class="col-md-12">
                 <form ng-submit="bindResPerm()" name="rolePerm" novalidate >
-                <h3>Права для додавання для {{rolePermObj.name}}</h3>
+                <h3>Права для додавання </h3>
                 <input type="text" ng-model="searchWord" class="form-control">
                 <table class="table table-stripped" id="tablePermRole">
 
@@ -159,16 +168,18 @@
                  <td>Опис</td>
                 </tr>
                 </thead>
-               <tbody>
+                <tbody>
                 <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.permission_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
                   <td ng-repeat="perm_prop in perm" > {{perm_prop}}</td>
-               </tr>
+                </tr>
           
-              </tbody>
-            </table>
-          <button type="submit" class="btn btn-primary btn-border">Підтвердити</button>
-</form>
+                </tbody>
+                </table>
+                  <button type="submit" class="btn btn-primary btn-border">Підтвердити</button>
+                </form>
+                 </div>
+               </div>
              </div>
           </div>
         </div>
@@ -228,7 +239,12 @@
      <div class="col-md-12 ">
         <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
       <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+      <div class="row">
+        <div class="col-md-11">
+          <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+        </div>
+        <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button></div>
+      </div>
 
       <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
         <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -238,11 +254,6 @@
     </div>
      </div>
    </div>
-    <div class="row">
-      <div class="col-md-9 col-md-offset-2">
-        <button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button>
-      </div>
-    </div>
   </form>
 </modal>
 
@@ -250,17 +261,17 @@
 <modal title="Редагувати ресурс" visible="editResModal">
   <form  ng-submit="editResource(editResObj)" name="editResForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': (editResForm.resName.$touched || editResSub) && editResForm.resName.$invalid }">
-      <label for="" class="control-label" >Назва ресурса</label>
-      <input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required>
+      <div class="row">
+        <div class="col-md-12"><label for="" class="control-label" >Назва ресурса</label></div>
+        <div class="col-md-11"><input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required></div>
+        <div class="col-md-11"><button type="submit" class="btn btn-primary btn-border" ng-click="editResSub=true">змінити</button></div>
+      </div>
+    
       <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
         <div ng-messages-include="/templates/error_msgs.html"></div>
 
       </div>
     </div>
-
-
-    <button type="submit" class="btn btn-primary btn-border" ng-click="editResSub=true">Змінити</button>
-
   </form>
 </modal>
 
@@ -279,14 +290,18 @@
       <label class="control-label">Модифікатор доступу</label>
       <select ng-model="perm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj"></select>
     </div>
+
     <div class="form-group" ng-class="{ 'has-error': addPerm.descr.$touched && addPerm.descr.$invalid }">
-      <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="perm.description" ng-maxlength="255" required>
+       <div class="row">
+     <div class="col-md-12"><label for="" class="control-label" >Опис права</label></div>
+      <div class="col-md-11"> <input type="text" class="form-control" name="descr" ng-model="perm.description" ng-maxlength="255" required></div>
+      <div class="col-md-1"><button type="sumbit" class="btn btn-primary btn-border">додати</button></div>
+    </div>     
     </div>
     <div class="help-block" ng-messages="addPerm.descr.$error" ng-show="addPerm.descr.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="sumbit" class="btn btn-primary btn-border">додати право</button>
+
   </form>
 </modal>
 
@@ -294,7 +309,8 @@
 <modal title="Редагувати право" visible="editPermModal">
   <form  ng-submit="editPermSubmit()" name="editPermition" novalidate>
     <div class="form-group">
-      <label> Назва ресурсу : {{editPerm.resource_name}}</label>
+      <label> Назва ресурсу :</label>
+      <div class="well well-sm"> {{editPerm.resource_name}}</div>
       
     </div>
     <div class="form-group">
@@ -306,13 +322,19 @@
       <select ng-model="editPerm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj"></select>
     </div>
     <div class="form-group" ng-class="{ 'has-error': editPerm.descr.$touched && editPerm.descr.$invalid }">
-      <label for="" class="control-label" >Опис права</label>
-      <input type="text" class="form-control" name="descr" ng-model="editPerm.description" ng-maxlength="255" required>
+    <div class="row">
+     <div class="col-md-12"><label for="" class="control-label" >Опис права</label></div>
+      <div class="col-md-11"><input type="text" class="form-control" name="descr" ng-model="editPerm.description" ng-maxlength="255" required></div>
+      <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border">змінити</button></div>
     </div>
+     
+      
+    </div>
+
     <div class="help-block" ng-messages="editPerm.descr.$error" ng-show="editPerm.descr.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
-    <button type="submit" class="btn btn-primary btn-border">Змінити право</button>
+    
   </form>
 </modal>
 
@@ -320,23 +342,32 @@
 <modal title="Додати роль" visible="addRoleModal">
   <form  ng-submit="addRoleSubmit()" name="addRoleForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
-      <label for="" class="control-label" >Назва ролі</label>
-      <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required>
+    <div class="row">
+      <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+      <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
+      <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border">додати</button></div>
+    </div>
+    
     </div>
     <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched">
       <div ng-messages-include="/templates/error_msgs.html"></div>
     </div>
 
-    <button type="submit" class="btn btn-primary btn-border">Додати</button>
+
   </form>
 </modal>
 
 <modal title="Редагувати роль" visible="editRoleModal">
   <form  ng-submit="editRole()" name="editRoleForm" novalidate>
     <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
-      <label for="" class="control-label" >Назва ролі</label>
-      <input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required>
+    <div class="row">
+      <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+      <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
+      <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border">Змінити</button></div>
+    </div>
+      
+      
     </div>    
-    <button type="submit" class="btn btn-primary btn-border">Змінити</button>
+
   </form>
 </modal>

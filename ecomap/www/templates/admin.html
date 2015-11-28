@@ -200,7 +200,7 @@
                  <td>Id</td>
                  <td>Роль</td>
                  <td>
-                 <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj"></select>
+                 <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()"></select>
 
 
                  </td>

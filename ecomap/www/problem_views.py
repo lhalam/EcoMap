@@ -90,6 +90,9 @@ def post_problem():
                    data['problem_type_id'],
                    posted_date,
                    user_id)
+            # call refresh problems!
+            # todo TIME!
+            # todo select problem id?
             response = jsonify(added_problem=data['title'])
         else:
             response = Response(json.dumps(valid),

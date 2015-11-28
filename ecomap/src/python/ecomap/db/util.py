@@ -197,6 +197,7 @@ def get_user_role_by_email(email):
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def get_all_permissions_by_role():
     """This query created for Restriction class.
@@ -368,6 +369,7 @@ def insert_permission(resource_id, action, modifier, description):
                 """
         cursor.execute(query, (resource_id, action, modifier, description))
         conn.commit()
+
 
 @retry_query(tries=3, delay=1)
 def edit_permission(action, modifier, permission_id, description):
@@ -754,6 +756,7 @@ def get_activity_by_problem_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def post_problem_into_problem_table(title, content, proposal, latitude,
                                     longtitude, created_date,
@@ -780,10 +783,11 @@ def post_problem_into_problem_table(title, content, proposal, latitude,
                                problem_type_id, user_id))
         conn.commit()
 
+
 @retry_query(tries=3, delay=1)
 def select_results_after_adding_problem(title, content, proposal, latitude,
-                               longtitude, created_date,
-                               problem_type_id):
+                                        longtitude, created_date,
+                                        problem_type_id):
     """Selects filled in data of problem if inserting is success
     for sending it to user.
     :params: title - title of problem
@@ -797,9 +801,9 @@ def select_results_after_adding_problem(title, content, proposal, latitude,
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`,`user_id` ,`created_date`
-                FROM `problem` 
-                WHERE `title` = %s AND `content` = %s 
-                AND `proposal` = %s AND `latitude`= %s 
+                FROM `problem`
+                WHERE `title` = %s AND `content` = %s
+                AND `proposal` = %s AND `latitude`= %s
                 AND `longtitude`= %s AND `created_date`= %s
                 AND `problem_type_id`= %s;
                 """
@@ -807,7 +811,6 @@ def select_results_after_adding_problem(title, content, proposal, latitude,
                                longtitude, created_date,
                                problem_type_id))
         return cursor.fetchone()
-
 
 
 # @retry_query(tries=3, delay=1)
@@ -825,11 +828,12 @@ def select_results_after_adding_problem(title, content, proposal, latitude,
 #         cursor.execute(query, (resource_id, action, modifier))
 #         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
-def post_problem_into_problem_activity_table(problem_id,user_id,
-                                            created_date):
+def post_problem_into_problem_activity_table(problem_id, user_id,
+                                             created_date):
     """Inserts activity data into "problem_activity" table from form which
-    user filled in. Created for doing connection between "problem" 
+    user filled in. Created for doing connection between "problem"
     and "User" tables.
     :params: problem_id - id of problem that have been created
             user_id - id of user that created problem
@@ -838,12 +842,11 @@ def post_problem_into_problem_activity_table(problem_id,user_id,
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ INSERT INTO `problem_activity` (`problem_id`,
-            `       user_id`,`created_date`,`activity_type`) 
+            `       user_id`,`created_date`,`activity_type`)
                     VALUES (%s, %s, %s, "Added");
                 """
-        cursor.execute(query, (problem_id,user_id,created_date))
+        cursor.execute(query, (problem_id, user_id, created_date))
         conn.commit()
-
 
 
 @retry_query(tries=3, delay=1)
@@ -861,6 +864,7 @@ def get_users_pagination(offset, per_page):
         cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def pagination_test(page, per_page):
     """Users per page
@@ -868,7 +872,7 @@ def pagination_test(page, per_page):
     if page == 1:
         offset = 0
     else:
-        offset = (page-1) * per_page
+        offset = (page - 1) * per_page
 
     with db_pool().manager() as conn:
         cursor = conn.cursor()

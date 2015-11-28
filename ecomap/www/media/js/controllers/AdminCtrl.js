@@ -77,7 +77,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                //console.log($scope.Roles)
+                console.log($scope.Roles)
             },function errorCallback(response) {
                 //console.log(response)
             })
@@ -129,6 +129,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
                 //$scope.Roles=data.
                 $scope.Users=data.data
+                console.log(data)
                 //console.log("user_roles")
 
             },function errorCallback(response) {
@@ -209,6 +210,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.newResource = {};
 
     $scope.addResource = function(newResource){
+        console.log($scope.Roles)
         if(!newResource.name){
             return;
         }
@@ -405,9 +407,15 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.rolePerm=false
 
     $scope.selectPerm=function(ev,perm){
-        //$scope.actualPermInRole.push(perm)
-        $scope.selectPermObj[perm.permission_id]=perm
-        $scope.listToSend.push(perm.permission_id)
+        
+        if($scope.listToSend.indexOf(perm.permission_id)===-1){
+            //$scope.selectPermObj[perm.permission_id]=perm
+            $scope.listToSend.push(perm.permission_id)
+        }
+        else{
+            $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
+        }
+        
         // Define all permision,wich already bind
         console.log($scope.listToSend)
         
@@ -482,7 +490,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.msg.deleteError('ролі');
             })
 
+
     }
+
 
 
     $scope.deletePermFormRole=function(perm){

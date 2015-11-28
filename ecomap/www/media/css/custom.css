@@ -466,3 +466,56 @@ form {
   background-color: #335190;
 
 }
+.btn.btn-default.btn-border {
+  border-color: #ffffff;
+  color: #fff;
+}
+.btn.btn-primary.btn-border {
+  border-color: #53a7df;
+  color: #3498db;
+}
+.btn.btn-success.btn-border {
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+.btn.btn-info.btn-border {
+  border-color: #81cfe0;
+  color: #81cfe0;
+}
+.btn.btn-warning.btn-border {
+  border-color: #EDD95F;
+  color: #D1C054;
+}
+.btn.btn-danger.btn-border {
+  border-color: #F04848;
+  color: #c0392b;
+}
+.btn.btn-border {
+  border: 2px solid;
+  background: transparent;
+}
+.btn.btn-primary:hover {
+  background-color: #53a7df;
+  color: #fff;
+}
+.btn.btn-success:hover {
+  background-color: #25a25a;
+  color: #fff;
+}
+.btn.btn-info:hover {
+  background-color: #58bfd6;
+  color: #fff;
+}
+.btn.btn-warning:hover {
+  background-color: #F5E062;
+  color: #fff;
+}
+.btn.btn-danger:hover {
+  background-color: #EB4646;
+  color: #fff;
+}
+.fa{
+  line-height: 40px;
+  vertical-align: middle;
+  font-size: 2.7em
+}

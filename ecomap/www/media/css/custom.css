@@ -355,12 +355,16 @@ form {
   flex-direction: column;
 }
 #map{
-  display: flex !important;
+  display: flex ;
   flex-direction: column;
   flex:1;
 }
 #map > div{
+  display: flex ;
   flex:1;
+}
+.angular-google-map-container{
+  flex: 1;
 }
 
 /*UserProfile styles*/

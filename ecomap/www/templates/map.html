@@ -1,4 +1,7 @@
 <div class="map-container" >
-    <ng-map center="49,30" zoom="6" id="map" default-style="false"></ng-map>  
-    <!-- <div style="background-color: black;"></div> -->
+    <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map">
+        <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
+                         click="zoomMarker" doCluster="true"> </ui-gmap-markers>
+        </ui-gmap-markers>
+    </ui-gmap-google-map>
 </div>

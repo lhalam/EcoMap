@@ -23,7 +23,7 @@ def problems():
         for problem in problem_tuple:
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
-                'latitude': problem[2], 'longtitude': problem[3],
+                'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
@@ -50,7 +50,7 @@ def detailed_problem(problem_id):
             'problem_id': problem_tuple[0], 'title': problem_tuple[1],
             'content': problem_tuple[2], 'proposal': problem_tuple[3],
             'severity': problem_tuple[4], 'status': problem_tuple[5],
-            'latitude': problem_tuple[6], 'longtitude': problem_tuple[7],
+            'latitude': problem_tuple[6], 'longitude': problem_tuple[7],
             'problem_type_id': problem_tuple[8]
             })
 

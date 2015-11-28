@@ -213,7 +213,7 @@
                 <td>{{user.email}}</td>
                 <td>{{user.id}}</td>
                   <td>
-                    <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles"></select>
+                    <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles" ></select>
                   </td>
                   <td>
                     <button class="btn btn-primary btn-border" ng-click="changeRole(user)">Змінити роль</button>

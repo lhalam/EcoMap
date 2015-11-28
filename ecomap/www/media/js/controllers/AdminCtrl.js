@@ -52,7 +52,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             $scope.Resources = data.data
 
         }, function errorCallback(response) {
-            //console.log(response)
         });
     }
     $scope.loadPerm=function(){
@@ -62,10 +61,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
-                //console.log($scope.Permisions)
                 
             }, function errorCallback(response) {
-                //console.log(response)
             })
 
     }
@@ -76,8 +73,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                console.log("Roles")
-                console.log($scope.Roles)
             },function errorCallback(response) {
                 //console.log(response)
             })
@@ -86,7 +81,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     $scope.loadData=function(){
         $scope.loadRole()
-        //load resources
+
         $http({
             method: 'GET',
             url: '/api/resources'
@@ -94,23 +89,21 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             $scope.Resources = data.data
 
         }, function errorCallback(response) {
-            //console.log(response)
+
         });
 
-        //load permisions
+
          $http({
                 method: "GET",
                 url: '/api/all_permissions',
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
-                //console.log($scope.Permisions)
+
                 
             }, function errorCallback(response) {
-                //console.log(response)
-            })
 
-        // load roles
+            })
 
         $http({
                 method:"GET",
@@ -118,43 +111,32 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                //console.log($scope.Roles)
-            },function errorCallback(response) {
-                //console.log(response)
-            })
-
-        $http({
-            method:'GET',
-            url:"/api/user_roles"
-        }).then(function successCallback(data) {
-                //$scope.Roles=data.
-                $scope.Users=data.data
-                console.log(data)
-                //console.log("user_roles")
 
             },function errorCallback(response) {
-                //console.log(response)
+
             })
+
+        // $http({
+        //     method:'GET',
+        //     url:"/api/user_roles"
+        // }).then(function successCallback(data) {
+        //         $scope.Users=data.data
+        //         console.log(data)
+        //     },function errorCallback(response) {
+
+        //     })
 
     }
 
     $scope.loadData()
 
-	// resource section
 
-    //trigers for modal windows
     $scope.addResModal = false;
+    $scope.editResModal = false;
     $scope.triggerAddResModal = function(){
         $scope.addResModal = true;
         $scope.newResource = {};
     };
-
-
-
-
-
-    $scope.editResModal = false;
-
     $scope.showEditResModal = function(name,id){
     	$scope.editResObj={
             'name':name,
@@ -162,8 +144,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     	};
     	$scope.editResModal = true;
     }
-
-
     $scope.editResource = function(editResObj){
         if(!editResObj.name || !editResObj.id){
             return;
@@ -196,7 +176,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             "resource_id":id
           }
         }).then(function successCallback(data) {
-            //if accepted data has attribute  'deleted_resource',delete prop
             $scope.loadRes()
             $scope.msg.deleteSuccess('ресурсу');
         }, function errorCallback(response) {
@@ -204,11 +183,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         })
    	};
 
-    //Create new resource object 
-
-
     $scope.newResource = {};
-
     $scope.addResource = function(newResource){
         console.log($scope.Roles)
         if(!newResource.name){
@@ -592,27 +567,27 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
    // Pagination
    $scope.loadPagination=function(){
 
-    $http({
-        method:"GET",
-        url:"/api/user_page",
-        params:{
-            per_page:4,
-            offset:0,
-        }
-    }).then(function successCallback(data) {
-                console.log(data)
-            }, function errorCallback(response) {
-                //$scope.Eror=response
-                //$scope.customEror=true
-                $scope.msg.editError('користувача');
-    })
+    // $http({
+    //     method:"GET",
+    //     url:"/api/user_page",
+    //     params:{
+    //         per_page:4,
+    //         offset:0,
+    //     }
+    // }).then(function successCallback(data) {
+    //             $scope.
+    //             console.log(data)
+    //             //console.log($scope.Users)
+    //         }, function errorCallback(response) {
+    //             //$scope.Eror=response
+    //             //$scope.customEror=true
+    //             $scope.msg.editError('користувача');
+    // })
 
 
-  $scope.totalItems = 62;
-  $scope.currentPage = 3;
-  $scope.fromPage = 1;
   $scope.bigCurrentPage = 1;
-  $scope.bigTotalItems = $scope.Users.length / $scope.selectCount['selected']*10;
+  //$scope.UsersLenght= $scope.selectCount['selected']
+
   if($scope.bigCurrentPage === 1){
     $http({
         method:"GET",
@@ -622,8 +597,13 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             offset:0,
         }
         }).then(function successCallback(data) {
-            $scope.selectedUsers = data.data
-                console.log(data)
+            var UsersObj= data.data
+            var UsersLenght=UsersObj.pop()
+            $scope.UsersLenght = UsersLenght['total_users']
+            $scope.selectedUsers = UsersObj
+            console.log("Before change")
+            $scope.bigTotalItems = $scope.UsersLenght / $scope.selectCount['selected']*10;
+             console.log($scope.UsersLenght / $scope.selectCount['selected']*10)
             }, function errorCallback(response) {
                 //$scope.Eror=response
                 //$scope.customEror=true
@@ -634,10 +614,13 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
   $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
 
-    $scope.bigTotalItems = $scope.Users.length / $scope.selectCount['selected']*10;
+    $scope.bigTotalItems =$scope.UsersLenght / $scope.selectCount['selected']*10;
+    console.log("After change")
+    console.log($scope.UsersLenght / $scope.selectCount['selected']*10)
+
     var stepCount =$scope.selectCount['selected']
-    console.log("new :"+$scope.selectCount['selected']*newValue)
-    console.log($scope.selectCount['selected']*newValue - stepCount)
+    //console.log("new :"+$scope.selectCount['selected']*newValue)
+    //console.log($scope.selectCount['selected']*newValue - stepCount)
         $http({
         method:"GET",
         url:"/api/user_page",
@@ -646,8 +629,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             offset:$scope.selectCount['selected']*newValue -stepCount,
         }
         }).then(function successCallback(data) {
-            $scope.selectedUsers = data.data
-                console.log(data)
+            var UsersObj=data.data
+            $scope.UsersLenght = UsersObj.pop()['total_users']
+            $scope.selectedUsers = UsersObj
+
             }, function errorCallback(response) {
                 //$scope.Eror=response
                 //$scope.customEror=true
@@ -660,9 +645,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
     }
 
-  $scope.maxSize = 6;
-
-  console.log($scope.bigTotalItems)
    }
 
 

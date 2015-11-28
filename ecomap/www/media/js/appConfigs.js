@@ -45,7 +45,8 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
             $state.go('map');
         });
       }]
-    })
+    }
+    )
     .state('register', {
       url: '/register',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
@@ -56,7 +57,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
             $state.go('map');
         });
       }]
-    });
+    })
+    .state('admin_resource',{
+      url:"/admin/resource"
+    })
+    ;
     
     $urlRouterProvider.otherwise('/map');
     $authProvider.loginUrl = '/api/login';

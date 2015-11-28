@@ -573,9 +573,11 @@ def delete_page(page_id):
 @app.route("/api/user_page", methods=['GET'])
 def pagination():
     """Returns a limit of users."""
-    offset = int(request.args.get('offset'))
-    per_page = int(request.args.get('per_page'))
+    offset = request.args.get('offset')
+    per_page = request.args.get('per_page')
+
     query = db.get_users_pagination(offset, per_page)
+    count = db.count_users()
     parsed_json = []
     if query:
         for user_data in query:
@@ -583,4 +585,6 @@ def pagination():
                                 'last_name': user_data[2],
                                 'email': user_data[3],
                                 'role_name': user_data[4]})
+    if count:
+        parsed_json.append({'total_users': count[0]})
     return Response(json.dumps(parsed_json), mimetype='application/json')

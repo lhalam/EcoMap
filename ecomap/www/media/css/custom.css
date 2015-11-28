@@ -339,9 +339,7 @@ form {
 
 /*Map styles*/
 
-#map{
-    /*width: 100%;
-    height: 100%;*/
+.map-container{
     flex:1;
     display: flex;
     flex-direction: column;
@@ -351,29 +349,25 @@ form {
   display: flex;
   flex-direction:column;
 }
-.wrapper > div {
+.wrapper > .map-div {
   flex: 1;
   display: flex;
-  /*justify-content: center;*/
   flex-direction: column;
 }
-
+#map{
+  display: flex !important;
+  flex-direction: column;
+  flex:1;
+}
+#map > div{
+  flex:1;
+}
 
 /*UserProfile styles*/
 
 .user-profile {
   margin-top: 30px;
-  /*height: 100%;*/
 }
-
-
-/*.user-profile .row{
-    height: 100%;
-}
-
-.user-profile .panel.panel-default{
-    height: 85%;
-}*/
 
 .user-profile .user-info-brief {
   text-align: center;

@@ -904,8 +904,8 @@ def count_users():
 
 
 @retry_query(tries=3, delay=1)
-def problem_post(title, content, proposal,latitude, longtitude,
-       created_date, problem_type_id, user_id):
+def problem_post(title, content, proposal, latitude, longtitude,
+       problem_type_id, created_date, user_id):
     """INSERT DOCSTRING
     """
     with db_pool().manager() as conn:
@@ -913,13 +913,13 @@ def problem_post(title, content, proposal,latitude, longtitude,
         cursor = conn.cursor()
         query = """
         INSERT INTO problem (title, content, proposal,
-                            latitude, longtitude, created_date,
-                             problem_type_id, user_id)
+                            latitude, longtitude, problem_type_id,
+                            created_date, user_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
          INSERT INTO `problem_activity`
                   (problem_id, created_date, user_id, activity_type)
         VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
         """
         cursor.execute(query, (title, content, proposal, latitude, longtitude,
-        created_date, problem_type_id, user_id, created_date, user_id))
+        problem_type_id, created_date, user_id, created_date, user_id))
 

@@ -80,18 +80,15 @@ def post_problem():
         valid = validator.problem_post(data)
 
         if valid['status']:
-            logger.warning('!!!problem')
-            logger.warning(data)
             user_id = current_user.uid
-            logger.info(user_id)
             posted_date = '999999'
             db.problem_post(data['title'],
                    data['content'],
                    data['proposal'],
                    data['latitude'],
                    data['longtitude'],
-                   posted_date,
                    data['problem_type_id'],
+                   posted_date,
                    user_id)
             response = jsonify(added_problem=data['title'])
         else:

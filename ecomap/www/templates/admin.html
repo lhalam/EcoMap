@@ -112,17 +112,20 @@
           <div class="row" ng-show="rolePermBlock">
             <div class="row">
             <div class="col-md-8">
-              <div class="well"><h4>Роль : {{rolePermObj.name}}</h4></div>
+              <div class="well well-sm">Роль : {{rolePermObj.name}}</div>
               </div>
             <div class="col-md-3">
               <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
             </div>
           </div>
              <div class="col-md-6">
-             <!-- Actual permision -->
+             
              <div class="row">
+
              <div class="col-md-12">
               <form>
+              <h3>Актуальні права</h3>
+              <input type="text" ng-model="searchWordActua" class="form-control">
               <table class="table table-stripped"  >
               <thead>
                <tr>
@@ -134,7 +137,7 @@
                </tr>
               </thead>
               <tbody ng-if="listToSend.length !== 0">
-                <tr ng-repeat="perm in actualPermInRole" >
+                <tr ng-repeat="perm in actualPermInRole | filter : searchWordActua" >
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
                   <td>{{perm.id || perm.permission_id}}</td>
@@ -145,7 +148,7 @@
             </table>
             </form>
                </div>
-             </div>
+             </div>  
 
 
             </div>
@@ -197,7 +200,7 @@
                  <td>Id</td>
                  <td>Роль</td>
                  <td>
-                 <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj"></select>
+                 <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()"></select>
 
 
                  </td>

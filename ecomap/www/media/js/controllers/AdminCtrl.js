@@ -11,15 +11,12 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         '2':'Own',
         "3":"Any"
     }
-    $scope.role_obj={
-        "1":"admin",
-        "2":"moderator",
-        "3":"user"
-    }
+    
     $scope.selectCountObj={
         "1":'5',
         "2":"10",
-        "3":"15"
+        "3":"15",
+        "4":"20"
     }
     $scope.selectCount={
         'selected':"5"
@@ -45,6 +42,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
         },
     };
+
+
     $scope.loadRes=function(){
         $http({
             method: 'GET',
@@ -77,6 +76,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
+                console.log("Roles")
                 console.log($scope.Roles)
             },function errorCallback(response) {
                 //console.log(response)
@@ -85,7 +85,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     }
 
     $scope.loadData=function(){
-
+        $scope.loadRole()
         //load resources
         $http({
             method: 'GET',
@@ -517,7 +517,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     }
     // data for filter
     $scope.searchWord=""
-
+    $scope.searchWordActual=""
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
 
@@ -569,10 +569,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.changeRole=function(user_obj){
         console.log(user_obj)
         var role_id;
-        for (role in $scope.role_obj){
-            if($scope.role_obj[role] == user_obj.role_name){
-                //console.log($scope.role_obj[role] )
-                role_id = role
+        for (role in $scope.Roles){
+            if(user_obj.role_name === role){
+                role_id = $scope.Roles[user_obj.role_name]
             }
         }
         $http({

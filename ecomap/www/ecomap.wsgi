@@ -10,10 +10,7 @@ import os
 os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
 os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
-
-#os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(__file__))
-#os.environ['CONFROOT'] = os.environ['PRODROOT'] + '/etc'
-#os.environ['PYSRCROOT'] = os.environ['PRODROOT'] + '/src/python'
+os.environ['STATICROOT'] = os.environ['PRODROOT'] + '/www/'
 
 #sys.path.insert(0, (os.path.join(os.environ['PRODROOT'], 'www')))
 

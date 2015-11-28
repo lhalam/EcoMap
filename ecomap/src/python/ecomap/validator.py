@@ -525,6 +525,7 @@ def change_password(data):
 
     return status
 
+
 def problem_post(data):
     """Validates problem post form.
        :params: data - json object
@@ -534,7 +535,7 @@ def problem_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title','content','latitude','longtitude','problem_type_id']
+    keys = ['title', 'content', 'latitude', 'longtitude', 'problem_type_id']
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})

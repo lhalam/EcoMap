@@ -14,6 +14,7 @@ os.environ['STATICROOT'] = os.environ['PRODROOT'] + '/www/'
 
 sys.path.insert(0, os.environ['PRODROOT'] + '/www')
 sys.path.insert(1, os.environ['PYSRCROOT'])
+
 from views import app as application
 
 # application = DebuggedApplication(application, True)

@@ -1,9 +1,10 @@
 """Module contains routes, used for problem table."""
 import functools
 import json
+import datetime
 
 from flask import request, jsonify, Response, g, abort
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -52,13 +53,49 @@ def detailed_problem(problem_id):
             'severity': problem_tuple[4], 'status': problem_tuple[5],
             'latitude': problem_tuple[6], 'longitude': problem_tuple[7],
             'problem_type_id': problem_tuple[8]
-            })
+        })
 
     if activity_tuple:
         activity_info.append({
             'created_date': activity_tuple[0], ' problem_id': activity_tuple[1],
             'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
-            })
+        })
 
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/problem_post', methods=['POST'])
+def post_problem():
+    """Function which adds data from problem form to DB.
+	:return: If request data is invalid:
+			 	{'status': False, 'error': [list of errors]}, 400
+			 If all ok:
+			 	{'added_problem': 'problem_title'
+			 	 'problem_id': 'problem_id'}
+	"""
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+
+        valid = validator.problem_post(data)
+
+        if valid['status']:
+            user_id = current_user.uid
+            posted_date = '999999'
+            db.problem_post(data['title'],
+                   data['content'],
+                   data['proposal'],
+                   data['latitude'],
+                   data['longtitude'],
+                   data['problem_type_id'],
+                   posted_date,
+                   user_id)
+            # call refresh problems!
+            # todo TIME!
+            # todo select problem id?
+            response = jsonify(added_problem=data['title'])
+        else:
+            response = Response(json.dumps(valid),
+                                mimetype='application/json'), 400
+        return response
+
 

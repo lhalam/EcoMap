@@ -803,3 +803,26 @@ def count_users():
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def problem_post(title, content, proposal, latitude, longtitude,
+                 problem_type_id, created_date, user_id):
+    """INSERT DOCSTRING
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """
+        INSERT INTO problem (title, content, proposal,
+                            latitude, longtitude, problem_type_id,
+                            created_date, user_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        INSERT INTO `problem_activity`
+                  (problem_id, created_date, user_id, activity_type)
+        VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
+        """
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longtitude, problem_type_id, created_date,
+                               user_id, created_date, user_id))
+

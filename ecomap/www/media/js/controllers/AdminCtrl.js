@@ -517,7 +517,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     }
     // data for filter
     $scope.searchWord=""
-
+    $scope.searchWordActual=""
     /*func for bind  permision to resource*/
     $scope.bindResPerm=function(){
 

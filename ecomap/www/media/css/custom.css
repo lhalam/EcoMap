@@ -512,3 +512,10 @@ form {
   vertical-align: middle;
   font-size: 2.7em
 }
+
+
+
+input[type="checkbox"]{
+  width: 1.3em;
+  height: 1.8em;
+}

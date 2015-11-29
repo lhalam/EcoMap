@@ -549,12 +549,12 @@ def problem_post(data):
         elif not check_string(data[keyname]):
             status['error'].append({keyname:
                                     ERROR_MSG['check_string'] % keyname})
-        # elif not check_minimum_length(data[keyname], LENGTHS[keyname]):
-        #     status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-        #                             % keyname})
-        # elif not check_maximum_length(data[keyname], LENGTHS[keyname]):
-        #     status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-        #                             % keyname})
+        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
+                                    % keyname})
+        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+                                    % keyname})
 
     if status['error']:
         status['status'] = False

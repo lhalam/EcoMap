@@ -1,6 +1,5 @@
-app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', function($scope, $http, uiGmapGoogleMapApi) {
-  
-  $scope.mapReady = true;
+app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady',function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady) {
+
   $scope.mapParams = {
     center: {
       latitude: 49,
@@ -8,6 +7,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', function($sc
     },
     zoom: 6
   };
+
   $scope.getMapParams = function() {
     return $scope.mapParams;
   };
@@ -22,6 +22,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', function($sc
       zoom: 17
     }
   };
+
   $scope.markers = [];
   $scope.loadProblems = function() {
     $http({
@@ -32,10 +33,16 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', function($sc
       console.log($scope.markers);
     }, function errorCallback(error) {});
   }
+
   $scope.loadProblems();
+  // uiGmapGoogleMapApi.then(function(maps){
+  //   $scope.maps = maps;
+  //   // google.maps.event.trigger(maps, 'resize');
+  // });
 
-  uiGmapGoogleMapApi.then(function(maps){
-    google.maps.event.trigger(maps, 'resize');
-  });
-
+  uiGmapIsReady.promise()
+    .then(function(instances) {
+      var maps = instances[0].map;
+      google.maps.event.trigger(maps, 'resize');
+    });
 }])

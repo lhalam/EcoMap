@@ -11,6 +11,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/map.html',
       controller: 'MapCtrl'
     })
+    .state('admin', {
+      url: '/admin',
+      templateUrl: '/templates/admin.html',
+      controller: 'AdminCtrl'
+    })
     .state('faq', {
       url: '/faq/:faqAlias',
       templateUrl: '/templates/detailedFaq.html',
@@ -40,8 +45,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
             $state.go('map');
         });
       }]
-    }
-    )
+    })
     .state('register', {
       url: '/register',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
@@ -52,30 +56,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
             $state.go('map');
         });
       }]
-    })
-    .state('admin_resource',{
-      url:"/admin/resource",
-      views:{
-        "admin":{
-           templateUrl: "/templates/admin.html",
-           controller:"AdminCtrl"
-
-        },
-        "resource":{
-          templateUrl: "/templates/admin_resource.html",
-          controller:"ResourceCtrl"
-
-        },
-        "modals":{
-          templateUrl: "/templates/admin_modals.html",
-          
-
-        }
-      },
-      
-
-    })
-    ;
+    });
     
     $urlRouterProvider.otherwise('/map');
     $authProvider.loginUrl = '/api/login';

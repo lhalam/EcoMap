@@ -3,6 +3,8 @@
 """
 import imghdr
 import re
+import logging
+logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 
@@ -535,56 +537,29 @@ def problem_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longitude', 'problem_type_id']
+    keys = ['title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
+        logger.warning(data)
+        logger.warning(keyname)
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:
-            status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_empty'] % keyname})
         elif not check_string(data[keyname]):
-            status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-                                    % keyname})
-        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-                                    % keyname})
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_string'] % keyname})
+        # elif not check_minimum_length(data[keyname], LENGTHS[keyname]):
+        #     status['error'].append({keyname: ERROR_MSG['check_minimum_length']
+        #                             % keyname})
+        # elif not check_maximum_length(data[keyname], LENGTHS[keyname]):
+        #     status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+        #                             % keyname})
 
     if status['error']:
         status['status'] = False
 
     return status
-
-
-def problem_post(data):
-    """Validates problem post form.
-       :params: data - json object
-       :return: dictionary with status keyname and error keys. By
-                default status is True, and error is empty.
-                If validation failed, status changes to False
-                and error keyname saves error ERROR_MSG
-    """
-    status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longitude', 'problem_type_id']
-    for keyname in keys:
-        if not has_key(data, keyname):
-            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not data[keyname]:
-            status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
-        elif not check_string(data[keyname]):
-            status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-                                    % keyname})
-        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-                                    % keyname})
-
-    if status['error']:
-        status['status'] = False
-
-    return status
-
 
 
 def has_key(dictionary, keyname):

@@ -9,7 +9,14 @@
 
         <section id="two" resizable r-directions="['left']" r-flex="true">
 
-    <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)" class="page-edit-form" novalidate>
+    <div>
+          <button class="btn btn-info" ng-click="locateUser()">coordt</button>
+    </div>
+    <div>
+        <p>{{  }}</p>
+    </div>
+    <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
+          class="page-edit-form" novalidate enctype="multipart/form-data">
 
       <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
         <label for="title" class="control-label">NAZVA PROBLEMY</label>
@@ -21,7 +28,7 @@
 
      <div class="form-group">
          <label for="problem_type_id"  class="control-label">TYPE PROBLEMY</label>
-         <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.problem_type_id"
+         <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
                  class="form-control">
              <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
          </select>
@@ -38,6 +45,9 @@
         <label for="proposal" class="control-label">PROPOSICII</label>
         <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control" ng-model="newProblem.proposal"></textarea>
       </div>
+
+
+
 
       <button class="btn btn-primary fl-right" type="submit" >Додати проблему</button>
       <div class="clear"></div>

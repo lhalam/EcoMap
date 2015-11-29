@@ -1,4 +1,4 @@
-app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http, toaster){
+app.controller('AdminCtrl', ['$scope','$http', 'toaster',"$rootScope", function($scope,$http, toaster,$rootScope){
 
     $scope.meth_obj={
         "1":"GET",
@@ -40,6 +40,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;              
+
             }, function errorCallback(response) {
             })
 
@@ -51,7 +52,6 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             }).then(function successCallback(data) {
                 $scope.Roles=data.data
-                console.log("Roles")
             },function errorCallback(response) {
             })
 
@@ -62,9 +62,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $scope.loadRes()
         $scope.loadPerm()
 
-    }
+        }
 
     $scope.loadData()
-
-
-}]);
+}])

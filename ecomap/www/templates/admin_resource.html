@@ -1,0 +1,29 @@
+<div class="row">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <td>
+                    Назва ресурсу
+                  </td>
+                  <td><button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
+                  <i class="fa fa-plus "></i>&nbsp;&nbsp;додати ресурс</button></td>
+                 
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="(resource_name,resource_id) in Resources">
+                  <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
+                  <td>
+                  <button class="btn btn-primary edit_btn btn-border" ng-click="showEditResModal(resource_name,resource_id)">редагувати</button>
+                  <button class="btn btn-danger edit_btn btn-border" ng-click="deleteResource(resource_id)">видалити</button>
+                    <!-- <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
+                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a> -->
+                  </td>
+                </tr>
+                
+              </tbody>
+            </table>
+            
+          </div>
+          </div>

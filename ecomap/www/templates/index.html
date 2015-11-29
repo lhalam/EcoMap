@@ -66,6 +66,7 @@
     <script src='/js/controllers/admin_userCtrl.js'></script>
 
 
+
   
 
   </head>
@@ -115,10 +116,8 @@
         </div>
       </nav>
       <toaster-container></toaster-container>
+    <div ui-view class="map-div"></div>
 
-      <div ui-view class="map-div"></div>
-
-    </div>
     <script>
       $(window).load(function() {
         $(".loader").fadeOut("slow");

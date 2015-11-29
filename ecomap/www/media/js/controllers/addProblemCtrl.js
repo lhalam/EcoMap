@@ -54,8 +54,6 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', '$time
     $http({
       method: 'POST',
       url: '/api/problem_post',
-      headers: {'Content-Type': 'multipart/form-data'
-   },
       data: newProblem
     }).then(function successCallback(response) {
       toaster.pop('success', 'Оповіщення', 'Проблему було успішно додано!');

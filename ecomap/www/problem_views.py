@@ -76,12 +76,14 @@ def post_problem():
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
+        logger.warning(data)
 
         valid = validator.problem_post(data)
 
         if valid['status']:
+            logger.warning(valid)
             user_id = current_user.uid
-            posted_date = 99999
+            posted_date = '999999'
             db.problem_post(data['title'],
                             data['content'],
                             data['proposal'],

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `problem` (
  `status` enum('Solved', 'Unsolved') 
         NOT NULL DEFAULT 'Unsolved',    # not resolved or resolved
  `latitude` float NOT NULL,           # coordinats of
- `longtitude` float NOT NULL,         # location
+ `longitude` float NOT NULL,         # location
  `created_date` int(11) unsigned NOT NULL, # date of creation
  `problem_type_id` int(10) unsigned NOT NULL,
  `user_id` int(10) unsigned NOT NULL,

@@ -1,7 +1,7 @@
 """Module contains routes, used for problem table."""
 import functools
 import json
-import datetime
+import time
 
 from flask import request, jsonify, Response, g, abort
 from flask_login import login_required, current_user
@@ -26,7 +26,7 @@ def problems():
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6]})
+                'date': problem[6])})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -82,7 +82,8 @@ def post_problem():
         if valid['status']:
             logger.warning(valid)
             user_id = current_user.uid
-            posted_date = '999999'
+            now = time.time()
+            posted_date = int(round(now))
             db.problem_post(data['title'],
                             data['content'],
                             data['proposal'],

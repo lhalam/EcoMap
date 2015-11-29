@@ -73,13 +73,14 @@ def post_problem():
     {'added_problem': 'problem_title'
     'problem_id': 'problem_id'}
     """
-
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
+    if request.method == 'POST' and request.form:
+        data = request.form
+        logger.warning(json.dumps(request.form))
 
         valid = validator.problem_post(data)
-
+        logger.warning(data)
         if valid['status']:
+            logger.warning(valid)
             user_id = current_user.uid
             posted_date = '999999'
             db.problem_post(data['title'],
@@ -87,12 +88,12 @@ def post_problem():
                             data['proposal'],
                             data['latitude'],
                             data['longitude'],
-                            data['problem_type_id'],
+                            data['type'],
                             posted_date,
                             user_id)
             # call refresh problems!
-            # todo TIME!
-            # todo select problem id?
+        # todo TIME!
+        # todo select problem id?
             response = jsonify(added_problem=data['title'])
         else:
             response = Response(json.dumps(valid),

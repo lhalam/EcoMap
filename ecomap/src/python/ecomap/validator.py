@@ -3,6 +3,8 @@
 """
 import imghdr
 import re
+import logging
+logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 
@@ -29,7 +31,8 @@ LENGTHS = {'email': [5, 100],
            'content': [2, 255],
            'latitude': [2, 255],
            'longitude': [2, 255],
-           'problem_type_id': [1, 255]}
+           'problem_type_id': [1, 255],
+           'type': [1, 255]}
 
 # Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
@@ -539,8 +542,10 @@ def problem_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longitude', 'problem_type_id']
+    keys = ['title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
+        logger.warning(data)
+        logger.warning(keyname)
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:

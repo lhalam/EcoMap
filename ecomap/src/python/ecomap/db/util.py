@@ -756,6 +756,7 @@ def get_activity_by_problem_id(problem_id):
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def problem_post(title, content, proposal, latitude, longitude,
                  problem_type_id, created_date, user_id):
@@ -832,6 +833,3 @@ def count_users():
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
         return cursor.fetchone()
-
-
-

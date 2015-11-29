@@ -1,9 +1,3 @@
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.54, 30.569, 1, 1, 1);
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.64, 30.569, 1, 1, 1);
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.74, 30.569, 1, 1, 1);
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.54, 30.569, 1, 1, 1);
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.84, 31.569, 1, 1, 1);
-insert into problem (title, content, proposal, severity, status, latitude, longtitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.94, 31.569, 1, 1, 1);
 insert into problem (title, content, proposal, severity, status, latitude, longitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.544, 31.569, 1, 1, 1);
 insert into problem (title, content, proposal, severity, status, latitude, longitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 49.44, 31.468, 1, 1, 1);
 insert into problem (title, content, proposal, severity, status, latitude, longitude, created_date, problem_type_id, user_id) values ('title', 'content', 'none', '3', 'unsolved', 48.54, 29.468, 1, 1, 1);

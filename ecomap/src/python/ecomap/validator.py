@@ -3,6 +3,8 @@
 """
 import imghdr
 import re
+import logging
+logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 
@@ -25,8 +27,8 @@ LENGTHS = {'email': [5, 100],
            'title':[2, 255],
            'content':[2, 255],
            'latitude':[2, 255],
-           'longtitude':[2, 255],
-           'problem_type_id':[1, 255]}
+           'longitude':[2, 255],
+           'type':[1, 255]}
 
 # Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
@@ -535,14 +537,18 @@ def problem_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longtitude', 'problem_type_id']
+    keys = ['title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
+        logger.warning(data)
+        logger.warning(keyname)
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:
-            status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_empty'] % keyname})
         elif not check_string(data[keyname]):
-            status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_string'] % keyname})
         elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
             status['error'].append({keyname: ERROR_MSG['check_minimum_length']
                                     % keyname})
@@ -554,7 +560,6 @@ def problem_post(data):
         status['status'] = False
 
     return status
-
 
 
 def has_key(dictionary, keyname):
@@ -649,5 +654,3 @@ def validate_image_file(img_file):
                 False - if file not in png format
     """
     return True if str(imghdr.what(img_file)) is 'png' else False
-
-

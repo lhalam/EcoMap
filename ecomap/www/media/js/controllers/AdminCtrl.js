@@ -331,7 +331,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $scope.role = {};
 
     }
-    // new role object
+    // new role object!
     
 
     $scope.addRoleSubmit = function(){

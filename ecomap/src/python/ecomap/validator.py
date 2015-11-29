@@ -25,7 +25,7 @@ LENGTHS = {'email': [5, 100],
            'title':[2, 255],
            'content':[2, 255],
            'latitude':[2, 255],
-           'longtitude':[2, 255],
+           'longitude':[2, 255],
            'problem_type_id':[1, 255]}
 
 # Dictionary of error messages.
@@ -535,7 +535,7 @@ def problem_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longtitude', 'problem_type_id']
+    keys = ['title', 'content', 'latitude', 'longitude', 'problem_type_id']
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})

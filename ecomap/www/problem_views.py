@@ -80,7 +80,7 @@ def post_problem():
 
         if valid['status']:
             user_id = current_user.uid
-            posted_date = '999999'
+            posted_date = datetime.datetime.now()
             db.problem_post(data['title'],
                             data['content'],
                             data['proposal'],

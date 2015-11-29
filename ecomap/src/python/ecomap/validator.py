@@ -13,6 +13,9 @@ ENUM = {'action': ['POST', 'GET', 'PUT', 'DELETE'],
 # Pattern to validate email is email.
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
 
+# Pattern to validate coordinates.
+COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,6}$')
+
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
            'first_name': [2, 255],
@@ -22,11 +25,11 @@ LENGTHS = {'email': [5, 100],
            'resource_name': [2, 100],
            'role_name': [2, 255],
            'description': [2, 255],
-           'title':[2, 255],
-           'content':[2, 255],
-           'latitude':[2, 255],
-           'longitude':[2, 255],
-           'problem_type_id':[1, 255]}
+           'title': [2, 255],
+           'content': [2, 255],
+           'latitude': [2, 255],
+           'longitude': [2, 255],
+           'problem_type_id': [1, 255]}
 
 # Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
@@ -37,7 +40,8 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_empty': '%s value is empty.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
-             'name_exists': '"%s" name allready exists.'}
+             'name_exists': '"%s" name allready exists.',
+             'check_coordinates': '%s value is not coordinates.'}
 
 
 def user_registration(data):
@@ -540,51 +544,30 @@ def problem_post(data):
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:
-            status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
-        elif not check_string(data[keyname]):
-            status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-                                    % keyname})
-        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-                                    % keyname})
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_empty'] % keyname})
+        elif keyname in ['title', 'content']:
+            if not check_string(data[keyname]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_string'] % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+        elif keyname in ['latitude', 'longitude']:
+            if not check_coordinates(data[keyname]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_coordinates']
+                                        % keyname})
 
     if status['error']:
         status['status'] = False
 
     return status
-
-
-def problem_post(data):
-    """Validates problem post form.
-       :params: data - json object
-       :return: dictionary with status keyname and error keys. By
-                default status is True, and error is empty.
-                If validation failed, status changes to False
-                and error keyname saves error ERROR_MSG
-    """
-    status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longitude', 'problem_type_id']
-    for keyname in keys:
-        if not has_key(data, keyname):
-            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-        elif not data[keyname]:
-            status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
-        elif not check_string(data[keyname]):
-            status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
-        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-                                    % keyname})
-        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-                                    % keyname})
-
-    if status['error']:
-        status['status'] = False
-
-    return status
-
 
 
 def has_key(dictionary, keyname):
@@ -679,3 +662,12 @@ def validate_image_file(img_file):
                 False - if file not in png format
     """
     return True if str(imghdr.what(img_file)) is 'png' else False
+
+
+def check_coordinates(value):
+    """Validator function to check if value looks like coordinates.
+       :params: value - string to check
+       :return: True - it value looks like coordinates
+                False - if it is not
+    """
+    return COORDINATES_PATTER.match(value)

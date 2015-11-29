@@ -717,7 +717,7 @@ def get_all_problems():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `id`,`title`,`latitude`,`longitude`,
+        query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
                     `problem_type_id`,`status`,`created_date`
                     FROM `problem`;
                 """
@@ -734,7 +734,7 @@ def get_problem_by_id(problem_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ SELECT `id`, `title`, `content`, `proposal`,
-                `severity`, `status`, `latitude`,`longitude`,
+                `severity`, `status`, `latitude`,`longtitude`,
                 `problem_type_id` FROM `problem` WHERE `id` = %s;
                 """
         cursor.execute(query, (problem_id, ))
@@ -806,7 +806,7 @@ def count_users():
 
 
 @retry_query(tries=3, delay=1)
-def problem_post(title, content, proposal, latitude, longitude,
+def problem_post(title, content, proposal, latitude, longtitude,
                  problem_type_id, created_date, user_id):
     """INSERT DOCSTRING
     """
@@ -815,7 +815,7 @@ def problem_post(title, content, proposal, latitude, longitude,
         cursor = conn.cursor()
         query = """
         INSERT INTO problem (title, content, proposal,
-                            latitude, longitude, problem_type_id,
+                            latitude, longtitude, problem_type_id,
                             created_date, user_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
         INSERT INTO `problem_activity`
@@ -823,5 +823,5 @@ def problem_post(title, content, proposal, latitude, longitude,
         VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
         """
         cursor.execute(query, (title, content, proposal, latitude,
-                               longitude, problem_type_id, created_date,
+                               longtitude, problem_type_id, created_date,
                                user_id, created_date, user_id))

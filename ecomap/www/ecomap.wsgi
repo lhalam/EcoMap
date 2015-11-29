@@ -7,8 +7,14 @@ import os
 # if you using some virtualenv interpreter - uncomment next three lines
 # and add your own path to env's 'activate_this.py' file
 
+<<<<<<< HEAD
 activate_this = "/home/gamolyavlad/myproject/venv/bin/activate_this.py"
 #activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
+=======
+#activate_this = "/home/gamolyavlad/myproject/venv/bin/activate_this.py"
+#activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
+activate_this = "/home/frutkic/venv/ecomap/bin/activate_this.py"
+>>>>>>> 42147fa0f3cc6fb558572ee877005ba38493cd5f
 execfile(activate_this, dict(__file__=activate_this))
 
 os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

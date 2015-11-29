@@ -1,4 +1,4 @@
-app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http, toaster){
+app.controller('AdminCtrl', ['$scope','$http', 'toaster',"$rootScope", function($scope,$http, toaster,$rootScope){
 
     $scope.meth_obj={
         "1":"GET",
@@ -116,25 +116,14 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
             })
 
-        // $http({
-        //     method:'GET',
-        //     url:"/api/user_roles"
-        // }).then(function successCallback(data) {
-        //         $scope.Users=data.data
-        //         console.log(data)
-        //     },function errorCallback(response) {
-
-        //     })
-
     }
 
     $scope.loadData()
-
-
     $scope.addResModal = false;
     $scope.editResModal = false;
     $scope.triggerAddResModal = function(){
         $scope.addResModal = true;
+        console.log($scope.editResModal)
         $scope.newResource = {};
     };
     $scope.showEditResModal = function(name,id){
@@ -142,13 +131,15 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             'name':name,
     		'id':id
     	};
+
     	$scope.editResModal = true;
+        console.log($scope.editResModal)
     }
     $scope.editResource = function(editResObj){
         if(!editResObj.name || !editResObj.id){
             return;
         }
-
+        console.log($scope.editResModal)
         $http({
         method:"PUT",
         url:"/api/resources",
@@ -159,9 +150,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
             $scope.loadRes()
             $scope.editResModal = false;
+            console.log($scope.editResModal)
             $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
             $scope.msg.editError('ресурсу');
+            console.log($scope.editResModal)
         })
 
     };
@@ -199,7 +192,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
         $scope.addResModal = false;
         $scope.Resources[data.data.added_resource]=data.data.resource_id
-        $scope.addResModal=false
+        console.log($scope.addResModal)
         $scope.msg.createSuccess('ресурсу');
         }, function errorCallback(response) {
             $scope.addResModal=false

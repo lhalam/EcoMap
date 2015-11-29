@@ -1,0 +1,37 @@
+<h3>Таблиця користувачів</h3>
+        <table class="table table-stripped">
+        <thead>
+               <tr>
+                 <td>Ім’я</td>
+                 <td>Прізвище</td>
+                 <td>e-mail</td>
+                 <td>Id</td>
+                 <td>Роль</td>
+                 <td>
+                 <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()"></select>
+
+
+                 </td>
+               </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="user in selectedUsers">
+                <td>{{user.first_name}}</td>
+                <td>{{user.last_name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.id}}</td>
+                  <td>
+                    <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles" ></select>
+                  </td>
+                  <td>
+                    <button class="btn btn-primary btn-border" ng-click="changeRole(user)">Змінити роль</button>
+                  </td>
+               </tr>
+
+              </tbody>
+        </table>
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+        </div>
+      </div>

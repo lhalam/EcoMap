@@ -54,6 +54,7 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
+    <script src='/js/controllers/admin_ResourceCtrl.js'></script>
 
 
     <!-- AngularJS directives -->
@@ -107,7 +108,13 @@
         </div>
       </nav>
       <toaster-container></toaster-container>
-      <div ui-view class="map-div"></div>
+      <div class="wrapper" ng-controller="AdminCtrl">
+        <div ui-view name="admin" ></div>
+        <div ui-view name="resource"></div>
+        <div ui-view name="modals" ></div>
+      </div>
+      <div ui-view class="map-div" id="map-block"></div>
+      
 
     </div>
     <script>

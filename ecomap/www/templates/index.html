@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="/css/toaster.min.css">
     <link rel="stylesheet" href="/css/textAngular.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/angular-resizable.css">
+    <link rel="stylesheet" href="/css/resize-test.css">
     <link href="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.css">
     <link rel="stylesheet" type="text/css" href="/css/custom.css">
     <link rel="stylesheet" type="text/css" href="/css/image_crop.css">
@@ -38,7 +40,8 @@
     <script src="/js/libs/angular-google-maps.min.js"></script>
     <script src="/js/libs/angular-simple-logger.min.js"></script>
     <script src="/js/libs/lodash.min.js"></script>
-    
+    <script src="/js/libs/angular-resizable.js"></script>
+
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
     <script src="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.js"></script>
@@ -60,6 +63,7 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
+    <script src='/js/controllers/addProblemCtrl.js'></script>
 
 
     <!-- AngularJS directives -->
@@ -83,7 +87,7 @@
           </div>
           <div class="navbar-collapse collapse" id="navMenu">
             <ul class="nav navbar-nav">
-              <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
+              <li id="inform_probl_btn"><a href="/#/addProblem">повідомити про проблему</a></li>
               <li class="dropdown" >
                 <a class="dropdown-toggle"  data-toggle="dropdown" ng-show="faqTitles">ресурси <span class="caret"></span></a>
                 <ul class="dropdown-menu" >

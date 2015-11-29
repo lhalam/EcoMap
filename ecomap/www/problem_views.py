@@ -98,28 +98,3 @@ def post_problem():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
         return response
-
-
-
-#
-# @app.route('/api/problem_post', methods=['POST'])
-# def post_problem():
-#
-#         valid = validator.problem_post(data)
-#
-#         # if valid['status']:
-#         logger.warning('!!!problem')
-#         logger.warning(data)
-#         created_date = '21312312312'
-#         user_id = current_user.uid
-#         db.pt(data['title'], data['content'], data['proposal'],
-#               data['latitude'],
-#               data['longtitude'], data['problem_type_id'], user_id, created_date)
-#         response = jsonify(added_problem=data['title'])
-#                            # problem_id=results_for_import[1])
-#         # else:
-#         #     response = Response(json.dumps(valid),
-#         #                         mimetype='application/json'), 400
-#         return response
-
-

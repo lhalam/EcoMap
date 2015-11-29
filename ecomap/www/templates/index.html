@@ -41,6 +41,12 @@
     <script src="/js/angular_app.js"></script>
     <script src="/js/appConfigs.js"></script>
 
+    <!-- AngularJS directives -->
+    <script src="/js/directives/ModalWindow.js"></script>
+    <script src="/js/directives/ValidatorsDirective.js"></script>
+    <script src="/js/factories/msg.js"></script>
+
+
     <!-- AngularJS Ctrls -->
     <script src="/js/controllers/MainCtrl.js"></script>
     <script src="/js/controllers/UserProfileCtrl.js"></script>
@@ -54,11 +60,13 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
+    <script src='/js/controllers/admin_resourceCtrl.js'></script>
+    <script src='/js/controllers/admin_permisionCtrl.js'></script>
+    <script src='/js/controllers/admin_roleCtrl.js'></script>
+    <script src='/js/controllers/admin_userCtrl.js'></script>
 
 
-    <!-- AngularJS directives -->
-    <script src="/js/directives/ModalWindow.js"></script>
-    <script src="/js/directives/ValidatorsDirective.js"></script>
+  
 
   </head>
   <body ng-controller="MainCtrl">
@@ -107,6 +115,7 @@
         </div>
       </nav>
       <toaster-container></toaster-container>
+
       <div ui-view class="map-div"></div>
 
     </div>

@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/css/admin.css">
 
 
-
+<div ui-view name="resource"></div>
 <div class="container" >
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -11,9 +11,8 @@
       <hr>
       <uib-tabset justified="true">
 
-        <uib-tab heading="Ресурси" >
-
-          <div class="row" ng-controller="ResourceCtrl">
+        <uib-tab heading="Ресурси" href="resource">   
+           <div class="row" ng-controller="ResourceCtrl">
             <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2">
             <table class="table table-hover">
               <thead>
@@ -77,8 +76,7 @@
             </div>
           </form>
         </modal>
-          </div>
-          
+          </div>       
         </uib-tab>
 
         <uib-tab heading="Права">
@@ -105,8 +103,6 @@
                  <td>
                   <button class="btn btn-primary edit_btn btn-border" ng-click="showEditPermModal(permision)">редагувати</button>
                   <button class="btn btn-danger edit_btn btn-border" ng-click="deletePerm(permision)">видалити</button>
-                  <!-- <a href="" ng-click="showEditPermModal(permision)">редагувати</a> &nbsp; &nbsp;
-                  <a href="" class="del" ng-click="deletePerm(permision)">видалити</a> -->
                  </td>
                </tr>
              
@@ -143,7 +139,6 @@
                 </form>
               </modal>
 
-              <!-- Modal window for editing permissions -->
               <modal title="Редагувати право" visible="editPermModal">
                 <form  ng-submit="editPermSubmit()" name="editPermition" novalidate>
                   <div class="form-group">
@@ -327,12 +322,10 @@
       <uib-tab heading="Користувачі" ng-click="loadPagination()" >
 
         <h3>Таблиця користувачів</h3>
-        
         <div class="row" ng-controller="UserCtrl">
           <div class="col-md-12">
-          {{name}}
+
             <table class="table table-stripped">
-          
         <thead>
                <tr>
                  <td>Ім’я</td>

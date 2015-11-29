@@ -26,7 +26,7 @@ def problems():
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6])})
+                'date': problem[6]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 

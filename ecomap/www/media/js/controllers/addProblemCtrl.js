@@ -41,7 +41,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', '$time
     "title": "",
     "problem_type_id": "",
     "latitude": '49.847743',
-    "longtitude": '24.037703'
+    "longitude": '24.037703'
 
   };
   $scope.addProblem = function(newProblem, form) {

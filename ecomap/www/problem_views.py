@@ -15,7 +15,7 @@ from ecomap.db import util as db
 def problems():
     """
     Function, used to get all problems.
-    :return: list of problems with id, title, latitude, longtitude,
+    :return: list of problems with id, title, latitude, longitude,
     problem type, status and date of creation
     """
     problem_tuple = db.get_all_problems()
@@ -68,10 +68,10 @@ def detailed_problem(problem_id):
 def post_problem():
     """Function which adds data from problem form to DB.
 	:return: If request data is invalid:
-			 	{'status': False, 'error': [list of errors]}, 400
-			 If all ok:
-			 	{'added_problem': 'problem_title'
-			 	 'problem_id': 'problem_id'}
+		{'status': False, 'error': [list of errors]}, 400
+		If all ok:
+		{'added_problem': 'problem_title'
+		'problem_id': 'problem_id'}
 	"""
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
@@ -82,13 +82,13 @@ def post_problem():
             user_id = current_user.uid
             posted_date = '999999'
             db.problem_post(data['title'],
-                   data['content'],
-                   data['proposal'],
-                   data['latitude'],
-                   data['longtitude'],
-                   data['problem_type_id'],
-                   posted_date,
-                   user_id)
+                            data['content'],
+                            data['proposal'],
+                            data['latitude'],
+                            data['longitude'],
+                            data['problem_type_id'],
+                            posted_date,
+                            user_id)
             # call refresh problems!
             # todo TIME!
             # todo select problem id?
@@ -97,5 +97,3 @@ def post_problem():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
         return response
-
-

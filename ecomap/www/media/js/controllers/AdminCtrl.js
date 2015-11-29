@@ -11,7 +11,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         '2':'Own',
         "3":"Any"
     }
-    
+
     $scope.selectCountObj={
         "1":'5',
         "2":"10",
@@ -59,11 +59,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $http({
                 method: "GET",
                 url: '/api/all_permissions',
-               
+
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
                 //console.log($scope.Permisions)
-                
+
             }, function errorCallback(response) {
                 //console.log(response)
             })
@@ -101,11 +101,11 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
          $http({
                 method: "GET",
                 url: '/api/all_permissions',
-               
+
             }).then(function successCallback(data) {
                 $scope.Permisions=data.data;
                 //console.log($scope.Permisions)
-                
+
             }, function errorCallback(response) {
                 //console.log(response)
             })
@@ -204,7 +204,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         })
    	};
 
-    //Create new resource object 
+    //Create new resource object
 
 
     $scope.newResource = {};
@@ -259,7 +259,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             "action":$scope.perm['action'],
             "modifier":$scope.perm['modifier'],
             "description":$scope.perm['description']
-            } 
+            }
         }).then(function successCallback(data) {
             $scope.loadPerm()
             $scope.addPermModal = false;
@@ -276,8 +276,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $scope.editPerm=perm
     	$scope.editPermModal = true;
     }
-    // function for editing permisions 
-    
+    // function for editing permisions
+
     $scope.editPermSubmit = function(id){
          $http({
             method:"PUT",
@@ -285,7 +285,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             data:{
                 "permission_id":$scope.editPerm.permission_id,
                 "action":$scope.editPerm['action'],
-                "modifier":$scope.editPerm.modifier, 
+                "modifier":$scope.editPerm.modifier,
                 "description":$scope.editPerm['description']
             }
         }).then(function successCallback(data) {
@@ -316,7 +316,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
            else{
                 $scope.msg.deleteError('права');
            }
-            
+
             console.log(data)
             }, function errorCallback(response) {
                  $scope.msg.deleteError('права');
@@ -331,8 +331,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         $scope.role = {};
 
     }
-    // new role object!
-    
+
+    // new role object
 
     $scope.addRoleSubmit = function(){
         console.log($scope.role['name'])
@@ -369,7 +369,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 if(data.data.error){
                 $scope.msg.deleteError('ролі');
                 }
-               
+
             }, function errorCallback(response) {
                 $scope.msg.deleteError('ролі');
             })
@@ -407,7 +407,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
     $scope.rolePerm=false
 
     $scope.selectPerm=function(ev,perm){
-        
+
         if($scope.listToSend.indexOf(perm.permission_id)===-1){
             //$scope.selectPermObj[perm.permission_id]=perm
             $scope.listToSend.push(perm.permission_id)
@@ -415,10 +415,10 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         else{
             $scope.listToSend.splice( $scope.listToSend.indexOf(perm.permission_id), 1 )
         }
-        
+
         // Define all permision,wich already bind
         console.log($scope.listToSend)
-        
+
 }
     $scope.isChecked=function(perm){
        if($scope.listToSend){
@@ -463,9 +463,9 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 $scope.listToSend.push($scope.actualPermInRole[i].permission_id)
 
                 $scope.selectPermObj[$scope.actualPermInRole[i]['permission_id']]=$scope.actualPermInRole[i]
-               
+
             }
-            
+
         }
             /* define function for ng-show atribute for permision.
                 If listToSend contains it, ng-show return false
@@ -475,16 +475,16 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 var actualPermList=[]
                      $scope.actualPermInRole.forEach(function(elem){
                         actualPermList.push(elem.permission_id)
-                        
+
                      })
-                     
+
                      if(actualPermList.indexOf(id) == -1){
                         return true
                      }
                      else{
                         return false
                      }
-                    
+
                 }
             }, function errorCallback(response) {
                 $scope.msg.deleteError('ролі');
@@ -496,7 +496,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
 
 
     $scope.deletePermFormRole=function(perm){
-           
+
             $scope.actualPermInRole.forEach(function(actual_perm,index){
                 if(actual_perm.permission_id === perm.permission_id){
                     $scope.actualPermInRole.splice( index, 1 )
@@ -512,8 +512,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
                 // }
             })
             console.log(perm)
-          
-        
+
+
     }
     // data for filter
     $scope.searchWord=""
@@ -530,7 +530,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             method:"PUT",
             url:"/api/role_permissions",
             data:{
-                "role_id":$scope.rolePermObj.id, 
+                "role_id":$scope.rolePermObj.id,
                 "permission_id":$scope.listToSend
             }
             }).then(function successCallback(data) {
@@ -547,7 +547,7 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
             })
 
 
-        
+
     }
 
     $scope.showResPerm=function(id){
@@ -560,8 +560,8 @@ app.controller('AdminCtrl', ['$scope','$http', 'toaster', function($scope,$http,
         }).then(function successCallback(data) {
 
             }, function errorCallback(response) {
-                
-                
+
+
             })
     }
 

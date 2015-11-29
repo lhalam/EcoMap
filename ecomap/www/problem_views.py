@@ -67,12 +67,13 @@ def detailed_problem(problem_id):
 @app.route('/api/problem_post', methods=['POST'])
 def post_problem():
     """Function which adds data from problem form to DB.
-	:return: If request data is invalid:
-		{'status': False, 'error': [list of errors]}, 400
-		If all ok:
-		{'added_problem': 'problem_title'
-		'problem_id': 'problem_id'}
-	"""
+    :return: If request data is invalid:
+    {'status': False, 'error': [list of errors]}, 400
+    If all ok:
+    {'added_problem': 'problem_title'
+    'problem_id': 'problem_id'}
+    """
+
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
 

@@ -649,5 +649,3 @@ def validate_image_file(img_file):
                 False - if file not in png format
     """
     return True if str(imghdr.what(img_file)) is 'png' else False
-
-

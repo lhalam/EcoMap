@@ -28,12 +28,10 @@
               </thead>
               <tbody>
                 <tr ng-repeat="(resource_name,resource_id) in Resources">
-                  <td ng-click="showResPerm(resource_id)">{{resource_name}}</td>
+                  <td >{{resource_name}}</td>
                   <td>
                   <button class="btn btn-primary edit_btn btn-border" ng-click="showeditResModal(resource_name,resource_id)">редагувати</button>
                   <button class="btn btn-danger edit_btn btn-border" ng-click="deleteResource(resource_id)">видалити</button>
-                    <!-- <a href="" ng-click="showEditResModal(resource_name,resource_id)">редагувати</a> &nbsp; &nbsp;
-                    <a href="" class="del" ng-click="deleteResource(resource_id)">видалити</a> -->
                   </td>
                 </tr>
                 
@@ -181,9 +179,41 @@
 
         </uib-tab>
 
-        <uib-tab heading="Ролі">
+      <uib-tab heading="Ролі">
         <div class="container" ng-controller="RoleCtrl">
-        
+        <modal title="Додати роль" visible="addRoleModal">
+          <form  ng-submit="addRoleSubmit()" name="addRoleForm" novalidate>
+            <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
+            <div class="row">
+              <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+              <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
+              <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border">додати</button></div>
+            </div>
+            
+            </div>
+            <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched">
+              <div ng-messages-include="/templates/error_msgs.html"></div>
+            </div>
+
+
+          </form>
+        </modal>
+
+        <modal title="Редагувати роль" visible="editRoleModal">
+          <form  ng-submit="editRole()" name="editRoleForm" novalidate>
+            <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
+            <div class="row">
+              <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+              <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
+              <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border">Змінити</button></div>
+            </div>
+              
+              
+            </div>    
+
+          </form>
+        </modal>
+
           <div class="row" ng-show="rolePermTable">
             <div class="col-md-9 col-md-offset-1">
              <table class="table table-stripped" >
@@ -294,9 +324,15 @@
 
 
         </uib-tab>
-        <uib-tab heading="Користувачі" ng-click="loadPagination()">
+      <uib-tab heading="Користувачі" ng-click="loadPagination()" >
+
         <h3>Таблиця користувачів</h3>
-        <table class="table table-stripped">
+        
+        <div class="row" ng-controller="UserCtrl">
+          <div class="col-md-12">
+          {{name}}
+            <table class="table table-stripped">
+          
         <thead>
                <tr>
                  <td>Ім’я</td>
@@ -327,56 +363,17 @@
 
               </tbody>
         </table>
-    <div class="row">
-      <div class="col-md-8 col-md-offset-4">
+        <div class="row">
+        <div class="col-md-8 col-md-offset-4">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
         </div>
       </div>
+          </div>
+        </div>
+        
         </uib-tab>
 
       </uib-tabset>
     </div>
   </div>
 </div>
-
-
-
-
-
-<!-- Modal window for editing resource -->
-
-
-
-<!-- Modal window for creating roles -->
-<modal title="Додати роль" visible="addRoleModal">
-  <form  ng-submit="addRoleSubmit()" name="addRoleForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
-    <div class="row">
-      <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-      <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
-      <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border">додати</button></div>
-    </div>
-    
-    </div>
-    <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched">
-      <div ng-messages-include="/templates/error_msgs.html"></div>
-    </div>
-
-
-  </form>
-</modal>
-
-<modal title="Редагувати роль" visible="editRoleModal">
-  <form  ng-submit="editRole()" name="editRoleForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': addRoleForm.roleName.$touched && addRoleForm.roleName.$invalid }">
-    <div class="row">
-      <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-      <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
-      <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border">Змінити</button></div>
-    </div>
-      
-      
-    </div>    
-
-  </form>
-</modal>

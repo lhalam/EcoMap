@@ -717,7 +717,7 @@ def get_all_problems():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
+        query = """ SELECT `id`,`title`,`latitude`,`longitude`,
                     `problem_type_id`,`status`,`created_date`
                     FROM `problem`;
                 """
@@ -734,7 +734,7 @@ def get_problem_by_id(problem_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """ SELECT `id`, `title`, `content`, `proposal`,
-                `severity`, `status`, `latitude`,`longtitude`,
+                `severity`, `status`, `latitude`,`longitude`,
                 `problem_type_id` FROM `problem` WHERE `id` = %s;
                 """
         cursor.execute(query, (problem_id, ))

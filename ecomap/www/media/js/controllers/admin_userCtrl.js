@@ -1,5 +1,6 @@
-app.controller("UserCtrl",['$scope','$http', 'toaster','$rootScope', function($scope,$http, toaster,$rootScope){
+app.controller("UserCtrl",['$scope','$http', 'toaster','$rootScope','msg', function($scope,$http, toaster,$rootScope,msg){
     $rootScope.loadPagination=function(){
+        $scope.msg=msg
         $scope.fromPage = 1;
         $scope.bigCurrentPage = 1;
         $scope.UsersLength = $scope.selectCount['selected'];
@@ -50,10 +51,10 @@ app.controller("UserCtrl",['$scope','$http', 'toaster','$rootScope', function($s
         "user_id":user_obj.id
         }
         }).then(function successCallback(data) {
-        $scope.msg.editSuccess('користувача');
+            $scope.msg.editSuccess('користувача');
         }, function errorCallback(response) {
 
-        $scope.msg.editError('користувача');
+            $scope.msg.editError('користувача');
         })
         }  
 

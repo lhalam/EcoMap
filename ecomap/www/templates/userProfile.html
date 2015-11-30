@@ -112,7 +112,7 @@
                       <td ng-bind="problem.title"></td>
                       <td ng-bind="getProblemType(problem.problem_type_id)"></td>
                       <td ng-bind="getStatus(problem.status)"></td>
-                      <td ng-bind="problem.date"></td>
+                      <td ng-bind="parseDate(problem.date)"></td>
                       <td>
                         <input type="checkbox" ng-model="problem.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="">
                       </td>
@@ -220,4 +220,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

@@ -115,6 +115,7 @@ def get_user_problems(user_id):
     """
     problems_list = []
     problem_tuple = db.get_user_problems(user_id)
+    logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],
                          'title': problem[1],
@@ -125,4 +126,4 @@ def get_user_problems(user_id):
                          'date': problem[6],
                          'severity': problem[8],
                          'is_enabled': problem[7]})
-    return Response(json.dumps(problems), mimetype='application/json')
+    return Response(json.dumps(problems_list), mimetype='application/json')

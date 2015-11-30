@@ -33,7 +33,11 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
       $http({
         method: 'POST',
         url: '/api/change_password',
-        data: data
+        data: {
+          'id':data.id,
+          'old_pass':data.old_pass,
+          'password': data.new_pass
+        }
       }).then(function successCallback(responce) {
         passwd = {};
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');

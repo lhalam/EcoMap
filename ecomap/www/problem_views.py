@@ -1,6 +1,7 @@
 """Module contains routes, used for problem table."""
 import json
 import time
+import os
 
 from flask import request, jsonify, Response
 from flask_login import current_user
@@ -10,7 +11,7 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
-@app.route('/api/problems', methods=['GET'])
+@app.route('/api/problems')
 def problems():
     """
     Function, used to get all problems.
@@ -82,7 +83,7 @@ def post_problem():
             user_id = current_user.uid
             now = time.time()
             posted_date = int(round(now))
-            db.problem_post(data['title'],
+            last_id=db.problem_post(data['title'],
                             data['content'],
                             data['proposal'],
                             data['latitude'],
@@ -90,8 +91,8 @@ def post_problem():
                             data['type'],
                             posted_date,
                             user_id)
-        # todo select problem id?
-            response = jsonify(added_problem=data['title'])
+            response = jsonify(added_problem=data['title'],
+                                problem_id = last_id)
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -126,3 +127,62 @@ def get_user_problems(user_id):
                          'severity': problem[8],
                          'is_enabled': problem[7]})
     return Response(json.dumps(problems), mimetype='application/json')
+
+# @app.route('/api/upload_photo', methods=['POST', 'DELETE'])
+# def problem_photo():
+#     """ Connected with problem_post. Creating for uploading photos
+#         with problem.
+#         :return: json with success if photo have been uploaded
+#     """
+#     if request.method is 'POST':
+#         problem_img = request.files['file']
+#         extension = '.png'
+#         f_name = 'problem_id%s' % current_user.uid + extension
+#         static_url = '/uploads/problem/problemid %d/'  % current_user.uid
+#         f_path = os.environ['STATICROOT'] + static_url
+
+#         if not os.path.exists(f_path):
+#             os.makedirs(os.path.dirname(f_path + f_name))
+
+
+
+
+
+# @app.route('/api/user_avatar', methods=['POST', 'DELETE'])
+# @login_required
+# def profile_photo():
+#     """Controller for handling editing user's profile photo.
+#     :return:
+#     """
+#     response = {}
+#     if request.method == 'POST':
+#         img_file = request.files['file']
+#         extension = '.png'
+#         f_name = 'profile_id%s' % current_user.uid + extension
+#         static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+#         f_path = os.environ['STATICROOT'] + static_url
+
+#         if img_file and validator.validate_image_file(img_file):
+#             if not os.path.exists(f_path):
+#                 os.makedirs(os.path.dirname(f_path + f_name))
+#             img_file.save(os.path.join(f_path, f_name))
+#             img_path = static_url + f_name
+#             db.insert_user_avatar(current_user.uid, img_path)
+#             return json.dumps({'added_file': img_path})
+#         return jsonify(error='error with import file'), 400
+
+#     if request.method == 'DELETE' and request.get_json():
+#         data = request.get_json()
+
+#         # valid = validator.validate_photo_delete(data)
+
+#         # if valid['status']:
+#         # if os.path.exists(f_path):
+#         #     os.remove(f_path + f_name)
+#         db.delete_user_avatar(data['user_id'])
+#         response = jsonify(msg='success', deleted_avatar=data['user_id'])
+#         # else:
+#         #     response = Response(json.dumps(valid),
+#         #                         mimetype='application/json'), 400
+#         return response
+#     return jsonify(response)

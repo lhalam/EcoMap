@@ -16,7 +16,7 @@ ENUM = {'action': ['POST', 'GET', 'PUT', 'DELETE'],
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
 
 # Pattern to validate coordinates.
-COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,7}$')
+COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$')
 
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],

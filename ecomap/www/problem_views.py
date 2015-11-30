@@ -27,6 +27,15 @@ def problems():
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6]})
+            # Prototype for parsing date from timestamp to gregorian
+        for problems in parsed_json:
+            for keys in problems:
+                if keys is 'date':
+                    logger.warning(problems[keys])
+                    parsed_date = int(problems[keys])
+                    result_date = time.ctime(parsed_date)
+                    logger.warning(result_date)
+                    problems[keys] = result_date
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 

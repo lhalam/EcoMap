@@ -1,22 +1,58 @@
 <div class="content-resize">
     <div class="row-resize">
 
-        <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map">
+ <script type="text/ng-template" id="searchbox.tpl.html">
+        <input type="text" placeholder="Search Box">
+</script>
+
+       <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom'
+                            id="map" draggable="true" options="options">
             <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
-                 click="zoomMarker" doCluster="true"></ui-gmap-markers>
+                 click="zoomMarker" doCluster="true" options="markers.options"
+                 events="markers.events">
             </ui-gmap-markers>
-        </ui-gmap-google-map>
+            <ui-gmap-marker coords="marker.coords" ng-repeat="m in marker"
+                       options="marker.options" events="marker.events" idkey="marker.id">
+            </ui-gmap-marker>
+                   <ui-gmap-search-box template="searchbox.template" events="searchbox.events"></ui-gmap-search-box>
+
+    </ui-gmap-google-map>
+
+
+
+
+
+
 
         <section id="two" resizable r-directions="['left']" r-flex="true">
 
     <div>
-          <button class="btn btn-info" ng-click="locateUser()">coordt</button>
+          <button class="btn btn-info" ng-click="locateUser()">get coords</button>
     </div>
-    <div>
-        <p>{{  }}</p>
-    </div>
+
     <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
           class="page-edit-form" novalidate enctype="multipart/form-data">
+
+
+   <i class="form-group" ng-class="{ 'has-error': (addProblemForm.latitude.$touched || submitted) && addProblemForm.latitude.$invalid}">
+        <label for="latitude" class="control-label">latitude</label>
+        <input type="text" class="form-control" ng-change="reloadPos()" name="latitude" id="latitude"
+               ng-model="newProblem.latitude" ng-max-length="255" required>
+        <span class="help-block" ng-messages="addProblemForm.latitude.$error"
+              ng-show="addProblemForm.latitude.$touched || submitted">
+          <span ng-messages-include="/templates/error_msgs.html"></span>
+        </span>
+   </i>
+
+   <i class="form-group" ng-class="{ 'has-error': (addProblemForm.longitude.$touched || submitted) && addProblemForm.longitude.$invalid}">
+        <label for="longitude" class="control-label">longitude</label>
+        <input type="text" class="form-control" name="longitude" id="longitude"
+               ng-model="newProblem.longitude" ng-change="reloadPos()" ng-max-length="255" required>
+        <span class="help-block" ng-messages="addProblemForm.longitude.$error"
+              ng-show="addProblemForm.longitude.$touched || submitted">
+          <span ng-messages-include="/templates/error_msgs.html"></span>
+        </span>
+   </i>
 
       <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
         <label for="title" class="control-label">NAZVA PROBLEMY</label>

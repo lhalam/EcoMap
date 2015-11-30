@@ -28,7 +28,7 @@ LENGTHS = {'email': [5, 100],
            'content':[2, 255],
            'latitude':[2, 255],
            'longitude':[2, 255],
-           'problem_type_id':[1, 255]}
+           'type':[1, 255]}
 
 # Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
@@ -540,7 +540,7 @@ def problem_post(data):
     keys = ['title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
         logger.warning(data)
-        logger.warning(keyname)
+        logger.warning(data[keyname])
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:
@@ -549,12 +549,12 @@ def problem_post(data):
         elif not check_string(data[keyname]):
             status['error'].append({keyname:
                                     ERROR_MSG['check_string'] % keyname})
-        # elif not check_minimum_length(data[keyname], LENGTHS[keyname]):
-        #     status['error'].append({keyname: ERROR_MSG['check_minimum_length']
-        #                             % keyname})
-        # elif not check_maximum_length(data[keyname], LENGTHS[keyname]):
-        #     status['error'].append({keyname: ERROR_MSG['check_maximum_length']
-        #                             % keyname})
+        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
+                                    % keyname})
+        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+                                    % keyname})
 
     if status['error']:
         status['status'] = False

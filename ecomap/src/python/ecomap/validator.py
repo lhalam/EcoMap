@@ -674,6 +674,26 @@ def validate_image_file(img_file):
     return True if str(imghdr.what(img_file)) is 'png' else False
 
 
+def user_photo_deletion(data):
+    """Custom validation to identify photo owner.
+    :parems: value - user data to check
+    :return: True - id data is valid
+                False - if data is not valid
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'user_id'
+
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
 def check_coordinates(value):
     """Validator function to check if value looks like coordinates.
        :params: value - string to check

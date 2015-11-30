@@ -20,6 +20,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies', function(
     return statuses[status];
   }
 
+  $scope.parseDate  = function(timestamp){
+      // todo make here parse format logic fro timestamp
+    var date = new Date(timestamp*1000).toString("H:mm MMM dd yyyy");
+    return date
+  };
+
   $scope.loadProblems = function(user_id) {
     $http({
       method: 'GET',

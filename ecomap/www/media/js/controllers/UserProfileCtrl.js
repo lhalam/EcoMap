@@ -12,7 +12,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         method: 'GET'
       }).success(function(response) {
         $scope.user.data = response;
-        $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/150x150';
+        $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/200x200';
       });
     }
 

@@ -2,9 +2,26 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
 
   $stateProvider
     .state('user_profile', {
+      abtract: true,
       url: '/user_profile',
       templateUrl: '/templates/userProfile.html',
       controller: 'UserProfileCtrl'
+    })
+    .state('user_profile.info', {
+      url: '/info',
+      templateUrl: '/templates/profileUserInfo.html'
+    })
+    .state('user_profile.problems', {
+      url: '/problems',
+      templateUrl: '/templates/profileProblems.html'
+    })
+    .state('user_profile.comments', {
+      url: '/comments',
+      templateUrl: '/templates/profileComments.html'
+    })
+    .state('user_profile.faq', {
+      url: '/faq',
+      templateUrl: '/templates/profileFaqEdit.html'
     })
     .state('map', {
       url: '/map',

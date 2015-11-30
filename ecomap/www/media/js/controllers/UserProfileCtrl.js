@@ -3,8 +3,27 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
-    $scope.body = angular.element(document.body);
-    $scope.body.addClass("body-scroll-shown");
+
+    $scope.tabs = [
+      { heading: "Профіль користувача", route:"user_profile.info", active:false },
+      { heading: "Мої проблеми", route:"user_profile.problems", active:false },
+      { heading: "Мої коментарі", route:"user_profile.comments", active:false },
+      { heading: "Редагування F.A.Q.", route:"user_profile.faq", active:false }
+    ];
+
+    $scope.$on("$stateChangeSuccess", function() {
+      $scope.tabs.forEach(function(tab) {
+        tab.active = $scope.active(tab.route);
+      });
+    });
+
+    $scope.go = function(route){
+      $state.go(route);
+    };
+
+    $scope.active = function(route){
+      return $state.is(route);
+    };
 
     if ($scope.user.id) {
       $http({
@@ -59,10 +78,4 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
     $scope.changeWrongPass = function() {
       $scope.wrongOldPass = false;
     };
-
-    $scope.$on("$destroy", function handler() {
-      $scope.body.removeClass("body-scroll-shown");
-    });
-
-  }
-]);
+}]);

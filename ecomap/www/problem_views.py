@@ -1,7 +1,7 @@
 """Module contains routes, used for problem table."""
 import functools
 import json
-import datetime
+import time
 
 from flask import request, jsonify, Response, g, abort
 from flask_login import login_required, current_user
@@ -27,6 +27,15 @@ def problems():
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6]})
+            # Prototype for parsing date from timestamp to gregorian
+        for problems in parsed_json:
+            for keys in problems:
+                if keys is 'date':
+                    logger.warning(problems[keys])
+                    parsed_date = int(problems[keys])
+                    result_date = time.ctime(parsed_date)
+                    logger.warning(result_date)
+                    problems[keys] = result_date
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -57,7 +66,7 @@ def detailed_problem(problem_id):
 
     if activity_tuple:
         activity_info.append({
-            'created_date': activity_tuple[0], ' problem_id': activity_tuple[1],
+            'created_date': activity_tuple[0], 'problem_id': activity_tuple[1],
             'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
         })
 
@@ -73,16 +82,17 @@ def post_problem():
     {'added_problem': 'problem_title'
     'problem_id': 'problem_id'}
     """
-
     if request.method == 'POST' and request.form:
         data = request.form
         logger.warning(json.dumps(request.form))
-
+        logger.info(data)
         valid = validator.problem_post(data)
         logger.warning(data)
         if valid['status']:
+            logger.warning(valid)
             user_id = current_user.uid
-            posted_date = '999999'
+            now = time.time()
+            posted_date = int(round(now))
             db.problem_post(data['title'],
                             data['content'],
                             data['proposal'],
@@ -99,3 +109,34 @@ def post_problem():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
         return response
+
+
+@app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
+def get_user_problems(user_id):
+    """This method retrieves all user's problem from db.
+        :returns list of user's problem represented with next objects:
+        {"id": 190,
+         "title": "name",
+         "latitude": 51.419765,
+         "longitude": 29.520264,
+         "problem_type_id": 1,
+         "status": 0,
+         "date": "2015-02-24T14:27:22.000Z",
+         "severity": '3',
+         "is_enabled": 1
+        }
+    """
+    if request.method == 'GET':
+        problem_tuple = db.get_user_problems(user_id)
+        problems = []
+        for problem in problem_tuple:
+            problems.append({'id': problem[0],
+                             'title': problem[1],
+                             'latitude': problem[2],
+                             'logitude': problem[3],
+                             'problem_type_id': problem[4],
+                             'status': problem[5],
+                             'date': problem[6],
+                             'severity': problem[8],
+                             'is_enabled': problem[7]})
+    return Response(json.dumps(problems), mimetype='application/json')

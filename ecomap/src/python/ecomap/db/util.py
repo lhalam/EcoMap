@@ -717,9 +717,9 @@ def get_all_problems():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `id`,`title`,`latitude`,`longitude`,
-                    `problem_type_id`,`status`,`created_date`
-                    FROM `problem`;
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`
+                   FROM `problem`;
                 """
         cursor.execute(query)
         return cursor.fetchall()
@@ -755,6 +755,36 @@ def get_activity_by_problem_id(problem_id):
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def problem_post(title, content, proposal, latitude, longitude,
+                 problem_type_id, created_date, user_id):
+    """This method adds problem into db.
+       :params: title - new title
+                content - new content
+                proposal - new proposal
+                latitude - new latitude of a new problem
+                longitude - new longitude of a new problem
+                problem_type_id - type of a new problem
+                created_date - time of problem creation
+                user_id - id of user that posted problem
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """
+        INSERT INTO problem (title, content, proposal,
+                            latitude, longitude, problem_type_id,
+                            created_date, user_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        INSERT INTO `problem_activity`
+                  (problem_id, created_date, user_id, activity_type)
+        VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
+        """
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longitude, problem_type_id, created_date,
+                               user_id, created_date, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -806,22 +836,14 @@ def count_users():
 
 
 @retry_query(tries=3, delay=1)
-def problem_post(title, content, proposal, latitude, longitude,
-                 problem_type_id, created_date, user_id):
-    """INSERT DOCSTRING
-    """
+def get_user_problems(user_id):
+    """Gets all problems posted by given user."""
     with db_pool().manager() as conn:
-        conn.autocommit(True)
         cursor = conn.cursor()
-        query = """
-        INSERT INTO problem (title, content, proposal,
-                            latitude, longitude, problem_type_id,
-                            created_date, user_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-        INSERT INTO `problem_activity`
-                  (problem_id, created_date, user_id, activity_type)
-        VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
-        """
-        cursor.execute(query, (title, content, proposal, latitude,
-                               longitude, problem_type_id, created_date,
-                               user_id, created_date, user_id))
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                `severity`
+                FROM `problem`
+                WHERE `user_id`=%s"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchall()

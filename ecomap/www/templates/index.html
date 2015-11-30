@@ -102,7 +102,7 @@
                 <a href="/#/login">Увійти</a>
               </li>
               <li ng-if="isAuthenticated()">
-                <a href="/#/user_profile" ng-bind="getUsername()" ></a>
+                <a href="/#/user_profile/info" ng-bind="getUsername()" ></a>
               </li>
               <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
                 <a href="" ng-click="Logout()">Вихід</a>

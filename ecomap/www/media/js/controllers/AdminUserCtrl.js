@@ -1,6 +1,6 @@
 app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
   function($scope, $http, toaster, $rootScope, msg) {
-    $rootScope.loadPagination = function() {
+    $scope.loadPagination = function() {
       $scope.msg = msg
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
@@ -29,6 +29,8 @@ app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
         $scope.bigCurrentPage = currPage
       }
     }
+
+    $scope.loadPagination();
 
     $scope.changeRole = function(user_obj) {
       var role_id;

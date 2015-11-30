@@ -5,6 +5,10 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         return $scope.mapParams;
     };
 
+    $scope.pattern = {
+      'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,7}$/
+    }
+
     $scope.zoomMarker = function(data){
         console.log(data);
         $scope.mapParams = {
@@ -46,21 +50,30 @@ $scope.locateUser = function() {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
                 };
+                $scope.newProblem = {
+                  "title": "",
+                  "type": "",
+                  "latitude": position.coords.latitude,
+                  "longitude": position.coords.longitude
+                };
+                $scope.latitude = position.coords.latitude;
+                $scope.longitude = position.coords.longitude
                 if (width < 1000) {
                     $scope.mapParams ={ center: mapCenter, zoom: 15 };
                 } else {
                     $scope.mapParams ={ center: mapCenter, zoom: 15 };
-                }
+                };
+                $scope.$apply();
             }
         };
 
-  $scope.newProblem = {
-    "title": "",
-    "type": "",
-    "latitude": '49.847743',
-    "longitude": '24.037703'
+  // $scope.newProblem = {
+  //   "title": "",
+  //   "type": "",
+  //   "latitude": '49.847743',
+  //   "longitude": '24.037703'
 
-  };
+  // };
 
   //$scope.addProblem = function(newProblem, form) {
   //  $scope.submitted = true;
@@ -81,12 +94,38 @@ $scope.locateUser = function() {
   //    toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
   //  })
   //};
+  $scope.logg = function() {
+    $scope.newProblem = {
+      'latitude': $scope.latitude,
+      'longitude': $scope.longitude
+    }
+    var width = window.innerWidth;
+    // if (width < 1000) {
+      $scope.mapParams = {
+        center: {
+          'longitude': $scope.longitude,
+          'latitude': $scope.latitude
+        },
+        zoom: 15
+      }
+    // } else {
+    //   $scope.mapParams = {
+    //     center: {
+    //       'longitude': $scope.longitude,
+    //       'latitude': $scope.latitude
+    //     },
+    //     zoom: 15
+    //   }
+    // }
+  }
+
   $scope.addProblem = function(newProblem, form) {
     $scope.submitted = true;
 
     if(form.$invalid){
       return;
     }
+    console.log(newProblem);
     Upload.upload({
       url: '/api/problem_post',
       method: "POST",

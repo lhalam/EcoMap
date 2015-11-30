@@ -3,8 +3,6 @@
 """
 import imghdr
 import re
-import logging
-logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 
@@ -16,7 +14,7 @@ ENUM = {'action': ['POST', 'GET', 'PUT', 'DELETE'],
 EMAIL_PATTERN = re.compile(r'^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$')
 
 # Pattern to validate coordinates.
-COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,6}$')
+COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,7}$')
 
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
@@ -32,7 +30,9 @@ LENGTHS = {'email': [5, 100],
            'latitude': [2, 255],
            'longitude': [2, 255],
            'problem_type_id': [1, 255],
-           'type': [1, 255]}
+           'type': [1, 255],
+           'latitude': [-90.0, 90.0],
+           'longitude': [-180.0, 180.0]}
 
 # Dictionary of error messages.
 ERROR_MSG = {'has_key': 'not contain %s key.',
@@ -44,7 +44,8 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
              'name_exists': '"%s" name allready exists.',
-             'check_coordinates': '%s value is not coordinates.'}
+             'check_coordinates': '%s is not coordinates.',
+             'check_coordinates_length': '%s is out of range.'}
 
 
 def user_registration(data):
@@ -544,8 +545,6 @@ def problem_post(data):
     status = {'status': True, 'error': []}
     keys = ['title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
-        logger.warning(data)
-        logger.warning(keyname)
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
         elif not data[keyname]:
@@ -567,7 +566,11 @@ def problem_post(data):
             if not check_coordinates(data[keyname]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_coordinates']
-                                        % keyname})
+                                        % data[keyname]})
+            if not check_coordinates_length(data[keyname], LENGTHS[keyname]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_coordinates_length']
+                                        % data[keyname]})
 
     if status['error']:
         status['status'] = False
@@ -676,3 +679,18 @@ def check_coordinates(value):
                 False - if it is not
     """
     return COORDINATES_PATTER.match(value)
+
+
+def check_coordinates_length(value, length):
+    """Validator function to check if longitude or latitude is
+       in valid range (from -90 to 90 for latitude and -180 to
+       180 for longitude).
+       :params: value - string to check
+                length - minimum and maximum range (list)
+       :return: True - if inside range
+                False - if not
+    """
+    result = False
+    if float(value) >= length[0] and float(value) <= length[1]:
+        result = True
+    return result

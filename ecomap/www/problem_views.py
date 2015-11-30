@@ -85,7 +85,7 @@ def post_problem():
     if request.method == 'POST' and request.form:
         data = request.form
         logger.warning(json.dumps(request.form))
-
+        logger.info(data)
         valid = validator.problem_post(data)
         logger.warning(data)
         if valid['status']:

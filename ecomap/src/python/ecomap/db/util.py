@@ -717,9 +717,9 @@ def get_all_problems():
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """ SELECT `id`,`title`,`latitude`,`longitude`,
-                    `problem_type_id`,`status`,`created_date`
-                    FROM `problem`;
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`
+                   FROM `problem`;
                 """
         cursor.execute(query)
         return cursor.fetchall()

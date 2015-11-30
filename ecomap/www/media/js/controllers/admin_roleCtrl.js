@@ -1,5 +1,6 @@
-app.controller("RoleCtrl",['$scope','$http', 'toaster','msg', function($scope,$http, toaster,msg){
+app.controller("RoleCtrl",['$scope','$http', 'toaster','msg','msgError',function($scope,$http, toaster,msg,msgError){
     $scope.msg=msg
+    $scope.msgError= msgError
     $scope.addRoleModal = false;
     $scope.showAddRoleModal = function(){
         $scope.addRoleModal = true;
@@ -18,7 +19,7 @@ app.controller("RoleCtrl",['$scope','$http', 'toaster','msg', function($scope,$h
                 $scope.Roles[data.data.added_role]=data.data.added_role_id;
                 $scope.addRoleModal = false;
             }, function errorCallback(response) {
-                $scope.msg.createError('ролі');
+                $scope.msg.createError('ролі',$scope.msgError['alreadyExist']);
             })
     };
 
@@ -38,10 +39,10 @@ app.controller("RoleCtrl",['$scope','$http', 'toaster','msg', function($scope,$h
                 }
             }
             if(data.data.error){
-            $scope.msg.deleteError('ролі');
+            $scope.msg.deleteError('ролі',$scope.msgError['alreadyBinded'])
             }
             },function errorCallback(response) {
-            $scope.msg.deleteError('ролі');
+            $scope.msg.deleteError('ролі',$scope.msgError['alreadyBinded'])
             })
             }
 
@@ -60,7 +61,7 @@ app.controller("RoleCtrl",['$scope','$http', 'toaster','msg', function($scope,$h
             $scope.msg.editSuccess('ролі');
             $scope.editRoleModal=false
             },function errorCallback(response) {
-            $scope.msg.editError('ролі');
+            $scope.msg.editError('ролі',$scope.msgError['alreadyExist']);
             })
             }
     $scope.editRoleModal=false

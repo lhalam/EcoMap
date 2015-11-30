@@ -9,14 +9,14 @@ app.factory('msg', function (toaster) {
         createSuccess: function(msg){
             toaster.pop('success', 'Додавання', 'Додавання ' + msg + ' здійснено успішно!');
         },
-        editError: function(msg){
-            toaster.pop('error', 'Редагування', 'При редагуванні ' + msg + ' виникла помилка!');
+        editError: function(msg,type){
+            toaster.pop('error', 'Редагування', 'При редагуванні ' + msg + ' виникла помилка!'+type);
         },
-        deleteError: function(msg){
-            toaster.pop('error', 'Видалення', 'При видаленні ' + msg + ' виникла помилка!');
+        deleteError: function(msg,type){
+            toaster.pop('error', 'Видалення', 'При видаленні ' + msg + ' виникла помилка!'+type);
         },
-        createError: function(msg){
-            toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
+        createError: function(msg,type){
+            toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!'+type);
         },
     };
     });

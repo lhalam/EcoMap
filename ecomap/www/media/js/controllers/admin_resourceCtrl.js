@@ -1,5 +1,6 @@
-app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg', function($scope,$http, toaster,msg){
+app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg','msgError', function($scope,$http, toaster,msg,msgError){
     $scope.msg=msg
+    $scope.msgError = msgError
     $scope.addResModal = false;
     $scope.triggerAddResModal = function(){
         $scope.addResModal = true;
@@ -18,6 +19,7 @@ app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg', function($scop
 
     $scope.editResource = function(editResObj){
         if(!editResObj.name || !editResObj.id){
+            $scope.msg.editError('ресурсу',$scope.msgError['incorectData']);
             return;
         }
 
@@ -33,7 +35,8 @@ app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg', function($scop
             $scope.editResModal = false;
             $scope.msg.editSuccess('ресурсу');
         }, function errorCallback(response) {
-            $scope.msg.editError('ресурсу');
+            $scope.msg.editError('ресурсу',$scope.msgError['alreadyExist']);
+
         })
 
     };
@@ -51,7 +54,7 @@ app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg', function($scop
             $scope.loadRes()
             $scope.msg.deleteSuccess('ресурсу');
         }, function errorCallback(response) {
-            $scope.msg.deleteError('ресурсу');
+            $scope.msg.deleteError('ресурсу',$scope.msgError['alreadyBinded']);
         })
     };
 
@@ -74,8 +77,8 @@ app.controller("ResourceCtrl",['$scope','$http', 'toaster','msg', function($scop
         $scope.addResModal=false
         $scope.msg.createSuccess('ресурсу');
         }, function errorCallback(response) {
-            $scope.addResModal=false
-            $scope.msg.createError('ресурсу');
+            $scope.addResModal=false;
+            $scope.msg.createError('ресурсу',$scope.msgError['alreadyExist']);
         });
 
     };

@@ -1,4 +1,33 @@
+app.factory('msgError', function (toaster) {
+        return msgError = {
+            "alreadyExist": " Дане ім’я вже зарезервоване.",
+            "alreadyBinded": " Так як дані вже прив’язані .",
+            "incorectData":" Так як дані невірні."
+        }
+    })
 app.controller('AdminCtrl', ['$scope','$http', 'toaster',"$rootScope", function($scope,$http, toaster,$rootScope){
+    // app.factory('msg', function (toaster) {
+    // return msg = {
+    //     editSuccess: function(msg){
+    //         toaster.pop('success', 'Редагування', 'Редагування ' + msg + ' здійснено успішно!');
+    //     },
+    //     deleteSuccess: function(msg){
+    //         toaster.pop('success', 'Видалення', 'Видалення ' + msg + ' здійснено успішно!');
+    //     },
+    //     createSuccess: function(msg){
+    //         toaster.pop('success', 'Додавання', 'Додавання ' + msg + ' здійснено успішно!');
+    //     },
+    //     editError: function(msg,type){
+    //         toaster.pop('error', 'Редагування', 'При редагуванні ' + msg + ' виникла помилка!'+type);
+    //     },
+    //     deleteError: function(msg,type){
+    //         toaster.pop('error', 'Видалення', 'При видаленні ' + msg + ' виникла помилка!'+type);
+    //     },
+    //     createError: function(msg,type){
+    //         toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!'+type);
+    //     },
+    // };
+    // });
 
     $scope.meth_obj={
         "1":"GET",

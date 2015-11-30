@@ -1,5 +1,6 @@
-app.controller("PermisionCtrl",['$scope','$http', 'toaster','msg', function($scope,$http, toaster,msg){
+app.controller("PermisionCtrl",['$scope','$http', 'toaster','msg','msgError', function($scope,$http, toaster,msg,msgError){
     $scope.addPermModal = false;
+    $scope.msgError = msgError;
     $scope.msg=msg;
 
     $scope.showAddPermModal = function(){
@@ -28,6 +29,7 @@ app.controller("PermisionCtrl",['$scope','$http', 'toaster','msg', function($sco
             $scope.addPermModal = false;
             $scope.msg.createSuccess('права');
         }, function errorCallback(response) {
+            console.log(response)
             $scope.msg.createError('права');
 
         });
@@ -40,6 +42,10 @@ app.controller("PermisionCtrl",['$scope','$http', 'toaster','msg', function($sco
     }
     
     $scope.editPermSubmit = function(id){
+         if(!$scope.editPerm.permission_id || !$scope.editPerm['action'] || !$scope.editPerm.modifier || !$scope.editPerm['description']){
+            $scope.msg.editError('права',$scope.msgError['incorectData'])
+            return;
+        }
          $http({
             method:"PUT",
             url:"/api/permissions",
@@ -67,15 +73,17 @@ app.controller("PermisionCtrl",['$scope','$http', 'toaster','msg', function($sco
                 "permission_id":perm.permission_id
             }
             }).then(function successCallback(data) {
+                console.log(data)
             if(!data.data.error){
                 $scope.loadPerm()
                 $scope.msg.deleteSuccess('права');
                 }
             else{
-                $scope.msg.deleteError('права');
+                $scope.msg.deleteError('права',$scope.msgError['alreadyBinded']);
             }
             }, function errorCallback(response) {
-                 $scope.msg.deleteError('права');
+
+                 $scope.msg.deleteError('права',$scope.msgError['alreadyBinded']);
             })
     }
 }])

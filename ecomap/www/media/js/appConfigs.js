@@ -11,10 +11,31 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       templateUrl: '/templates/map.html',
       controller: 'MapCtrl'
     })
-    .state('admin', {
-      url: '/admin',
-      templateUrl: '/templates/admin.html',
+    .state("admin", {
+      abtract: true,
+      url:"/admin",
+      templateUrl:"/templates/admin.html",
       controller: 'AdminCtrl'
+    })
+    .state("admin.resources", {
+      url: "/resources",
+      templateUrl: "/templates/resourcesAdmin.html",
+      controller: 'ResourceCtrl'
+    })
+    .state("admin.permissions", {
+      url: "/permissions",
+      templateUrl: "/templates/permissionAdmin.html",
+      controller: 'PermisionCtrl'
+    })
+    .state("admin.roles", {
+      url: "/roles",
+      templateUrl: "/templates/rolesAdmin.html",
+      controller: 'RoleCtrl'
+    })
+    .state("admin.users", {
+      url: "/users",
+      templateUrl: "/templates/userAdmin.html",
+      controller: 'UserCtrl'
     })
     .state('faq', {
       url: '/faq/:faqAlias',

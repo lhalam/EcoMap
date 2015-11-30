@@ -1,0 +1,133 @@
+<div class="container" ng-controller="RoleCtrl">
+  <modal title="Додати роль" visible="addRoleModal">
+    <form  ng-submit="addRoleSubmit(role)" name="addRoleForm" novalidate>
+      <div class="form-group" ng-class="{ 'has-error': (addRoleForm.roleName.$touched || addRoleSub) && addRoleForm.roleName.$invalid }">
+        <div class="row">
+          <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+          <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
+          <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addRoleSub=true">додати</button></div>
+        </div>
+
+        <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched || addRoleSub">
+          <div ng-messages-include="/templates/error_msgs.html">
+          </div>
+        </div>
+      </div>
+    </form>
+  </modal>
+  <modal title="Редагувати роль" visible="editRoleModal">
+    <form  ng-submit="editRole()" name="editRoleForm" novalidate>
+      <div class="form-group" ng-class="{ 'has-error': (editRoleForm.roleName.$touched || editRoleSub) && editRoleForm.roleName.$invalid }">
+        <div class="row">
+          <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
+          <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
+          <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSub=true">Змінити</button></div>
+        </div>
+        <div class="help-block" ng-messages="editRoleForm.roleName.$error" ng-show="editRoleForm.roleName.$touched || editRoleSub">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
+        </div>
+      </div>
+    </form>
+  </modal>
+  <div class="row" ng-show="rolePermTable">
+    <div class="col-md-9 col-md-offset-1">
+      <table class="table table-stripped" >
+        <thead>
+          <tr>
+            <td>Назва ролі</td>
+            <td><button class="btn btn-primary btn-border" ng-click=" showAddRoleModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати роль</button></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(role_name,role_id) in Roles">
+            <td >{{role_name}}</td>
+            <td>
+              <button class="btn btn-danger edit_btn btn-border" ng-click="deleteRole(role_id)">видалити</button>
+
+              <button class="btn btn-warning edit_btn btn-border" ng-click="showEditRoleModal(role_name,role_id)">редагувати</button>
+              <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">права ролі</button>
+
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+  <br>
+  <br>
+
+  <div class="row" ng-show="rolePermBlock">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="well well-sm">Роль : {{rolePermObj.name}}</div>
+      </div>
+      <div class="col-md-3">
+        <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
+      </div>
+    </div>
+    <div class="col-md-6">
+
+      <div class="row">
+        <div class="col-md-12">
+          <form>
+            <h3>Актуальні права</h3>
+            <input type="text" ng-model="searchWordActua" class="form-control">
+            <table class="table table-stripped"  >
+              <thead>
+                <tr>
+                  <td>Назва методу</td>
+                  <td>Модифікатор доступу</td>
+                  <td>Id</td>
+                  <td>Опис</td>
+
+                </tr>
+              </thead>
+              <tbody ng-if="listToSend.length !== 0">
+                <tr ng-repeat="perm in actualPermInRole | filter : searchWordActua" >
+                  <td>{{perm.action}}</td>
+                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.id || perm.permission_id}}</td>
+                  <td>{{perm.description}}</td>
+                  <td><button class="btn btn-danger btn-border"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <!-- All permis -->
+      <div class="row">
+        <div class="col-md-12">
+          <form ng-submit="bindResPerm()" name="rolePerm" novalidate >
+            <h3>Права для додавання </h3>
+            <input type="text" ng-model="searchWord" class="form-control">
+            <table class="table table-stripped" id="tablePermRole">
+              <thead>
+                <tr>
+                  <td></td>
+                  <td>Назва методу</td>
+                  <td>Id</td>
+                  <td>Ресурс</td>
+                  <td>Modifier</td>
+                  <td>Опис</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.permission_id)">
+                  <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
+                  <td ng-repeat="perm_prop in perm" > {{perm_prop}}</td>
+                </tr>
+
+              </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary btn-border">Підтвердити</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

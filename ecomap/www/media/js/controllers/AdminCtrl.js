@@ -1,5 +1,5 @@
-app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
-  function($scope, $http, toaster, $rootScope) {
+app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope", 
+  '$state', function($scope, $http, toaster, $rootScope, $state) {
     $scope.meth_obj = {
       "1": "GET",
       "2": "PUT",
@@ -20,6 +20,27 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
     $scope.selectCount = {
       'selected': "5"
     }
+
+    $scope.tabs = [
+      { heading: "Ресурси", route:"admin.resources", active:false },
+      { heading: "Права", route:"admin.permissions", active:false },
+      { heading: "Ролі", route:"admin.roles", active:false },
+      { heading: "Користувачі", route:"admin.users", active:false }
+    ];
+
+    $scope.$on("$stateChangeSuccess", function() {
+      $scope.tabs.forEach(function(tab) {
+        tab.active = $scope.active(tab.route);
+      });
+    });
+
+    $scope.go = function(route){
+      $state.go(route);
+    };
+
+    $scope.active = function(route){
+      return $state.is(route);
+    };
 
     $scope.loadRes = function() {
       $http({

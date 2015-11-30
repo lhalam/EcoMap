@@ -1,4 +1,6 @@
-app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', function($scope, $state, $http, toaster, Upload, $timeout) {
+app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload',
+    '$timeout', 'uiGmapIsReady',
+    function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady) {
 
     $scope.mapParams = { center: { latitude: 49, longitude: 30 }, zoom: 6 };
     $scope.getMapParams = function(){
@@ -32,12 +34,37 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
 
 //FORM for ADDING PROBLEMS
-var eventsSearchbox = {
-          places_changed: function (searchBox) {}
-        };
-        $scope.searchbox = { template:'searchbox.tpl.html', events:eventsSearchbox};
+angular.extend($scope, {
+        map: {
+            center: {
+                latitude: 42.3349940452867,
+                longitude:-71.0353168884369
+            },
+            zoom: 11,
+            markers: [],
+            events: {
+            click: function (map, eventName, originalEventArgs) {
+                var e = originalEventArgs[0];
+                var lat = e.latLng.lat(),lon = e.latLng.lng();
+                var marker = {
+                    id: Date.now(),
+                    coords: {
+                        latitude: lat,
+                        longitude: lon
+                    }
+                };
+                $scope.map.markers.push(marker);
+                console.log($scope.map.markers);
+                $scope.$apply();
+            }
+        }
+        }
+    });
 
-
+//var eventsSearchbox = {
+//          places_changed: function (searchBox) {}
+//        };
+//        $scope.searchbox = { template:'searchbox.tpl.html', events:eventsSearchbox};
 
     $scope.newProblem = {
     "title": "",
@@ -59,7 +86,16 @@ var eventsSearchbox = {
     //  labelClass: "marker-labels",
     //  icon:'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'}
     //}
-
+    $scope.marker = {id: Date.now(),
+      coords: {
+        //latitude: position.coords.latitude,
+        //longitude: position.coords.longitude,
+        latitude: $scope.newProblem.latitude,
+        longitude: $scope.newProblem.longitude
+        //latitude: position.coords.latitude,
+        //longitude: position.coords.longitude
+      }
+    }
   $scope.problemTypes =
       [
         {name: 'Проблеми лісів', id: 1},
@@ -73,9 +109,11 @@ var eventsSearchbox = {
 
     $scope.createMarker = function(position){
         console.info('created');
+
     $scope.options = {scrollwheel: false};
     $scope.coordsUpdates = 0;
     $scope.dynamicMoveCtr = 0;
+
     $scope.marker = {
       id: Date.now(),
       coords: {
@@ -83,6 +121,8 @@ var eventsSearchbox = {
         //longitude: position.coords.longitude,
         latitude: $scope.newProblem.latitude,
         longitude: $scope.newProblem.longitude
+        //latitude: position.coords.latitude,
+        //longitude: position.coords.longitude
       },
       options: {
       draggable: true,
@@ -132,7 +172,7 @@ $scope.reloadPos = function(){
 
 var options = {
   enableHighAccuracy: true,
-  timeout: 5000,
+  timeout: 3000,
   maximumAge: 0
 };
 
@@ -147,26 +187,26 @@ $scope.locateUser = function() {
     //navigator.geolocation.getCurrentPosition(success, error, options);
     var width = window.innerWidth;
     function getUserPosition(position) {
-        var mapCenter = {
+        mapCenter = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
         };
         $scope.newProblem.latitude = position.coords.latitude;
         $scope.newProblem.longitude = position.coords.longitude;
-        var crd = position.coords;
-          console.log('Your current position is:');
-          console.log('Latitude : ' + crd.latitude);
-          console.log('Longitude: ' + crd.longitude);
-          console.log('More or less ' + crd.accuracy + ' meters.');
+        //var crd = position.coords;
+        //  console.log('Your current position is:');
+        //  console.log('Latitude : ' + crd.latitude);
+        //  console.log('Longitude: ' + crd.longitude);
+        //  console.log('More or less ' + crd.accuracy + ' meters.');
         if (width < 1000) {
-            $scope.mapParams ={ center: mapCenter, zoom: 17 };
+            $scope.mapParams ={ center: mapCenter, zoom: 10 };
         } else {
             $scope.mapParams ={ center: mapCenter, zoom: 17 };
         }
         $scope.createMarker(position);
-
+     $scope.$apply()
     }
-    $scope.$apply()
+
 };
 
   //$scope.addProblem = function(newProblem, form) {
@@ -236,4 +276,10 @@ $scope.locateUser = function() {
       toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
     })
   };
+
+    uiGmapIsReady.promise()
+    .then(function(instances) {
+      var maps = instances[0].map;
+      google.maps.event.trigger(maps, 'resize');
+    });
 }]);

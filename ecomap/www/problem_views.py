@@ -138,52 +138,64 @@ def get_user_problems(user_id):
 #     if request.method is 'POST':
 #         problem_img = request.files['file']
 #         extension = '.png'
-#         f_name = 'problem_id%s' % current_user.uid + extension
-#         static_url = '/uploads/problem/problemid %d/'  % current_user.uid
+#         problem_id = '50'
+#         f_name = 'problem_id%s' % problem_id + extension
+#         static_url = '/uploads/problem/problemid %d/'  % problem_id
 #         f_path = os.environ['STATICROOT'] + static_url
 
 #         if not os.path.exists(f_path):
 #             os.makedirs(os.path.dirname(f_path + f_name))
+#             img_file.save(os.path.join(f_path, f_name))
+#             img_path = static_url + f_name
+#             db.insert_problem_image(problem_id, img_path)
+#             response = json.dumps({'added_file': img_path})
+#     return response
 
 
 
-
-
-# @app.route('/api/user_avatar', methods=['POST', 'DELETE'])
-# @login_required
-# def profile_photo():
-#     """Controller for handling editing user's profile photo.
-#     :return:
+# def add_profile_photo():
+#     """Controller provides add and edit function for user's profile photo.
+#     :return: json object with image path if success or 400 error message
 #     """
-#     response = {}
+#     response = jsonify(), 400
+#     extension = '.png'
+#     f_name = 'profile_id%s' % current_user.uid + extension
+#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+#     f_path = os.environ['STATICROOT'] + static_url
+
 #     if request.method == 'POST':
 #         img_file = request.files['file']
-#         extension = '.png'
-#         f_name = 'profile_id%s' % current_user.uid + extension
-#         static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
-#         f_path = os.environ['STATICROOT'] + static_url
-
 #         if img_file and validator.validate_image_file(img_file):
 #             if not os.path.exists(f_path):
 #                 os.makedirs(os.path.dirname(f_path + f_name))
 #             img_file.save(os.path.join(f_path, f_name))
 #             img_path = static_url + f_name
 #             db.insert_user_avatar(current_user.uid, img_path)
-#             return json.dumps({'added_file': img_path})
-#         return jsonify(error='error with import file'), 400
+#             response = json.dumps({'added_file': img_path})
+#         else:
+#             response = jsonify(error='error with import file'), 400
+#     return response
+# @app.route('/api/user_avatar', methods=['DELETE'])
+# @login_required
+# def delete_profile_photo():
+#     """Controller for handling deleting user's profile photo.
+#     :return: json object with success message or message with error status
+#     """
+#     response = jsonify(), 400
+#     extension = '.png'
+#     f_name = 'profile_id%s' % current_user.uid + extension
+#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+#     f_path = os.environ['STATICROOT'] + static_url
 
 #     if request.method == 'DELETE' and request.get_json():
 #         data = request.get_json()
-
-#         # valid = validator.validate_photo_delete(data)
-
-#         # if valid['status']:
-#         # if os.path.exists(f_path):
-#         #     os.remove(f_path + f_name)
-#         db.delete_user_avatar(data['user_id'])
-#         response = jsonify(msg='success', deleted_avatar=data['user_id'])
-#         # else:
-#         #     response = Response(json.dumps(valid),
-#         #                         mimetype='application/json'), 400
-#         return response
-#     return jsonify(response)
+#         valid = validator.user_photo_deletion(data)
+#         if valid['status']:
+#             if os.path.exists(f_path):
+#                 os.remove(f_path + f_name)
+#             db.delete_user_avatar(data['user_id'])
+#             response = jsonify(msg='success', deleted_avatar=data['user_id'])
+#         else:
+#             response = Response(json.dumps(valid),
+#                                 mimetype='application/json'), 400
+#     return response

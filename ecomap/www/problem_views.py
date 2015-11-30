@@ -102,6 +102,15 @@ def post_problem():
                             posted_date,
                             user_id)
             # call refresh problems!
+
+            logger.info(db.problem_post(data['title'],
+                            data['content'],
+                            data['proposal'],
+                            data['latitude'],
+                            data['longitude'],
+                            data['type'],
+                            posted_date,
+                            user_id))
         # todo TIME!
         # todo select problem id?
             response = jsonify(added_problem=data['title'])

@@ -164,7 +164,9 @@ $scope.locateUser = function() {
             $scope.mapParams ={ center: mapCenter, zoom: 17 };
         }
         $scope.createMarker(position);
+
     }
+    $scope.$apply()
 };
 
   //$scope.addProblem = function(newProblem, form) {

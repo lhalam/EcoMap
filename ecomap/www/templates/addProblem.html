@@ -11,6 +11,8 @@
 
     <div>
           <button class="btn btn-info" ng-click="locateUser()">coordt</button>
+          <input type='text' placeholder='latitude' ng-pattern='pattern.coords' ng-model='latitude' ng-change='logg("hello")'>
+          <input type='text' placeholder='longitude' ng-pattern='pattern.coords' ng-model='longitude' ng-change='logg("hello")'>
     </div>
     <div>
         <p>{{  }}</p>

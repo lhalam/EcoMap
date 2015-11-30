@@ -5,21 +5,20 @@
   <form  ng-submit="addResource(newResource)" name="addResForm" novalidate>
    <div class="row">
      <div class="col-md-12 ">
-        <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
-      <label for="" class="control-label" >Назва ресурса</label>
-      <div class="row">
-        <div class="col-md-11">
-          <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+      <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
+        <label for="" class="control-label" >Назва ресурса</label>
+        <div class="row">
+          <div class="col-md-11">
+            <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+          </div>
+          <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button></div>
         </div>
-        <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button></div>
+
+        <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
+          <div ng-messages-include="/templates/error_msgs.html"></div>
+        </div>
+
       </div>
-
-      <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
-        <div ng-messages-include="/templates/error_msgs.html"></div>
-
-      </div>
-
-    </div>
      </div>
    </div>
   </form>

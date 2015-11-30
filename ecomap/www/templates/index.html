@@ -44,6 +44,8 @@
     <!-- AngularJS directives -->
     <script src="/js/directives/ModalWindow.js"></script>
     <script src="/js/directives/ValidatorsDirective.js"></script>
+
+    <!-- AngularJS factories -->
     <script src="/js/factories/msg.js"></script>
     <script src="/js/factories/msgError.js"></script>
 
@@ -61,14 +63,10 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
-    <script src='/js/controllers/admin_resourceCtrl.js'></script>
-    <script src='/js/controllers/admin_permisionCtrl.js'></script>
-    <script src='/js/controllers/admin_roleCtrl.js'></script>
-    <script src='/js/controllers/admin_userCtrl.js'></script>
-
-
-
-  
+    <script src='/js/controllers/AdminResourceCtrl.js'></script>
+    <script src='/js/controllers/AdminPermissionCtrl.js'></script>
+    <script src='/js/controllers/AdminRoleCtrl.js'></script>
+    <script src='/js/controllers/AdminUserCtrl.js'></script>  
 
   </head>
   <body ng-controller="MainCtrl">
@@ -119,10 +117,5 @@
       <toaster-container></toaster-container>
     <div ui-view class="map-div"></div>
 
-    <script>
-      $(window).load(function() {
-        $(".loader").fadeOut("slow");
-      }); 
-    </script>
   </body>
 </html>

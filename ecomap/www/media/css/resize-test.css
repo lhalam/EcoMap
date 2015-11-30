@@ -76,8 +76,7 @@ section.resizable {
 }
 
 #two {
-  background:  rgba(0, 121, 255, 0.4);
-  color: black;
+  background:  #fff;
   flex-basis: 20%;
 }
 

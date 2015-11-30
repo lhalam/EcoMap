@@ -785,7 +785,7 @@ def problem_post(title, content, proposal, latitude, longitude,
         cursor.execute(query, (title, content, proposal, latitude,
                                longitude, problem_type_id, created_date,
                                user_id, created_date, user_id))
-        return conn.insert_id()
+        # return conn.insert_id()
 
 
 @retry_query(tries=3, delay=1)

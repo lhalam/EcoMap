@@ -28,14 +28,14 @@ def problems():
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6]})
             # Prototype for parsing date from timestamp to gregorian
-        for problems in parsed_json:
-            for keys in problems:
-                if keys is 'date':
-                    logger.warning(problems[keys])
-                    parsed_date = int(problems[keys])
-                    result_date = time.ctime(parsed_date)
-                    logger.warning(result_date)
-                    problems[keys] = result_date
+        # for problems in parsed_json:
+        #     for keys in problems:
+        #         if keys is 'date':
+        #             logger.warning(problems[keys])
+        #             parsed_date = int(problems[keys])
+        #             result_date = time.ctime(parsed_date)
+        #             logger.warning(result_date)
+        #             problems[keys] = result_date
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -103,14 +103,14 @@ def post_problem():
                             user_id)
             # call refresh problems!
 
-            logger.info(db.problem_post(data['title'],
-                            data['content'],
-                            data['proposal'],
-                            data['latitude'],
-                            data['longitude'],
-                            data['type'],
-                            posted_date,
-                            user_id))
+            # logger.info(db.problem_post(data['title'],
+            #                 data['content'],
+            #                 data['proposal'],
+            #                 data['latitude'],
+            #                 data['longitude'],
+            #                 data['type'],
+            #                 posted_date,
+            #                 user_id))
         # todo TIME!
         # todo select problem id?
             response = jsonify(added_problem=data['title'])
@@ -135,9 +135,9 @@ def get_user_problems(user_id):
          "is_enabled": 1
         }
     """
+    problems = []
     if request.method == 'GET':
         problem_tuple = db.get_user_problems(user_id)
-        problems = []
         for problem in problem_tuple:
             problems.append({'id': problem[0],
                              'title': problem[1],

@@ -3,6 +3,8 @@
 """
 import imghdr
 import re
+import logging
+logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 

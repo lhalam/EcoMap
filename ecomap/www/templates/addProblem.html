@@ -1,54 +1,125 @@
 <div class="content-resize">
-  <div class="row-resize">
-    <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map">
-    <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
-    click="zoomMarker" doCluster="true"></ui-gmap-markers>
-    </ui-gmap-markers>
-    </ui-gmap-google-map>
-    <section id="two" resizable r-directions="['left']" r-flex="true">
-      <uib-tabset justified="true">
-      <uib-tab heading="Опис">
-      <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
-        class="page-edit-form" novalidate enctype="multipart/form-data">
-        <button class="btn btn-default" ng-click="locateUser()">Знайти мене</button>
-        <div class="form-group">
-          <label for="latitude" class="control-label">Широта</label>
-          <input type="text" id="latitude" placeholder="Широта" ng-pattern='pattern.coords' ng-model='latitude' ng-change='logg("hello")' class="form-control">
-        </div>
-        <div class="form-group">
-          <label for="longitude" class="control-label">Довгота</label>
-          <input type="text" id="longitude" placeholder="Довгота"ng-pattern='pattern.coords' ng-model='longitude' ng-change='logg("hello")' class="form-control">
-        </div>
+    <div class="row-resize">
+        <script type="text/ng-template" id="searchbox.tpl.html">
+                <input type="text" placeholder="Search Box"></script>
 
-        <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
-          <label for="title" class="control-label">Заголовок проблеми</label>
-          <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-max-length="255" required placeholder="Заголовок">
-          <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
-            <div ng-messages-include="/templates/error_msgs.html"></div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="problem_type_id"  class="control-label">Тип проблеми</label>
-          <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
-            class="form-control">
-            <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="content" class="control-label">Опис проблеми</label>
-          <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control" ng-model="newProblem.content"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
-          <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control" ng-model="newProblem.proposal"></textarea>
-        </div>
-        <button class="btn btn-primary fl-right" type="submit" >Додати проблему</button>
-        <div class="clear"></div>
-      </form>
-      </uib-tab>
-      <uib-tab heading="Фото">
-      </uib-tab>
+        <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom'
+                            id="map" draggable="true" options="options">
+            <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
+                 click="zoomMarker" doCluster="true" options="markers.options"
+                 events="markers.events">
+            </ui-gmap-markers>
+            <ui-gmap-marker coords="marker.coords" ng-repeat="m in marker"
+                       options="marker.options" events="marker.events" idkey="marker.id">
+            </ui-gmap-marker>
+                   <ui-gmap-search-box template="searchbox.template" events="searchbox.events"></ui-gmap-search-box>
+        </ui-gmap-google-map>
+
+        <section id="two" resizable r-directions="['left']" r-flex="true">
+
+
+
+      <uib-tabset justified="true">
+
+        <uib-tab heading="Опис">
+            <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
+                class="page-edit-form" novalidate enctype="multipart/form-data">
+                <button class="btn btn-default" ng-click="locateUser()">Знайти мене</button>
+                <div class="form-group">
+                  <label for="latitude" class="control-label">Широта</label>
+                  <input type="text" id="latitude" placeholder="Широта" ng-pattern='pattern.coords' ng-model='latitude' ng-change='logg("hello")' class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="longitude" class="control-label">Довгота</label>
+                  <input type="text" id="longitude" placeholder="Довгота"ng-pattern='pattern.coords' ng-model='longitude' ng-change='logg("hello")' class="form-control">
+                </div>
+
+                <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
+                  <label for="title" class="control-label">Заголовок проблеми</label>
+                  <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-max-length="255" required placeholder="Заголовок">
+                  <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
+                    <div ng-messages-include="/templates/error_msgs.html"></div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="problem_type_id"  class="control-label">Тип проблеми</label>
+                  <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
+                    class="form-control">
+                    <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="content" class="control-label">Опис проблеми</label>
+                  <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control" ng-model="newProblem.content"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
+                  <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control" ng-model="newProblem.proposal"></textarea>
+                </div>
+                <button class="btn btn-primary fl-right" type="submit" >Додати проблему</button>
+                <div class="clear"></div>
+            </form>
+        </uib-tab>
+
+        <uib-tab heading="Фото">
+            <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
+            class="page-edit-form" novalidate enctype="multipart/form-data">
+                <div class="location-finder">
+                    <div class="btn btn-info" ng-click="locateUser()">get coords</div>
+                    <i class="form-group" ng-class="{ 'has-error': (addProblemForm.latitude.$touched || submitted) && addProblemForm.latitude.$invalid}">
+                        <label for="latitude" class="control-label">latitude</label>
+                        <input type="text" class="form-control" ng-change="reloadPos()" name="latitude" id="latitude"
+                               ng-model="newProblem.latitude" ng-max-length="255" required>
+                        <span class="help-block" ng-messages="addProblemForm.latitude.$error"
+                              ng-show="addProblemForm.latitude.$touched || submitted">
+                            <span ng-messages-include="/templates/error_msgs.html"></span>
+                        </span>
+                   </i>
+
+                    <i class="form-group" ng-class="{ 'has-error': (addProblemForm.longitude.$touched || submitted) && addProblemForm.longitude.$invalid}">
+                        <label for="longitude" class="control-label">longitude</label>
+                        <input type="text" class="form-control" name="longitude" id="longitude"
+                               ng-model="newProblem.longitude" ng-change="reloadPos()" ng-max-length="255" required>
+                        <span class="help-block" ng-messages="addProblemForm.longitude.$error"
+                              ng-show="addProblemForm.longitude.$touched || submitted">
+                          <span ng-messages-include="/templates/error_msgs.html"></span>
+                        </span>
+                   </i>
+                </div>
+
+                <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
+                    <label for="title" class="control-label">NAZVA PROBLEMY</label>
+                    <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-max-length="255" required>
+                    <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
+                        <div ng-messages-include="/templates/error_msgs.html"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="problem_type_id"  class="control-label">TYPE PROBLEMY</label>
+                    <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
+                         class="form-control">
+                        <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="problemContent" class="control-label">OPYS PROBLEMY</label>
+                    <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control" ng-model="newProblem.content"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="proposal" class="control-label">PROPOSICII</label>
+                    <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control" ng-model="newProblem.proposal"></textarea>
+                </div>
+
+                <button class="btn btn-primary fl-right" type="submit" >Додати проблему</button>
+
+                <div class="clear"></div>
+            </form>
+        </uib-tab>
+
       </uib-tabset>
-    </section>
-  </div>
+        </section>
+    </div>
 </div>

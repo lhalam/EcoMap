@@ -710,81 +710,7 @@ def get_permission_control_data():
         return cursor.fetchall()
 
 
-@retry_query(tries=3, delay=1)
-def get_all_problems():
-    """Return all problems in db.
-    :return: tuple, containing all problems
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `latitude`, `longitude`,
-                   `problem_type_id`, `status`, `created_date`
-                   FROM `problem`;
-                """
-        cursor.execute(query)
-        return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def get_problem_by_id(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: list with lists where located dictionary
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `id`, `title`, `content`, `proposal`,
-                `severity`, `status`, `latitude`,`longitude`,
-                `problem_type_id` FROM `problem` WHERE `id` = %s;
-                """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
-
-
-@retry_query(tries=3, delay=1)
-def get_activity_by_problem_id(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: tuple with problem_activity info
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `created_date`, `problem_id`, `user_id`,
-                    `activity_type` FROM `problem_activity`
-                    WHERE `problem_id` = %s;
-                """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
-
-
-@retry_query(tries=3, delay=1)
-def problem_post(title, content, proposal, latitude, longitude,
-                 problem_type_id, created_date, user_id):
-    """This method adds problem into db.
-       :params: title - new title
-                content - new content
-                proposal - new proposal
-                latitude - new latitude of a new problem
-                longitude - new longitude of a new problem
-                problem_type_id - type of a new problem
-                created_date - time of problem creation
-                user_id - id of user that posted problem
-    """
-    with db_pool().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
-        query = """
-        INSERT INTO problem (title, content, proposal,
-                            latitude, longitude, problem_type_id,
-                            created_date, user_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-        INSERT INTO `problem_activity`
-                  (problem_id, created_date, user_id, activity_type)
-        VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
-        """
-        cursor.execute(query, (title, content, proposal, latitude,
-                               longitude, problem_type_id, created_date,
-                               user_id, created_date, user_id))
+        # return conn.insert_id()
 
 
 @retry_query(tries=3, delay=1)
@@ -834,6 +760,19 @@ def count_users():
         cursor.execute(query)
         return cursor.fetchone()
 
+@retry_query(tries=3, delay=1)
+def get_all_problems():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`
+                   FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
 
 @retry_query(tries=3, delay=1)
 def get_user_problems(user_id):
@@ -847,3 +786,63 @@ def get_user_problems(user_id):
                 WHERE `user_id`=%s"""
         cursor.execute(query, (user_id,))
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_problem_by_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: list with lists where located dictionary
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `id`, `title`, `content`, `proposal`,
+                `severity`, `status`, `latitude`,`longitude`,
+                `problem_type_id` FROM `problem` WHERE `id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def get_activity_by_problem_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `created_date`, `problem_id`, `user_id`,
+                    `activity_type` FROM `problem_activity`
+                    WHERE `problem_id` = %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def problem_post(title, content, proposal, latitude, longitude,
+                 problem_type_id, created_date, user_id):
+    """This method adds problem into db.
+       :params: title - new title
+                content - new content
+                proposal - new proposal
+                latitude - new latitude of a new problem
+                longitude - new longitude of a new problem
+                problem_type_id - type of a new problem
+                created_date - time of problem creation
+                user_id - id of user that posted problem
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """
+        INSERT INTO problem (title, content, proposal,
+                            latitude, longitude, problem_type_id,
+                            created_date, user_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        INSERT INTO `problem_activity`
+                  (problem_id, created_date, user_id, activity_type)
+        VALUES (LAST_INSERT_ID(), %s, %s, 'Added');
+        """
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longitude, problem_type_id, created_date,
+                               user_id, created_date, user_id))

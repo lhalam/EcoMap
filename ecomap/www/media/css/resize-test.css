@@ -156,3 +156,23 @@ section.resizable {
   top: 0;
   margin-left: -14px;
 }
+
+.location-finder {
+    background: #238BAB;
+    display: flex;
+    color: white;
+    text-align: center;
+}
+
+.location-finder.form-group{
+    margin: 0;
+}
+
+.location-finder input{
+    margin: auto;
+    width: 90%;
+
+}.location-finder.form-group input{
+    margin: auto;
+    width: 90%;
+}

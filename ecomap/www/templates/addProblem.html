@@ -4,7 +4,8 @@
                 <input type="text" placeholder="Search Box"></script> -->
 
         <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom'
-                            id="map" draggable="true" options="options" >
+                            id="map" draggable="true" options="options"
+                            events="map.events">
             <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
                  click="zoomMarker" doCluster="true" options="markers.options"
                  events="markers.events">
@@ -15,10 +16,10 @@
                    <!--<ui-gmap-search-box template="searchbox.template" events="searchbox.events"></ui-gmap-search-box>-->
         </ui-gmap-google-map>
 
+<!--             <ui-gmap-marker ng-repeat="m in map.markers" coords="m.coords"
+                      icon="m.icon" idkey="m.id"></ui-gmap-marker> -->
 
-    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" events="map.events">
-        <ui-gmap-marker ng-repeat="m in map.markers" coords="m.coords" icon="m.icon" idkey="m.id"></ui-gmap-marker>
-    </ui-gmap-google-map>
+
 
         <section id="two" resizable r-directions="['left']" r-flex="true">
 

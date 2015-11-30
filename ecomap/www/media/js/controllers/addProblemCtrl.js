@@ -34,44 +34,39 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
 
 //FORM for ADDING PROBLEMS
-angular.extend($scope, {
-        map: {
-            center: {
-                latitude: 42.3349940452867,
-                longitude:-71.0353168884369
-            },
-            zoom: 11,
-            markers: [],
-            events: {
-            click: function (map, eventName, originalEventArgs) {
-                var e = originalEventArgs[0];
-                var lat = e.latLng.lat(),lon = e.latLng.lng();
-                var marker = {
-                    id: Date.now(),
-                    coords: {
-                        latitude: lat,
-                        longitude: lon
-                    }
-                };
-                $scope.map.markers.push(marker);
-                console.log($scope.map.markers);
-                $scope.$apply();
-            }
-        }
-        }
-    });
 
-//var eventsSearchbox = {
-//          places_changed: function (searchBox) {}
-//        };
-//        $scope.searchbox = { template:'searchbox.tpl.html', events:eventsSearchbox};
+    $scope.map ={
+
+        events: {
+            click: function (map, eventName, originalEventArgs) {
+            var e = originalEventArgs[0];
+            var lat = e.latLng.lat(),lon = e.latLng.lng();
+            $scope.marker = {
+                id: Date.now,
+                coords: {
+                    latitude: lat,
+                    longitude: lon
+                },
+              options: {
+              draggable: true,
+              labelContent: 'clicked marker',
+              labelAnchor: "65 0",
+              labelClass: "marker-labels",
+              icon:'http://www.tnetnoc.com/public/ANS/Dynaflex/Images/HCL/SEO/St-Kilda-Guide/Icons/MarkerPurple.png'}
+            };
+                $scope.newProblem.latitude = lat;
+                $scope.newProblem.longitude = lon;
+            console.log($scope.marker);
+            $scope.$apply();
+        }}
+    };
 
     $scope.newProblem = {
     "title": "",
     "type": "",
     "latitude": "",
     "longitude": ""
-  };
+    };
 
     //$scope.marker = {
     //  id: Date.now(),
@@ -95,7 +90,7 @@ angular.extend($scope, {
         //latitude: position.coords.latitude,
         //longitude: position.coords.longitude
       }
-    }
+    };
   $scope.problemTypes =
       [
         {name: 'Проблеми лісів', id: 1},
@@ -121,8 +116,6 @@ angular.extend($scope, {
         //longitude: position.coords.longitude,
         latitude: $scope.newProblem.latitude,
         longitude: $scope.newProblem.longitude
-        //latitude: position.coords.latitude,
-        //longitude: position.coords.longitude
       },
       options: {
       draggable: true,
@@ -131,10 +124,10 @@ angular.extend($scope, {
       labelClass: "marker-labels",
       icon:'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'},
       events: {
-        dragend: function (marker, eventName, args) {
+      dragend: function (marker, eventName, args) {
           console.log('marker dragend');
-          var lat = marker.getPosition().lat();
-          var lon = marker.getPosition().lng();
+          //var lat = marker.getPosition().lat();
+          //var lon = marker.getPosition().lng();
 
         $scope.newProblem.latitude = marker.getPosition().lat();
         $scope.newProblem.longitude =  marker.getPosition().lng();
@@ -146,7 +139,20 @@ angular.extend($scope, {
           labelClass: "marker-labels",
           icon:'https://2ip.com.ua/images/marker_map.png'
           };
-        }
+        },
+      //click: function (map, eventName, originalEventArgs) {
+      //      var e = originalEventArgs[0];
+      //      var lat = e.latLng.lat(),lon = e.latLng.lng();
+      //      $scope.marker = {
+      //          id: Date.now(),
+      //          coords: {
+      //              latitude: lat,
+      //              longitude: lon
+      //          }
+      //      };
+      //      console.log($scope.marker);
+      //      $scope.$apply();
+      //  }
       }
     };
 

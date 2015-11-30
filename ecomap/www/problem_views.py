@@ -66,7 +66,7 @@ def detailed_problem(problem_id):
 
     if activity_tuple:
         activity_info.append({
-            'created_date': activity_tuple[0], ' problem_id': activity_tuple[1],
+            'created_date': activity_tuple[0], 'problem_id': activity_tuple[1],
             'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
         })
 
@@ -109,3 +109,34 @@ def post_problem():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
         return response
+
+
+@app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
+def get_user_problems(user_id):
+    """This method retrieves all user's problem from db.
+        :returns list of user's problem represented with next objects:
+        {"id": 190,
+         "title": "name",
+         "latitude": 51.419765,
+         "longitude": 29.520264,
+         "problem_type_id": 1,
+         "status": 0,
+         "date": "2015-02-24T14:27:22.000Z",
+         "severity": '3',
+         "is_enabled": 1
+        }
+    """
+    if request.method == 'GET':
+        problem_tuple = db.get_user_problems(user_id)
+        problems = []
+        for problem in problem_tuple:
+            problems.append({'id': problem[0],
+                             'title': problem[1],
+                             'latitude': problem[2],
+                             'logitude': problem[3],
+                             'problem_type_id': problem[4],
+                             'status': problem[5],
+                             'date': problem[6],
+                             'severity': problem[8],
+                             'is_enabled': problem[7]})
+    return Response(json.dumps(problems), mimetype='application/json')

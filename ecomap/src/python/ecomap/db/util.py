@@ -833,3 +833,17 @@ def count_users():
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_problems(user_id):
+    """Gets all problems posted by given user."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                `severity`
+                FROM `problem`
+                WHERE `user_id`=%s"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchall()

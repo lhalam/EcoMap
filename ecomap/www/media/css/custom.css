@@ -527,3 +527,30 @@ input[type="checkbox"]{
   width: 1.3em;
   height: 1.8em;
 }
+
+.det-problem-modal .title{
+  margin-top: 0px;
+  margin-bottom: 30px;
+}
+
+.det-problem-modal .general{
+  background-color: #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.det-problem-modal .rate{
+  float: left;
+}
+
+.det-problem-modal .solution{
+  float: right;
+}
+
+
+.det-problem-modal .problem-type,
+.det-problem-modal .description,
+.det-problem-modal .proposal,
+.det-problem-modal .photos{
+  padding: 10px;
+}

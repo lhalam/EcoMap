@@ -749,7 +749,6 @@ def pagination_test(page, per_page):
         cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
-
 @retry_query(tries=3, delay=1)
 def count_users():
     """Users per page
@@ -759,6 +758,7 @@ def count_users():
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
         return cursor.fetchone()
+
 
 @retry_query(tries=3, delay=1)
 def get_all_problems():
@@ -774,6 +774,7 @@ def get_all_problems():
         cursor.execute(query)
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_user_problems(user_id):
     """Gets all problems posted by given user."""
@@ -786,6 +787,7 @@ def get_user_problems(user_id):
                 WHERE `user_id`=%s"""
         cursor.execute(query, (user_id,))
         return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def get_problem_by_id(problem_id):

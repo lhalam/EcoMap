@@ -13,6 +13,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsRea
   };
 
   $scope.zoomMarker = function(data) {
+    console.log(data);
     $scope.mapParams = {
       center: {
         latitude: data.model.latitude,

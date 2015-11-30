@@ -5,7 +5,7 @@
 
         <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom'
                             id="map" draggable="true" options="options"
-                            events="map.events">
+                            events="map.events" ng-click="createMarker()">
             <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
                  click="zoomMarker" doCluster="true" options="markers.options"
                  events="markers.events">
@@ -25,7 +25,7 @@
 
       <uib-tabset justified="true">
 
-        <uib-tab heading="Опис">
+        <!-- <uib-tab heading="Опис">
             <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
                 class="page-edit-form" novalidate enctype="multipart/form-data">
                 <button class="btn btn-default" ng-click="locateUser()">Знайти мене</button>
@@ -63,16 +63,15 @@
                 <button class="btn btn-primary fl-right" type="submit" >Додати проблему</button>
                 <div class="clear"></div>
             </form>
-        </uib-tab>
+        </uib-tab> -->
 
         <uib-tab heading="Фото">
             <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
             class="page-edit-form" novalidate enctype="multipart/form-data">
-                <div class="location-finder">
-                    <div class="btn btn-info" ng-click="locateUser()">get coords</div>
+                <div>
+                    <input type='button' value='Знайти мене' class="btn btn-info" ng-click="locateUser()">
                     <i class="form-group" ng-class="{ 'has-error': (addProblemForm.latitude.$touched || submitted) && addProblemForm.latitude.$invalid}">
-                        <label for="latitude" class="control-label">latitude</label>
-                        <input type="text" class="form-control" ng-change="reloadPos()" name="latitude" id="latitude"
+                        <input type="text" placeholder='Довгота' class="form-control" name="latitude" id="latitude"
                                ng-model="newProblem.latitude" ng-max-length="255" required>
                         <span class="help-block" ng-messages="addProblemForm.latitude.$error"
                               ng-show="addProblemForm.latitude.$touched || submitted">
@@ -81,14 +80,14 @@
                    </i>
 
                     <i class="form-group" ng-class="{ 'has-error': (addProblemForm.longitude.$touched || submitted) && addProblemForm.longitude.$invalid}">
-                        <label for="longitude" class="control-label">longitude</label>
-                        <input type="text" class="form-control" name="longitude" id="longitude"
-                               ng-model="newProblem.longitude" ng-change="reloadPos()" ng-max-length="255" required>
+                        <input type="text" placeholder='Широта' class="form-control" name="longitude" id="longitude"
+                               ng-model="newProblem.longitude" ng-max-length="255" required>
                         <span class="help-block" ng-messages="addProblemForm.longitude.$error"
                               ng-show="addProblemForm.longitude.$touched || submitted">
                           <span ng-messages-include="/templates/error_msgs.html"></span>
                         </span>
                    </i>
+                   <input type='button' ng-click="reloadPos()" value='Пошук' class="btn btn-info">
                 </div>
 
                 <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">

@@ -145,7 +145,7 @@ def oauth_login(provider):
 
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url = 'https://graph.facebook.com/v2.5/me?fields=email,'\
-                    'first_name,last_name,id'
+                    'first_name,last_name,id,picture.type(large)'
 
     params = {
         'client_id': request.json['clientId'],
@@ -158,22 +158,16 @@ def oauth_login(provider):
     access_token = dict(parse_qsl(resource.text))
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
-    logger.info(profile)
+    logger.info(profile['picture']['data']['url'])
 
-    user = ecomap_user.get_user_by_oauth_id(profile['id'])
-    if not user:
-        user = ecomap_user.get_user_by_email(profile['email'])
-        if not user:
-            ecomap_user.facebook_register(profile['first_name'],
-                                          profile['last_name'],
-                                          profile['email'],
-                                          provider,
-                                          profile['id'])
-        else:
-            db.add_oauth_to_user(user[0], provider, profile['id'])
-        user = ecomap_user.get_user_by_oauth_id(profile['id'])
+    user = ecomap_user.facebook_register(profile['first_name'],
+                                         profile['last_name'],
+                                         profile['email'],
+                                         provider,
+                                         profile['id'])
 
-    logger.info(user)
+    db.insert_user_avatar(user.uid, profile['picture']['data']['url'])
+
     login_user(user, remember=True)
 
     response = jsonify(id=user.uid,

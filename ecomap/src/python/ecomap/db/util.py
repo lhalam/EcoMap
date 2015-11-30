@@ -62,7 +62,7 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
         query = """UPDATE `user` SET `oauth_provider`=%s,
                    `oauth_uid`=%s WHERE `id`=%s;
                 """
-        cursor.execute(query, oauth_provider, oauth_uid, user_id)
+        cursor.execute(query, (oauth_provider, oauth_uid, user_id))
         conn.commit()
 
 

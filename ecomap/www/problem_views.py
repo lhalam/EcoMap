@@ -83,16 +83,19 @@ def post_problem():
             user_id = current_user.uid
             now = time.time()
             posted_date = int(round(now))
-            last_id=db.problem_post(data['title'],
-                            data['content'],
-                            data['proposal'],
-                            data['latitude'],
-                            data['longitude'],
-                            data['type'],
-                            posted_date,
-                            user_id)
+            last_id = db.problem_post(data['title'],
+                                      data['content'],
+                                      data['proposal'],
+                                      data['latitude'],
+                                      data['longitude'],
+                                      data['type'],
+                                      posted_date)
+            if last_id:
+                db.problem_activity_post(last_id, posted_date,
+                                         user_id)
+            logger.debug(last_id)
             response = jsonify(added_problem=data['title'],
-                                problem_id = last_id)
+                               problem_id=last_id)
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400

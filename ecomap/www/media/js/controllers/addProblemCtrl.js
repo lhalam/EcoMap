@@ -93,7 +93,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             labelClass: "marker-labels",
             icon:'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'},
             events: {
-                dragend: function (marker, eventName, args) {
+                drag: function (marker, eventName, args) {
                     console.log('marker dragend');
 
                     $scope.newProblem.latitude = marker.getPosition().lat();
@@ -123,6 +123,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     $scope.reloadPos = function(){
         $scope.mapParams ={ center: { latitude: $scope.newProblem.latitude,
             longitude: $scope.newProblem.longitude }, zoom: 7 };
+        $scope.createMarker()
     };
 
 
@@ -156,7 +157,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             }
 
             $scope.$apply()
-            // $scope.createMarker()
+            $scope.createMarker()
         }
 
     };

@@ -85,7 +85,33 @@
             </form>
         </uib-tab>
 
-        <uib-tab heading="Фото">
+        <uib-tab heading="Додати фото" >
+            <div ng-controller="ProblemPhotoCtrl">
+            <form name="uploadProblemPhoto">
+                <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
+                     ngf-pattern="'image/*'" accept="image/*"
+                     ngf-max-size="5MB" ngf-keep="'distinct'" ngf-multiple="true">select</div>
+
+                <br>
+                <div ng-repeat="f in photos">
+                    <input type="text" ng-model="f.description" value="f.description"></input>
+                <img ngf-thumbnail="f"  class="thumb">
+                </div>
+                <br>
+
+                <div class="btn btn-info photo-btn add" ng-click="photos = []"
+                     ng-show="photos">Remove</div>
+                <button type="submit" ng-click="arrayUpload(photos)">submit photos</button>
+                <button class="btn btn-success photo-btn "
+                        ng-disabled="!uploadProblemPhoto.$valid"
+                        ng-click="arrayUpload(photos)" >Завантажити</button>
+                        <button class="btn btn-danger photo-btn " ng-click="photos = null || cancelImg(photos)">Закрити</button>
+
+
+            </form>
+
+
+            </div>
         </uib-tab>
 
       </uib-tabset>

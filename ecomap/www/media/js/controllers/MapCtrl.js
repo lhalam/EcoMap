@@ -1,20 +1,26 @@
-app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady',function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady) {
+app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope','uiGmapIsReady',"$state",
+  function($scope, $http, uiGmapGoogleMapApi,$rootScope, uiGmapIsReady,$state) {
 
-  $scope.mapParams = {
+ if(!$rootScope.mapParams){
+   $rootScope.mapParams = {
     center: {
       latitude: 49.357826, 
       longitude: 31.518239
     },
     zoom: 6
   };
+ }
 
-  $scope.getMapParams = function() {
-    return $scope.mapParams;
+  $rootScope.getMapParams = function() {
+    return $rootScope.mapParams;
   };
 
-  $scope.zoomMarker = function(data) {
+  $rootScope.zoomMarker = function(data) {
+    $state.go("detailedProblem",{
+      'id':data.model.problem_id
+    })
     console.log(data);
-    $scope.mapParams = {
+    $rootScope.mapParams = {
       center: {
         latitude: data.model.latitude,
         longitude: data.model.longitude
@@ -31,7 +37,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsRea
     }).then(function successCallback(response) {
       $scope.markers = response.data;
       angular.forEach($scope.markers, function(value, key){
-        $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+        // $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
       });
     }, function errorCallback(error) {});
   }

@@ -119,6 +119,21 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         templateUrl: '/templates/addProblem.html',
         controller: 'addProblemCtrl'
     })
+    .state("detailedProblem",{
+      url:"/detailedProblem/:id",
+      views:{
+        "detailedProblem":{
+        "templateUrl":"/templates/detailedProblem.html",
+        "controller":"detailedProblemCtrl"
+        },
+        "":{
+          'templateUrl': '/templates/map.html',
+          'controller': 'MapCtrl'
+        }
+
+        }
+      
+    })
 
     .state('register', {
       url: '/register',

@@ -586,3 +586,23 @@ input[type="checkbox"]{
   background-color: rgba(100,100,100,0.1);
   z-index: 99999999;
 }
+.problemBlock{
+  position: absolute;
+  top:50px;
+  right: 0px;
+  height: 100vh;
+  background-color: #fff;
+}
+.severity{
+  position: absolute;
+  top:0.1em;
+  left: -2em;
+}
+.severity li{
+  list-style: none;
+  display: inline;
+  margin-right: 0.1em;
+}
+.selectSeverity{
+  color: red;
+}

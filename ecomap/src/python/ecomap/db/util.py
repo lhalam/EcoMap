@@ -822,7 +822,7 @@ def get_activity_by_problem_id(problem_id):
 
 @retry_query(tries=3, delay=1)
 def problem_post(title, content, proposal, latitude, longitude,
-                 problem_type_id,created_date):
+                 problem_type_id, created_date):
     """This method adds problem into db.
        :params: title - new title
                 content - new content

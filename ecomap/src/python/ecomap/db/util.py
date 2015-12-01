@@ -746,6 +746,7 @@ def pagination_test(page, per_page):
         cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def count_users():
     """Users per page
@@ -797,7 +798,7 @@ def get_problem_by_id(problem_id):
         cursor = conn.cursor()
         query = """SELECT `id`, `title`, `content`, `proposal`,
                    `severity`, `status`, `latitude`,`longitude`,
-                   `problem_type_id`
+                   `problem_type_id`, `created_date`
                    FROM `problem` WHERE `id` = %s;
                 """
         cursor.execute(query, (problem_id, ))
@@ -843,6 +844,7 @@ def problem_post(title, content, proposal, latitude, longitude,
                                longitude, problem_type_id, created_date))
         last_id = cursor.lastrowid
         return last_id
+
 
 @retry_query(tries=3, delay=1)
 def problem_activity_post(problem_id, created_date, user_id):

@@ -52,7 +52,7 @@ def detailed_problem(problem_id):
             'content': problem_tuple[2], 'proposal': problem_tuple[3],
             'severity': problem_tuple[4], 'status': problem_tuple[5],
             'latitude': problem_tuple[6], 'longitude': problem_tuple[7],
-            'problem_type_id': problem_tuple[8]
+            'problem_type_id': problem_tuple[8], 'date': problem_tuple[9]
         })
 
     if activity_tuple:
@@ -123,14 +123,14 @@ def get_user_problems(user_id):
     logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],
-                         'title': problem[1],
-                         'latitude': problem[2],
-                         'logitude': problem[3],
-                         'problem_type_id': problem[4],
-                         'status': problem[5],
-                         'date': problem[6],
-                         'severity': problem[8],
-                         'is_enabled': problem[7]})
+                              'title': problem[1],
+                              'latitude': problem[2],
+                              'logitude': problem[3],
+                              'problem_type_id': problem[4],
+                              'status': problem[5],
+                              'date': problem[6],
+                              'severity': problem[8],
+                              'is_enabled': problem[7]})
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 # @app.route('/api/upload_photo', methods=['POST', 'DELETE'])

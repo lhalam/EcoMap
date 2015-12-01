@@ -86,27 +86,32 @@
         </uib-tab>
 
         <uib-tab heading="Додати фото" >
-            <form name="uploadProblemPhoto" ng-controller="ProblemPhotoCtrl">
-                      <div class="modal-resize">
-                        <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
-                        name="file" accept="image/*" ngf-pattern="'image/*'"
-                        ngf-max-size="5MB" ngf-change="showCanvas(uploadProblemPhoto)" required="">
-                        Оберіть фото</button>
-                        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
-                        <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
-                        <div class="cropArea" ngf-drop
-                          ng-model="picFile" ngf-pattern="image/*">
-                          <img-crop image="picFile  | ngfDataUrl" area-type="square"
-                          filename = "picFile.filename"
-                          result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
-                          </img-crop>
-                        </div>
-                        <button class="btn btn-success photo-btn "
-                        ng-disabled="!uploadPhoto.$valid"
-                        ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
-                        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
-                      </div>
-                    </form>
+            <div ng-controller="ProblemPhotoCtrl">
+            <form name="uploadProblemPhoto">
+                <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
+                     ngf-pattern="'image/*'" accept="image/*"
+                     ngf-max-size="5MB" ngf-keep="'distinct'" ngf-multiple="true">select</div>
+
+                <br>
+                <div ng-repeat="f in photos">
+                    <input type="text" ng-model="f.description" value="f.description"></input>
+                <img ngf-thumbnail="f"  class="thumb">
+                </div>
+                <br>
+
+                <div class="btn btn-info photo-btn add" ng-click="photos = []"
+                     ng-show="photos">Remove</div>
+                <button type="submit" ng-click="arrayUpload(photos)">submit photos</button>
+                <button class="btn btn-success photo-btn "
+                        ng-disabled="!uploadProblemPhoto.$valid"
+                        ng-click="arrayUpload(photos)" >Завантажити</button>
+                        <button class="btn btn-danger photo-btn " ng-click="photos = null || cancelImg(photos)">Закрити</button>
+
+
+            </form>
+
+
+            </div>
         </uib-tab>
 
       </uib-tabset>

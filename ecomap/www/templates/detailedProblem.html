@@ -1,0 +1,40 @@
+
+    <div class="row">
+        <div class="col-md-4 problemBlock" >
+        <i class="fa fa-times fa-2x close" ng-click="close()"></i>
+        <h3>{{selectProblem.title}}</h3>
+        <div class="well well-sm ">
+            <div class="row">
+                <div class="col-md-4">
+                <ul class="severity">
+                    <li ng-repeat="sev in maxSeverity" ng-class="$index < selectProblem.severity ? 'selectSeverity' : ''"><i class="fa fa-star "></i></li>
+                </ul>
+                    
+                </div>
+                <div class="col-md-4">{{selectProblem.status}}</div>
+                <div class="col-md-4"></div>
+            </div>
+        </div>
+            <uib-tabset justified="true" class="tabs">
+
+            <uib-tab heading="Детально">
+            <div class="row section">
+            <div class="col-md-12">Опис проблеми:</div>
+            <div class="col-md-12 showBlock">{{selectProblem.content}}
+            </div>
+            </div>
+            <div class="row section">
+            <div class="col-md-12">Пропозиція шодо вирішення:</div>
+            <div class="col-md-12 showBlock">{{selectProblem.proposal}}
+            </div>
+            </div>
+
+            </uib-tab>
+
+            <uib-tab heading="Коментарі">
+
+            </uib-tab>
+
+        </uib-tabset>
+        </div>
+    </div>

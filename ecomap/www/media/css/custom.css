@@ -527,6 +527,7 @@ input[type="checkbox"]{
   width: 1.3em;
   height: 1.8em;
 }
+
 .det-problem-modal .title{
   margin-top: 0px;
   margin-bottom: 30px;
@@ -558,8 +559,8 @@ input[type="checkbox"]{
   position: absolute;
   left: 0;
   right: 0;
-  -webkit-transition:all .3s ease-in-out;
-  transition:all .3s ease-in-out;
+  -webkit-transition:all .2s ease-in-out;
+  transition:all .2s ease-in-out;
 }
 
 [ui-view].ng-enter {
@@ -585,4 +586,24 @@ input[type="checkbox"]{
   width: 100%;
   background-color: rgba(100,100,100,0.1);
   z-index: 99999999;
+}
+.problemBlock{
+  position: absolute;
+  top:50px;
+  right: 0px;
+  height: 100vh;
+  background-color: #fff;
+}
+.severity{
+  position: absolute;
+  top:0.1em;
+  left: -2em;
+}
+.severity li{
+  list-style: none;
+  display: inline;
+  margin-right: 0.1em;
+}
+.selectSeverity{
+  color: red;
 }

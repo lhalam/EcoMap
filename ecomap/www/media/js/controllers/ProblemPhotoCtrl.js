@@ -131,4 +131,56 @@ function($scope, $cookies, $http, toaster, Upload, $timeout, uiGmapIsReady) {
     })
   };
 
+  $scope.photos = [];
+
+  //$scope.addPhotos = function(file){
+  //  console.log($scope.photos)
+  //  $scope.photos.push(file);
+  //  console.log($scope.photos)
+  //};
+  //
+
+  $scope.arrayUpload = function (photos) {
+  console.log(photos)
+
+    angular.forEach(photos, $scope.uploadPic);
+
+  //photos.map($scope.uploadPic(file))
+  console.log(photos)
+  };
+
+  $scope.uploadPic = function(file) {
+  alert('click');
+    console.log(file);
+    console.log(file);
+    console.log(file.description);
+    //file.description = f
+    file.upload = Upload.upload({
+      url: '/api/user_avatar',
+      method: "POST",
+      cache: false,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      data: {
+        file: file,
+        name: file.name,
+        description: file.description
+      }
+    });
+
+    file.upload.then(function (response) {
+      $timeout(function () {
+        file.result = response.data;
+        alert('succes')
+      });
+    }, function (response) {
+      if (response.status > 0)
+        $scope.errorMsg = response.status + ': ' + response.data;
+    }, function (evt) {
+      // Math.min is to fix IE which reports 200% sometimes
+      file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+    });
+    }
+
 }]);

@@ -52,11 +52,11 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         url: '/api/change_password',
         data: {
           'id': data.id,
-          'old_pass': $scope.password.old_pass,
-          'password': $scope.password.new_pass
+          'old_pass': passwd.old_pass,
+          'password': passwd.new_pass
         }
       }).then(function successCallback(responce) {
-        passwd = {};
+        $scope.password = {};
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
       }, function errorCallback(responce) {
         if (responce.status == 401) {

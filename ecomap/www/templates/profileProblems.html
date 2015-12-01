@@ -12,8 +12,6 @@
         <td><strong>Тип проблеми</strong> </td>
         <td><strong>Статус</strong></td>
         <td><strong>Дата створення</strong> </td>
-        <!-- is user able to change visibility of problem or it's moderato's job? -->
-        <td><strong>Відображення</strong></td>
         <td><strong>Детальне інфо</strong> </td>
       </tr>
     </thead>
@@ -24,9 +22,6 @@
         <td ng-bind="getProblemType(problem.problem_type_id)"></td>
         <td ng-bind="getStatus(problem.status)"></td>
         <td ng-bind="parseDate(problem.date)"></td>
-        <td>
-          <input type="checkbox" ng-model="problem.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="">
-        </td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
       </tr>
     </tbody>
@@ -51,20 +46,27 @@
     <div class="clear"></div>
   </div>
   <uib-tabset justified="true">
-  <uib-tab heading="Детально">
-  <div class="problem-type">
-    <p><strong>Тип проблеми:</strong></p>
-    <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
-  </div>
-  <div class="description">
-    <p><strong>Опис проблеми:</strong></p>
-    <p ng-bind="detailedProblem.content"></p>
-  </div>
-  <div class="proposal">
-    <p><strong>Пропозиції щодо вирішення</strong></p>
-    <p ng-bind="detailedProblem.proposal"></p>
-  </div>
-  <div class="photos">
-    <p><strong>Фото проблеми:</strong></p>
-    Not implemented yet!!!
-  </div>
+      <uib-tab heading="Детально">
+          <div class="problem-type">
+            <p><strong>Тип проблеми:</strong></p>
+            <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+          </div>
+          <div class="description">
+            <p><strong>Опис проблеми:</strong></p>
+            <p ng-bind="detailedProblem.content"></p>
+          </div>
+          <div class="proposal">
+            <p><strong>Пропозиції щодо вирішення</strong></p>
+            <p ng-bind="detailedProblem.proposal"></p>
+          </div>
+          <div class="photos">
+            <p><strong>Фото проблеми:</strong></p>
+            Not implemented yet!!!
+          </div>
+      </uib-tab>
+      <uib-tab heading="Коментарі">
+        Not implemented yet!!!
+      </uib-tab>
+  </uib-tabset>
+  </modal>
+</div>

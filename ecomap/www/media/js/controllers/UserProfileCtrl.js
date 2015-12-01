@@ -5,10 +5,10 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
     $scope.user.id = $cookies.get("id");
 
     $scope.tabs = [
-      { heading: "Профіль користувача", route:"user_profile.info", active:false },
-      { heading: "Мої проблеми", route:"user_profile.problems", active:false },
-      { heading: "Мої коментарі", route:"user_profile.comments", active:false },
-      { heading: "Редагування F.A.Q.", route:"user_profile.faq", active:false }
+      { heading: "Профіль користувача", route:"user_profile.info", active:false, showToUser: true},
+      { heading: "Мої проблеми", route:"user_profile.problems", active:false, showToUser: true },
+      { heading: "Мої коментарі", route:"user_profile.comments", active:false, showToUser: true },
+      { heading: "Редагування F.A.Q.", route:"user_profile.faq", active:false, showToUser: false }
     ];
 
     $scope.$on("$stateChangeSuccess", function() {

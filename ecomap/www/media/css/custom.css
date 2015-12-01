@@ -527,7 +527,6 @@ input[type="checkbox"]{
   width: 1.3em;
   height: 1.8em;
 }
-
 .det-problem-modal .title{
   margin-top: 0px;
   margin-bottom: 30px;
@@ -577,4 +576,13 @@ input[type="checkbox"]{
 
 [ui-view].ng-leave-active {
   opacity: 0;
+}
+.admin{
+  position: absolute;
+  top:-100%;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(100,100,100,0.1);
+  z-index: 99999999;
 }

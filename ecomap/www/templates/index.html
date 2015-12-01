@@ -50,6 +50,15 @@
     <script src="/js/angular_app.js"></script>
     <script src="/js/appConfigs.js"></script>
 
+    <!-- AngularJS directives -->
+    <script src="/js/directives/ModalWindow.js"></script>
+    <script src="/js/directives/ValidatorsDirective.js"></script>
+
+    <!-- AngularJS factories -->
+    <script src="/js/factories/msg.js"></script>
+    <script src="/js/factories/msgError.js"></script>
+
+
     <!-- AngularJS Ctrls -->
     <script src="/js/controllers/MainCtrl.js"></script>
     <script src="/js/controllers/UserProfileCtrl.js"></script>
@@ -65,11 +74,10 @@
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
     <script src='/js/controllers/addProblemCtrl.js'></script>
     <script src='/js/controllers/UserProblemTableCtrl.js'></script>
-
-
-    <!-- AngularJS directives -->
-    <script src="/js/directives/ModalWindow.js"></script>
-    <script src="/js/directives/ValidatorsDirective.js"></script>
+    <script src='/js/controllers/AdminResourceCtrl.js'></script>
+    <script src='/js/controllers/AdminPermissionCtrl.js'></script>
+    <script src='/js/controllers/AdminRoleCtrl.js'></script>
+    <script src='/js/controllers/AdminUserCtrl.js'></script>  
 
   </head>
   <body ng-controller="MainCtrl">
@@ -105,7 +113,7 @@
                 <a href="/#/login">Увійти</a>
               </li>
               <li ng-if="isAuthenticated()">
-                <a href="/#/user_profile" ng-bind="getUsername()" ></a>
+                <a href="/#/user_profile/info" ng-bind="getUsername()" ></a>
               </li>
               <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
                 <a href="" ng-click="Logout()">Вихід</a>
@@ -118,7 +126,7 @@
         </div>
       </nav>
       <toaster-container></toaster-container>
-      <div ui-view class="map-div"></div>
+    <div ui-view class="map-div"></div>
 
     </div>
   </body>

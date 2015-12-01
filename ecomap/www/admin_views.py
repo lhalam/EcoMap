@@ -587,4 +587,5 @@ def pagination():
                                 'role_name': user_data[4]})
     if count:
         parsed_json.append({'total_users': count[0]})
+
     return Response(json.dumps(parsed_json), mimetype='application/json')

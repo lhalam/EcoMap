@@ -18,7 +18,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
   $rootScope.zoomMarker = function(data) {
     $state.go("detailedProblem",{
       'id':data.model.problem_id
-    })
+    });
     console.log(data);
     $rootScope.mapParams = {
       center: {
@@ -40,7 +40,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
         // $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
       });
     }, function errorCallback(error) {});
-  }
+  };
 
   $scope.loadProblems();
   
@@ -49,4 +49,4 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
-}])
+}]);

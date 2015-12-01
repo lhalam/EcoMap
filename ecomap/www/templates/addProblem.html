@@ -2,13 +2,13 @@
     <div class="row-resize">
         <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom'
                             id="map" draggable="true" options="options"
-                            events="map.events" ng-click="createMarker()">
+                            events="map.events" ng-click="createMarker()"  scrollwheel="true">
             <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
-                 click="zoomMarker" doCluster="true" options="markers.options"
-                 events="markers.events" icon="'iconUrl'">
+                 click="zoomMarker" doCluster="true" options="markers.options" draggable="true"
+                 events="markers.events" icon="'iconUrl'" scrollwheel="true">
             </ui-gmap-markers>
-            <ui-gmap-marker coords="marker.coords" ng-model="marker"
-                       options="marker.options" events="marker.events" idkey="marker.id">
+            <ui-gmap-marker coords="marker.coords" ng-model="marker" draggable="true"
+                       options="marker.options" events="marker.events" idkey="marker.id"  scrollwheel="true">
             </ui-gmap-marker>
         </ui-gmap-google-map>
 
@@ -92,12 +92,10 @@
                      ngf-pattern="'image/*'" accept="image/*"
                      ngf-max-size="5MB" ngf-keep="'distinct'" ngf-multiple="true">select</div>
 
-                <br>
-                <div ng-repeat="f in photos">
+                <div сдфіі ng-repeat="f in photos">
                     <input type="text" ng-model="f.description" value="f.description"></input>
                 <img ngf-thumbnail="f"  class="thumb">
                 </div>
-                <br>
 
                 <div class="btn btn-info photo-btn add" ng-click="photos = []"
                      ng-show="photos">Remove</div>

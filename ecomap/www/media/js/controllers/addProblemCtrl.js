@@ -9,7 +9,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
     $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
-    }
+    };
 
     $scope.zoomMarker = function(data){
         console.log(data);
@@ -76,7 +76,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     $scope.createMarker = function(position){
         console.info('created');
 
-        $scope.options = {scrollwheel: false};
+        $scope.options = {scrollwheel: true};
         $scope.coordsUpdates = 0;
         $scope.dynamicMoveCtr = 0;
 
@@ -108,14 +108,14 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
                     }
                 }
             }
-        }
+        };
 
 
 
         $scope.$watchCollection("marker.coords", function (newVal, oldVal) {
             if (_.isEqual(newVal, oldVal)) {
                 return;
-            };
+            }
             $scope.coordsUpdates++;
         });
     };
@@ -135,7 +135,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
     function error(err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
+    }
 
 
     $scope.locateUser = function() {
@@ -155,8 +155,8 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
                 $scope.mapParams ={ center: mapCenter, zoom: 17 };
             }
 
-            $scope.$apply()
-            // $scope.createMarker()
+            $scope.$apply();
+             $scope.createMarker()
         }
 
     };

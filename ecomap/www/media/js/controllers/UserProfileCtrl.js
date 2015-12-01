@@ -86,9 +86,12 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         $scope.changePasswordForm.$setUntouched();
     },
       function errorCallback(responce){
-        if(responce.status == 401){
+        if(responce.status == 401) {
           $scope.wrongOldPass = true;
-        }
+        };
+        if(responce.status == 400) {
+          toaster.pop('error', 'Пароль', 'Пароль не було змінено!')
+        };
       });
     };
 

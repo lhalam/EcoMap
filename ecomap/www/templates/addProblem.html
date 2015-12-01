@@ -65,7 +65,7 @@
             </form>
         </uib-tab> -->
 
-        <uib-tab heading="Фото">
+        <uib-tab heading="Додати повідомлення">
             <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
             class="page-edit-form" novalidate enctype="multipart/form-data">
                 <div>
@@ -120,6 +120,30 @@
 
                 <div class="clear"></div>
             </form>
+        </uib-tab>
+
+        <uib-tab heading="Додати фото" >
+            <form name="uploadProblemPhoto" ng-controller="ProblemPhotoCtrl">
+                      <div class="modal-resize">
+                        <button class="btn btn-info photo-btn add" ngf-select ng-model="picFile"
+                        name="file" accept="image/*" ngf-pattern="'image/*'"
+                        ngf-max-size="5MB" ngf-change="showCanvas(uploadProblemPhoto)" required="">
+                        Оберіть фото</button>
+                        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
+                        <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
+                        <div class="cropArea" ngf-drop
+                          ng-model="picFile" ngf-pattern="image/*">
+                          <img-crop image="picFile  | ngfDataUrl" area-type="square"
+                          filename = "picFile.filename"
+                          result-image="newImage" ng-init="newImage=''" ng-show="showStatus">
+                          </img-crop>
+                        </div>
+                        <button class="btn btn-success photo-btn "
+                        ng-disabled="!uploadPhoto.$valid"
+                        ng-click="upload(newImage, picFile)" ng-show="uploadButton">Завантажити</button>
+                        <button class="btn btn-danger photo-btn " ng-click="picFile = null || cancelImg(picFile)" ng-show="uploadButton">Закрити</button>
+                      </div>
+                    </form>
         </uib-tab>
 
       </uib-tabset>

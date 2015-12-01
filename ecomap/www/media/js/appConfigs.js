@@ -46,23 +46,27 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
         });
       }]
     })
-    //.state('addProblem', {
-    //  url: '/addProblem',
-    //  onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-    //    $uibModal.open({
-    //        templateUrl: '/templates/addProblem.html',
-    //        controller: 'addProblemCtrl'
-    //    }).result.finally(function() {
-    //        $state.go('map');
-    //    });
-    //  }]
-    //})
     .state('addProblem', {
       url: '/addProblem',
         templateUrl: '/templates/addProblem.html',
         controller: 'addProblemCtrl'
     })
-
+    //.state('addPhoto', {
+    //  url: '/addPhoto/:problemId',
+    //    templateUrl: '/templates/addPhoto.html',
+    //    controller: 'ProblemPhotoCtrl'
+    //})
+.state('addPhoto', {
+      url: '/addPhoto/:problemId',
+      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        $uibModal.open({
+            templateUrl: '/templates/addPhoto.html',
+            controller: 'ProblemPhotoCtrl'
+        }).result.finally(function() {
+            $state.go('map');
+        });
+      }]
+    })
     .state('register', {
       url: '/register',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {

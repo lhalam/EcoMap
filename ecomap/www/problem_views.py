@@ -88,7 +88,8 @@ def post_problem():
                                       data['proposal'],
                                       data['latitude'],
                                       data['longitude'],
-                                      data['type'])
+                                      data['type'],
+                                      posted_date)
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
                                          user_id)

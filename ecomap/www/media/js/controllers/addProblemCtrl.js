@@ -2,7 +2,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     '$timeout', 'uiGmapIsReady',
     function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady) {
 
-    $scope.mapParams = { center: { latitude: 49, longitude: 30 }, zoom: 6 };
+    $scope.mapParams = { center: { latitude: 49.357826, longitude: 31.518239 }, zoom: 6 };
     $scope.getMapParams = function(){
         return $scope.mapParams;
     };
@@ -27,7 +27,9 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             url: '/api/problems'
         }).then(function successCallback(response){
             $scope.markers = response.data;
-            console.log($scope.markers);
+            angular.forEach($scope.markers, function(value, key){
+              $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+            });
         }, function errorCallback(error){});
     };
     $scope.loadProblems();

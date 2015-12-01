@@ -1,4 +1,19 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+ function($stateProvider, $urlRouterProvider, $authProvider) {
+
+  // var accessRestrictionHandler = function($q, $rootScope, $state, $cookies) {
+  //           var deferred = $q.defer();
+
+  //           asyncCheckForLogin(function(status) {
+  //               if ($cookies.get('role') != 'admin') {
+  //                   $state.go("error403");
+  //               }
+  //               else
+  //                   deferred.resolve();
+  //           }.bind(this));
+
+  //           return deferred.promise;
+  //       };
 
   $stateProvider
     .state('user_profile', {
@@ -14,7 +29,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     .state('admin', {
       url: '/admin',
       templateUrl: '/templates/admin.html',
-      controller: 'AdminCtrl'
+      controller: 'AdminCtrl',
+      // resolve: {
+      //   adminRequired: accessRestrictionHandler
+      // }
     })
     .state('faq', {
       url: '/faq/:faqAlias',
@@ -34,6 +52,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     .state('error404', {
       url: '/error404',
       templateUrl: '/templates/404.html'
+    })
+    .state('error403', {
+      url: '/error403',
+      templateUrl: '/templates/403.html'
     })
     .state('login', {
       url: '/login',

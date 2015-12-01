@@ -37,7 +37,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
     }).then(function successCallback(response) {
       $scope.markers = response.data;
       angular.forEach($scope.markers, function(value, key){
-        // $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+        $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
       });
     }, function errorCallback(error) {});
   };

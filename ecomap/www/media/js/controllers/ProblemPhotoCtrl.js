@@ -183,5 +183,4 @@ function($scope, $cookies, $http, toaster, Upload, $timeout, uiGmapIsReady) {
     });
     }
 
-
 }]);

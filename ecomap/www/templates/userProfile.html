@@ -7,9 +7,10 @@
             <uib-tab ng-repeat="tab in tabs"
                      heading="{{tab.heading}}"
                      select="go(tab.route)"
-                     active="tab.active">
+                     active="tab.active"
+                     ng-if="isAdmin() || tab.showToUser">
             </uib-tab>
-            <uib-tab select="go('admin.resources')" active="false">
+            <uib-tab select="go('admin.resources')" active="false" ng-if="isAdmin()">
               <uib-tab-heading>
                 Адміністрування <i class="fa fa-link"></i>
               </uib-tab-heading>

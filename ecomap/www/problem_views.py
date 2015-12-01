@@ -52,7 +52,7 @@ def detailed_problem(problem_id):
             'content': problem_tuple[2], 'proposal': problem_tuple[3],
             'severity': problem_tuple[4], 'status': problem_tuple[5],
             'latitude': problem_tuple[6], 'longitude': problem_tuple[7],
-            'problem_type_id': problem_tuple[8]
+            'problem_type_id': problem_tuple[8], 'date': problem_tuple[9]
         })
 
     if activity_tuple:
@@ -83,16 +83,20 @@ def post_problem():
             user_id = current_user.uid
             now = time.time()
             posted_date = int(round(now))
-            last_id=db.problem_post(data['title'],
-                            data['content'],
-                            data['proposal'],
-                            data['latitude'],
-                            data['longitude'],
-                            data['type'],
-                            posted_date,
-                            user_id)
+            logger.warning(posted_date)
+            last_id = db.problem_post(data['title'],
+                                      data['content'],
+                                      data['proposal'],
+                                      data['latitude'],
+                                      data['longitude'],
+                                      data['type'],
+                                      posted_date)
+            if last_id:
+                db.problem_activity_post(last_id, posted_date,
+                                         user_id)
+            logger.debug(last_id)
             response = jsonify(added_problem=data['title'],
-                                problem_id = last_id)
+                               problem_id=last_id)
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -119,14 +123,14 @@ def get_user_problems(user_id):
     logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],
-                         'title': problem[1],
-                         'latitude': problem[2],
-                         'logitude': problem[3],
-                         'problem_type_id': problem[4],
-                         'status': problem[5],
-                         'date': problem[6],
-                         'severity': problem[8],
-                         'is_enabled': problem[7]})
+                              'title': problem[1],
+                              'latitude': problem[2],
+                              'logitude': problem[3],
+                              'problem_type_id': problem[4],
+                              'status': problem[5],
+                              'date': problem[6],
+                              'severity': problem[8],
+                              'is_enabled': problem[7]})
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 # @app.route('/api/upload_photo', methods=['POST', 'DELETE'])
@@ -138,52 +142,64 @@ def get_user_problems(user_id):
 #     if request.method is 'POST':
 #         problem_img = request.files['file']
 #         extension = '.png'
-#         f_name = 'problem_id%s' % current_user.uid + extension
-#         static_url = '/uploads/problem/problemid %d/'  % current_user.uid
+#         problem_id = '50'
+#         f_name = 'problem_id%s' % problem_id + extension
+#         static_url = '/uploads/problem/problemid %d/'  % problem_id
 #         f_path = os.environ['STATICROOT'] + static_url
 
 #         if not os.path.exists(f_path):
 #             os.makedirs(os.path.dirname(f_path + f_name))
+#             img_file.save(os.path.join(f_path, f_name))
+#             img_path = static_url + f_name
+#             db.insert_problem_image(problem_id, img_path)
+#             response = json.dumps({'added_file': img_path})
+#     return response
 
 
 
-
-
-# @app.route('/api/user_avatar', methods=['POST', 'DELETE'])
-# @login_required
-# def profile_photo():
-#     """Controller for handling editing user's profile photo.
-#     :return:
+# def add_profile_photo():
+#     """Controller provides add and edit function for user's profile photo.
+#     :return: json object with image path if success or 400 error message
 #     """
-#     response = {}
+#     response = jsonify(), 400
+#     extension = '.png'
+#     f_name = 'profile_id%s' % current_user.uid + extension
+#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+#     f_path = os.environ['STATICROOT'] + static_url
+
 #     if request.method == 'POST':
 #         img_file = request.files['file']
-#         extension = '.png'
-#         f_name = 'profile_id%s' % current_user.uid + extension
-#         static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
-#         f_path = os.environ['STATICROOT'] + static_url
-
 #         if img_file and validator.validate_image_file(img_file):
 #             if not os.path.exists(f_path):
 #                 os.makedirs(os.path.dirname(f_path + f_name))
 #             img_file.save(os.path.join(f_path, f_name))
 #             img_path = static_url + f_name
 #             db.insert_user_avatar(current_user.uid, img_path)
-#             return json.dumps({'added_file': img_path})
-#         return jsonify(error='error with import file'), 400
+#             response = json.dumps({'added_file': img_path})
+#         else:
+#             response = jsonify(error='error with import file'), 400
+#     return response
+# @app.route('/api/user_avatar', methods=['DELETE'])
+# @login_required
+# def delete_profile_photo():
+#     """Controller for handling deleting user's profile photo.
+#     :return: json object with success message or message with error status
+#     """
+#     response = jsonify(), 400
+#     extension = '.png'
+#     f_name = 'profile_id%s' % current_user.uid + extension
+#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
+#     f_path = os.environ['STATICROOT'] + static_url
 
 #     if request.method == 'DELETE' and request.get_json():
 #         data = request.get_json()
-
-#         # valid = validator.validate_photo_delete(data)
-
-#         # if valid['status']:
-#         # if os.path.exists(f_path):
-#         #     os.remove(f_path + f_name)
-#         db.delete_user_avatar(data['user_id'])
-#         response = jsonify(msg='success', deleted_avatar=data['user_id'])
-#         # else:
-#         #     response = Response(json.dumps(valid),
-#         #                         mimetype='application/json'), 400
-#         return response
-#     return jsonify(response)
+#         valid = validator.user_photo_deletion(data)
+#         if valid['status']:
+#             if os.path.exists(f_path):
+#                 os.remove(f_path + f_name)
+#             db.delete_user_avatar(data['user_id'])
+#             response = jsonify(msg='success', deleted_avatar=data['user_id'])
+#         else:
+#             response = Response(json.dumps(valid),
+#                                 mimetype='application/json'), 400
+#     return response

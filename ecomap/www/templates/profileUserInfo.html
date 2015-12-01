@@ -64,7 +64,7 @@
       </div>
       <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.new_pass_confirm.$touched || submitted) && changePasswordForm.new_pass_confirm.$invalid }">
         <label for="new_pass_confirm" class="control-label">Підтвердіть новий пароль:</label>
-        <input type="password" id="new_pass_confirm" name="new_pass_confirm" ng-model='password.newRepeat' class="form-control" compare-to="password.new_pass" required>
+        <input type="password" id="new_pass_confirm" name="new_pass_confirm" ng-model='password.new_pass_confirm' class="form-control" compare-to="password.new_pass" required>
         <div class="help-block" ng-messages="changePasswordForm.new_pass_confirm.$error" ng-show="changePasswordForm.new_pass_confirm.$touched || submitted" >
           <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>

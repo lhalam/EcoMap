@@ -23,10 +23,11 @@ button{
 #customEror {
     font-size: 1.5em;
 }
-.return-profile{
+.return-profile {
     position: absolute;
     right: 20px;
     top:25px;
+    cursor: pointer;
 }
 
 .selected {

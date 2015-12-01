@@ -1,20 +1,73 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+ function($stateProvider, $urlRouterProvider, $authProvider) {
+
+  // var accessRestrictionHandler = function($q, $rootScope, $state, $cookies) {
+  //           var deferred = $q.defer();
+
+  //           asyncCheckForLogin(function(status) {
+  //               if ($cookies.get('role') != 'admin') {
+  //                   $state.go("error403");
+  //               }
+  //               else
+  //                   deferred.resolve();
+  //           }.bind(this));
+
+  //           return deferred.promise;
+  //       };
 
   $stateProvider
     .state('user_profile', {
+      abtract: true,
       url: '/user_profile',
       templateUrl: '/templates/userProfile.html',
       controller: 'UserProfileCtrl'
+    })
+    .state('user_profile.info', {
+      url: '/info',
+      templateUrl: '/templates/profileUserInfo.html'
+    })
+    .state('user_profile.problems', {
+      url: '/problems',
+      templateUrl: '/templates/profileProblems.html'
+    })
+    .state('user_profile.comments', {
+      url: '/comments',
+      templateUrl: '/templates/profileComments.html'
+    })
+    .state('user_profile.faq', {
+      url: '/faq',
+      templateUrl: '/templates/profileFaqEdit.html'
     })
     .state('map', {
       url: '/map',
       templateUrl: '/templates/map.html',
       controller: 'MapCtrl'
     })
-    .state('admin', {
-      url: '/admin',
-      templateUrl: '/templates/admin.html',
+    .state("admin", {
+      abtract: true,
+      url:"/admin",
+      templateUrl:"/templates/admin.html",
       controller: 'AdminCtrl'
+    })
+    .state("admin.resources", {
+      url: "/resources",
+      templateUrl: "/templates/resourcesAdmin.html",
+      controller: 'ResourceCtrl'
+    })
+    .state("admin.permissions", {
+      url: "/permissions",
+      templateUrl: "/templates/permissionAdmin.html",
+      controller: 'PermisionCtrl'
+    })
+    .state("admin.roles", {
+      url: "/roles",
+      templateUrl: "/templates/rolesAdmin.html",
+      controller: 'RoleCtrl'
+    })
+    .state("admin.users", {
+      url: "/users",
+      templateUrl: "/templates/userAdmin.html",
+      controller: 'UserCtrl'
     })
     .state('faq', {
       url: '/faq/:faqAlias',
@@ -34,6 +87,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     .state('error404', {
       url: '/error404',
       templateUrl: '/templates/404.html'
+    })
+    .state('error403', {
+      url: '/error403',
+      templateUrl: '/templates/403.html'
     })
     .state('login', {
       url: '/login',

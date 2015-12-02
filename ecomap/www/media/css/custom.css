@@ -535,18 +535,27 @@ input[type="checkbox"]{
 
 .det-problem-modal .general{
   background-color: #eee;
-  padding: 10px;
+  padding: 15px;
   margin-bottom: 10px;
 }
 
 .det-problem-modal .rate{
   float: left;
+  font-size: 18px;
 }
 
 .det-problem-modal .solution{
   float: right;
+  font-size: 18px;
 }
 
+.solved{
+  color: #008800;
+}
+
+.unsolved{
+  color: #880000;
+}
 
 .det-problem-modal .problem-type,
 .det-problem-modal .description,

@@ -21,52 +21,50 @@
         <td ng-bind="problem.title"></td>
         <td ng-bind="getProblemType(problem.problem_type_id)"></td>
         <td ng-bind="getStatus(problem.status)"></td>
-        <td ng-bind="parseDate(problem.date)"></td>
+        <!-- <td ng-bind="parseDate(problem.date)"></td> -->
+        <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
       </tr>
     </tbody>
   </table>
-  <hr>
-  <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
-  <div class="clear"></div>
   <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
-  <!-- to do -->
-  <!-- implemet commetns here -->
-  <!-- implement photos here -->
-  <div class="title">
-    <h3 ng-bind="detailedProblem.title"></h3>
-  </div>
-  <div class="general">
-    <div class="rate">
-      <strong><span ng-bind="detailedProblem.severity"></span>/5</strong>
-    </div>
-    <div class="solution">
-      <strong><span ng-bind="getStatus(detailedProblem.status)"></span></strong>
-    </div>
-    <div class="clear"></div>
-  </div>
-  <uib-tabset justified="true">
-      <uib-tab heading="Детально">
-          <div class="problem-type">
-            <p><strong>Тип проблеми:</strong></p>
-            <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
-          </div>
-          <div class="description">
-            <p><strong>Опис проблеми:</strong></p>
-            <p ng-bind="detailedProblem.content"></p>
-          </div>
-          <div class="proposal">
-            <p><strong>Пропозиції щодо вирішення</strong></p>
-            <p ng-bind="detailedProblem.proposal"></p>
-          </div>
-          <div class="photos">
-            <p><strong>Фото проблеми:</strong></p>
+      <!-- to do -->
+      <!-- implemet commetns here -->
+      <!-- implement photos here -->
+      <div class="title">
+        <h3 ng-bind="detailedProblem.title"></h3>
+      </div>
+      <div class="general">
+        <div class="rate">
+          <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
+        </div>
+        <div class="solution unsolved" >
+          <strong><span ng-bind="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <uib-tabset justified="true">
+          <uib-tab heading="Детально">
+              <div class="problem-type">
+                <p><strong>Тип проблеми:</strong></p>
+                <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+              </div>
+              <div class="description">
+                <p><strong>Опис проблеми:</strong></p>
+                <p ng-bind="detailedProblem.content"></p>
+              </div>
+              <div class="proposal">
+                <p><strong>Пропозиції щодо вирішення</strong></p>
+                <p ng-bind="detailedProblem.proposal"></p>
+              </div>
+              <div class="photos">
+                <p><strong>Фото проблеми:</strong></p>
+                Not implemented yet!!!
+              </div>
+          </uib-tab>
+          <uib-tab heading="Коментарі">
             Not implemented yet!!!
-          </div>
-      </uib-tab>
-      <uib-tab heading="Коментарі">
-        Not implemented yet!!!
-      </uib-tab>
-  </uib-tabset>
+          </uib-tab>
+      </uib-tabset>
   </modal>
 </div>

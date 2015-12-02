@@ -87,31 +87,44 @@
 
         <uib-tab heading="Додати фото" >
             <div ng-controller="ProblemPhotoCtrl">
-            <form name="uploadProblemPhoto">
+            <form name="uploadProblemPhoto" class="uploadPhoto" >
                 <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
                      ngf-pattern="'image/*'" accept="image/*"
-                     ngf-max-size="5MB" ngf-keep="'distinct'" ngf-multiple="true">select</div>
-
-                <div сдфіі ng-repeat="f in photos">
-                    <input type="text" ng-model="f.description" value="f.description"></input>
-                <img ngf-thumbnail="f"  class="thumb">
+                     ngf-max-size="5MB" ngf-keep="'distinct'"
+                     ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png', ratio: '1:1', centerCrop: true}"
+                     ngf-multiple="true"
+                     ngf-change="check(uploadProblemPhoto)">Додати фото +</div>
+                <div ng-show="photos.length==0">оберіть фото в форматі * макс розмір 5мб</div>
+                <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
+                <div class="thumbs"
+                     ngf-drop="" name="file" ng-model="photos"
+                     ngf-pattern="'image/*'" accept="image/*"
+                     ngf-max-size="5MB" ngf-keep="'distinct'"
+                     ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png', ratio: '1:1', centerCrop: true}"
+                     ngf-multiple="true"
+                     ngf-change="check(uploadProblemPhoto)">
+                    <div ng-repeat="f in photos" class="thumb-box">
+                        <div class="thumb">
+                        <img ngf-thumbnail="f">
+                        <span class="text-content" ng-click="removePhoto(f)">
+                            <span>видалити</span>
+                        </span>
+                        </div>
+                        <textarea ng-model="f.description" cols="15" rows="3" name="description"
+                                   value="f.description" placeholder="Додати опис до фотографії"
+                                   class="thumb-descr">
+                        </textarea>
+                    </div>
                 </div>
-
-                <div class="btn btn-info photo-btn add" ng-click="photos = []"
-                     ng-show="photos">Remove</div>
-                <button type="submit" ng-click="arrayUpload(photos)">submit photos</button>
-                <button class="btn btn-success photo-btn "
-                        ng-disabled="!uploadProblemPhoto.$valid"
-                        ng-click="arrayUpload(photos)" >Завантажити</button>
-                        <button class="btn btn-danger photo-btn " ng-click="photos = null || cancelImg(photos)">Закрити</button>
-
-
+                <button class="btn btn-success photo-btn"
+                        ng-disabled=" photos.length==0"
+                        ng-show="photos.length>0"
+                        ng-click="arrayUpload(photos)">Завантажити</button>
+                <div class="btn btn-info photo-btn remove" ng-click="photos = []"
+                     ng-show="photos.length>1">Відміна</div>
             </form>
-
-
             </div>
         </uib-tab>
-
       </uib-tabset>
         </section>
     </div>

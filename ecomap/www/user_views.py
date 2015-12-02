@@ -2,7 +2,7 @@
 import json
 import os
 
-import ecomap.user as ecomap_usr
+import ecomap.user as ecomap_user
 
 from flask import request, jsonify, Response
 from flask_login import login_required, current_user
@@ -25,7 +25,7 @@ def change_password():
         valid = validator.change_password(data)
 
         if valid['status']:
-            user = ecomap_usr.get_user_by_id(data['id'])
+            user = ecomap_user.get_user_by_id(data['id'])
             if user and user.verify_password(data['old_pass']):
                 user.change_password(data['password'])
                 response = jsonify(), 200
@@ -41,7 +41,7 @@ def change_password():
 def get_user_info(user_id):
     """This method returns json object with user data."""
     if request.method == 'GET':
-        user = ecomap_usr.get_user_by_id(user_id)
+        user = ecomap_user.get_user_by_id(user_id)
         if user:
             return jsonify(name=user.first_name,
                            surname=user.last_name,

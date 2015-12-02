@@ -3,7 +3,8 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import render_template, session, request, Response, g, url_for, abort
+from flask import render_template, session, request, Response, g
+from flask import abort
 from flask_login import current_user
 
 from ecomap.app import app, logger
@@ -25,7 +26,7 @@ def load_users():
     if current_user.is_authenticated:
         g.user = current_user
     else:
-        anon = ecomap_usr.Anonymous()
+        anon = ecomap_user.Anonymous()
         g.user = anon
         # logger.info(g.user.role)
         # logger.info(current_user)
@@ -46,13 +47,14 @@ def check_access():
     logger.info(session)
     access_rules = session['access_control']
     route = '/' + '/'.join(request.url.split('/')[3:])
+
     access_result = check_permissions(current_user.role,
                                       route, request.method, access_rules)
     if not access_result['error']:
         access_status = access_result['status']
-        logger.info('ACCESS STATUS: %s DETAILS:(url= %s[%s], user ID:%s (%s))'
-                 % (access_status, route, request.method, current_user.uid,
-                    current_user.role))
+        logger.info('ACCESS STATUS: %s DETAILS:(url= %s[%s], user ID:%s (%s))',
+                    access_status, route, request.method, current_user.uid,
+                    current_user.role)
     else:
         logger.debug('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s], '
                      'user ID:%s (%s), errors=%s)'

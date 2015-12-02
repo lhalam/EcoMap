@@ -125,18 +125,9 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
 
     $scope.reloadPos = function(){
-        latLng = new google.maps.LatLng({'lat': $scope.newProblem.latitude,
-                                         'lng': $scope.newProblem.longitude})
-        if ($scope.check(latLng)) {
-            $scope.createMarker();
-            $scope.mapParams ={ center: { latitude: $scope.newProblem.latitude,
-                                          longitude: $scope.newProblem.longitude }, zoom: 7 };
-        } else {
-            alert('Ви за межами України!');
-            $scope.newProblem.latitude = 0;
-            $scope.newProblem.longitude = 0;
-        }
-        
+        $scope.mapParams ={ center: {latitude: $scope.newProblem.latitude,
+                                     longitude: $scope.newProblem.longitude }, zoom: 7 };
+        $scope.createMarker();       
     };
 
 

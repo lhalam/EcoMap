@@ -37,14 +37,12 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
     }).then(function successCallback(response) {
       $scope.markers = response.data;
       angular.forEach($scope.markers, function(value, key){
-        latLng = new google.maps.LatLng({'lat': value['latitude'], 'lng': value['longitude']})
         $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
       });
     }, function errorCallback(error) {});
   };
 
   $scope.loadProblems();
-
 
   uiGmapIsReady.promise()
     .then(function(instances) {

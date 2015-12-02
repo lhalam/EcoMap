@@ -133,7 +133,7 @@ function($scope, $cookies, $http, toaster, Upload, $timeout, uiGmapIsReady) {
 
   $scope.photos = [];
   $scope.validationStatus = 0;
-
+  $scope.createdProblemId = 0;
 
   $scope.check = function(formFile) {
     $scope.validationStatus = 0;
@@ -165,6 +165,16 @@ function($scope, $cookies, $http, toaster, Upload, $timeout, uiGmapIsReady) {
   console.log(photos)
   };
 
+  //$scope.getCreatedProblemId = function() {
+  //  $http({
+  //    method: 'GET',
+  //    url: 'api/usersProblem/'
+  //  }).then(function successCallback(response) {
+  //    console.log(response);
+  //    $scope.createdProblemId = response.data.id;
+  //  });
+  //};
+
   $scope.uploadPic = function(file) {
     console.log(file);
     console.log(file.description);
@@ -185,7 +195,23 @@ function($scope, $cookies, $http, toaster, Upload, $timeout, uiGmapIsReady) {
     file.upload.then(function (response) {
       $timeout(function () {
         file.result = response.data;
+        console.log(response);
+        console.log(response.data);
+        console.log(response.data.last_id);
         toaster.pop('success', 'Фото', 'Фото було успішно додано!');
+        //$http({
+        //method: "GET",
+        //url: "/api/permissions",
+        //data: {
+        //}
+        //}).then(function successCallback(data) {
+        //$scope.editPermModal = false;
+        //$scope.msg.editSuccess('права');
+        //$scope.loadPerm()
+        //}, function errorCallback(response) {
+        //$scope.msg.editError('права');
+        //})
+        //
       });
     }, function (response) {
       if (response.status >= 400)

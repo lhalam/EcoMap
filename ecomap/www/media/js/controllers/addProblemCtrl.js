@@ -27,6 +27,8 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             url: '/api/problems'
         }).then(function successCallback(response){
             $scope.markers = response.data;
+            //console.log($scope.markers);
+            //console.log($scope.markers[0]);
             angular.forEach($scope.markers, function(value, key){
               $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
             });
@@ -55,6 +57,8 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     "latitude": "",
     "longitude": ""
     };
+
+    $scope.createdProblemId = 0;
 
     $scope.marker = {id: Date.now(),
         coords: {
@@ -155,9 +159,8 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             } else {
                 $scope.mapParams ={ center: mapCenter, zoom: 17 };
             }
-
             $scope.$apply();
-             $scope.createMarker()
+            $scope.createMarker()
         }
 
     };
@@ -179,13 +182,99 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             data: newProblem
 
         }).then(function successCallback(response) {
-                toaster.pop('success', 'Оповіщення', 'Проблему було успішно додано!');
-                $state.go('map');
+                toaster.pop('success', 'Оповіщення', 'Оповіщення про проблему' +
+                    ' було успішно додано!');
+                $scope.createdProblemId = response.data.problem_id;
+                toaster.pop('info', 'Фото', 'Додайте фотографіі до' +
+                    ' вашого оповіщення!');
+                console.log($scope.markers);
+                console.log($scope.markers[$scope.markers.length-1]);
+                console.log(response);
+                console.log(response.data);
+                console.log($scope.createdProblemId);
+                //console.log(response.data.last_id);
+                //$scope.markers.push(newProblem);
+                //$state.go('map');
             }, function errorCallback() {
-                toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
+                toaster.pop('error', 'Помилка при додаванні', 'При спробі' +
+                    ' додавання проблеми виникла помилка!');
             })
     };
 
+    //PHOTOS CTRL
+      $scope.photos = [];
+  $scope.validationStatus = 0;
+
+  $scope.check = function(formFile) {
+    console.log('eee')
+    console.log($scope.photos)
+      $scope.validationStatus = 0;
+
+    //$scope.arrayValidation = {
+    //  'len':$scope.photos.length,
+    //  'totalSize':0
+    //};
+
+    if (formFile.$error.maxSize) {
+      return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
+    } else if (formFile.$error.pattern) {
+      return toaster.pop('error', 'Фото профілю', 'Оберіть зображення в форматі .jpg або .png!');
+    } else {
+      $scope.validationStatus = 1;
+      return 'valid'
+    }
+  };
+
+
+  $scope.removePhoto = function(photo){
+    var index = $scope.photos.indexOf(photo);
+      console.log($scope.photos);
+      console.log($scope.photos.length);
+    $scope.photos.splice(index, 1);
+    toaster.pop('warning', 'Фото', 'Фото видалено');
+  };
+
+  $scope.arrayUpload = function (photos) {
+  console.log(photos);
+    angular.forEach(photos, $scope.uploadPic);
+  console.log(photos)
+      $state.go('map');
+  };
+
+  $scope.uploadPic = function(file) {
+    console.log(file);
+    console.log(file.description);
+    file.upload = Upload.upload({
+      url: '/api/user_avatar',
+      method: "POST",
+      cache: false,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      data: {
+        file: file,
+        name: file.name,
+        description: file.description
+      }
+    });
+
+    file.upload.then(function (response) {
+      $timeout(function () {
+        file.result = response.data;
+        console.log(response);
+        console.log(response.data);
+        console.log(response.data.last_id);
+        toaster.pop('success', 'Фото', 'Фото було успішно додано!');
+      });
+    }, function (response) {
+      if (response.status >= 400)
+        toaster.pop('error', 'помилка', 'помилка завантаження фото');
+        //$scope.errorMsg = response.status + ': ' + response.data;
+    }, function (evt) {
+      // Math.min is to fix IE which reports 200% sometimes
+      file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+    });
+    };
     uiGmapIsReady.promise().then(function(instances) {
         var maps = instances[0].map;
         google.maps.event.trigger(maps, 'resize');

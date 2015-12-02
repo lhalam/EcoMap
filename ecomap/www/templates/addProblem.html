@@ -52,7 +52,7 @@
                           <!-- <input type='button' value='Знайти мене' class="btn btn-default form-control" ng-click="locateUser()"> -->
                         </div>
                     </div>
- 
+
                     <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
                         <label for="title" class="control-label">Заголовок проблеми</label>
                         <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-max-length="255" required>
@@ -86,7 +86,7 @@
         </uib-tab>
 
         <uib-tab heading="Додати фото" >
-            <div ng-controller="ProblemPhotoCtrl">
+            <div ng-controller="addProblemCtrl">
             <form name="uploadProblemPhoto" class="uploadPhoto" >
                 <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
                      ngf-pattern="'image/*'" accept="image/*"

@@ -10,30 +10,8 @@ from ecomap.app import app, logger
 from ecomap.db import util as db
 
 
-def is_admin(func):
-    """Decorator function to protect routes from non admin users.
-       :params: func - function we want to protect from non admin users
-       :return: wrapper function
-    """
-    @functools.wraps(func)
-    def wrapped(*args, **kwargs):
-        """Wrapper function to give arguments to func.
-           :params: *args - list of arguments
-                    **kwargs - dictionary of arguments
-           :return: function with given arguments
-        """
-        logger.warning(g.user)
-        logger.warning('SIC!')
-        logger.warning(g.user.role)
-        if g.user.role != 'admin':
-            abort(403)
-        return func(*args, **kwargs)
-    return wrapped
-
-
 @app.route("/api/resources", methods=['POST'])
 @login_required
-@is_admin
 def resource_post():
     """Function which edits resource name.
     :return: If there is already resource with this name:
@@ -64,7 +42,6 @@ def resource_post():
 
 @app.route("/api/resources", methods=['PUT'])
 @login_required
-@is_admin
 def resource_put():
     """Function which edits resource name.
     :return: If there is already resource with this name:
@@ -94,7 +71,6 @@ def resource_put():
 
 @app.route("/api/resources", methods=['DELETE'])
 @login_required
-@is_admin
 def resource_delete():
     """Function which deletes resource from database.
        Before delete checks if resource have any permissions.
@@ -124,7 +100,6 @@ def resource_delete():
 
 @app.route("/api/resources", methods=['GET'])
 @login_required
-@is_admin
 def resource_get():
     """Function which returns all resources from database.
        :return: {'resource_name': 'resource_id'}
@@ -138,7 +113,6 @@ def resource_get():
 
 @app.route("/api/roles", methods=['POST'])
 @login_required
-@is_admin
 def role_post():
     """Function which adds new role into database.
     :return: If there is already role with this name:
@@ -170,7 +144,6 @@ def role_post():
 
 @app.route("/api/roles", methods=['PUT'])
 @login_required
-@is_admin
 def role_put():
     """Function which edits role name.
     :return: If there is already resource with this name:
@@ -199,7 +172,7 @@ def role_put():
 
 @app.route("/api/roles", methods=['DELETE'])
 @login_required
-@is_admin
+# @is_admin
 def role_delete():
     """Function which deletes role from database.
     :return: If role has permissions:
@@ -228,7 +201,7 @@ def role_delete():
 
 @app.route("/api/roles", methods=['GET'])
 @login_required
-@is_admin
+# @is_admin
 def role_get():
     """Function which gets all roles from database.
        :return: {'role_name': 'role_id'}
@@ -242,7 +215,7 @@ def role_get():
 
 @app.route("/api/permissions", methods=['POST'])
 @login_required
-@is_admin
+# @is_admin
 def permission_post():
     """Function which adds new permission into database.
     :return: If request data is invalid:
@@ -275,7 +248,7 @@ def permission_post():
 
 @app.route("/api/permissions", methods=['PUT'])
 @login_required
-@is_admin
+# @is_admin
 def permission_put():
     """Function which edits permission.
     :return: If request data is invalid:
@@ -304,7 +277,7 @@ def permission_put():
 
 @app.route("/api/permissions", methods=['DELETE'])
 @login_required
-@is_admin
+# @is_admin
 def permission_delete():
     """Function which edits permission.
     :return: If permission is binded with any role:
@@ -335,7 +308,7 @@ def permission_delete():
 
 @app.route("/api/permissions", methods=['GET'])
 @login_required
-@is_admin
+# @is_admin
 def permission_get():
     """Function which gets all permissions.
     :return: {'permission_id': 'permission_id', 'action': 'action',
@@ -355,7 +328,7 @@ def permission_get():
 
 @app.route("/api/role_permissions", methods=['POST'])
 @login_required
-@is_admin
+# @is_admin
 def role_permission_post():
     """Function which binds permission with role.
     :return: If request data is not valid:
@@ -379,7 +352,7 @@ def role_permission_post():
 
 @app.route("/api/role_permissions", methods=['PUT'])
 @login_required
-@is_admin
+# @is_admin
 def role_permission_put():
     """Function which sets list of permission to role. Before sets
        removes all permissions from role.
@@ -401,7 +374,7 @@ def role_permission_put():
 
 @app.route("/api/role_permissions", methods=['DELETE'])
 @login_required
-@is_admin
+# @is_admin
 def role_permission_delete():
     """Function to delete permissions."""
     data = request.get_json()
@@ -423,7 +396,7 @@ def role_permission_delete():
 
 @app.route("/api/role_permissions", methods=['GET'])
 @login_required
-@is_admin
+# @is_admin
 def role_permission_get():
     """Function which gets all permissions from database and all actual
        permissions for current role.
@@ -453,7 +426,7 @@ def role_permission_get():
 
 @app.route("/api/all_permissions", methods=['GET'])
 @login_required
-@is_admin
+# @is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 
@@ -475,7 +448,7 @@ def get_all_permissions():
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
 @login_required
-@is_admin
+# @is_admin
 def get_all_users():
     """Function, used to get all users.
        :return: list of users with id, first name, last name, email and role

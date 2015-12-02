@@ -28,7 +28,10 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }).then(function successCallback(response){
             $scope.markers = response.data;
             angular.forEach($scope.markers, function(value, key){
-              $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+              latLng = new google.maps.LatLng({'lat': value['latitude'], 'lng': value['longitude']})
+              if ($scope.check(latLng)) {
+                $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+              };
             });
         }, function errorCallback(error){});
     };
@@ -129,6 +132,8 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
                                           longitude: $scope.newProblem.longitude }, zoom: 7 };
         } else {
             alert('Ви за межами України!');
+            $scope.newProblem.latitude = 0;
+            $scope.newProblem.longitude = 0;
         }
         
     };

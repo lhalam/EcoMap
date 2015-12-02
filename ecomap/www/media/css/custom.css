@@ -623,3 +623,8 @@ input[type="checkbox"]{
 .selectSeverity{
   color: red;
 }
+
+.login.panel-content,
+.register.panel-content{
+  padding: 20px;
+}

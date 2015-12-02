@@ -103,17 +103,6 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         }
       }
     })
-    .state('login', {
-      url: '/login',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/login.html',
-            controller: 'LoginCtrl',
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
-    })
     .state('addProblem', {
       url: '/addProblem',
         templateUrl: '/templates/addProblem.html',
@@ -149,16 +138,15 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         });
       }]
     })
+    .state('login', {
+      url: '/login',
+      templateUrl: '/templates/login.html',
+      controller: 'LoginCtrl'
+    })
     .state('register', {
       url: '/register',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/register.html',
-            controller: 'RegisterCtrl',
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
+      templateUrl: '/templates/register.html',
+      controller: 'RegisterCtrl'
     });    
     $urlRouterProvider.otherwise('error404');
 

@@ -864,6 +864,7 @@ def problem_activity_post(problem_id, created_date, user_id):
                 """
         cursor.execute(query, (problem_id, created_date, user_id))
 
+
 @retry_query(tries=3, delay=1)
 def get_id_problem_owner(problem_id):
     """Return problem, found by id.

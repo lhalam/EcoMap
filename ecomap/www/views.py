@@ -25,7 +25,7 @@ def load_users():
     if current_user.is_authenticated:
         g.user = current_user
     else:
-        anon = ecomap_usr.Anonymous()
+        anon = ecomap_user.Anonymous()
         g.user = anon
         logger.info(g.user.role)
 
@@ -41,9 +41,8 @@ def check_access():
     logger.warning(request.url)
     route = '/' + '/'.join(request.url.split('/')[3:])
     logger.warning(route)
-    logger.debug('CHECK REQUEST: (url = %s [ %s ], user ID %s as %s )'
-                 % (route, request.method, current_user.uid,
-                    current_user.role))
+    logger.debug('CHECK REQUEST: (url = %s [ %s ], user ID %s as %s )',
+                 route, request.method, current_user.uid, current_user.role)
     check_permissions(current_user.role, route,
                       request.method, access_info)
     logger.debug(check_permissions(current_user.role, route,

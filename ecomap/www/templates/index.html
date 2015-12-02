@@ -41,6 +41,7 @@
     <script src="/js/libs/angular-simple-logger.min.js"></script>
     <script src="/js/libs/lodash.min.js"></script>
     <script src="/js/libs/angular-resizable.js"></script>
+    <script src="/js/libs/angular-ui-router-grant.min.js"></script>
 
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
@@ -49,6 +50,7 @@
     <!-- AngularJS app -->
     <script src="/js/angular_app.js"></script>
     <script src="/js/appConfigs.js"></script>
+    <script src="/js/RightsRestriction.js"></script>
 
     <!-- AngularJS directives -->
     <script src="/js/directives/ModalWindow.js"></script>
@@ -98,7 +100,7 @@
           </div>
           <div class="navbar-collapse collapse" id="navMenu">
             <ul class="nav navbar-nav">
-              <li id="inform_probl_btn"><a href="/#/addProblem">повідомити про проблему</a></li>
+              <li id="inform_probl_btn" ng-if="isAuthenticated()"><a href="/#/addProblem">повідомити про проблему</a></li>
               <li class="dropdown" >
                 <a class="dropdown-toggle"  data-toggle="dropdown" ng-show="faqTitles">ресурси <span class="caret"></span></a>
                 <ul class="dropdown-menu" >

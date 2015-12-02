@@ -533,18 +533,21 @@ input[type="checkbox"]{
   margin-bottom: 30px;
 }
 
-.det-problem-modal .general{
+.det-problem-modal .general,
+.problemBlock .general{
   background-color: #eee;
   padding: 15px;
   margin-bottom: 10px;
 }
 
-.det-problem-modal .rate{
+.det-problem-modal .rate,
+.problemBlock .rate {
   float: left;
   font-size: 18px;
 }
 
-.det-problem-modal .solution{
+.det-problem-modal .solution,
+.problemBlock .solution {
   float: right;
   font-size: 18px;
 }
@@ -560,7 +563,11 @@ input[type="checkbox"]{
 .det-problem-modal .problem-type,
 .det-problem-modal .description,
 .det-problem-modal .proposal,
-.det-problem-modal .photos{
+.det-problem-modal .photos, 
+.problemBlock .problem-type,
+.problemBlock .description,
+.problemBlock .proposal,
+.problemBlock .photos{
   padding: 10px;
 }
 

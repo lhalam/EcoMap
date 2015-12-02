@@ -823,7 +823,7 @@ def get_activity_by_problem_id(problem_id):
 
 @retry_query(tries=3, delay=1)
 def problem_post(title, content, proposal, latitude, longitude,
-                 problem_type_id, created_date):
+                 problem_type_id, created_date, user_id):
     """This method adds problem into db.
        :params: title - new title
                 content - new content
@@ -836,12 +836,13 @@ def problem_post(title, content, proposal, latitude, longitude,
         conn.autocommit(True)
         cursor = conn.cursor()
         query = """INSERT INTO `problem`
-                   (`title`, `content`, `proposal`,
-                    `latitude`, `longitude`, `problem_type_id`,`created_date`)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s);
+                   (`title`, `content`, `proposal`, `latitude`, `longitude`,
+                    `problem_type_id`,`created_date`, `user_id`)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                 """
         cursor.execute(query, (title, content, proposal, latitude,
-                               longitude, problem_type_id, created_date))
+                               longitude, problem_type_id, created_date,
+                               user_id))
         last_id = cursor.lastrowid
         return last_id
 

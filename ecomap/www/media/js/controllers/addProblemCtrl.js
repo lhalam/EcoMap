@@ -30,7 +30,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             //console.log($scope.markers);
             //console.log($scope.markers[0]);
             angular.forEach($scope.markers, function(value, key){
-              $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
+                $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
             });
         }, function errorCallback(error){});
     };
@@ -125,9 +125,18 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
 
     $scope.reloadPos = function(){
-        $scope.mapParams ={ center: { latitude: $scope.newProblem.latitude,
-            longitude: $scope.newProblem.longitude }, zoom: 7 };
-        $scope.createMarker()
+        latLng = new google.maps.LatLng({'lat': $scope.newProblem.latitude,
+                                         'lng': $scope.newProblem.longitude})
+        if ($scope.check(latLng)) {
+            $scope.createMarker();
+            $scope.mapParams ={ center: { latitude: $scope.newProblem.latitude,
+                                          longitude: $scope.newProblem.longitude }, zoom: 7 };
+        } else {
+            alert('Ви за межами України!');
+            $scope.newProblem.latitude = 0;
+            $scope.newProblem.longitude = 0;
+        }
+        
     };
 
 
@@ -147,6 +156,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         navigator.geolocation.getCurrentPosition(getUserPosition, error, options);
         var width = window.innerWidth;
         function getUserPosition(position) {
+            
             mapCenter = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
@@ -200,6 +210,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
                     ' додавання проблеми виникла помилка!');
             })
     };
+
 
     //PHOTOS CTRL
       $scope.photos = [];

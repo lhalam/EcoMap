@@ -28,5 +28,6 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$cookies', '$state',
       $scope.faqTitles = resp;
       console.log(resp);
     });
+
   }
 ]);

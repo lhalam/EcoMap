@@ -12,7 +12,7 @@ def get_user_by_email(email):
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `email`,
                    `password`, `avatar`
-                   FROM `user` WHERE `email`=%s;
+                   FROM `user` WHERE `email`= %s;
                 """
         cursor.execute(query, (email,))
         return cursor.fetchone()
@@ -28,7 +28,7 @@ def get_user_by_id(user_id):
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `email`,
                    `password`, `avatar`
-                   FROM `user` WHERE `id`=%s;
+                   FROM `user` WHERE `id`= %s;
                 """
         cursor.execute(query, (user_id,))
         return cursor.fetchone()
@@ -43,7 +43,7 @@ def get_user_by_oauth_id(user_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
-                   FROM `user` WHERE `oauth_uid`=%s;
+                   FROM `user` WHERE `oauth_uid`= %s;
                 """
         cursor.execute(query, (user_id,))
         return cursor.fetchone()
@@ -59,10 +59,10 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `user` SET `oauth_provider`=%s,
-                   `oauth_uid`=%s WHERE `id`=%s;
+        query = """UPDATE `user` SET `oauth_provider`= %s,
+                   `oauth_uid`= %s WHERE `id`= %s;
                 """
-        cursor.execute(query, oauth_provider, oauth_uid, user_id)
+        cursor.execute(query, (oauth_provider, oauth_uid, user_id))
         conn.commit()
 
 
@@ -101,6 +101,7 @@ def insert_user(first_name, last_name, email, password, role_id):
              password - hashed password of user
     """
     with db_pool().manager() as conn:
+        # Separate on 2 function
         conn.autocommit(True)
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
@@ -124,7 +125,7 @@ def get_role_id(name='user'):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `role`
-                   WHERE `name`=%s;"""
+                   WHERE `name`= %s;"""
         cursor.execute(query, (name,))
         return cursor.fetchone()
 
@@ -138,7 +139,7 @@ def get_role_by_name(name='user'):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `role`
-                   WHERE `name`=%s;"""
+                   WHERE `name`= %s;"""
         cursor.execute(query, (name,))
         return cursor.fetchone()
 
@@ -151,7 +152,7 @@ def insert_user_avatar(user_id, img_path):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `user` SET `avatar` = %s WHERE id = %s;"""
+        query = """UPDATE `user` SET `avatar`= %s WHERE id= %s;"""
         cursor.execute(query, (img_path, user_id))
         conn.commit()
 
@@ -164,7 +165,7 @@ def delete_user_avatar(user_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `user` SET `avatar` = '' WHERE `id`=%s;"""
+        query = """UPDATE `user` SET `avatar`= '' WHERE `id`= %s;"""
         cursor.execute(query, (user_id,))
         conn.commit()
 
@@ -177,7 +178,7 @@ def change_user_password(user_id, new_password):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
+        query = """UPDATE `user` SET `password`= %s WHERE `id`= %s;"""
         cursor.execute(query, (new_password, user_id))
         conn.commit()
 
@@ -190,25 +191,26 @@ def get_user_role_by_email(email):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name FROM `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id = u.id
-                   INNER JOIN `role` AS r ON ur.role_id = r.id
-                   WHERE u.email=%s;
+                   INNER JOIN `user` AS u ON ur.user_id= u.id
+                   INNER JOIN `role` AS r ON ur.role_id= r.id
+                   WHERE u.email= %s;
                 """
         cursor.execute(query, (email,))
         return cursor.fetchone()
 
 
+@retry_query(tries=3, delay=1)
 def get_all_permissions_by_role():
     """This query created for Restriction class.
     Restriction class is for lesser entering to DB.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT r.name , res.resource_name, p.action, p.modifier
+        query = """SELECT r.name, res.resource_name, p.action, p.modifier
                    FROM `role_permission` AS rp INNER JOIN `permission` AS p ON
-                   rp.permission_id = p.id INNER JOIN `role` AS r
-                   ON rp.role_id = r.id INNER JOIN `resource` AS res
-                   ON p.resource_id = res.id;
+                   rp.permission_id= p.id INNER JOIN `role` AS r
+                   ON rp.role_id= r.id INNER JOIN `resource` AS res
+                   ON p.resource_id= res.id;
                 """
         cursor.execute(query)
     return cursor.fetchall()
@@ -222,8 +224,8 @@ def get_user_role_by_id(user_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name FROM `role` AS r
-                   INNER JOIN `user_role` AS ur ON r.id=ur.role_id
-                   WHERE ur.user_id=%s;
+                   INNER JOIN `user_role` AS ur ON r.id= ur.role_id
+                   WHERE ur.user_id= %s;
                 """
         cursor.execute(query, (user_id,))
         return cursor.fetchone()
@@ -249,7 +251,7 @@ def get_resource_id(resource_name):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        sql = """SELECT `id` FROM `resource` WHERE `resource_name`= %s;"""
         cursor.execute(sql, (resource_name,))
         return cursor.fetchone()
 
@@ -276,7 +278,9 @@ def edit_resource_name(new_resource_name, resource_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `resource` SET `resource_name`=%s WHERE `id`=%s;"""
+        query = """UPDATE `resource` SET `resource_name`= %s
+                   WHERE `id`= %s;
+                """
         cursor.execute(query, (new_resource_name, resource_id))
         conn.commit()
 
@@ -313,7 +317,7 @@ def edit_role(new_role_name, role_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `role` SET `name`=%s WHERE `id`=%s;"""
+        query = """UPDATE `role` SET `name`= %s WHERE `id`= %s;"""
         cursor.execute(query, (new_role_name, role_id))
         conn.commit()
 
@@ -327,7 +331,7 @@ def get_all_permissions_by_resource(resource_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `action`, `modifier`, `description`
-                   FROM `permission` WHERE `resource_id`=%s;
+                   FROM `permission` WHERE `resource_id`= %s;
                 """
         cursor.execute(query, (resource_id,))
         return cursor.fetchall()
@@ -345,7 +349,8 @@ def get_all_permissions():
                    p.description
                    FROM `permission` as p
                    INNER JOIN `resource` as r
-                   ON p.resource_id = r.id;"""
+                   ON p.resource_id= r.id;
+                """
         cursor.execute(query)
         return cursor.fetchall()
 
@@ -370,6 +375,7 @@ def insert_permission(resource_id, action, modifier, description):
         conn.commit()
 
 
+@retry_query(tries=3, delay=1)
 def edit_permission(action, modifier, permission_id, description):
     """Edit permission.
     :params: action - action (POST, GET, DELETE, PUT)
@@ -379,8 +385,8 @@ def edit_permission(action, modifier, permission_id, description):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `permission` SET `description`=%s, `action`=%s,
-                   `modifier`=%s WHERE `id`=%s;
+        query = """UPDATE `permission` SET `description`= %s, `action`= %s,
+                   `modifier`= %s WHERE `id`= %s;
                 """
         cursor.execute(query, (description, action, modifier, permission_id))
         conn.commit()
@@ -395,8 +401,8 @@ def get_permission_id(resource_id, action, modifier):
     :return: tuple, containing permission id"""
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id` FROM `permission` WHERE `resource_id`=%s AND
-                   `action`=%s AND `modifier`=%s;
+        query = """SELECT `id` FROM `permission` WHERE `resource_id`= %s AND
+                   `action`= %s AND `modifier`= %s;
                 """
         cursor.execute(query, (resource_id, action, modifier))
         return cursor.fetchone()
@@ -426,7 +432,7 @@ def change_user_role(role_id, user_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `user_role` SET `role_id`=%s WHERE `user_id`=%s;"""
+        query = """UPDATE `user_role` SET `role_id`= %s WHERE `user_id`= %s;"""
         cursor.execute(query, (role_id, user_id))
         conn.commit()
 
@@ -458,8 +464,8 @@ def get_role_permission(role_id):
         cursor = conn.cursor()
         query = """SELECT p.id, p.action, p.modifier, p.description
                    FROM `role_permission` AS rp
-                   LEFT JOIN `permission` AS p  ON rp.permission_id=p.id
-                   WHERE `role_id`=%s;
+                   LEFT JOIN `permission` AS p  ON rp.permission_id= p.id
+                   WHERE `role_id`= %s;
                 """
         cursor.execute(query, (role_id,))
         return cursor.fetchall()
@@ -473,7 +479,7 @@ def delete_permissions_by_role_id(role_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """DELETE `role_permission` FROM `role_permission`
-                   WHERE `role_id`=%s;
+                   WHERE `role_id`= %s;
                 """
         cursor.execute(query, (role_id,))
         conn.commit()
@@ -490,7 +496,7 @@ def check_resource_deletion(res_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `resource_id` FROM `permission`
-                   WHERE `resource_id`=%s;
+                   WHERE `resource_id`= %s;
                 """
         cursor.execute(query, (res_id,))
         return cursor.fetchall()
@@ -503,7 +509,7 @@ def delete_resource_by_id(res_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """DELETE FROM `resource` WHERE `id`=%s;"""
+        query = """DELETE FROM `resource` WHERE `id`= %s;"""
         cursor.execute(query, (res_id,))
         conn.commit()
 
@@ -520,7 +526,7 @@ def check_permission_deletion(permission_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `permission_id` FROM `role_permission`
-                   WHERE `permission_id`=%s;
+                   WHERE `permission_id`= %s;
                 """
         cursor.execute(query, (permission_id,))
         return cursor.fetchall()
@@ -533,7 +539,7 @@ def delete_permission_by_id(permission_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """DELETE FROM `permission` WHERE `id`=%s;"""
+        query = """DELETE FROM `permission` WHERE `id`= %s;"""
         cursor.execute(query, (permission_id,))
         conn.commit()
 
@@ -549,7 +555,7 @@ def check_role_deletion(role_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `role_id` FROM `role_permission`
-                   WHERE `role_id`=%s;
+                   WHERE `role_id`= %s;
                 """
         cursor.execute(query, (role_id,))
         return cursor.fetchall()
@@ -562,7 +568,7 @@ def delete_role_by_id(role_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """DELETE FROM `role` WHERE `id`=%s;"""
+        query = """DELETE FROM `role` WHERE `id`= %s;"""
         cursor.execute(query, (role_id,))
         conn.commit()
 
@@ -590,7 +596,7 @@ def get_page_by_alias(alias):
         query = """SELECT `id`, `title`, `alias`, `description`, `content`,
                    `meta_keywords`, `meta_description`, `is_enabled`
                    FROM `page`
-                   WHERE `alias`=%s;
+                   WHERE `alias`= %s;
                 """
         cursor.execute(query, (alias,))
         return cursor.fetchone()
@@ -612,11 +618,11 @@ def edit_page(page_id, title, alias, descr, content,
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `page`
-                   SET `title`=%s, `alias`=%s,
-                   `description`=%s, `content`=%s,
-                   `meta_keywords`=%s, `meta_description`=%s,
-                   `is_enabled`=%s
-                   WHERE `id`=%s;
+                   SET `title`= %s, `alias`= %s,
+                   `description`= %s, `content`= %s,
+                   `meta_keywords`= %s, `meta_description`= %s,
+                   `is_enabled`= %s
+                   WHERE `id`= %s;
                 """
         cursor.execute(query, (title, alias, descr, content,
                                meta_key, meta_descr, is_enabled, page_id))
@@ -655,7 +661,7 @@ def delete_page_by_id(page_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """DELETE FROM `page` WHERE `id`=%s;"""
+        query = """DELETE FROM `page` WHERE `id`= %s;"""
         cursor.execute(query, (page_id,))
         conn.commit()
 
@@ -671,7 +677,7 @@ def get_page_by_id(page_id):
         query = """SELECT `id`, `title`, `alias`, `description`, `content`,
                    `meta_keywords`, `meta_description`, `is_enabled`
                    FROM `page`
-                   WHERE `id`=%s;
+                   WHERE `id`= %s;
                 """
         cursor.execute(query, (page_id,))
         return cursor.fetchone()
@@ -685,8 +691,8 @@ def get_all_users():
         cursor = conn.cursor()
         query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
                    FROM  `user_role` as ur
-                   INNER JOIN `user` as u ON ur.user_id = u.id
-                   INNER JOIN `role` as r ON ur.role_id = r.id;
+                   INNER JOIN `user` as u ON ur.user_id= u.id
+                   INNER JOIN `role` as r ON ur.role_id= r.id;
                 """
         cursor.execute(query)
         return cursor.fetchall()
@@ -700,75 +706,13 @@ def get_permission_control_data():
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         sql = """SELECT r.name, res.resource_name, p.action, p.modifier
-                FROM role_permission AS rp
-                INNER JOIN role AS r ON rp.role_id = r.id
-                INNER JOIN permission AS p ON rp.permission_id = p.id
-                INNER JOIN resource AS res ON p.resource_id = res.id;"""
+                 FROM role_permission AS rp
+                 INNER JOIN role AS r ON rp.role_id= r.id
+                 INNER JOIN permission AS p ON rp.permission_id= p.id
+                 INNER JOIN resource AS res ON p.resource_id= res.id;
+              """
         cursor.execute(sql)
         return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def get_all_problems():
-    """Return all problems in db.
-    :return: tuple, containing all problems
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `id`,`title`,`latitude`,`longtitude`,
-                    `problem_type_id`,`status`,`created_date`
-                    FROM `problem`;
-                """
-        cursor.execute(query)
-        return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
-def get_problem_by_id(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: list with lists where located dictionary
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `id`, `title`, `content`, `proposal`,
-                `severity`, `status`, `latitude`,`longtitude`,
-                `problem_type_id` FROM `problem` WHERE `id` = %s;
-                """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
-
-
-@retry_query(tries=3, delay=1)
-def get_activity_by_problem_id(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: tuple with problem_activity info
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `created_date`, `problem_id`, `user_id`,
-                    `activity_type` FROM `problem_activity`
-                    WHERE `problem_id` = %s;
-                """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
-
-
-@retry_query(tries=3, delay=1)
-def get_id_problem_owner(problem_id):
-    """Return problem, found by id.
-    :params: problem_id - id of problem which was selected
-    :return: tuple with problem_activity info
-    """
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """ SELECT `created_date`, `problem_id`, `user_id`,
-                    `activity_type` FROM `problem_activity`
-                    WHERE `problem_id` = %s;
-                """
-        cursor.execute(query, (problem_id, ))
-        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)
@@ -779,8 +723,8 @@ def get_users_pagination(offset, per_page):
         cursor = conn.cursor()
         query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
                    FROM  `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id = u.id
-                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   INNER JOIN `user` AS u ON ur.user_id= u.id
+                   INNER JOIN `role` AS r ON ur.role_id= r.id
                    ORDER BY `id` LIMIT %s,%s;
                 """
         cursor.execute(query % (offset, per_page))
@@ -794,14 +738,14 @@ def pagination_test(page, per_page):
     if page == 1:
         offset = 0
     else:
-        offset = (page-1) * per_page
+        offset = (page - 1) * per_page
 
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
                    FROM  `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id = u.id
-                   INNER JOIN `role` AS r ON ur.role_id = r.id
+                   INNER JOIN `user` AS u ON ur.user_id= u.id
+                   INNER JOIN `role` AS r ON ur.role_id= r.id
                    ORDER BY `id` LIMIT %s,%s;
                 """
         cursor.execute(query % (offset, per_page))
@@ -817,3 +761,157 @@ def count_users():
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_problems():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`
+                   FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_problems(user_id):
+    """Gets all problems posted by given user."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                   `severity`
+                   FROM `problem`
+                   WHERE `user_id`= %s
+                """
+        cursor.execute(query, (user_id,))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_by_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: list with lists where located dictionary
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `content`, `proposal`,
+                   `severity`, `status`, `latitude`,`longitude`,
+                   `problem_type_id`, `created_date`
+                   FROM `problem` WHERE `id`= %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_activity_by_problem_id(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `created_date`, `problem_id`, `user_id`,
+                   `activity_type` FROM `problem_activity`
+                   WHERE `problem_id`= %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def problem_post(title, content, proposal, latitude, longitude,
+                 problem_type_id, created_date, user_id):
+    """This method adds problem into db.
+       :params: title - new title
+                content - new content
+                proposal - new proposal
+                latitude - new latitude of a new problem
+                longitude - new longitude of a new problem
+                problem_type_id - type of a new problem
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `problem`
+                   (`title`, `content`, `proposal`, `latitude`, `longitude`,
+                    `problem_type_id`,`created_date`, `user_id`)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+                """
+        cursor.execute(query, (title, content, proposal, latitude,
+                               longitude, problem_type_id, created_date,
+                               user_id))
+        last_id = cursor.lastrowid
+        return last_id
+
+
+@retry_query(tries=3, delay=1)
+def problem_activity_post(problem_id, created_date, user_id):
+    """This method adds new problem_activity into db.
+       :params: problem_id - id of problem
+                created_date - time of problem creation
+                user_id - id of user that posted problem
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `problem_activity`
+                   (`problem_id`, `created_date`, `user_id`,
+                    `activity_type`)
+                   VALUES (%s, %s, %s, 'Added');
+                """
+        cursor.execute(query, (problem_id, created_date, user_id))
+
+
+@retry_query(tries=3, delay=1)
+def get_id_problem_owner(problem_id):
+    """Return problem, found by id.
+    :params: problem_id - id of problem which was selected
+    :return: tuple with problem_activity info
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ SELECT `created_date`, `problem_id`, `user_id`,
+                    `activity_type` FROM `problem_activity`
+                    WHERE `problem_id`= %s;
+                """
+        cursor.execute(query, (problem_id, ))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def add_problem_photo(problem_id, photo_url, photo_descr, user_id):
+    """Adds a link for added problem photo into db.
+    :param problem_id:
+    :param photo_url:
+    :param photo_descr:
+    :param user_id:
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ INSERT INTO `photo`
+                    (`name`, `description`, `problem_id`, user_id)
+                    VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (photo_url, photo_descr, problem_id, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_photos(problem_id):
+    """Gets all photos posted by user to problem."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `name`, `description`, `user_id`
+                   FROM `photo` WHERE `problem_id`= %s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchall()

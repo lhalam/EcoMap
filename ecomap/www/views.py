@@ -3,13 +3,15 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import render_template, request, Response, g
+from flask import render_template, session, request, Response, g
+from flask import abort
 from flask_login import current_user
 
 from ecomap.app import app, logger
 from authorize_views import *
 from admin_views import *
 from user_views import *
+from problem_views import *
 
 from ecomap.db import util as db
 from ecomap.permission import permission_control, check_permissions
@@ -24,9 +26,11 @@ def load_users():
     if current_user.is_authenticated:
         g.user = current_user
     else:
-        anon = ecomap_usr.Anonymous()
+        anon = ecomap_user.Anonymous()
         g.user = anon
-        logger.info(g.user.role)
+        # logger.info(g.user.role)
+        # logger.info(current_user)
+    logger.info('current user is %s, %s', g.user.role, g.user)
 
 
 # @app.before_request
@@ -36,17 +40,27 @@ def check_access():
     Gets dynamic user info(user role, url, request method)from request context.
     :return: nested function returns true or 403
     """
-    access_info = permission_control.get_dct()
-    logger.warning(request.url)
+    logger.info(session)
+    if 'access_control' not in session:
+        session['access_control'] = permission_control.get_dct()
+    session['access_control'] = permission_control.reload_dct()
+    logger.info(session)
+    access_rules = session['access_control']
     route = '/' + '/'.join(request.url.split('/')[3:])
-    logger.warning(route)
-    logger.debug('CHECK REQUEST: (url = %s [ %s ], user ID %s as %s )'
-                 % (route, request.method, current_user.uid,
-                    current_user.role))
-    check_permissions(current_user.role, route,
-                      request.method, access_info)
-    logger.debug(check_permissions(current_user.role, route,
-                                   request.method, access_info))
+
+    access_result = check_permissions(current_user.role,
+                                      route, request.method, access_rules)
+    if not access_result['error']:
+        access_status = access_result['status']
+        logger.info('ACCESS STATUS: %s DETAILS:(url= %s[%s], user ID:%s (%s))',
+                    access_status, route, request.method, current_user.uid,
+                    current_user.role)
+    else:
+        logger.debug('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s], '
+                     'user ID:%s (%s), errors=%s)'
+                     % (route, request.method, current_user.uid,
+                        current_user.role, access_result['error']))
+        abort(403)
 
 
 @app.route('/', methods=['GET'])

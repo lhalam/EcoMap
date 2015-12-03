@@ -11,14 +11,19 @@
     <link rel="stylesheet" href="/css/toaster.min.css">
     <link rel="stylesheet" href="/css/textAngular.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/angular-resizable.css">
+    <link rel="stylesheet" href="/css/resize-test.css">
     <link href="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.css">
-    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+    <!--<link rel="stylesheet" type="text/css" href="/css/custom.css">-->
     <link rel="stylesheet" type="text/css" href="/css/image_crop.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
     <!-- Non-angularJS scripts -->
     <script src="/js/libs/jquery.min.js"></script>
     <script src="/js/libs/bootstrap.min.js"></script>
+    <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-Wwj3Nk7crgNakQ424rCJCykh0YZYfs&libraries=geometry">
+    </script>
 
     <!-- AngularJS modules -->
     <script src="/js/libs/angular.min.js"></script>
@@ -32,6 +37,11 @@
     <script src="/js/libs/textAngular-rangy.min.js"></script>
     <script src="/js/libs/textAngular-sanitize.min.js"></script>
     <script src="/js/libs/textAngular.min.js"></script>
+    <script src="/js/libs/angular-google-maps.min.js"></script>
+    <script src="/js/libs/angular-simple-logger.min.js"></script>
+    <script src="/js/libs/lodash.min.js"></script>
+    <script src="/js/libs/angular-resizable.js"></script>
+    <script src="/js/libs/angular-ui-router-grant.min.js"></script>
 
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
@@ -40,6 +50,7 @@
     <!-- AngularJS app -->
     <script src="/js/angular_app.js"></script>
     <script src="/js/appConfigs.js"></script>
+    <script src="/js/RightsRestriction.js"></script>
 
     <!-- AngularJS directives -->
     <script src="/js/directives/ModalWindow.js"></script>
@@ -63,10 +74,14 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
+    <script src='/js/controllers/addProblemCtrl.js'></script>
+    <script src='/js/controllers/UserProblemTableCtrl.js'></script>
     <script src='/js/controllers/AdminResourceCtrl.js'></script>
     <script src='/js/controllers/AdminPermissionCtrl.js'></script>
     <script src='/js/controllers/AdminRoleCtrl.js'></script>
-    <script src='/js/controllers/AdminUserCtrl.js'></script>  
+    <script src='/js/controllers/AdminUserCtrl.js'></script> 
+    <script src='/js/controllers/detailedProblemCtrl.js'></script>   
+    <!--<script src='/js/controllers/ProblemPhotoCtrl.js'></script>-->
 
   </head>
   <body ng-controller="MainCtrl">
@@ -85,7 +100,7 @@
           </div>
           <div class="navbar-collapse collapse" id="navMenu">
             <ul class="nav navbar-nav">
-              <li id="inform_probl_btn"><a href="#">повідомити про проблему</a></li>
+              <li id="inform_probl_btn" ng-if="isAuthenticated()"><a href="/#/addProblem">повідомити про проблему</a></li>
               <li class="dropdown" >
                 <a class="dropdown-toggle"  data-toggle="dropdown" ng-show="faqTitles">ресурси <span class="caret"></span></a>
                 <ul class="dropdown-menu" >
@@ -116,6 +131,8 @@
       </nav>
       <toaster-container></toaster-container>
     <div ui-view class="map-div"></div>
+    <div ui-view name="detailedProblem"></div>
 
+    </div>
   </body>
 </html>

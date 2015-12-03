@@ -1,2 +1,70 @@
-<h3>Проблеми користувача</h3>
-<hr>
+<div ng-controller="UserProblemTableCtrl">
+  <h3>Проблеми користувача {{user.data.surname}} {{user.data.name}}</h3>
+  <hr>
+  <!-- To do list -->
+  <!-- Show date normally -->
+  <!-- Implement changing of showing -->
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td><strong>Номер</strong></td>
+        <td><strong>Заголовок</strong></td>
+        <td><strong>Тип проблеми</strong> </td>
+        <td><strong>Статус</strong></td>
+        <td><strong>Дата створення</strong> </td>
+        <td><strong>Детальне інфо</strong> </td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="problem in problems track by $index">
+        <td ng-bind="problem.id"></td>
+        <td ng-bind="problem.title"></td>
+        <td ng-bind="getProblemType(problem.problem_type_id)"></td>
+        <td ng-bind="getStatus(problem.status)"></td>
+        <!-- <td ng-bind="parseDate(problem.date)"></td> -->
+        <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
+        <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
+      <!-- to do -->
+      <!-- implemet commetns here -->
+      <!-- implement photos here -->
+      <div class="title">
+        <h3 ng-bind="detailedProblem.title"></h3>
+      </div>
+      <div class="general">
+        <div class="rate">
+          <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
+        </div>
+        <div class="solution unsolved" >
+          <strong><span ng-bind="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <uib-tabset justified="true">
+          <uib-tab heading="Детально">
+              <div class="problem-type">
+                <p><strong>Тип проблеми:</strong></p>
+                <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+              </div>
+              <div class="description">
+                <p><strong>Опис проблеми:</strong></p>
+                <p ng-bind="detailedProblem.content"></p>
+              </div>
+              <div class="proposal">
+                <p><strong>Пропозиції щодо вирішення</strong></p>
+                <p ng-bind="detailedProblem.proposal"></p>
+              </div>
+              <div class="photos">
+                <p><strong>Фото проблеми:</strong></p>
+                Not implemented yet!!!
+              </div>
+          </uib-tab>
+          <uib-tab heading="Коментарі">
+            Not implemented yet!!!
+          </uib-tab>
+      </uib-tabset>
+  </modal>
+</div>

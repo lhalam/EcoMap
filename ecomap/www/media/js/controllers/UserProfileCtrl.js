@@ -5,10 +5,10 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
     $scope.user.id = $cookies.get("id");
 
     $scope.tabs = [
-      { heading: "Профіль користувача", route:"user_profile.info", active:false },
-      { heading: "Мої проблеми", route:"user_profile.problems", active:false },
-      { heading: "Мої коментарі", route:"user_profile.comments", active:false },
-      { heading: "Редагування F.A.Q.", route:"user_profile.faq", active:false }
+      { heading: "Профіль користувача", route:"user_profile.info", active:false, showToUser: true},
+      { heading: "Мої проблеми", route:"user_profile.problems", active:false, showToUser: true },
+      { heading: "Мої коментарі", route:"user_profile.comments", active:false, showToUser: true },
+      { heading: "Редагування F.A.Q.", route:"user_profile.faq", active:false, showToUser: false }
     ];
 
     $scope.$on("$stateChangeSuccess", function() {
@@ -41,24 +41,23 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
       new_pass_confirm: ""
     };
     $scope.changePassword = function(passwd) {
-      console.log(passwd);
       if(!passwd.old_pass || !passwd.new_pass || !passwd.new_pass_confirm){
         return;
       }
 
       var data = {};
       data.id = $cookies.get('id');
-      data.old_pass = passwd.old_pass;
-      data.password = passwd.new_pass;
-      console.log(data);
       $http({
         method: 'POST',
         url: '/api/change_password',
-        data: data
+        data: {
+          'id': data.id,
+          'old_pass': passwd.old_pass,
+          'password': passwd.new_pass
+        }
       }).then(function successCallback(responce) {
-        passwd = {};
+        $scope.password = {};
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
-        $scope.changePasswordForm.$setUntouched();
       }, function errorCallback(responce) {
         if (responce.status == 401) {
           $scope.wrongOldPass = true;

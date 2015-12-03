@@ -75,5 +75,4 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
       $scope.loadPerm()
     }
     $scope.loadData()
-  }
-]);
+}]);

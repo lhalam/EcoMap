@@ -1,19 +1,9 @@
-<div class="container-fluid map-div">
-  <div id="map">
-      
-  </div>
+<div class="map-container" >
+    <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map" >
+        <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
+                         click="zoomMarker" doCluster="true" 
+                         icon="'iconUrl'"></ui-gmap-markers>
+        </ui-gmap-markers>
+    
+    </ui-gmap-google-map>
 </div>
-
-<script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-Wwj3Nk7crgNakQ424rCJCykh0YZYfs&callback=initMap">
-</script>
-
-<script>
-  var map;
-  function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 48.4538077, lng: 31.9612523},
-      zoom: 6
-    });
-  }
-</script>

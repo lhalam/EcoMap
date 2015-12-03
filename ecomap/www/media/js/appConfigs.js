@@ -1,11 +1,25 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($stateProvider, $urlRouterProvider, $authProvider) {
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+ function($stateProvider, $urlRouterProvider, $authProvider) {
 
   $stateProvider
+    .state('error404', {
+      url: '/error404',
+      templateUrl: '/templates/404.html'
+    })
+    .state('error403', {
+      url: '/error403',
+      templateUrl: '/templates/403.html'
+    })
     .state('user_profile', {
       abtract: true,
       url: '/user_profile',
       templateUrl: '/templates/userProfile.html',
-      controller: 'UserProfileCtrl'
+      controller: 'UserProfileCtrl',
+      resolve: {
+        admin: function(grant) {
+          return grant.only({test: 'authenticated', state: 'error403'});
+        }
+      }
     })
     .state('user_profile.info', {
       url: '/info',
@@ -21,7 +35,12 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     })
     .state('user_profile.faq', {
       url: '/faq',
-      templateUrl: '/templates/profileFaqEdit.html'
+      templateUrl: '/templates/profileFaqEdit.html',
+      resolve: {
+        admin: function(grant) {
+          return grant.only({test: 'admin', state: 'error403'});
+        }
+      }
     })
     .state('map', {
       url: '/map',
@@ -32,7 +51,12 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
       abtract: true,
       url:"/admin",
       templateUrl:"/templates/admin.html",
-      controller: 'AdminCtrl'
+      controller: 'AdminCtrl',
+      resolve: {
+        admin: function(grant) {
+          return grant.only({test: 'admin', state: 'error403'});
+        }
+      }
     })
     .state("admin.resources", {
       url: "/resources",
@@ -62,41 +86,71 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', function($s
     .state('addFaq', {
       url: '/addFaq',
       templateUrl: '/templates/addFaq.html',
-      controller: 'AddFaqCtrl'
+      controller: 'AddFaqCtrl',
+      resolve: {
+        admin: function(grant) {
+          return grant.only({test: 'admin', state: 'error403'});
+        }
+      }
     })
     .state('editFaq', {
       url: '/editFaq/:alias',
       templateUrl: '/templates/editFaq.html',
-      controller: 'EditFaqCtrl'
+      controller: 'EditFaqCtrl',
+      resolve: {
+        admin: function(grant) {
+          return grant.only({test: 'admin', state: 'error403'});
+        }
+      }
     })
-    .state('error404', {
-      url: '/error404',
-      templateUrl: '/templates/404.html'
+    .state('addProblem', {
+      url: '/addProblem',
+        templateUrl: '/templates/addProblem.html',
+        controller: 'addProblemCtrl',
+        resolve: {
+          admin: function(grant) {
+            return grant.only({test: 'authenticated', state: 'error403'});
+          }
+        }
+    })
+    .state("detailedProblem",{
+      url:"/detailedProblem/:id",
+      views:{
+        "detailedProblem":{
+        "templateUrl":"/templates/detailedProblem.html",
+        "controller":"detailedProblemCtrl"
+        },
+        "":{
+          'templateUrl': '/templates/map.html',
+          'controller': 'MapCtrl'
+        }
+      }
+      
+    })
+    .state('addPhoto', {
+      url: '/addPhoto/:problemId',
+      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        $uibModal.open({
+            templateUrl: '/templates/addPhoto.html',
+            controller: 'ProblemPhotoCtrl'
+        }).result.finally(function() {
+            $state.go('map');
+        });
+      }]
     })
     .state('login', {
       url: '/login',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/login.html',
-            controller: 'LoginCtrl',
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
+      templateUrl: '/templates/login.html',
+      controller: 'LoginCtrl'
     })
     .state('register', {
       url: '/register',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/register.html',
-            controller: 'RegisterCtrl',
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
-    });
-    
-    $urlRouterProvider.otherwise('/map');
+      templateUrl: '/templates/register.html',
+      controller: 'RegisterCtrl'
+    });    
+    $urlRouterProvider.otherwise('map');
+
+
     $authProvider.loginUrl = '/api/login';
     $authProvider.signupUrl = '/api/register';
     $authProvider.facebook({

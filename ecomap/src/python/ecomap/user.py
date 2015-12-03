@@ -159,9 +159,9 @@ def register(first_name, last_name, email, password):
     """
     salted_pass = hash_pass(password)
     role_id = util.get_role_id('user')
-    send_email(first_name, last_name, email, password)
+    # send_email(first_name, last_name, email, password)
     return util.insert_user(first_name, last_name, email, salted_pass,
-                            role_id)
+                            role_id[0])
 
 
 def facebook_register(first_name, last_name, email, provider, uid):
@@ -170,12 +170,20 @@ def facebook_register(first_name, last_name, email, provider, uid):
     from util.
         :returns True if transaction finished successfully.
     """
-    password = random_password(10)
-    salted_pass = hash_pass(password)
-    role_id = util.get_role_id('user')
-    send_email(first_name, last_name, email, password)
-    return util.facebook_insert(first_name, last_name, email, salted_pass,
-                                role_id, provider, uid)
+    user = get_user_by_oauth_id(uid)
+    if not user:
+        user = get_user_by_email(email)
+    if not user:
+        salted_pass = hash_pass(random_password(10))
+        role_id = util.get_role_id('user')
+        util.facebook_insert(first_name, last_name, email,
+                             salted_pass, role_id[0],
+                             provider, uid)
+        user = get_user_by_oauth_id(uid)
+    else:
+        util.add_oauth_to_user(user.uid, provider, uid)
+    # send_email(first_name, last_name, email, password)
+    return user
 
 
 @LOGIN_MANAGER.user_loader
@@ -206,3 +214,7 @@ def load_token(token):
     if user and data[1] == user.password:
         return user
     return None
+
+
+if __name__ == '__main__':
+    register('user1', 'user1', 'next@gmail.com', 'pass')

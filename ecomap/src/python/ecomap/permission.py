@@ -1,12 +1,13 @@
+# coding=utf-8
 """
 Module providing complex and secure access control for all application's
-resources by checking user role permissions predifined by admin.
+resources by checking user role permissions predefined by admin.
 Permission data stores in db. This module checks data from user's request
 and compares it with dynamic permission App JSON object.
 
 """
 import ecomap.utils
-import db.util as db
+import ecomap.db.util as db
 
 from flask import abort
 from flask_login import current_user
@@ -47,9 +48,83 @@ def get_current_user_id(user_id):
     """
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
+RULEST_DICT = {':idUser': get_current_user_id,
+               ':page': 'get_pages',
+               ':idProblem': get_id_problem_owner}
 
-rules_dct = {':idUser': get_current_user_id,
-             ':idProblem': get_id_problem_owner}
+MODIFIERS = ['None', 'Own', 'Any']
+
+MSG = {'forbidden': 'forbidden',
+       '404': 'resource 404',
+       'unknown_role': 'no role',
+       'own': 'YOU HAVE ACCESS ONLY TO YOUR OWN %s',
+       'warning': 'make this permission modifier = ANY!',
+       'ok': 'ok'}
+
+
+def check_static_route(dct, access, role, resource, method):
+    """Method for checking access to static resources urls from user request.
+    :param dct: dictionary with all permission rules given from db.
+    :param access: result dictionary contains access control status and errors.
+    :param role: role of user given from each request.
+    :param resource: resource url requested by user to check.
+    :param method: request method of resource url.
+    :return: access - dictionary with checking status and results.
+    """
+    permissions = dct[role][resource]
+    for i in permissions:
+        if method in permissions:
+            if permissions[method] == MODIFIERS[2]:
+                access['status'] = MSG['ok']
+            elif permissions[method] == MODIFIERS[1]:
+                access['warning'] = MSG['warning']
+            elif permissions[method] == MODIFIERS[0]:
+                access['error'] = MSG['forbidden']
+        else:
+            access['error'] = MSG['forbidden']
+    return access
+
+
+def check_dynamic_route(dct, access, role, route, resource, method):
+    """Method for checking access to dynamic resources urls from user request.
+    Compares user's request params with access rules given from database.
+    :param dct: dictionary with all permission rules given from db.
+    :param access: result dictionary contains access control status and errors.
+    :param role: role of user given from each request.
+    :param resource: resource url requested by user to check.
+    :param method: request method of resource url.
+    :param route: resource url extracted from db to compare with user request url.
+    :return: access - dictionary with checking status and results.
+    """
+    if ':' in route:
+        pattern = route.split('/')[-1]
+        dynamic_res_host = '/'.join(route.split('/')[:-1])
+        request_res_arg = resource.split('/')[-1]
+        request_res_host = '/'.join(resource.split('/')[:-1])
+
+        if request_res_host == dynamic_res_host \
+                and pattern in RULEST_DICT:
+            owner_id = RULEST_DICT[pattern](request_res_arg)
+            perms = dct[role][route]
+            if method in perms:
+                if perms[method] == MODIFIERS[2]:
+                    access['status'] = MSG['ok']
+                if perms[method] == MODIFIERS[1]:
+                    if current_user.uid == owner_id:
+                        access['status'] = MSG['ok']
+                    else:
+                        access['error'] = MSG['own'] % request_res_host
+            else:
+                access['error'] = MSG['404']
+
+        elif '?' in resource and pattern in RULEST_DICT:
+            access['status'] = MSG['ok']
+        else:
+            if not access['status'] == MSG['ok']:
+                access['error'] = MSG['forbidden']
+    else:
+        access['error'] = MSG['forbidden']
+    return access
 
 
 def check_permissions(role, resource, method, dct):
@@ -64,58 +139,18 @@ def check_permissions(role, resource, method, dct):
     :return: True if access is allowed or status 403
     and error message otherwise
     """
-    perm = {'status': None, 'error': None}
+    access = {'status': None, 'error': None}
     if role in dct:
-        xpath = dct[role]
-        for perm_res in xpath:
-            if resource in dct[role]:
-                for permissions in dct[role][resource]:
-                    if method in dct[role][resource]:
-                        if dct[role][resource][method] == 'Any':
-                            perm['status'] = 'ok'
-                        elif dct[role][resource][method] == 'Own':
-                            perm['warning'] = 'static resource error'
-                        elif dct[role][resource][method] == 'None':
-                            perm['error'] = 'METHOD FORBIDDEN BY ADMIN'
-                    else:
-                        perm['error'] = 'METHOD FORBIDDEN'
+        role_perms = dct[role]
+        for route in role_perms:
+            if resource in role_perms:
+                check_static_route(dct, access, role, resource, method)
             else:
-                if ':' in perm_res:  # checking dynamic path
-                    pattern = perm_res.split('/')[-1]
-                    dynamic_res_host = '/'.join(perm_res.split('/')[:-1])
-                    request_res_arg = resource.split('/')[-1]
-                    request_res_host = '/'.join(resource.split('/')[:-1])
-                    if request_res_host == dynamic_res_host \
-                            and pattern in rules_dct:
-                        owner_id = rules_dct[pattern](request_res_arg)
-                        if dct[role][perm_res][method] == 'Any':
-                            perm['status'] = 'ok'
-                            return True
-                        if dct[role][perm_res][method] == 'Own' \
-                                and current_user.uid == owner_id:
-                            perm['status'] = 'ok own'
-                            return True
-                        else:
-                            perm['error'] = 'YOU CAN ACCESS ONLY YOUR' \
-                                            ' OWN %s' % request_res_host
-                            logger.warning(perm['error'])
-                            logger.warning('UNABLE TO ACCESS to %s '
-                                           'with user id %s',
-                                           resource, current_user.uid)
-                            abort(403)
-                            return perm['error']
-                else:
-                    perm['error'] = 'NO SUCH RESOURCE FOR ROLE'
+                check_dynamic_route(dct, access, role, route, resource, method)
     else:
-        perm['error'] = 'NOT ALLOWED FOR THIS ROLE'
-    if not perm['error']:
-        return True
-    else:
-        logger.warning(perm['error'])
-        logger.warning('UNABLE TO ACCESS to %s with user id %s',
-                       resource, current_user.uid)
-        abort(403)
-        return perm['error']
+        access['error'] = MSG['unknown_role']
+
+    return access
 
 
 class Permission(object):
@@ -136,7 +171,7 @@ class Permission(object):
         :return:
         """
         parsed_data = {}
-        logger.info('__Permission Control Initialization__')
+        logger.info('<<<Permission Control Initialization>>>')
         all_perms_list = db.get_permission_control_data()
         if all_perms_list:
             parsed_data = [x for x in all_perms_list]

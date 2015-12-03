@@ -17,7 +17,7 @@ from ecomap.db import util as db
 
 
 @app.route('/api/logout', methods=['POST', 'GET'])
-# @login_required
+@login_required
 def logout():
     """Method for user's log out.
 

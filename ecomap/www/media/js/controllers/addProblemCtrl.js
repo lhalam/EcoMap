@@ -213,7 +213,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       }).then(function successCallback(response) {
         toaster.pop('success', 'Додавання проблеми', 'Проблему було успішно додано!');
         $scope.createdProblemId = response.data.problem_id;
-        $scope.arrayUpload($scope.photos);
+        $scope.arrayUpload(photos);
       }, function errorCallback() {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі' + ' додавання проблеми виникла помилка!');
       })
@@ -239,7 +239,9 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       toaster.pop('warning', 'Фото', 'Фото видалено');
     };
     $scope.arrayUpload = function(photos) {
-      angular.forEach(photos, $scope.uploadPic);
+      angular.forEach(photos, function(value, key){
+        $scope.uploadPic(value);
+      });
       $state.go('map');
     };
     $scope.uploadPic = function(file) {

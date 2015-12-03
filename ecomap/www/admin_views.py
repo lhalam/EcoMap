@@ -51,7 +51,6 @@ def resource_put():
                  {'status': 'success', 'edited': 'resource_name'}
     """
     data = request.get_json()
-
     valid = validator.resource_put(data)
 
     if valid['status']:
@@ -81,7 +80,6 @@ def resource_delete():
                  {'status': 'success', 'deleted_resource': 'resource_id'}
     """
     data = request.get_json()
-
     valid = validator.resource_delete(data)
 
     if valid['status']:
@@ -123,7 +121,6 @@ def role_post():
                   'added_role_id': 'role_id'}
     """
     data = request.get_json()
-
     valid = validator.role_post(data)
 
     if valid['status']:
@@ -153,7 +150,6 @@ def role_put():
                  {'status': 'success', 'edited': 'resource_name'}
     """
     data = request.get_json()
-
     valid = validator.role_put(data)
 
     if valid['status']:
@@ -171,7 +167,6 @@ def role_put():
 
 @app.route("/api/roles", methods=['DELETE'])
 @login_required
-# @is_admin
 def role_delete():
     """Function which deletes role from database.
     :return: If role has permissions:
@@ -200,7 +195,6 @@ def role_delete():
 
 @app.route("/api/roles", methods=['GET'])
 @login_required
-# @is_admin
 def role_get():
     """Function which gets all roles from database.
        :return: {'role_name': 'role_id'}
@@ -214,7 +208,6 @@ def role_get():
 
 @app.route("/api/permissions", methods=['POST'])
 @login_required
-# @is_admin
 def permission_post():
     """Function which adds new permission into database.
     :return: If request data is invalid:
@@ -226,7 +219,6 @@ def permission_post():
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_post(data)
 
         if valid['status']:
@@ -247,7 +239,6 @@ def permission_post():
 
 @app.route("/api/permissions", methods=['PUT'])
 @login_required
-# @is_admin
 def permission_put():
     """Function which edits permission.
     :return: If request data is invalid:
@@ -258,7 +249,6 @@ def permission_put():
     """
     if request.method == 'PUT' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_put(data)
 
         if valid['status']:
@@ -276,7 +266,6 @@ def permission_put():
 
 @app.route("/api/permissions", methods=['DELETE'])
 @login_required
-# @is_admin
 def permission_delete():
     """Function which edits permission.
     :return: If permission is binded with any role:
@@ -289,7 +278,6 @@ def permission_delete():
     """
     if request.method == 'DELETE' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_delete(data)
 
         if valid['status']:
@@ -307,7 +295,6 @@ def permission_delete():
 
 @app.route("/api/permissions", methods=['GET'])
 @login_required
-# @is_admin
 def permission_get():
     """Function which gets all permissions.
     :return: {'permission_id': 'permission_id', 'action': 'action',
@@ -327,7 +314,6 @@ def permission_get():
 
 @app.route("/api/role_permissions", methods=['POST'])
 @login_required
-# @is_admin
 def role_permission_post():
     """Function which binds permission with role.
     :return: If request data is not valid:
@@ -336,7 +322,6 @@ def role_permission_post():
                  {'added_role_permission_for_role': 'role_id'}
     """
     data = request.get_json()
-
     valid = validator.role_permission_post(data)
 
     if valid['status']:
@@ -351,7 +336,6 @@ def role_permission_post():
 
 @app.route("/api/role_permissions", methods=['PUT'])
 @login_required
-# @is_admin
 def role_permission_put():
     """Function which sets list of permission to role. Before sets
        removes all permissions from role.
@@ -361,8 +345,7 @@ def role_permission_put():
                     {'msg': 'edited permission'}
     """
     data = request.get_json()
-
-    logger.info('Role permission put')
+    logger.info('Role permission has been changed.')
 
     db.delete_permissions_by_role_id(data['role_id'])
     for perm_id in data['permission_id']:
@@ -373,7 +356,6 @@ def role_permission_put():
 
 @app.route("/api/role_permissions", methods=['DELETE'])
 @login_required
-# @is_admin
 def role_permission_delete():
     """Function to delete permissions."""
     data = request.get_json()
@@ -395,7 +377,6 @@ def role_permission_delete():
 
 @app.route("/api/role_permissions", methods=['GET'])
 @login_required
-# @is_admin
 def role_permission_get():
     """Function which gets all permissions from database and all actual
        permissions for current role.
@@ -425,7 +406,6 @@ def role_permission_get():
 
 @app.route("/api/all_permissions", methods=['GET'])
 @login_required
-# @is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 
@@ -447,7 +427,6 @@ def get_all_permissions():
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
 @login_required
-# @is_admin
 def get_all_users():
     """Function, used to get all users.
        :return: list of users with id, first name, last name, email and role
@@ -483,10 +462,10 @@ def edit_page(page_id):
 
         :returns confirmation.
     """
-    if request.method == 'PUT':
+    if request.method == 'PUT' and request.get_json():
         data = request.get_json()
-        status_code = None
-        result = None
+        result = False
+        status_code = 404
         if db.get_page_by_id(data['id']):
             db.edit_page(page_id, data['title'], data['alias'],
                          data['description'], data['content'],
@@ -494,9 +473,6 @@ def edit_page(page_id):
                          data['is_enabled'])
             result = True
             status_code = 200
-        else:
-            result = False
-            status_code = 404
         return jsonify(result=result), status_code
 
 
@@ -506,7 +482,7 @@ def add_page():
     """This method adds new page to db."""
     result = None
     msg = None
-    if request.method == 'POST':
+    if request.method == 'POST' and request.get_json():
         data = request.get_json()
         if not db.get_page_by_alias(data['alias']):
             db.add_page(data['title'], data['alias'],

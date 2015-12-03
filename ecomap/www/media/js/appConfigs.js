@@ -148,7 +148,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       templateUrl: '/templates/register.html',
       controller: 'RegisterCtrl'
     });    
-    $urlRouterProvider.otherwise('error404');
+    $urlRouterProvider.otherwise('map');
 
 
     $authProvider.loginUrl = '/api/login';

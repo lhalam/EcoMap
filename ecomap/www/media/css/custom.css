@@ -632,3 +632,14 @@ input[type="checkbox"]{
 .addProblem{
   margin: 0;
 }
+
+.error-page-header{
+  font-size: 72px;
+  font-weight: 700;
+}
+
+.photos img{
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+}

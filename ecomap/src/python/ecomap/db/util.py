@@ -927,3 +927,14 @@ def get_problem_photos(problem_id):
                 """
         cursor.execute(query, (problem_id,))
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_owner(problem_id):
+    """Gets all photos posted by user to problem."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `user_id` FROM `problem` WHERE `id`= %s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchone()

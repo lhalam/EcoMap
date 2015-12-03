@@ -59,8 +59,9 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         $scope.password = {};
         form.$setUntouched();
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
+
       }, function errorCallback(responce) {
-        if (responce.status == 401) {
+        if (responce.status == 401 || responce.status == 400) {
           $scope.wrongOldPass = true;
         }
       });

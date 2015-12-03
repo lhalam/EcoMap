@@ -38,7 +38,7 @@ def get_id_problem_owner(problem_id):
     :return: id of problem owner
     """
     user_owner_id = db.get_problem_owner(problem_id)
-    return user_owner_id
+    return int(user_owner_id[0])
 
 
 def get_current_user_id(user_id):
@@ -49,13 +49,12 @@ def get_current_user_id(user_id):
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 RULEST_DICT = {':idUser': get_current_user_id,
-               ':page': 'get_pages',
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']
 
 MSG = {'forbidden': 'forbidden',
-       '404': 'resource 404',
+       '404': 'access is forbidden or resource not exists',
        'unknown_role': 'no role',
        'own': 'YOU HAVE ACCESS ONLY TO YOUR OWN %s',
        'warning': 'make this permission modifier = ANY!',
@@ -96,7 +95,7 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :param route: resource url extracted from db to compare with user request url.
     :return: access - dictionary with checking status and results.
     """
-    if ':' in route:
+    if ':' in str(route):
         pattern = route.split('/')[-1]
         dynamic_res_host = '/'.join(route.split('/')[:-1])
         request_res_arg = resource.split('/')[-1]
@@ -115,16 +114,14 @@ def check_dynamic_route(dct, access, role, route, resource, method):
                     else:
                         access['error'] = MSG['own'] % request_res_host
             else:
-                access['error'] = MSG['404']
+                access['error'] = 'else 404'
 
         elif '?' in resource and pattern in RULEST_DICT:
             access['status'] = MSG['ok']
         else:
             if not access['status'] == MSG['ok']:
-                access['error'] = MSG['forbidden']
-    else:
-        access['error'] = MSG['forbidden']
-    return access
+                access['error'] = None
+        return access
 
 
 def check_permissions(role, resource, method, dct):
@@ -149,7 +146,8 @@ def check_permissions(role, resource, method, dct):
                 check_dynamic_route(dct, access, role, route, resource, method)
     else:
         access['error'] = MSG['unknown_role']
-
+    if not access['status'] == MSG['ok']:
+        access['error'] = access['error'] or MSG['404']
     return access
 
 

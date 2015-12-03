@@ -7,14 +7,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       "url": "/api/problem_detailed_info/" + $state.params['id']
     }).then(function successCallback(response) {
       $rootScope.selectProblem = response.data[0][0];
-      console.log(response.data);
       $scope.photos = response.data[2];
       $rootScope.mapParams = {
         center: {
           latitude: $rootScope.selectProblem['latitude'],
           longitude: $rootScope.selectProblem['longitude']
         },
-        zoom: 17
+        zoom: 14
       };
     }, function errorCallback(error) {
       $state.go('error404');

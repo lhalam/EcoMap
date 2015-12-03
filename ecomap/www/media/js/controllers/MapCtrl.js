@@ -22,7 +22,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', '$rootScope'
           latitude: data.model.latitude,
           longitude: data.model.longitude
         },
-        zoom: 17
+        zoom: 14
       }
     };
     $scope.markers = [];

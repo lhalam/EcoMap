@@ -1,5 +1,6 @@
 """Module contains routes, used for problem table."""
 import json
+import hashlib
 import time
 import os
 
@@ -85,8 +86,7 @@ def post_problem():
         logger.info(data)
         valid = validator.problem_post(data)
         if valid['status']:
-            logger.debug('Checks if valid.')
-            logger.debug(valid)
+            logger.debug('Checks problem post validation. %s', valid)
             user_id = current_user.uid
             now = time.time()
             posted_date = int(now)
@@ -101,7 +101,7 @@ def post_problem():
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
                                          user_id)
-            logger.debug(last_id)
+            logger.debug('New problem post was created with id %s', last_id)
             response = jsonify(added_problem=data['title'],
                                problem_id=last_id)
         else:
@@ -148,22 +148,24 @@ def problem_photo(problem_id):
         :return: json with success if photo have been uploaded
     """
     response = jsonify(), 400
-
     extension = '.png'
-    static_url = 'uploads/problems/problem_%s/' % problem_id
+    static_url = '/uploads/problems/%s/' % problem_id
     f_path = os.environ['STATICROOT'] + static_url
     user_id = current_user.uid
+    now = time.time()*10000
+    unique_key = (int(now)+user_id)
+    hashed_name = hashlib.md5(str(unique_key))
+    f_name = '%s%s' % (hashed_name.hexdigest(), extension)
 
     if request.method == 'POST':
         problem_img = request.files['file']
-        user_f_name = request.form['name']
-        f_name = user_f_name[:-4] + '_problem_%s' % problem_id + extension
         photo_descr = request.form['description']
+
         if problem_img and validator.validate_image_file(problem_img):
             if not os.path.exists(f_path):
-                os.makedirs(os.path.dirname(f_path + f_name))
+                os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             problem_img.save(os.path.join(f_path, f_name))
-            img_path = static_url + f_name
+            img_path = '%s%s' % (static_url, f_name)
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
             response = json.dumps({'added_file': img_path})
         else:

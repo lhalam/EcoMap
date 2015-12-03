@@ -38,7 +38,7 @@ def get_id_problem_owner(problem_id):
     :return: id of problem owner
     """
     user_owner_id = db.get_problem_owner(problem_id)
-    return user_owner_id
+    return int(user_owner_id[0])
 
 
 def get_current_user_id(user_id):
@@ -49,13 +49,12 @@ def get_current_user_id(user_id):
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 RULEST_DICT = {':idUser': get_current_user_id,
-               ':page': 'get_pages',
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']
 
 MSG = {'forbidden': 'forbidden',
-       '404': 'resource 404',
+       '404': 'access is forbidden or resource not exists',
        'unknown_role': 'no role',
        'own': 'YOU HAVE ACCESS ONLY TO YOUR OWN %s',
        'warning': 'make this permission modifier = ANY!',
@@ -97,25 +96,17 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :return: access - dictionary with checking status and results.
     """
     if ':' in str(route):
-        logger.info('INSIDE ::: route %s' % route)
-
         pattern = route.split('/')[-1]
         dynamic_res_host = '/'.join(route.split('/')[:-1])
         request_res_arg = resource.split('/')[-1]
-        # request_res_host = '/'.join(resource.split('/')[:-1])
         request_res_host = '/'.join(resource.split('/')[:-1])
 
         if request_res_host == dynamic_res_host \
                 and pattern in RULEST_DICT:
-            logger.warning('INSIDE PATTERN____')
             owner_id = RULEST_DICT[pattern](request_res_arg)
             perms = dct[role][route]
             if method in perms:
-                logger.warning('INSIDE PERMS!!!!')
-                logger.debug(perms)
-                logger.debug(method)
                 if perms[method] == MODIFIERS[2]:
-                    logger.info('OLOLO')
                     access['status'] = MSG['ok']
                 if perms[method] == MODIFIERS[1]:
                     if current_user.uid == owner_id:
@@ -123,17 +114,14 @@ def check_dynamic_route(dct, access, role, route, resource, method):
                     else:
                         access['error'] = MSG['own'] % request_res_host
             else:
-                access['error'] = MSG['404']
+                access['error'] = 'else 404'
 
         elif '?' in resource and pattern in RULEST_DICT:
             access['status'] = MSG['ok']
         else:
             if not access['status'] == MSG['ok']:
-                access['error'] = MSG['forbidden']
-    # else:
-    #     logger.warning(" role = %s, route = %s, resource = %s" % (role, route, resource))
-    #     access['error'] = 'MAIN ELSE'
-    return access
+                access['error'] = None
+        return access
 
 
 def check_permissions(role, resource, method, dct):
@@ -158,7 +146,8 @@ def check_permissions(role, resource, method, dct):
                 check_dynamic_route(dct, access, role, route, resource, method)
     else:
         access['error'] = MSG['unknown_role']
-
+    if not access['status'] == MSG['ok']:
+        access['error'] = access['error'] or MSG['404']
     return access
 
 

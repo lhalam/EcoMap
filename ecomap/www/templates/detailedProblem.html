@@ -35,9 +35,7 @@
             <div>
                 <div ng-repeat="f in photos" ng-model="photos">
                     <div >
-                    <img ng-src="'/'+ f.url">
-                    <span class="text-content" ng-click="removePhoto(f, photos)">
-                        <span>видалити</span>
+                    <img ng-src="{{ f.url }}">
                     </span>
                     </div>
                 </div>

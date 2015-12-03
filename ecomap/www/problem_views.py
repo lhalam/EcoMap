@@ -66,7 +66,7 @@ def detailed_problem(problem_id):
                 'description': photo_data[1],
                 'user_id': photo_data[2]})
 
-    response = Response(json.dumps([[problems], activities, photos]),
+    response = Response(json.dumps([[problems], [activities], photos]),
                         mimetype='application/json')
     return response
 
@@ -152,7 +152,7 @@ def problem_photo(problem_id):
     static_url = '/uploads/problems/%s/' % problem_id
     f_path = os.environ['STATICROOT'] + static_url
     user_id = current_user.uid
-    now = time.time()*10000
+    now = time.time()*100000
     unique_key = (int(now)+user_id)
     hashed_name = hashlib.md5(str(unique_key))
     f_name = '%s%s' % (hashed_name.hexdigest(), extension)

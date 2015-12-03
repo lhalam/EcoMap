@@ -40,7 +40,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
       new_pass: "",
       new_pass_confirm: ""
     };
-    $scope.changePassword = function(passwd) {
+    $scope.changePassword = function(passwd, form) {
       if(!passwd.old_pass || !passwd.new_pass || !passwd.new_pass_confirm){
         return;
       }
@@ -57,9 +57,11 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         }
       }).then(function successCallback(responce) {
         $scope.password = {};
+        form.$setUntouched();
         toaster.pop('success', 'Пароль', 'Пароль було успішно змінено!');
+
       }, function errorCallback(responce) {
-        if (responce.status == 401) {
+        if (responce.status == 401 || responce.status == 400) {
           $scope.wrongOldPass = true;
         }
       });

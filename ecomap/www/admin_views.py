@@ -1,12 +1,13 @@
 """Module contains routes, used for admin page."""
 import json
 
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, session
 from flask_login import login_required
 
 from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
+from ecomap.permission import permission_control
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -33,6 +34,7 @@ def resource_post():
         added_res_id = db.get_resource_id(data['resource_name'])
         response = jsonify(added_resource=data['resource_name'],
                            resource_id=added_res_id[0])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -61,6 +63,7 @@ def resource_put():
                               data['resource_id'])
         response = jsonify(status='success',
                            edited=data['resource_name'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -87,6 +90,7 @@ def resource_delete():
             db.delete_resource_by_id(data['resource_id'])
             response = jsonify(status='success',
                                deleted_resource=data['resource_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!'), 400
     else:
@@ -132,6 +136,7 @@ def role_post():
 
         response = jsonify(added_role=data['role_name'],
                            added_role_id=added_role_id[0])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -159,6 +164,7 @@ def role_put():
         db.edit_role(data['role_name'], data['role_id'])
         response = jsonify(status='success',
                            edited=data['role_name'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -185,6 +191,7 @@ def role_delete():
             db.delete_role_by_id(data['role_id'])
             response = jsonify(msg='success',
                                    deleted_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!')
     else:
@@ -231,6 +238,7 @@ def permission_post():
                                                  data['modifier'])
             response = jsonify(added_permission_for=data['description'],
                                permission_id=added_perm_id[0])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -258,6 +266,7 @@ def permission_put():
                                data['description'])
             response = jsonify(status='success',
                                edited_perm_id=data['permission_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -285,6 +294,7 @@ def permission_delete():
                 db.delete_permission_by_id(data['permission_id'])
                 response = jsonify(status='success',
                                    deleted_permission=data['permission_id'])
+                session['access_control'] = permission_control.reload_dct()
             else:
                 response = jsonify(error='Cannot delete!')
         else:
@@ -328,6 +338,7 @@ def role_permission_post():
         db.add_role_permission(data['role_id'],
                                data['permission_id'])
         response = jsonify(added_role_permission_for_role=data['role_id'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -351,6 +362,7 @@ def role_permission_put():
     for perm_id in data['permission_id']:
         db.add_role_permission(data['role_id'], perm_id)
     response = jsonify(msg='edited permission')
+    session['access_control'] = permission_control.reload_dct()
     return response
 
 
@@ -367,6 +379,7 @@ def role_permission_delete():
             db.delete_role_by_id(data['role_id'])
             response = jsonify(status='success',
                                deleted_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!')
     else:
@@ -441,6 +454,7 @@ def get_all_users():
                                 data['user_id'])
             response = jsonify(msg='success',
                                added_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400

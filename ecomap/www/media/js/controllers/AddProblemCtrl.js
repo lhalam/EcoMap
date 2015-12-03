@@ -1,4 +1,4 @@
-app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady',
+app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady) {
     /* Map & markers section */
     $scope.mapParams = {

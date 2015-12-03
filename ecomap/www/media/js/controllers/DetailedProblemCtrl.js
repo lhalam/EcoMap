@@ -1,4 +1,4 @@
-app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
+app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
   function($scope, $rootScope, $state, $http, toaster) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];

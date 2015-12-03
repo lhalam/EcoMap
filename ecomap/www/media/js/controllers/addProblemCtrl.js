@@ -55,7 +55,9 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     "title": "",
     "type": "",
     "latitude": "",
-    "longitude": ""
+    "longitude": "",
+    "content": "",
+    "proposal":""
     };
 
 
@@ -247,9 +249,6 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     file.upload.then(function (response) {
       $timeout(function () {
         file.result = response.data;
-        //console.log(response);
-        console.log(response.data);
-        //console.log(response.data.problem_id);
         toaster.pop('success', 'Фото', 'Фото було успішно додано!');
       });
     }, function (response) {

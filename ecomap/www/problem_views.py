@@ -39,6 +39,7 @@ def detailed_problem(problem_id):
     """
     problem_tuple = db.get_problem_by_id(problem_id)
     activity_tuple = db.get_activity_by_problem_id(problem_id)
+    photos = db.get_problem_photos(problem_id)
     parsed_json = []
     problem_info = []
     activity_info = []
@@ -60,6 +61,13 @@ def detailed_problem(problem_id):
             'created_date': activity_tuple[0], 'problem_id': activity_tuple[1],
             'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
         })
+    if photos:
+        for photo_data in photos:
+            logger.warning(photos)
+            photo_info.append({
+                'url': photo_data[0], 'description': photo_data[1],
+                'user_id': photo_data[2]
+            })
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -151,10 +159,8 @@ def problem_photo(problem_id):
     if request.method == 'POST':
         problem_img = request.files['file']
         user_f_name = request.form['name']
-        f_name = user_f_name[0] + '_problem_%s' % problem_id + extension
-        logger.warning(f_name)
+        f_name = user_f_name[:-4] + '_problem_%s' % problem_id + extension
         photo_descr = request.form['description']
-        logger.warning(photo_descr)
         if problem_img and validator.validate_image_file(problem_img):
             if not os.path.exists(f_path):
                 os.makedirs(os.path.dirname(f_path + f_name))

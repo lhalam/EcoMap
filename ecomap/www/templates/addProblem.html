@@ -84,7 +84,6 @@
                             <div ng-messages-include="/templates/error_msgs.html"></div>
                         </div>
                     </div>
-                <button class="btn btn-primary fl-right" type="submit" >Додати оповіщення</button>
 
                 <button class="btn btn-primary fl-right" type="submit" ng-click="submitted=true">Додати проблему</button>
 
@@ -100,7 +99,7 @@
                      ngf-max-size="5MB" ngf-keep="'distinct'"
                      ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
                      ngf-multiple="true" ngf-capture="'camera'"
-                     ngf-change="check(uploadProblemPhoto)">Додати фото +</div>
+                     ngf-change="check(uploadProblemPhoto)">Оберіть фото</div>
 
                 <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
                 <div ng-show="validationStatus">{{ arrayValidation.len }}</div>

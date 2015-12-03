@@ -239,7 +239,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       toaster.pop('warning', 'Фото', 'Фото видалено');
     };
     $scope.arrayUpload = function(photos) {
-      angular.forEach(photos, function(key,value){
+      angular.forEach(photos, function(value, key){
         $scope.uploadPic(value);
       });
       $state.go('map');

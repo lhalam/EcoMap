@@ -1,8 +1,7 @@
 """Module contains routes, used for admin page."""
-import functools
 import json
 
-from flask import request, jsonify, Response, g, abort
+from flask import request, jsonify, Response
 from flask_login import login_required
 
 from ecomap import validator

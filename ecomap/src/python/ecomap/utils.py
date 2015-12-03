@@ -1,3 +1,4 @@
+"""Module contains usefull functions."""
 import logging
 import logging.config
 import os
@@ -8,6 +9,9 @@ CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 
 
 def random_password(length):
+    """Generates randow string. Contains lower- and uppercase letters.
+       :params: length - length of string
+       :return: string"""
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
 

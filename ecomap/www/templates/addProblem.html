@@ -45,7 +45,6 @@
                     <div class="row">
                         <div class="form-group col-lg-6">
                           <button type="button" class="btn btn-default form-control" ng-click="locateUser()"><i class="fa fa-map-marker"></i> Знайти мене</button>
-                          <!-- <input type='button' value='Знайти мене' class="btn btn-default form-control" ng-click="locateUser()"> -->
                         </div>
                     </div>
 
@@ -57,8 +56,8 @@
                         </div>
                     </div>
 
-                    <div class="form-group addProblem" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
-                        <label for="problem_type_id" class="control-label">Тип проблеми</label>
+                    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
+                        <label for="problem_type_id"  class="control-label">Тип проблеми</label>
                         <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
                              class="form-control" required>
                             <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
@@ -80,14 +79,14 @@
 
                     <div class="form-group addProblem" ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
                         <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
+                        <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-model="newProblem.proposal" required></textarea>
                         <div class="help-block" ng-messages="addProblemForm.proposal.$error" ng-show="addProblemForm.proposal.$touched || submitted">
                             <div ng-messages-include="/templates/error_msgs.html"></div>
                         </div>
-                        <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control"
-                                  ng-maxlength="255" ng-minlength="2"
-                                  ng-model="newProblem.proposal"></textarea>
                     </div>
                 <button class="btn btn-primary fl-right" type="submit" >Додати оповіщення</button>
+
+                <button class="btn btn-primary fl-right" type="submit" ng-click="submitted=true">Додати проблему</button>
 
                 <div class="clear"></div>
             </form>
@@ -105,8 +104,13 @@
 
                 <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
                 <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
-                <div class="thumbs">
-
+                <div class="thumbs"
+                     ngf-drop="" name="file" ng-model="photos"
+                     ngf-pattern="'image/*'" accept="image/*"
+                     ngf-max-size="5MB" ngf-keep="'distinct'"
+                     ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png', ratio: '1:1', centerCrop: true}"
+                     ngf-multiple="true"
+                     ngf-change="check(uploadProblemPhoto)">
                     <div ng-repeat="f in photos" class="thumb-box">
 
                         <div class="thumb">

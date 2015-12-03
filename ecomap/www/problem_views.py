@@ -129,7 +129,7 @@ def get_user_problems(user_id):
                               'logitude': problem[3],
                               'problem_type_id': problem[4],
                               'status': problem[5],
-                              'date': problem[6],
+                              'date': problem[6] * 1000,
                               'severity': problem[8],
                               'is_enabled': problem[7]})
     return Response(json.dumps(problems_list), mimetype='application/json')

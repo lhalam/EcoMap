@@ -55,9 +55,9 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
 
   $scope.editRoleObj = {};
   $scope.editRole = function(role) {
-    if (!role.name) {
-      return;
-    }
+    // if (!$scope.role.name) {
+    //   return;
+    // }
     $http({
       method: "PUT",
       url: "/api/roles",

@@ -3,8 +3,6 @@
 """
 import imghdr
 import re
-import logging
-logger = logging.getLogger('validatro')
 
 from ecomap.db import util as db
 
@@ -29,8 +27,6 @@ LENGTHS = {'email': [5, 100],
            'description': [2, 255],
            'title': [2, 255],
            'content': [2, 255],
-           'latitude': [2, 255],
-           'longitude': [2, 255],
            'problem_type_id': [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],

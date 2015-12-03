@@ -13,7 +13,7 @@ from ConfigParser import SafeConfigParser
 from ecomap.utils import Singleton
 
 REFRESH_TIME = 900
-PASSWORD = 'password'
+PASSWORD = ['password', 'facebook_secret']
 CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
 
 
@@ -53,7 +53,7 @@ class Config(object):
         temp_config = {}
         for section in sections:
             for (key, value) in config.items(section):
-                if value and key != PASSWORD:
+                if value and key not in PASSWORD:
                     try:
                         value = eval(value)
                     except NameError:

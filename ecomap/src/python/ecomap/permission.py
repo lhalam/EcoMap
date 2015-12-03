@@ -96,18 +96,26 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :param route: resource url extracted from db to compare with user request url.
     :return: access - dictionary with checking status and results.
     """
-    if ':' in route:
+    if ':' in str(route):
+        logger.info('INSIDE ::: route %s' % route)
+
         pattern = route.split('/')[-1]
         dynamic_res_host = '/'.join(route.split('/')[:-1])
         request_res_arg = resource.split('/')[-1]
+        # request_res_host = '/'.join(resource.split('/')[:-1])
         request_res_host = '/'.join(resource.split('/')[:-1])
 
         if request_res_host == dynamic_res_host \
                 and pattern in RULEST_DICT:
+            logger.warning('INSIDE PATTERN____')
             owner_id = RULEST_DICT[pattern](request_res_arg)
             perms = dct[role][route]
             if method in perms:
+                logger.warning('INSIDE PERMS!!!!')
+                logger.debug(perms)
+                logger.debug(method)
                 if perms[method] == MODIFIERS[2]:
+                    logger.info('OLOLO')
                     access['status'] = MSG['ok']
                 if perms[method] == MODIFIERS[1]:
                     if current_user.uid == owner_id:
@@ -122,8 +130,9 @@ def check_dynamic_route(dct, access, role, route, resource, method):
         else:
             if not access['status'] == MSG['ok']:
                 access['error'] = MSG['forbidden']
-    else:
-        access['error'] = MSG['forbidden']
+    # else:
+    #     logger.warning(" role = %s, route = %s, resource = %s" % (role, route, resource))
+    #     access['error'] = 'MAIN ELSE'
     return access
 
 

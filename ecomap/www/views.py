@@ -38,7 +38,7 @@ def check_access():
     Gets dynamic user info(user role, url, request method)from request context.
     :return: nested function returns true or 403
     """
-    logger.info(session)
+    # logger.info(session)
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
     # session['access_control'] = permission_control.reload_dct()

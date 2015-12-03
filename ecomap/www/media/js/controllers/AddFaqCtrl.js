@@ -1,10 +1,7 @@
 app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout', function($scope, $state, $http, toaster, $timeout) {
   
   $scope.page = {
-    // "title": null,
-    // "alias": null,
     "description": "",
-    // "content": null,
     "meta_keywords": "",
     "meta_description": ""
   };

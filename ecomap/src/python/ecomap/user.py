@@ -5,7 +5,7 @@ from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
 from ecomap.db import util
-from ecomap.email_sender import send_email
+#from ecomap.email_sender import send_email
 from ecomap.app import app
 from ecomap.utils import random_password
 
@@ -159,9 +159,12 @@ def register(first_name, last_name, email, password):
     """
     salted_pass = hash_pass(password)
     role_id = util.get_role_id('user')
+    register_user_id = util.insert_user(first_name, last_name,
+                                        email, salted_pass)
+    if util.insert_user:
+        util.add_users_role(register_user_id, role_id[0])
     # send_email(first_name, last_name, email, password)
-    return util.insert_user(first_name, last_name, email, salted_pass,
-                            role_id[0])
+    return get_user_by_id(register_user_id)
 
 
 def facebook_register(first_name, last_name, email, provider, uid):

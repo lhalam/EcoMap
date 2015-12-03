@@ -5,12 +5,10 @@ app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     $http({
       "method": "GET",
       "url": "/api/problem_detailed_info/" + $state.params['id']
-    }).then(function successCallback(data) {
-      $rootScope.selectProblem = data.data[0][0];
-      console.log(data.data);
-      $rootScope.photos = data.data[0][2];
-      console.log($rootScope.selectProblem);
-      console.log($rootScope.photos);
+    }).then(function successCallback(response) {
+      $rootScope.selectProblem = response.data[0][0];
+      console.log(response.data);
+      $scope.photos = response.data[2];
       $rootScope.mapParams = {
         center: {
           latitude: $rootScope.selectProblem['latitude'],
@@ -18,7 +16,6 @@ app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         },
         zoom: 17
       };
-      console.log($rootScope.selectProblem)
     }, function errorCallback(error) {});
 
     $scope.close = function() {

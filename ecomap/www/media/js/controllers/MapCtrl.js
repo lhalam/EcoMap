@@ -1,8 +1,8 @@
 app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope','uiGmapIsReady',"$state",
   function($scope, $http, uiGmapGoogleMapApi,$rootScope, uiGmapIsReady,$state) {
 
- if(!$rootScope.mapParams){
-   $rootScope.mapParams = {
+ if(!$scope.mapParams){
+   $scope.mapParams = {
     center: {
       latitude: 49.357826, 
       longitude: 31.518239
@@ -11,16 +11,16 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
   };
  }
 
-  $rootScope.getMapParams = function() {
-    return $rootScope.mapParams;
+  $scope.getMapParams = function() {
+    return $scope.mapParams;
   };
 
-  $rootScope.zoomMarker = function(data) {
+  $scope.zoomMarker = function(data) {
     $state.go("detailedProblem",{
       'id':data.model.problem_id
     });
     console.log(data);
-    $rootScope.mapParams = {
+    $scope.mapParams = {
       center: {
         latitude: data.model.latitude,
         longitude: data.model.longitude

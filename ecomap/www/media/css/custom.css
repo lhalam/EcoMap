@@ -628,3 +628,7 @@ input[type="checkbox"]{
 .register.panel-content{
   padding: 20px;
 }
+
+.addProblem{
+  margin: 0;
+}

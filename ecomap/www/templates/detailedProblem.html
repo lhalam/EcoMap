@@ -30,7 +30,20 @@
       </div>
       <div class="row photos">
         <div class="col-md-12"><strong>Фото:</strong></div>
-        <div class="col-md-12 showBlock">Not implemented yet!!!
+        <div class="col-md-12 showBlock" ng-repeat="f in photos">Not implemented yet!!!
+
+            <div>
+                <div ng-repeat="f in photos" ng-model="photos">
+                    <div >
+                    <img ng-src="'/'+ f.url">
+                    <span class="text-content" ng-click="removePhoto(f, photos)">
+                        <span>видалити</span>
+                    </span>
+                    </div>
+                </div>
+                </div>
+
+
         </div>
       </div>
     </uib-tab>

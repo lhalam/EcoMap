@@ -1,12 +1,16 @@
 app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
   function($scope, $rootScope, $state, $http, toaster) {
-    $scope.maxSeverity = [1, 2, 3, 4, 5]
+    $scope.photos = [];
+    $scope.maxSeverity = [1, 2, 3, 4, 5];
     $http({
       "method": "GET",
       "url": "/api/problem_detailed_info/" + $state.params['id']
     }).then(function successCallback(data) {
-      $rootScope.selectProblem = data.data[0][0]
-      console.log($rootScope.selectProblem)
+      $rootScope.selectProblem = data.data[0][0];
+      console.log(data.data);
+      $rootScope.photos = data.data[0][2];
+      console.log($rootScope.selectProblem);
+      console.log($rootScope.photos);
       $rootScope.mapParams = {
         center: {
           latitude: $rootScope.selectProblem['latitude'],
@@ -15,11 +19,11 @@ app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         zoom: 17
       };
       console.log($rootScope.selectProblem)
-    }, function errorCallback(error) {})
+    }, function errorCallback(error) {});
 
     $scope.close = function() {
       $state.go('map')
-    }
+    };
 
     $scope.getStatus = function(status) {
       var statuses = {
@@ -37,7 +41,7 @@ app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       5: 'Загрози біорізноманіттю',
       6: 'Браконьєрство',
       7: 'Інші проблеми'
-    }
+    };
     return types[type_id];
   };
   }

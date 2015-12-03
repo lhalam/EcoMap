@@ -55,9 +55,13 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     "title": "",
     "type": "",
     "latitude": "",
-    "longitude": ""
+    "longitude": "",
+    "content": "",
+    "proposal":""
     };
 
+
+    $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
 
     $scope.marker = {id: Date.now(),
@@ -114,8 +118,6 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
             }
         };
 
-
-
         $scope.$watchCollection("marker.coords", function (newVal, oldVal) {
             if (_.isEqual(newVal, oldVal)) {
                 return;
@@ -130,7 +132,6 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.createMarker();       
     };
 
-
     var options = {
         enableHighAccuracy: true,
         timeout: 3000,
@@ -140,8 +141,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
     function error(err) {
         console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
-
+    }
 
     $scope.locateUser = function() {
         navigator.geolocation.getCurrentPosition(getUserPosition, error, options);
@@ -166,7 +166,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
     };
 
-    $scope.addProblem = function(newProblem, form) {
+    $scope.addProblem = function(newProblem, form, photos) {
         $scope.submitted = true;
 
         if(form.$invalid){
@@ -188,14 +188,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
                 $scope.createdProblemId = response.data.problem_id;
                 toaster.pop('info', 'Фото', 'Додайте фотографіі до' +
                     ' вашого оповіщення!');
-                console.log($scope.markers);
-                console.log($scope.markers[$scope.markers.length-1]);
-                console.log(response);
-                console.log(response.data);
-                console.log($scope.createdProblemId);
-                //console.log(response.data.last_id);
-                //$scope.markers.push(newProblem);
-                //$state.go('map');
+                //$scope.arrayUpload($scope.photos,  $scope.createdProblemId )
             }, function errorCallback() {
                 toaster.pop('error', 'Помилка при додаванні', 'При спробі' +
                     ' додавання проблеми виникла помилка!');
@@ -204,13 +197,10 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
 
 
     //PHOTOS CTRL
-      $scope.photos = [];
-  $scope.validationStatus = 0;
 
-  $scope.check = function(formFile) {
-    console.log('eee')
-    console.log($scope.photos)
-      $scope.validationStatus = 0;
+    $scope.photos = [];
+    $scope.check = function(formFile) {
+    $scope.validationStatus = 0;
 
     //$scope.arrayValidation = {
     //  'len':$scope.photos.length,
@@ -228,26 +218,22 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
   };
 
 
-  $scope.removePhoto = function(photo){
-    var index = $scope.photos.indexOf(photo);
-      console.log($scope.photos);
-      console.log($scope.photos.length);
-    $scope.photos.splice(index, 1);
+  $scope.removePhoto = function(photo, photos){
+    var index = photos.indexOf(photo);
+    photos.splice(index, 1);
     toaster.pop('warning', 'Фото', 'Фото видалено');
   };
 
   $scope.arrayUpload = function (photos) {
-  console.log(photos);
+    console.log(photos);
     angular.forEach(photos, $scope.uploadPic);
-  console.log(photos)
+    console.log(photos);
       $state.go('map');
   };
 
   $scope.uploadPic = function(file) {
-    console.log(file);
-    console.log(file.description);
     file.upload = Upload.upload({
-      url: '/api/user_avatar',
+      url: '/api/photo/' + $scope.createdProblemId,
       method: "POST",
       cache: false,
       headers: {
@@ -256,16 +242,13 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       data: {
         file: file,
         name: file.name,
-        description: file.description
+        description: file.description || ''
       }
     });
 
     file.upload.then(function (response) {
       $timeout(function () {
         file.result = response.data;
-        console.log(response);
-        console.log(response.data);
-        console.log(response.data.last_id);
         toaster.pop('success', 'Фото', 'Фото було успішно додано!');
       });
     }, function (response) {

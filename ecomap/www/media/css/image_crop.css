@@ -144,6 +144,7 @@ span.image-err{
 }
 
 .thumb {
+    overflow: hidden;
     z-index: 2;
     width: 150px;
     height: 150px;

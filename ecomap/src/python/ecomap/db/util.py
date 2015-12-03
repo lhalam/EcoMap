@@ -879,3 +879,34 @@ def get_id_problem_owner(problem_id):
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def add_problem_photo(problem_id, photo_url, photo_descr, user_id):
+    """Adds a link for added problem photo into db.
+    :param problem_id:
+    :param photo_url:
+    :param photo_descr:
+    :param user_id:
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """ INSERT INTO `photo`
+                    (`name`, `description`, `problem_id`, user_id)
+                    VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (photo_url, photo_descr, problem_id, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_photos(problem_id):
+    """Gets all photos posted by user to problem."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `name`, `description`, `user_id`
+                   FROM `photo` WHERE `problem_id`=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchall()

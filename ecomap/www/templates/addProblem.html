@@ -15,25 +15,21 @@
         <section id="two" resizable r-directions="['left']" r-flex="true">
 
           <uib-tabset justified="true">
-            <uib-tab heading="Опис">
-                <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm)"
-                      class="page-edit-form" novalidate enctype="multipart/form-data">
+            <uib-tab heading="Опис" ng-show="!createdProblemId">
+                <form name="addProblemForm" ng-submit="addProblem(newProblem, addProblemForm, photos)"
+                      class="page-edit-form" novalidate enctype="multipart/form-data" ng-show="!createdProblemId">
                     <div class="row">
                         <div class="form-group col-lg-12">
                           <label for="" class="control-label">Пошук за координатами</label>
                         </div>
-
-
                         <div class="form-group col-lg-4" ng-class="{ 'has-error': (addProblemForm.latitude.$touched || submitted) && addProblemForm.latitude.$invalid}">
                             <input type="text" placeholder='Довгота' class="form-control" name="latitude" id="latitude"
-                                   ng-model="newProblem.latitude" ng-max-length="255" required>
+                                   ng-model="newProblem.latitude" ng-maxlength="255"  required>
                             <div class="help-block" ng-messages="addProblemForm.latitude.$error"
                                   ng-show="addProblemForm.latitude.$touched || submitted">
                                 <p ng-messages-include="/templates/error_msgs.html"></p>
                             </div>
-                       </div>
-
-
+                        </div>
                         <div class="form-group col-lg-4" ng-class="{ 'has-error': (addProblemForm.longitude.$touched || submitted) && addProblemForm.longitude.$invalid}">
                             <input type="text" placeholder='Широта' class="form-control" name="longitude" id="longitude"
                                    ng-model="newProblem.longitude" ng-max-length="255" required>
@@ -52,9 +48,9 @@
                         </div>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
+                    <div class="form-group addProblem" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
                         <label for="title" class="control-label">Заголовок проблеми</label>
-                        <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-max-length="255" required>
+                        <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-maxlength="255" ng-minlength="2" required>
                         <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
                             <div ng-messages-include="/templates/error_msgs.html"></div>
                         </div>
@@ -71,17 +67,19 @@
                         </div>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
+                    <div class="form-group addProblem" ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
                         <label for="problemContent" class="control-label">Опис проблеми</label>
-                        <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control" ng-model="newProblem.content" required></textarea>
+                        <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control"
+                                  ng-maxlength="255" ng-minlength="2"
+                                  ng-model="newProblem.content"></textarea>
                         <div class="help-block" ng-messages="addProblemForm.content.$error" ng-show="addProblemForm.content.$touched || submitted">
                             <div ng-messages-include="/templates/error_msgs.html"></div>
                         </div>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
+                    <div class="form-group addProblem" ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
                         <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
-                        <textarea name="proposal"  id="proposal" cols="30" rows="5" class="form-control" ng-model="newProblem.proposal" required></textarea>
+                        <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-model="newProblem.proposal" required></textarea>
                         <div class="help-block" ng-messages="addProblemForm.proposal.$error" ng-show="addProblemForm.proposal.$touched || submitted">
                             <div ng-messages-include="/templates/error_msgs.html"></div>
                         </div>
@@ -93,16 +91,17 @@
             </form>
         </uib-tab>
 
-        <uib-tab heading="Додати фото" >
-            <div ng-controller="addProblemCtrl">
-            <form name="uploadProblemPhoto" class="uploadPhoto" >
+        <uib-tab heading="Додати фото" id="addPhotoTab">
+            <div>
+            <form name="uploadProblemPhoto" class="uploadPhoto">
                 <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
                      ngf-pattern="'image/*'" accept="image/*"
                      ngf-max-size="5MB" ngf-keep="'distinct'"
-                     ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png', ratio: '1:1', centerCrop: true}"
-                     ngf-multiple="true"
-                     ngf-change="check(uploadProblemPhoto)">Додати фото +</div>
-                <div ng-show="photos.length==0">оберіть фото в форматі * макс розмір 5мб</div>
+                     ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
+                     ngf-multiple="true" ngf-capture="'camera'"
+                     ngf-change="check(uploadProblemPhoto)">Оберіть фото</div>
+
+                <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
                 <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
                 <div class="thumbs"
                      ngf-drop="" name="file" ng-model="photos"
@@ -112,9 +111,10 @@
                      ngf-multiple="true"
                      ngf-change="check(uploadProblemPhoto)">
                     <div ng-repeat="f in photos" class="thumb-box">
+
                         <div class="thumb">
                         <img ngf-thumbnail="f">
-                        <span class="text-content" ng-click="removePhoto(f)">
+                        <span class="text-content" ng-click="removePhoto(f, photos)">
                             <span>видалити</span>
                         </span>
                         </div>
@@ -125,9 +125,9 @@
                     </div>
                 </div>
                 <button class="btn btn-success photo-btn"
-                        ng-disabled=" photos.length==0"
+                        ng-disabled=" photos.length==0 || !createdProblemId"
                         ng-show="photos.length>0"
-                        ng-click="arrayUpload(photos)">Завантажити</button>
+                        ng-click="arrayUpload(photos)">Завантажити фото</button>
                 <div class="btn btn-info photo-btn remove" ng-click="photos = []"
                      ng-show="photos.length>1">Відміна</div>
             </form>

@@ -15,7 +15,7 @@
         name="file" accept="image/*" ngf-pattern="'image/*'"
         ngf-max-size="5MB" ngf-change="showCanvas(uploadPhoto)" required="">
         Оберіть фото</button>
-        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити фото</button>
+        <button class="btn btn-danger photo-btn remove" ng-show="deleteButton" ng-click="setDefaultPhoto()">Видалити існуюче фото</button>
         <span class="image-info">*розмір фотографії не повинен перевищувати 5Mb</span>
         <div class="cropArea" ngf-drop
           ng-model="picFile" ngf-pattern="image/*">

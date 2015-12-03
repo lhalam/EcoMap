@@ -102,7 +102,6 @@ def post_problem():
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
                                          user_id)
-            logger.debug(last_id)
             response = jsonify(added_problem=data['title'],
                                problem_id=last_id)
         else:

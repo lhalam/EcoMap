@@ -93,7 +93,7 @@ def facebook_insert(first_name, last_name, email, password, role_id,
 
 
 @retry_query(tries=3, delay=1)
-def insert_user(first_name, last_name, email, password, role_id):
+def insert_user(first_name, last_name, email, password):
     """Adds new user into db.
     :params: first_name - first name of user
              last_name - last name of user
@@ -101,7 +101,6 @@ def insert_user(first_name, last_name, email, password, role_id):
              password - hashed password of user
     """
     with db_pool().manager() as conn:
-        # Separate on 2 function
         conn.autocommit(True)
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
@@ -109,11 +108,25 @@ def insert_user(first_name, last_name, email, password, role_id):
                                        `email`,
                                        `password`)
                    VALUES (%s, %s, %s, %s);
-                   INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password,
-                               role_id))
+        cursor.execute(query, (first_name, last_name, email, password))
+        registered_user_id = cursor.lastrowid
+        return registered_user_id
+
+
+@retry_query(tries=3, delay=1)
+def add_users_role(user_id, role_id):
+    """Adds to recenty registered user role "User".
+    :params: user_id - id of recenty created user
+             role_id - default is "User"
+    """
+    with db_pool().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `user_role` (`user_id`, `role_id`)
+                   VALUES (%s, %s);
+                """
+        cursor.execute(query, (user_id, role_id))
 
 
 @retry_query(tries=3, delay=1)

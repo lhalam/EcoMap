@@ -16,7 +16,9 @@ app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         },
         zoom: 17
       };
-    }, function errorCallback(error) {});
+    }, function errorCallback(error) {
+      $state.go('error404');
+    });
 
     $scope.close = function() {
       $state.go('map')

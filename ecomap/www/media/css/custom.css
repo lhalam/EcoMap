@@ -676,3 +676,8 @@ input[type="checkbox"]{
 .overflow-on{
   overflow-y: auto; 
 }
+
+.toast-top-right{
+  top:60px !important;
+  right:12px;
+}

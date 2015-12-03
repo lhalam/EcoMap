@@ -179,10 +179,13 @@ def facebook_register(first_name, last_name, email, provider, uid):
     if not user:
         salted_pass = hash_pass(random_password(10))
         role_id = util.get_role_id('user')
-        util.facebook_insert(first_name, last_name, email,
-                             salted_pass, role_id[0],
-                             provider, uid)
-        user = get_user_by_oauth_id(uid)
+        register_user_id = util.facebook_insert(first_name,
+                                                last_name, email, 
+                                                salted_pass,
+                                                provider, uid)
+        if util.facebook_insert:
+            util.add_users_role(register_user_id, role_id[0])
+            user = get_user_by_oauth_id(uid)
     else:
         util.add_oauth_to_user(user.uid, provider, uid)
     # send_email(first_name, last_name, email, password)

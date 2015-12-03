@@ -1,18 +1,24 @@
-app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsReady',function($scope, $http, uiGmapGoogleMapApi, uiGmapIsReady) {
+app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope','uiGmapIsReady',"$state",
+  function($scope, $http, uiGmapGoogleMapApi,$rootScope, uiGmapIsReady,$state) {
 
-  $scope.mapParams = {
+ if(!$scope.mapParams){
+   $scope.mapParams = {
     center: {
       latitude: 49.357826, 
       longitude: 31.518239
     },
     zoom: 6
   };
+ }
 
   $scope.getMapParams = function() {
     return $scope.mapParams;
   };
 
   $scope.zoomMarker = function(data) {
+    $state.go("detailedProblem",{
+      'id':data.model.problem_id
+    });
     console.log(data);
     $scope.mapParams = {
       center: {
@@ -34,13 +40,13 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi', 'uiGmapIsRea
         $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
       });
     }, function errorCallback(error) {});
-  }
+  };
 
   $scope.loadProblems();
-  
+
   uiGmapIsReady.promise()
     .then(function(instances) {
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
-}])
+}]);

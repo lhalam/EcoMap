@@ -527,30 +527,47 @@ input[type="checkbox"]{
   width: 1.3em;
   height: 1.8em;
 }
+
 .det-problem-modal .title{
   margin-top: 0px;
   margin-bottom: 30px;
 }
 
-.det-problem-modal .general{
+.det-problem-modal .general,
+.problemBlock .general{
   background-color: #eee;
-  padding: 10px;
+  padding: 15px;
   margin-bottom: 10px;
 }
 
-.det-problem-modal .rate{
+.det-problem-modal .rate,
+.problemBlock .rate {
   float: left;
+  font-size: 18px;
 }
 
-.det-problem-modal .solution{
+.det-problem-modal .solution,
+.problemBlock .solution {
   float: right;
+  font-size: 18px;
 }
 
+.solved{
+  color: #008800;
+}
+
+.unsolved{
+  color: #880000;
+}
 
 .det-problem-modal .problem-type,
 .det-problem-modal .description,
 .det-problem-modal .proposal,
-.det-problem-modal .photos{
+.det-problem-modal .photos, 
+.problemBlock .problem-type,
+.problemBlock .description,
+.problemBlock .proposal,
+.problemBlock .photos{
   padding: 10px;
 }
 
@@ -558,8 +575,8 @@ input[type="checkbox"]{
   position: absolute;
   left: 0;
   right: 0;
-  -webkit-transition:all .3s ease-in-out;
-  transition:all .3s ease-in-out;
+  -webkit-transition:all .2s ease-in-out;
+  transition:all .2s ease-in-out;
 }
 
 [ui-view].ng-enter {
@@ -585,4 +602,33 @@ input[type="checkbox"]{
   width: 100%;
   background-color: rgba(100,100,100,0.1);
   z-index: 99999999;
+}
+.problemBlock{
+  position: absolute;
+  top:50px;
+  right: 0px;
+  height: 100vh;
+  background-color: #fff;
+}
+.severity{
+  position: absolute;
+  top:0.1em;
+  left: -2em;
+}
+.severity li{
+  list-style: none;
+  display: inline;
+  margin-right: 0.1em;
+}
+.selectSeverity{
+  color: red;
+}
+
+.login.panel-content,
+.register.panel-content{
+  padding: 20px;
+}
+
+.addProblem{
+  margin: 0;
 }

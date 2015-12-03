@@ -28,8 +28,6 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-        # logger.info(g.user.role)
-        # logger.info(current_user)
     logger.info('current user is %s, %s', g.user.role, g.user)
 
 
@@ -43,8 +41,9 @@ def check_access():
     logger.info(session)
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
-    session['access_control'] = permission_control.reload_dct()
+    # session['access_control'] = permission_control.reload_dct()
     logger.info(session)
+    logger.debug(jsonify(session['access_control']))
     access_rules = session['access_control']
     route = '/' + '/'.join(request.url.split('/')[3:])
 
@@ -101,8 +100,8 @@ def get_faq(alias):
     """
     if request.method == 'GET':
         page = db.get_page_by_alias(alias)
-        status_code = None
-        result = None
+        result = []
+        status_code = 404
         if page:
             result = [{'id': page[0],
                        'title': page[1],
@@ -113,9 +112,6 @@ def get_faq(alias):
                        'meta_description': page[6],
                        'is_enabled': page[7]}]
             status_code = 200
-        else:
-            result = []
-            status_code = 404
         return Response(json.dumps(result), mimetype="application/json",
                         status=status_code)
 

@@ -13,8 +13,8 @@ from ecomap.db import util as db
 
 @app.route('/api/problems')
 def problems():
-    """
-    Function, used to get all problems.
+    """Handler for sending short data about all problem stored in db.
+    Used by Google Map instance
     :return: list of problems with id, title, latitude, longitude,
     problem type, status and date of creation
     """
@@ -32,43 +32,42 @@ def problems():
 
 @app.route('/api/problem_detailed_info/<int:problem_id>', methods=['GET'])
 def detailed_problem(problem_id):
-    """
-    This method returns json object with detailed problem data.
+    """This method returns json object with detailed problem data.
     :params problem_id - id of selected problem
     :return json with detailed info about problem
     """
-    problem_tuple = db.get_problem_by_id(problem_id)
-    activity_tuple = db.get_activity_by_problem_id(problem_id)
-    photos = db.get_problem_photos(problem_id)
-    parsed_json = []
-    problem_info = []
-    activity_info = []
-    photo_info = []
-    parsed_json.append(problem_info)
-    parsed_json.append(activity_info)
-    parsed_json.append(photo_info)
-    if problem_tuple:
-        problem_info.append({
-            'problem_id': problem_tuple[0], 'title': problem_tuple[1],
-            'content': problem_tuple[2], 'proposal': problem_tuple[3],
-            'severity': problem_tuple[4], 'status': problem_tuple[5],
-            'latitude': problem_tuple[6], 'longitude': problem_tuple[7],
-            'problem_type_id': problem_tuple[8], 'date': problem_tuple[9]
-        })
+    problem_data = db.get_problem_by_id(problem_id)
+    activities_data = db.get_activity_by_problem_id(problem_id)
+    photos_data = db.get_problem_photos(problem_id)
+    photos = []
+    activities = {}
 
-    if activity_tuple:
-        activity_info.append({
-            'created_date': activity_tuple[0], 'problem_id': activity_tuple[1],
-            'user_id': activity_tuple[2], 'activity_type': activity_tuple[3]
-        })
-    if photos:
-        for photo_data in photos:
-            logger.warning(photos)
-            photo_info.append({
-                'url': photo_data[0], 'description': photo_data[1],
-                'user_id': photo_data[2]
-            })
-    return Response(json.dumps(parsed_json), mimetype='application/json')
+    if problem_data:
+        problems = {
+            'problem_id': problem_data[0], 'title': problem_data[1],
+            'content': problem_data[2], 'proposal': problem_data[3],
+            'severity': problem_data[4], 'status': problem_data[5],
+            'latitude': problem_data[6], 'longitude': problem_data[7],
+            'problem_type_id': problem_data[8], 'date': problem_data[9]}
+    else:
+        return jsonify({'message': ' resource not exists'}), 404
+
+    if activities_data:
+        activities = {
+            'created_date': activities_data[0],
+            'problem_id': activities_data[1],
+            'user_id': activities_data[2],
+            'activity_type': activities_data[3]}
+    if photos_data:
+        for photo_data in photos_data:
+            photos.append({
+                'url': photo_data[0],
+                'description': photo_data[1],
+                'user_id': photo_data[2]})
+
+    response = Response(json.dumps([[problems], activities, photos]),
+                        mimetype='application/json')
+    return response
 
 
 @app.route('/api/problem_post', methods=['POST'])

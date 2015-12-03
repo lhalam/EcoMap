@@ -124,17 +124,17 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       
     })
 
-    .state('addPhoto', {
-      url: '/addPhoto/:problemId',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/addPhoto.html',
-            controller: 'ProblemPhotoCtrl'
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
-    })
+    //.state('addPhoto', {
+    //  url: '/addPhoto/:problemId',
+    //  onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+    //    $uibModal.open({
+    //        templateUrl: '/templates/addPhoto.html',
+    //        controller: 'ProblemPhotoCtrl'
+    //    }).result.finally(function() {
+    //        $state.go('map');
+    //    });
+    //  }]
+    //})
     .state('register', {
       url: '/register',
       onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {

@@ -616,3 +616,7 @@ input[type="checkbox"]{
 .selectSeverity{
   color: red;
 }
+
+.addProblem{
+  margin: 0;
+}

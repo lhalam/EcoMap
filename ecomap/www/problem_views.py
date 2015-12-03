@@ -134,73 +134,34 @@ def get_user_problems(user_id):
                               'is_enabled': problem[7]})
     return Response(json.dumps(problems_list), mimetype='application/json')
 
-# @app.route('/api/upload_photo', methods=['POST', 'DELETE'])
-# def problem_photo():
-#     """ Connected with problem_post. Creating for uploading photos
-#         with problem.
-#         :return: json with success if photo have been uploaded
-#     """
-#     if request.method is 'POST':
-#         problem_img = request.files['file']
-#         extension = '.png'
-#         problem_id = '50'
-#         f_name = 'problem_id%s' % problem_id + extension
-#         static_url = '/uploads/problem/problemid %d/'  % problem_id
-#         f_path = os.environ['STATICROOT'] + static_url
 
-#         if not os.path.exists(f_path):
-#             os.makedirs(os.path.dirname(f_path + f_name))
-#             img_file.save(os.path.join(f_path, f_name))
-#             img_path = static_url + f_name
-#             db.insert_problem_image(problem_id, img_path)
-#             response = json.dumps({'added_file': img_path})
-#     return response
+@app.route('/api/photo/<int:problem_id>', methods=['POST'])
+def problem_photo(problem_id):
+    """ Connected with problem_post. Creating for uploading photos
+        with problem.
+        :return: json with success if photo have been uploaded
+    """
+    response = jsonify(), 400
 
+    extension = '.png'
+    static_url = 'uploads/problems/problem_%s/' % problem_id
+    f_path = os.environ['STATICROOT'] + static_url
+    user_id = current_user.uid
 
-
-# def add_profile_photo():
-#     """Controller provides add and edit function for user's profile photo.
-#     :return: json object with image path if success or 400 error message
-#     """
-#     response = jsonify(), 400
-#     extension = '.png'
-#     f_name = 'profile_id%s' % current_user.uid + extension
-#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
-#     f_path = os.environ['STATICROOT'] + static_url
-
-#     if request.method == 'POST':
-#         img_file = request.files['file']
-#         if img_file and validator.validate_image_file(img_file):
-#             if not os.path.exists(f_path):
-#                 os.makedirs(os.path.dirname(f_path + f_name))
-#             img_file.save(os.path.join(f_path, f_name))
-#             img_path = static_url + f_name
-#             db.insert_user_avatar(current_user.uid, img_path)
-#             response = json.dumps({'added_file': img_path})
-#         else:
-#             response = jsonify(error='error with import file'), 400
-#     return response
-# @app.route('/api/user_avatar', methods=['DELETE'])
-# @login_required
-# def delete_profile_photo():
-#     """Controller for handling deleting user's profile photo.
-#     :return: json object with success message or message with error status
-#     """
-#     response = jsonify(), 400
-#     extension = '.png'
-#     f_name = 'profile_id%s' % current_user.uid + extension
-#     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
-#     f_path = os.environ['STATICROOT'] + static_url
-
-#     if request.method == 'DELETE' and request.get_json():
-#         data = request.get_json()
-#         valid = validator.user_photo_deletion(data)
-#         if valid['status']:
-#             if os.path.exists(f_path):
-#                 os.remove(f_path + f_name)
-#             db.delete_user_avatar(data['user_id'])
-#             response = jsonify(msg='success', deleted_avatar=data['user_id'])
-#         else:
-#             response = Response(json.dumps(valid),
-#                                 mimetype='application/json'), 400
-#     return response
+    if request.method == 'POST':
+        problem_img = request.files['file']
+        user_f_name = request.form['name']
+        f_name = user_f_name[0] + '_problem_%s' % problem_id + extension
+        logger.warning(f_name)
+        photo_descr = request.form['description']
+        logger.warning(photo_descr)
+        if problem_img and validator.validate_image_file(problem_img):
+            if not os.path.exists(f_path):
+                os.makedirs(os.path.dirname(f_path + f_name))
+            problem_img.save(os.path.join(f_path, f_name))
+            img_path = static_url + f_name
+            db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
+            response = json.dumps({'added_file': img_path})
+        else:
+            response = jsonify(error='error with import file'), 400
+    return response

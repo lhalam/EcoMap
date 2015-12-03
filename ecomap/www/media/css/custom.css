@@ -31,6 +31,10 @@ body {
   margin-bottom: 0px;
 }
 
+.navbar-default .navbar-collapse{
+  margin-left: 50px;
+}
+
 .navbar-brand {
   padding-top: 0px;
 }
@@ -39,10 +43,6 @@ body {
   height: 70px;
   position: absolute;
   z-index: 100;
-}
-
-.navbar .navbar-header {
-  padding-right: 70px;
 }
 
 .nav.navbar-nav li {
@@ -339,17 +339,28 @@ form {
 
 /*Map styles*/
 
-.map-container{
+/*.map-container{
     flex:1;
     display: flex;
     flex-direction: column;
-}
+}*/
 
 .wrapper{
   display: flex;
   flex-direction:column;
 }
-.wrapper > .map-div {
+
+.angular-google-map{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+.angular-google-map-container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+/*.wrapper > .map-div {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -365,7 +376,7 @@ form {
 }
 .angular-google-map-container{
   flex: 1;
-}
+}*/
 
 
 /*UserProfile styles*/
@@ -605,10 +616,8 @@ input[type="checkbox"]{
 }
 .problemBlock{
   position: absolute;
-  top:50px;
   right: 0px;
-  height: 100vh;
-  background-color: #fff;
+  background-color: #fff;  
 }
 .severity{
   position: absolute;
@@ -642,4 +651,33 @@ input[type="checkbox"]{
   width: 100px;
   height: 100px;
   margin: 10px;
+}
+
+/*Flex declaration*/
+.flex-container{
+  display: flex;
+}
+
+.flex-column{
+  flex-direction: column;
+}
+
+.flex-row{
+  flex-direction: row;
+}
+
+.flex-item-1{
+  flex:1;
+}
+.flex-item-2{
+  flex:2;
+}
+
+.overflow-on{
+  overflow-y: auto; 
+}
+
+.toast-top-right{
+  top:60px !important;
+  right:12px;
 }

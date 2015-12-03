@@ -4,9 +4,7 @@
     <title>Ecomap.org</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon" /> -->
-    <!-- <link rel="icon" href="/image/favicon.ico"> -->
-    <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon"/>
+    <link rel="icon" type="image/icon" href="http://ecomap.org/images/icons/favicon.ico">
 
     <!-- Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -93,11 +91,11 @@
         <div class="container-fluid">
           <div class="navbar-header">
             <button type = "button" class = "navbar-toggle"
-            data-toggle = "collapse" data-target = "#navMenu">
-            <span class = "sr-only">Toggle navigation</span>
-            <span class = "icon-bar"></span>
-            <span class = "icon-bar"></span>
-            <span class = "icon-bar"></span>
+            data-toggle = "collapse" data-target = "#navMenu" aria-expanded="true">
+              <span class = "sr-only">Toggle navigation</span>
+              <span class = "icon-bar"></span>
+              <span class = "icon-bar"></span>
+              <span class = "icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
           </div>
@@ -113,7 +111,6 @@
                 </ul>
               </li>
               <li><a href="/#/map">статистика</a></li>
-              <li><a href="/#/map">термінове повідомлення</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li id="loginField" ng-if="!isAuthenticated()">
@@ -132,9 +129,11 @@
           </div>
         </div>
       </nav>
-      <toaster-container></toaster-container>
-    <div ui-view class="map-div"></div>
-    <div ui-view name="detailedProblem"></div>
+      <toaster-container toaster-options="{'close-button': true}"></toaster-container>
+      <div class="flex-container flex-row flex-item-1">
+        <div ui-view class="map-div flex-item-2 flex-container flex-column"></div>
+        <div ui-view name="detailedProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('detailedProblem')"></div>
+      </div>
 
     </div>
   </body>

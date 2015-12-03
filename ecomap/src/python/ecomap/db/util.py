@@ -67,7 +67,7 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
 
 
 @retry_query(tries=3, delay=1)
-def facebook_insert(first_name, last_name, email, password, role_id,
+def facebook_insert(first_name, last_name, email, password,
                     provider, uid):
     """Adds new user into db through facebook.
     :params: first_name - first name of user
@@ -85,11 +85,11 @@ def facebook_insert(first_name, last_name, email, password, role_id,
                                        `oauth_provider`,
                                        `oauth_uid`)
                    VALUES (%s, %s, %s, %s, %s, %s);
-                   INSERT INTO `user_role` (`user_id`, `role_id`)
-                   values (LAST_INSERT_ID(), %s);
                 """
         cursor.execute(query, (first_name, last_name, email, password,
-                               provider, uid, role_id))
+                               provider, uid))
+        registered_user_id = cursor.lastrowid
+        return registered_user_id
 
 
 @retry_query(tries=3, delay=1)
@@ -174,7 +174,6 @@ def insert_user_avatar(user_id, img_path):
 def delete_user_avatar(user_id):
     """Deletes user profile photo from db.
     :params: user_id - unique id user
-
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()

@@ -84,13 +84,12 @@ def post_problem():
         logger.warning(json.dumps(request.form))
         logger.info(data)
         valid = validator.problem_post(data)
-        logger.warning(data)
         if valid['status']:
-            logger.warning(valid)
+            logger.debug('Checks if valid.')
+            logger.debug(valid)
             user_id = current_user.uid
             now = time.time()
-            posted_date = int(round(now))
-            logger.warning(posted_date)
+            posted_date = int(now)
             last_id = db.problem_post(data['title'],
                                       data['content'],
                                       data['proposal'],

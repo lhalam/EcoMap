@@ -1,25 +1,23 @@
-app.controller('detailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
+app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
   function($scope, $rootScope, $state, $http, toaster) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $http({
       "method": "GET",
       "url": "/api/problem_detailed_info/" + $state.params['id']
-    }).then(function successCallback(data) {
-      $rootScope.selectProblem = data.data[0][0];
-      console.log(data.data);
-      $rootScope.photos = data.data[0][2];
-      console.log($rootScope.selectProblem);
-      console.log($rootScope.photos);
+    }).then(function successCallback(response) {
+      $rootScope.selectProblem = response.data[0][0];
+      $scope.photos = response.data[2];
       $rootScope.mapParams = {
         center: {
           latitude: $rootScope.selectProblem['latitude'],
           longitude: $rootScope.selectProblem['longitude']
         },
-        zoom: 17
+        zoom: 14
       };
-      console.log($rootScope.selectProblem)
-    }, function errorCallback(error) {});
+    }, function errorCallback(error) {
+      $state.go('error404');
+    });
 
     $scope.close = function() {
       $state.go('map')

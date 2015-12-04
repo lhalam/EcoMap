@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app" >
   <head>
-    <title>ecomap</title>
+    <title>Ecomap.org</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/icon" href="http://ecomap.org/images/icons/favicon.ico">
 
     <!-- Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -14,7 +15,6 @@
     <link rel="stylesheet" href="/css/angular-resizable.css">
     <link rel="stylesheet" href="/css/resize-test.css">
     <link href="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.css">
-    <!--<link rel="stylesheet" type="text/css" href="/css/custom.css">-->
     <link rel="stylesheet" type="text/css" href="/css/image_crop.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -48,9 +48,9 @@
     <script src="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.js"></script>
 
     <!-- AngularJS app -->
-    <script src="/js/angular_app.js"></script>
-    <script src="/js/appConfigs.js"></script>
-    <script src="/js/RightsRestriction.js"></script>
+    <script src="/js/App.js"></script>
+    <script src="/js/AppConfigs.js"></script>
+    <script src="/js/PermissionControl.js"></script>
 
     <!-- AngularJS directives -->
     <script src="/js/directives/ModalWindow.js"></script>
@@ -74,14 +74,13 @@
     <script src="/js/controllers/AddFaqCtrl.js"></script>
     <script src='/js/controllers/EditFaqCtrl.js'></script>
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
-    <script src='/js/controllers/addProblemCtrl.js'></script>
+    <script src='/js/controllers/AddProblemCtrl.js'></script>
     <script src='/js/controllers/UserProblemTableCtrl.js'></script>
     <script src='/js/controllers/AdminResourceCtrl.js'></script>
     <script src='/js/controllers/AdminPermissionCtrl.js'></script>
     <script src='/js/controllers/AdminRoleCtrl.js'></script>
     <script src='/js/controllers/AdminUserCtrl.js'></script> 
-    <script src='/js/controllers/detailedProblemCtrl.js'></script>   
-    <!--<script src='/js/controllers/ProblemPhotoCtrl.js'></script>-->
+    <script src='/js/controllers/DetailedProblemCtrl.js'></script>   
 
   </head>
   <body ng-controller="MainCtrl">
@@ -90,11 +89,11 @@
         <div class="container-fluid">
           <div class="navbar-header">
             <button type = "button" class = "navbar-toggle"
-            data-toggle = "collapse" data-target = "#navMenu">
-            <span class = "sr-only">Toggle navigation</span>
-            <span class = "icon-bar"></span>
-            <span class = "icon-bar"></span>
-            <span class = "icon-bar"></span>
+            data-toggle = "collapse" data-target = "#navMenu" aria-expanded="true">
+              <span class = "sr-only">Toggle navigation</span>
+              <span class = "icon-bar"></span>
+              <span class = "icon-bar"></span>
+              <span class = "icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
           </div>
@@ -109,8 +108,7 @@
                   </li>
                 </ul>
               </li>
-              <li><a href="#">статистика</a></li>
-              <li><a href="">термінове повідомлення</a></li>
+              <li><a href="/#/map">статистика</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li id="loginField" ng-if="!isAuthenticated()">
@@ -129,9 +127,11 @@
           </div>
         </div>
       </nav>
-      <toaster-container></toaster-container>
-    <div ui-view class="map-div"></div>
-    <div ui-view name="detailedProblem"></div>
+      <toaster-container toaster-options="{'close-button': true}"></toaster-container>
+      <div class="flex-container flex-row flex-item-1">
+        <div ui-view class="map-div flex-item-2 flex-container flex-column"></div>
+        <div ui-view name="detailedProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('detailedProblem')"></div>
+      </div>
 
     </div>
   </body>

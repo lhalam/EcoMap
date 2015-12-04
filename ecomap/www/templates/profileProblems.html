@@ -21,16 +21,12 @@
         <td ng-bind="problem.title"></td>
         <td ng-bind="getProblemType(problem.problem_type_id)"></td>
         <td ng-bind="getStatus(problem.status)"></td>
-        <!-- <td ng-bind="parseDate(problem.date)"></td> -->
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
       </tr>
     </tbody>
   </table>
   <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
-      <!-- to do -->
-      <!-- implemet commetns here -->
-      <!-- implement photos here -->
       <div class="title">
         <h3 ng-bind="detailedProblem.title"></h3>
       </div>
@@ -57,13 +53,8 @@
                 <p><strong>Пропозиції щодо вирішення</strong></p>
                 <p ng-bind="detailedProblem.proposal"></p>
               </div>
-              <div class="photos">
-                <p><strong>Фото проблеми:</strong></p>
-                Not implemented yet!!!
-              </div>
           </uib-tab>
           <uib-tab heading="Коментарі">
-            Not implemented yet!!!
           </uib-tab>
       </uib-tabset>
   </modal>

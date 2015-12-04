@@ -27,8 +27,7 @@ def logout():
         - in case of problems:
             json {result:False}
     """
-    result = logout_user()
-    return jsonify(result=result)
+    return jsonify(result=logout_user())
 
 
 @app.route('/api/register', methods=['POST'])
@@ -51,7 +50,6 @@ def register():
     response = jsonify(msg='unauthorized'), 400
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-
         valid = validator.user_registration(data)
 
         if valid['status']:
@@ -100,7 +98,6 @@ def login():
     response = jsonify(), 401
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-
         valid = validator.user_login(data)
 
         if valid['status']:

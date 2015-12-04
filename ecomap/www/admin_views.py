@@ -1,12 +1,13 @@
 """Module contains routes, used for admin page."""
 import json
 
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, session
 from flask_login import login_required
 
 from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
+from ecomap.permission import permission_control
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -33,6 +34,7 @@ def resource_post():
         added_res_id = db.get_resource_id(data['resource_name'])
         response = jsonify(added_resource=data['resource_name'],
                            resource_id=added_res_id[0])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -51,7 +53,6 @@ def resource_put():
                  {'status': 'success', 'edited': 'resource_name'}
     """
     data = request.get_json()
-
     valid = validator.resource_put(data)
 
     if valid['status']:
@@ -62,6 +63,7 @@ def resource_put():
                               data['resource_id'])
         response = jsonify(status='success',
                            edited=data['resource_name'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -81,7 +83,6 @@ def resource_delete():
                  {'status': 'success', 'deleted_resource': 'resource_id'}
     """
     data = request.get_json()
-
     valid = validator.resource_delete(data)
 
     if valid['status']:
@@ -89,6 +90,7 @@ def resource_delete():
             db.delete_resource_by_id(data['resource_id'])
             response = jsonify(status='success',
                                deleted_resource=data['resource_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!'), 400
     else:
@@ -123,7 +125,6 @@ def role_post():
                   'added_role_id': 'role_id'}
     """
     data = request.get_json()
-
     valid = validator.role_post(data)
 
     if valid['status']:
@@ -135,6 +136,7 @@ def role_post():
 
         response = jsonify(added_role=data['role_name'],
                            added_role_id=added_role_id[0])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -153,7 +155,6 @@ def role_put():
                  {'status': 'success', 'edited': 'resource_name'}
     """
     data = request.get_json()
-
     valid = validator.role_put(data)
 
     if valid['status']:
@@ -163,6 +164,7 @@ def role_put():
         db.edit_role(data['role_name'], data['role_id'])
         response = jsonify(status='success',
                            edited=data['role_name'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -171,7 +173,6 @@ def role_put():
 
 @app.route("/api/roles", methods=['DELETE'])
 @login_required
-# @is_admin
 def role_delete():
     """Function which deletes role from database.
     :return: If role has permissions:
@@ -190,6 +191,7 @@ def role_delete():
             db.delete_role_by_id(data['role_id'])
             response = jsonify(msg='success',
                                    deleted_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!')
     else:
@@ -200,7 +202,6 @@ def role_delete():
 
 @app.route("/api/roles", methods=['GET'])
 @login_required
-# @is_admin
 def role_get():
     """Function which gets all roles from database.
        :return: {'role_name': 'role_id'}
@@ -214,7 +215,6 @@ def role_get():
 
 @app.route("/api/permissions", methods=['POST'])
 @login_required
-# @is_admin
 def permission_post():
     """Function which adds new permission into database.
     :return: If request data is invalid:
@@ -226,7 +226,6 @@ def permission_post():
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_post(data)
 
         if valid['status']:
@@ -239,6 +238,7 @@ def permission_post():
                                                  data['modifier'])
             response = jsonify(added_permission_for=data['description'],
                                permission_id=added_perm_id[0])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -247,7 +247,6 @@ def permission_post():
 
 @app.route("/api/permissions", methods=['PUT'])
 @login_required
-# @is_admin
 def permission_put():
     """Function which edits permission.
     :return: If request data is invalid:
@@ -258,7 +257,6 @@ def permission_put():
     """
     if request.method == 'PUT' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_put(data)
 
         if valid['status']:
@@ -268,6 +266,7 @@ def permission_put():
                                data['description'])
             response = jsonify(status='success',
                                edited_perm_id=data['permission_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -276,7 +275,6 @@ def permission_put():
 
 @app.route("/api/permissions", methods=['DELETE'])
 @login_required
-# @is_admin
 def permission_delete():
     """Function which edits permission.
     :return: If permission is binded with any role:
@@ -289,7 +287,6 @@ def permission_delete():
     """
     if request.method == 'DELETE' and request.get_json():
         data = request.get_json()
-
         valid = validator.permission_delete(data)
 
         if valid['status']:
@@ -297,6 +294,7 @@ def permission_delete():
                 db.delete_permission_by_id(data['permission_id'])
                 response = jsonify(status='success',
                                    deleted_permission=data['permission_id'])
+                session['access_control'] = permission_control.reload_dct()
             else:
                 response = jsonify(error='Cannot delete!')
         else:
@@ -307,7 +305,6 @@ def permission_delete():
 
 @app.route("/api/permissions", methods=['GET'])
 @login_required
-# @is_admin
 def permission_get():
     """Function which gets all permissions.
     :return: {'permission_id': 'permission_id', 'action': 'action',
@@ -327,7 +324,6 @@ def permission_get():
 
 @app.route("/api/role_permissions", methods=['POST'])
 @login_required
-# @is_admin
 def role_permission_post():
     """Function which binds permission with role.
     :return: If request data is not valid:
@@ -336,13 +332,13 @@ def role_permission_post():
                  {'added_role_permission_for_role': 'role_id'}
     """
     data = request.get_json()
-
     valid = validator.role_permission_post(data)
 
     if valid['status']:
         db.add_role_permission(data['role_id'],
                                data['permission_id'])
         response = jsonify(added_role_permission_for_role=data['role_id'])
+        session['access_control'] = permission_control.reload_dct()
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
@@ -351,7 +347,6 @@ def role_permission_post():
 
 @app.route("/api/role_permissions", methods=['PUT'])
 @login_required
-# @is_admin
 def role_permission_put():
     """Function which sets list of permission to role. Before sets
        removes all permissions from role.
@@ -361,19 +356,18 @@ def role_permission_put():
                     {'msg': 'edited permission'}
     """
     data = request.get_json()
-
-    logger.info('Role permission put')
+    logger.info('Role permission has been changed.')
 
     db.delete_permissions_by_role_id(data['role_id'])
     for perm_id in data['permission_id']:
         db.add_role_permission(data['role_id'], perm_id)
     response = jsonify(msg='edited permission')
+    session['access_control'] = permission_control.reload_dct()
     return response
 
 
 @app.route("/api/role_permissions", methods=['DELETE'])
 @login_required
-# @is_admin
 def role_permission_delete():
     """Function to delete permissions."""
     data = request.get_json()
@@ -385,6 +379,7 @@ def role_permission_delete():
             db.delete_role_by_id(data['role_id'])
             response = jsonify(status='success',
                                deleted_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = jsonify(error='Cannot delete!')
     else:
@@ -395,7 +390,6 @@ def role_permission_delete():
 
 @app.route("/api/role_permissions", methods=['GET'])
 @login_required
-# @is_admin
 def role_permission_get():
     """Function which gets all permissions from database and all actual
        permissions for current role.
@@ -425,7 +419,6 @@ def role_permission_get():
 
 @app.route("/api/all_permissions", methods=['GET'])
 @login_required
-# @is_admin
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
 
@@ -447,7 +440,6 @@ def get_all_permissions():
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
 @login_required
-# @is_admin
 def get_all_users():
     """Function, used to get all users.
        :return: list of users with id, first name, last name, email and role
@@ -462,6 +454,7 @@ def get_all_users():
                                 data['user_id'])
             response = jsonify(msg='success',
                                added_role=data['role_id'])
+            session['access_control'] = permission_control.reload_dct()
         else:
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
@@ -483,10 +476,10 @@ def edit_page(page_id):
 
         :returns confirmation.
     """
-    if request.method == 'PUT':
+    if request.method == 'PUT' and request.get_json():
         data = request.get_json()
-        status_code = None
-        result = None
+        result = False
+        status_code = 404
         if db.get_page_by_id(data['id']):
             db.edit_page(page_id, data['title'], data['alias'],
                          data['description'], data['content'],
@@ -494,9 +487,6 @@ def edit_page(page_id):
                          data['is_enabled'])
             result = True
             status_code = 200
-        else:
-            result = False
-            status_code = 404
         return jsonify(result=result), status_code
 
 
@@ -506,7 +496,7 @@ def add_page():
     """This method adds new page to db."""
     result = None
     msg = None
-    if request.method == 'POST':
+    if request.method == 'POST' and request.get_json():
         data = request.get_json()
         if not db.get_page_by_alias(data['alias']):
             db.add_page(data['title'], data['alias'],

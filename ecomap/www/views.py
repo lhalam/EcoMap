@@ -28,10 +28,10 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('current user is %s, %s', g.user.role, g.user)
+    logger.info('Current user is %s, role(%s)', g.user.role, g.user)
 
 
-# @app.before_request
+@app.before_request
 def check_access():
     """Global decorator for each view.
     Checks permissions to access app resources by each user's request.
@@ -40,7 +40,8 @@ def check_access():
     """
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
-    logger.debug(jsonify(session['access_control']))
+    # logger.debug(session)
+    # logger.debug(jsonify(session['access_control']))
     access_rules = session['access_control']
     route = '/' + '/'.join(request.url.split('/')[3:])
 
@@ -52,9 +53,9 @@ def check_access():
                     access_status, route, request.method, current_user.uid,
                     current_user.role)
     else:
-        logger.debug('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s], '
-                     'user ID:%s (%s), errors=%s)'
-                     % (route, request.method, current_user.uid,
+        logger.info('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s],'
+                    'user ID:%s (%s), errors=%s)'
+                    % (route, request.method, current_user.uid,
                         current_user.role, access_result['error']))
         abort(403)
 

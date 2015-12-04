@@ -63,14 +63,14 @@ def add_profile_photo():
     f_name = 'profile_id%s' % current_user.uid + extension
     static_url = '/uploads/user_profile/userid_%d/' % current_user.uid
     f_path = os.environ['STATICROOT'] + static_url
-
     if request.method == 'POST':
         img_file = request.files['file']
+
         if img_file and validator.validate_image_file(img_file):
             if not os.path.exists(f_path):
-                os.makedirs(os.path.dirname(f_path + f_name))
+                os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             img_file.save(os.path.join(f_path, f_name))
-            img_path = static_url + f_name
+            img_path = '%s%s' % (static_url, f_name)
             db.insert_user_avatar(current_user.uid, img_path)
             response = json.dumps({'added_file': img_path})
         else:
@@ -93,9 +93,10 @@ def delete_profile_photo():
     if request.method == 'DELETE' and request.get_json():
         data = request.get_json()
         valid = validator.user_photo_deletion(data)
+
         if valid['status']:
             if os.path.exists(f_path):
-                os.remove(f_path + f_name)
+                os.remove('%s%s' % (f_path, f_name))
             db.delete_user_avatar(data['user_id'])
             response = jsonify(msg='success', deleted_avatar=data['user_id'])
         else:

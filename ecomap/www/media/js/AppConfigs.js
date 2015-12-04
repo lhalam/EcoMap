@@ -106,7 +106,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     .state('addProblem', {
       url: '/addProblem',
         templateUrl: '/templates/addProblem.html',
-        controller: 'addProblemCtrl',
+        controller: 'AddProblemCtrl',
         resolve: {
           admin: function(grant) {
             return grant.only({test: 'authenticated', state: 'error403'});
@@ -118,7 +118,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       views:{
         "detailedProblem":{
         "templateUrl":"/templates/detailedProblem.html",
-        "controller":"detailedProblemCtrl"
+        "controller":"DetailedProblemCtrl"
         },
         "":{
           'templateUrl': '/templates/map.html',
@@ -126,17 +126,6 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         }
       }
       
-    })
-    .state('addPhoto', {
-      url: '/addPhoto/:problemId',
-      onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-        $uibModal.open({
-            templateUrl: '/templates/addPhoto.html',
-            controller: 'ProblemPhotoCtrl'
-        }).result.finally(function() {
-            $state.go('map');
-        });
-      }]
     })
     .state('login', {
       url: '/login',

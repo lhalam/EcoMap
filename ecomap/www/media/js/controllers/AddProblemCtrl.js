@@ -1,5 +1,5 @@
-app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady',
-  function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady) {
+app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope',
+  function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope) {
     /* Map & markers section */
     $scope.mapParams = {
       center: {
@@ -15,13 +15,12 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
     $scope.zoomMarker = function(data) {
-      console.log(data);
       $scope.mapParams = {
         center: {
           latitude: data.model.latitude,
           longitude: data.model.longitude
         },
-        zoom: 17
+        zoom: 14
       }
     };
     $scope.markers = [];
@@ -173,7 +172,7 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         } else {
           $scope.mapParams = {
             center: mapCenter,
-            zoom: 17
+            zoom: 14
           };
         }
         $scope.$apply();
@@ -214,6 +213,13 @@ app.controller('addProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         toaster.pop('success', 'Додавання проблеми', 'Проблему було успішно додано!');
         $scope.createdProblemId = response.data.problem_id;
         $scope.arrayUpload(photos);
+        $rootScope.mapParams = {
+            center: {
+              latitude: newProblem.latitude,
+              longitude: newProblem.longitude
+            },
+            zoom: 14
+          };
       }, function errorCallback() {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі' + ' додавання проблеми виникла помилка!');
       })

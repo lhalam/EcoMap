@@ -937,3 +937,17 @@ def get_problem_owner(problem_id):
         query = """SELECT `user_id` FROM `problem` WHERE `id`=%s;"""
         cursor.execute(query, (problem_id,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def insert_into_restore_password(hashed, user_id, create_time):
+    """Inserts info restore_password table new line."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `restore_password` (`create_time`,
+                                                   `hash`,
+                                                   `user_id`)
+                   VALUES (%s, %s, %S);
+                """
+        cursor.execute(query, (create_time, hashed, user_id))
+        conn.commit()

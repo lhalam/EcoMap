@@ -175,3 +175,23 @@ def oauth_login(provider):
                        email=user.email)
 
     return response
+
+
+@app.route('/api/restore_password', methods=['POST'])
+def restore_password():
+    """Function to restore forgotten password."""
+    json = request.get_json()
+    email = json['email']
+    user = ecomap_user.get_user_by_email(email)
+    if user:
+        ecomap_user.restore_password(user)
+        response = jsonify(message='Email was sended.'), 200
+    else:
+        response = jsonify(error='There is not such email.'), 401
+    return response
+
+
+@app.route('/api/restore_password_page/<string:hashed>')
+def restore_password_page(hashed):
+    """Renders page to restore password."""
+    pass

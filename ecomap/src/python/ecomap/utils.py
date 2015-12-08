@@ -44,8 +44,16 @@ class Singleton(type):
         return cls._instance
 
 
-def send_email(app_name, app_key, user_name, user_surname, user_email,
-               user_password):
+def send_email(app_name, app_key, msg, user_email):
+    """Sends email."""
+    server = smtplib.SMTP_SSL('smtp.gmail.com')
+    server.login(app_name, app_key)
+    server.sendmail('admin@ecomap.com', user_email,
+                    msg.as_string())
+    server.quit()
+
+
+def registration_email(user_name, user_surname, user_email, user_password):
     """Sends email to new created users.
        :params: app_name - app's login
                 app_key - app's key
@@ -71,9 +79,29 @@ def send_email(app_name, app_key, user_name, user_surname, user_email,
     msg['Subject'] = 'Test email'
     msg['From'] = 'admin@ecomap.com'
     msg['To'] = user_email
+    return msg
 
-    server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(app_name, app_key)
-    server.sendmail('admin@ecomap.com', user_email,
-                    msg.as_string())
-    server.quit()
+
+def restore_password_email(user_name, user_surname, user_email, hashed):
+    """Sends to user's email message with link to restore user's password.
+       :params: app_name - app's login
+                app_key - app's key
+                user_name - user's name
+                user_surname - user's surname
+    """
+    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
+                                 'restore_password_template.html')
+    with open(TEMPLATE_PATH, 'rb') as template:
+        html = template.read().decode('utf-8')
+    html_decoded = html % (user_name, user_surname, hashed)
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
+
+    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
+
+    msg.attach(htmltext)
+    msg['Subject'] = 'Test email'
+    msg['From'] = 'admin@ecomap.com'
+    msg['To'] = user_email
+    return msg

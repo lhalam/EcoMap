@@ -982,3 +982,18 @@ def restore_password(user_id, password):
                 """
         cursor.execute(query, (password, user_id))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_id_by_hash(hash_sum):
+    """Get user id by hash sum from restore password table.
+       :params: hash_sum - hash sum
+       :return: user id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `user_id` FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hash_sum,))
+        return cursor.fetchone()

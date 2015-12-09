@@ -13,7 +13,7 @@
           </div>
 
           <div class="form-group" ng-class="{ 'has-error': ((loginForm.password.$touched || submitted) && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
-            <label for="password" class="control-label">Пароль</label> <strong><a href="/#/restore_password">(забули пароль?)</a></strong> 
+            <label for="password" class="control-label">Пароль</label> <strong><a href="/#/restore_email">(забули пароль?)</a></strong> 
             <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
             <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched || submitted">
               <div ng-messages-include="/templates/error_msgs.html"></div>

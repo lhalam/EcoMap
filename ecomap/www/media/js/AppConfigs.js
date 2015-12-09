@@ -133,9 +133,14 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       controller: 'LoginCtrl'
     })
     .state('restore_email', {
-      url: '/restore_password',
+      url: '/restore_email',
       templateUrl: '/templates/passwordRestoringEmail.html',
-      controller: 'LoginCtrl'
+      controller: 'RestorePasswordCtrl'
+    })
+    .state('restore_pass', {
+      url: '/restore_password',
+      templateUrl: '/templates/passwordRestoringPass.html',
+      controller: 'RestorePasswordCtrl'
     })
     .state('register', {
       url: '/register',

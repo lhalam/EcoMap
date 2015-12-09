@@ -138,7 +138,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       controller: 'RestorePasswordCtrl'
     })
     .state('restore_pass', {
-      url: '/restore_password',
+      url: '/restore_password/:hash_sum',
       templateUrl: '/templates/passwordRestoringPass.html',
       controller: 'RestorePasswordCtrl'
     })

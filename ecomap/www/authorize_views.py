@@ -5,7 +5,7 @@ import json
 import requests
 import time
 
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, render_template
 from flask_login import login_user, logout_user, login_required
 
 from urlparse import parse_qsl
@@ -200,7 +200,7 @@ def restore_password_page(hashed):
     if creation_time:
         elapsed = time.time() - creation_time[0]
     if elapsed <= 900:
-        return 'Rstore password template in development.'
+        return render_template('passwordRestoringPass.html')
     else:
         return 'Out of date.'
 
@@ -209,9 +209,13 @@ def restore_password_page(hashed):
 def restore_password():
     """Updates user password."""
     data = request.get_json()
-    valid = validator.restore_password(data)
+    valid = validator.change_password(data)
+
     if valid:
-        db.restore_password(data['user_id'], data['password'])
+        user_id = db.get_user_id_by_hash(data['hash_sum'])
+    if user_id:
+        password = ecomap_user.hash_pass(data['password'])
+        db.restore_password(user_id[0], password)
         response = jsonify(message='Password restored.')
     else:
         response = Response(json.dumps(valid),

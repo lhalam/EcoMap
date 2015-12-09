@@ -967,3 +967,18 @@ def check_restore_password(hashed):
                 """
         cursor.execute(query, (hashed,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=3)
+def restore_password(user_id, password):
+    """Updates user password.
+       :params: user_id - user id
+                password - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `password`=%s
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (password, user_id))
+        conn.commit()

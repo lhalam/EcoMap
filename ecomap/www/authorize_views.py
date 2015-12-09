@@ -3,6 +3,7 @@
 """
 import json
 import requests
+import time
 
 from flask import request, jsonify, Response
 from flask_login import login_user, logout_user, login_required
@@ -194,4 +195,11 @@ def restore_password():
 @app.route('/api/restore_password_page/<string:hashed>')
 def restore_password_page(hashed):
     """Renders page to restore password."""
-    pass
+    creation_time = db.check_restore_password(hashed)
+
+    if creation_time:
+        elapsed = time.time() - creation_time[0]
+    if elapsed <= 900:
+        pass
+    else:
+        pass

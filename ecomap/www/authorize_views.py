@@ -200,6 +200,6 @@ def restore_password_page(hashed):
     if creation_time:
         elapsed = time.time() - creation_time[0]
     if elapsed <= 900:
-        pass
+        return 'Rstore password template in development.'
     else:
-        pass
+        return 'Out of date.'

@@ -1,0 +1,36 @@
+table{
+    margin: 20px;
+}
+
+thead{
+    font-weight:700;
+}
+button{
+    float: right;
+}
+.clear{
+    clear: both;
+}
+
+.del, .def:hover{
+    color: red;
+}
+
+#customEror{
+    font-size:1.5em;
+}
+
+#customEror {
+    font-size: 1.5em;
+}
+.return-profile {
+    position: absolute;
+    right: 20px;
+    top:25px;
+    cursor: pointer;
+}
+
+.selected {
+  background-color: #eee;
+}
+/*buttons*/

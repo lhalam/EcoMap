@@ -1,0 +1,25 @@
+<div class="container user-profile">
+  <div class="row">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <uib-tabset justified="true">
+            <uib-tab ng-repeat="tab in tabs"
+                     heading="{{tab.heading}}"
+                     select="go(tab.route)"
+                     active="tab.active"
+                     ng-if="isAdmin() || tab.showToUser">
+            </uib-tab>
+            <uib-tab select="go('admin.resources')" active="false" ng-if="isAdmin()">
+              <uib-tab-heading>
+                Адміністрування <i class="fa fa-link"></i>
+              </uib-tab-heading>
+            </uib-tab>
+          </uib-tabset>
+
+          <div ui-view></div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>

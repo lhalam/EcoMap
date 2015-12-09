@@ -1,0 +1,32 @@
+{
+  "name": "ecomap",
+  "description": "This is front-end project for ecomap project.",
+  "main": "index.html",
+  "authors": [
+    "Lv-164.UI"
+  ],
+  "license": "BSD-2-Clause",
+  "keywords": [
+    "Ecomap",
+    "Ukraine",
+    "map",
+    "ecology"
+  ],
+  "homepage": "https://github.com/lhalam/Lv-164.UI",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "~1.4.7",
+    "angular-bootstrap": "~0.14.3",
+    "bootstrap": "~3.3.5"
+  },
+  "dependencies": {
+    "angular-ui-router": "~0.2.15"
+  }
+}

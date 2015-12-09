@@ -1,0 +1,35 @@
+<div ng-controller="FaqTableCtrl">
+  <h3>Редагування F.A.Q.</h3>
+  <hr>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td>Номер</td>
+        <td>Назва інструкції</td>
+        <td>Адреса інструкції</td>
+        <td>Відображення</td>
+        <td>Редагування</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="page in pages track by $index">
+        <td ng-bind="page.id"></td>
+        <td ng-bind="page.title"></td>
+        <td ng-bind="page.alias"></td>
+        <td>
+          <input type="checkbox" ng-model="page.is_enabled" ng-true-value="1" ng-false-value="0" ng-change="changeShowing($index)">
+        </td>
+        <td>
+          <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
+          <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <a href="/#/addFaq"><button class="btn btn-primary fl-right"> Додати інструкцію</button></a>
+  <div class="clear"></div>
+  <hr>
+  <p class="fl-right">*Для введення змін у дію потрібно перевантажити сторінку.</p>
+  <div class="clear"></div>
+
+</div>

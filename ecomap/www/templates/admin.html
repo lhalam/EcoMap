@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/css/admin.css">
+
+<div class="container" >
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+      <a ng-click="go('user_profile.info')" class="return-profile">Повернутись до профілю</a>
+      <div class="clear"></div>
+      <h3>Адміністрування</h3>
+      <hr>
+      <uib-tabset justified="true"> 
+        <uib-tab ng-repeat="t in tabs"
+                 heading="{{t.heading}}"
+                 select="go(t.route)"
+                 active="t.active">
+        </uib-tab>
+      </uib-tabset>
+      <div ui-view></div>      
+    </div>
+  </div>
+</div>
+

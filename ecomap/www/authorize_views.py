@@ -179,7 +179,7 @@ def oauth_login(provider):
 
 
 @app.route('/api/restore_password', methods=['POST'])
-def restore_password():
+def restore_password_request():
     """Function to restore forgotten password."""
     json = request.get_json()
     email = json['email']
@@ -192,7 +192,7 @@ def restore_password():
     return response
 
 
-@app.route('/api/restore_password_page/<string:hashed>')
+@app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
 def restore_password_page(hashed):
     """Renders page to restore password."""
     creation_time = db.check_restore_password(hashed)
@@ -203,3 +203,17 @@ def restore_password_page(hashed):
         return 'Rstore password template in development.'
     else:
         return 'Out of date.'
+
+
+@app.route('/api/restore_password', methods=['PUT'])
+def restore_password():
+    """Updates user password."""
+    data = request.get_json()
+    valid = validator.restore_password(data)
+    if valid:
+        db.restore_password(data['user_id'], data['password'])
+        response = jsonify(message='Password restored.')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response

@@ -17,7 +17,7 @@ app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout'
         data: newPage
       }).then(function successCallback(response) {
         toaster.pop('success', 'Інструкцію додано', 'Інструкцію було успішно додано!');
-        $state.go('user_profile');
+        $state.go('user_profile.faq');
       }, function errorCallback() {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі створення нової інструкції виникла помилка!');
       })

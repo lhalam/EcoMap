@@ -241,17 +241,17 @@ def load_token(token):
 
 def restore_password(user):
     """Funtion send's email to user with link to restore password."""
-    create_time = time.time()
-    hashed = hashlib.sha256(user['email'] + user['password'] + create_time)
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
     hex_hash = hashed.hexdigest()
 
-    # util.insert_into_restore_password(hex_hash, user['id'], create_time)
+    util.insert_into_restore_password(hex_hash, user.uid, create_time)
 
-    email_body = restore_password_email(user['first_name'], user['last_name'],
-                                        user['email'], hex_hash)
+    email_body = restore_password_email(user.first_name, user.last_name,
+                                        user.email, hex_hash)
     send_email(_CONFIG['email.user_name'],
                _CONFIG['email.app_password'],
-               email_body, user['email'])
+               email_body, user.email)
 
 
 if __name__ == '__main__':

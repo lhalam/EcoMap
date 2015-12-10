@@ -944,10 +944,56 @@ def insert_into_restore_password(hashed, user_id, create_time):
     """Inserts info restore_password table new line."""
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """INSERT INTO `restore_password` (`create_time`,
-                                                   `hash`,
+        query = """INSERT INTO `password_restore` (`creation_date`,
+                                                   `hash_sum`,
                                                    `user_id`)
-                   VALUES (%s, %s, %S);
+                   VALUES (%s, %s, %s);
                 """
         cursor.execute(query, (create_time, hashed, user_id))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def check_restore_password(hashed):
+    """Returns restore password request time.
+       :params: hashed - hash sum
+       :return: time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `creation_date`
+                   FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hashed,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=3)
+def restore_password(user_id, password):
+    """Updates user password.
+       :params: user_id - user id
+                password - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `password`=%s
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (password, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_id_by_hash(hash_sum):
+    """Get user id by hash sum from restore password table.
+       :params: hash_sum - hash sum
+       :return: user id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `user_id` FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hash_sum,))
+        return cursor.fetchone()

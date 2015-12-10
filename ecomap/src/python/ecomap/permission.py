@@ -47,7 +47,7 @@ def get_current_user_id(user_id):
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 
-def allow_alias():
+def allow_alias(alias):
     """Checks access rules for dynamic route.
     :return: True if user is not Anonymous
     """

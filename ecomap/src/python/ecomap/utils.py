@@ -106,56 +106,85 @@ def restore_password_email(user_name, user_surname, user_email, hashed):
     msg['To'] = user_email
     return msg
 
-
-def admin_stats_email():
-    """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
-    """
-    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
-                                 'admin_stats_template.html')
-
-    data = []
-
-    with open(TEMPLATE_PATH, 'rb') as template:
-        html = template.read()
-
-    mes = 'message noone changed </body>'
-    table_head = """<table>
-        <tr>
-            <th>користувач</th>
-            <th>mail</th>
-            <th>number request</th>
-        </tr>
-    """
-    table_row = """
-        <tr>
-            <td>%s</td>
-            <td>%s</td>
-            <td>%s</td>
-        </tr>
-            """
-    if data:
-        html += table_head
-        for x in data:
-            html += table_row % (x[0], x[1], x[2])
-        else:
-            html += '</table></body>'
-    else:
-        html += mes
-
-    html_decoded = html
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
-
-    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
-
-    msg.attach(htmltext)
-    msg['Subject'] = 'звіт за добу'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = 'vadime.padalko@gmail.com'
-    return msg
+#
+# def admin_stats_email(data=None):
+#     """Sends email to new created users.
+#        :params: app_name - app's login
+#                 app_key - app's key
+#                 name - user name
+#                 surname - user surname
+#                 email - user email
+#                 password - user password
+#     """
+#     TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
+#                                  'admin_stats_template.html')
+#
+#     with open(TEMPLATE_PATH, 'rb') as template:
+#         html = template.read()
+#
+#     mes = 'message noone changed </body>'
+#     table_head = """<table>
+#         <tr>
+#             <th>користувач</th>
+#             <th>mail</th>
+#             <th>number request</th>
+#         </tr>
+#     """
+#     table_row = """
+#         <tr>
+#             <td>%s</td>
+#             <td>%s</td>
+#             <td>%d</td>
+#         </tr>
+#             """
+#     if data:
+#         html += table_head
+#         for x in data:
+#             html += table_row % (x[1].encode('utf-8'),
+#                                  x[2].encode('utf-8'),
+#                                  int(x[3]))
+#         else:
+#             html += '</table></body>'
+#     else:
+#         html += mes
+#
+#     html_decoded = html
+#     msg = MIMEMultipart('alternative')
+#     msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+#
+#     # htmltext = MIMEText(html_decoded, 'html', 'utf-8')
+#
+#     # msg.attach(htmltext)
+#     msg['Subject'] = 'звіт за добу'
+#     msg['From'] = 'admin@ecomap.com'
+#     msg['To'] = 'vadime.padalko@gmail.com'
+#
+#     with app.app_context():
+#     #     msg.body = render_template(template + '.txt')
+#         msg.html = render_template('jinja_template.html', data=data)
+#     #     # mail.send(msg)
+#
+#     return msg
+#
+# def admin_stats_email2(data=None):
+#     """Sends email to new created users.
+#        :params: app_name - app's login
+#                 app_key - app's key
+#                 name - user name
+#                 surname - user surname
+#                 email - user email
+#                 password - user password
+#     """
+#     msg = MIMEMultipart('alternative')
+#     msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+#
+#     with app.app_context():
+#         msg.html = render_template('jinja_template.html', data=data)
+#
+#     htmltext = MIMEText(msg.html, 'html', 'utf-8')
+#
+#     msg.attach(htmltext)
+#     msg['Subject'] = 'звіт за добу'
+#     msg['From'] = 'admin@ecomap.com'
+#     msg['To'] = 'vadime.padalko@gmail.com'
+#     return msg

@@ -1,4 +1,5 @@
 """This module contains functions for interacting with Database."""
+import time
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -997,3 +998,37 @@ def get_user_id_by_hash(hash_sum):
                 """
         cursor.execute(query, (hash_sum,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_change_pass_stats(last24h):
+    """
+    Gets statistic info from db about user's change password activity during
+    the last 24hours.
+    :return: tuple(creation_time(timestamp), user_name, user_email, number
+             of change tries)
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
+                   FROM `password_restore` AS p
+                   INNER JOIN user AS u ON p.user_id = u.id
+                   HAVING p.creation_date > %d;
+                """
+        cursor.execute(query % last24h)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def refresh_table(last24h, time_now):
+    """Deletes statistics info from db for last 24 hours.
+    :return:
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `password_restore` WHERE `creation_date`
+                   BETWEEN %d AND %d;
+                """
+        cursor.execute(query, (last24h, time_now))

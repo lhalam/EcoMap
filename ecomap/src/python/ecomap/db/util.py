@@ -1029,6 +1029,7 @@ def refresh_table(last24h, time_now):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """DELETE FROM `password_restore` WHERE `creation_date`
-                   BETWEEN %d AND %d;
+                   BETWEEN %s AND %s;
                 """
-        cursor.execute(query, (last24h, time_now))
+        cursor.execute(query % (last24h, time_now))
+        conn.commit()

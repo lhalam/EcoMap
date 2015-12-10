@@ -1,5 +1,6 @@
 # coding=utf-8
 import time
+import logging
 from ecomap.app import app
 from flask import render_template
 

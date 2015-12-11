@@ -10,8 +10,8 @@ import os
 
 #activate_this = "/home/padalko/python_enviroments/flask_test/bin/activate_this.py"
 #activate_this = "/home/frutkic/venv/ecomap/bin/activate_this.py"
-#activate_this = "/home/gamolyavlad/myproject/venv/bin/activate_this.py"
-#execfile(activate_this, dict(__file__=activate_this))
+activate_this = "/home/gamolyavlad/myproject/venv/bin/activate_this.py"
+execfile(activate_this, dict(__file__=activate_this))
 
 
 os.environ['PRODROOT'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

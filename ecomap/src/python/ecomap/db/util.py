@@ -1,4 +1,5 @@
 """This module contains functions for interacting with Database."""
+import time
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -937,3 +938,98 @@ def get_problem_owner(problem_id):
         query = """SELECT `user_id` FROM `problem` WHERE `id`=%s;"""
         cursor.execute(query, (problem_id,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def insert_into_restore_password(hashed, user_id, create_time):
+    """Inserts info restore_password table new line."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `password_restore` (`creation_date`,
+                                                   `hash_sum`,
+                                                   `user_id`)
+                   VALUES (%s, %s, %s);
+                """
+        cursor.execute(query, (create_time, hashed, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def check_restore_password(hashed):
+    """Returns restore password request time.
+       :params: hashed - hash sum
+       :return: time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `creation_date`
+                   FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hashed,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=3)
+def restore_password(user_id, password):
+    """Updates user password.
+       :params: user_id - user id
+                password - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `password`=%s
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (password, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_id_by_hash(hash_sum):
+    """Get user id by hash sum from restore password table.
+       :params: hash_sum - hash sum
+       :return: user id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `user_id` FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hash_sum,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_change_pass_stats(last24h):
+    """
+    Gets statistic info from db about user's change password activity during
+    the last 24hours.
+    :return: tuple(creation_time(timestamp), user_name, user_email, number
+             of change tries)
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
+                   FROM `password_restore` AS p
+                   INNER JOIN user AS u ON p.user_id = u.id
+                   HAVING p.creation_date > %d;
+                """
+        cursor.execute(query % last24h)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def refresh_table(last24h, time_now):
+    """Deletes statistics info from db for last 24 hours.
+    :return:
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `password_restore` WHERE `creation_date`
+                   BETWEEN %s AND %s;
+                """
+        cursor.execute(query % (last24h, time_now))
+        conn.commit()

@@ -9,7 +9,7 @@ app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$s
         data: page
       }).then(function successCallback(response) {
         toaster.pop('success', 'Інструкцію відредаговано', 'Інструкцію відредаговано успішно!');
-        $state.go('user_profile');
+        $state.go('user_profile.faq');
       }, function errorCallback() {
         toaster.pop('error', 'Помилка', 'Інструкцію не вдалось відредагувати через помилку!');
       });

@@ -142,10 +142,11 @@ def get_user_problems(user_id):
 
 @app.route('/api/photo/<int:problem_id>', methods=['POST'])
 def problem_photo(problem_id):
-    """ Connected with problem_post. Creating for uploading photos
-        with problem.
-        :return: json with success if photo have been uploaded
+    """Controller for handling adding problem photos.
+    :param problem_id - id of problem instance for uploading new photos.
+    :return: json object with success message or message with error status.
     """
+
     response = jsonify(), 400
     extension = '.png'
     static_url = '/uploads/problems/%s/' % problem_id

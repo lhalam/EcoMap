@@ -9,9 +9,7 @@ and compares it with dynamic permission App JSON object.
 import ecomap.utils
 import ecomap.db.util as db
 
-from flask import abort
 from flask_login import current_user
-
 from ecomap.app import logger
 
 
@@ -42,13 +40,23 @@ def get_id_problem_owner(problem_id):
 
 
 def get_current_user_id(user_id):
-    """returns id of current user
+    """Returns id of current user.
     :param user_id - user id to check
     :return: id of problem owner
     """
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
+
+def allow_alias(alias):
+    """Checks access rules for dynamic route.
+    :return: True if user is not Anonymous
+    """
+    return True if current_user.uid != 2 else False
+
 RULEST_DICT = {':idUser': get_current_user_id,
+               ':alias': allow_alias,
+               ':idPage': allow_alias,
+               ':provider': allow_alias,
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']

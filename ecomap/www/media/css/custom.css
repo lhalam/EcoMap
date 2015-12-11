@@ -338,13 +338,19 @@ form {
 
 
 /*Map styles*/
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
+.map-div{
+  position: absolute;
+  width: 100%;
+  height: 91vh;
 }
-
-.angular-google-map {
+.map-container{
+  width: 100%;
+  height: 100%;
+}
+#map { 
+  height: 100%;
+   }
+/*.angular-google-map {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -354,316 +360,390 @@ form {
   flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-
-/*UserProfile styles*/
-
-.user-profile {
-  margin-top: 30px;
-}
-
-.user-profile .user-info-brief {
-  text-align: center;
-  font-family: "LatoBold";
-  font-size: 20px;
-}
-
-.user-profile .list-group {
-  padding-top: 20px;
-}
-
-.user-profile img {
-  border-radius: 10%;
-  float: right;
-}
-
-.user-profile .change-photo {
-  clear: both;
-}
-
-.user-profile .user-info {
-  padding-left: 30px;
-}
-
-.user-profile .change-password, .user-profile .add-profile-photo {
-  background-color: #fff;
-  padding-top: 20px;
-}
-
-.user-profile .panel {
-  position: relative;
-}
-
-.user-profile .close-button {
-  font-size: 30px;
-  font-weight: 700;
-  position: absolute;
-  right: 20px;
-  top: 0;
-  text-decoration: none;
-  color: black;
-}
-
-.del, .def:hover {
-  color: red;
-}
-
-.fl-right {
-  float: right;
-}
-
-.clear {
-  clear: both;
-}
-
-.page-edit-form {
-  background-color: #fff;
-}
-
-.page-edit-form input {
-  width: 100%;
-}
-
-.error-404 {
-  text-align: center;
-}
-
-.error-404 .video-fluid {
-  width: 100%;
-  height: 600px;
-}
-
-.loader {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  background: url('http://bradsknutson.com/wp-content/uploads/2013/04/page-loader.gif') 50% 50% no-repeat rgb(249, 249, 249);
-}
-
-.btn.edit_btn {
-  margin-left: 10px;
-}
-
-.facebook {
-  background-color: #3b5998;
-  border-color: #335190;
-}
-
-.facebook:hover, .facebook:active, .facebook:focus {
-  background-color: #335190;
-}
-
-.btn.btn-default.btn-border {
-  border-color: #ffffff;
-  color: #fff;
-}
-
-.btn.btn-primary.btn-border {
-  border-color: #53a7df;
-  color: #3498db;
-}
-
-.btn.btn-success.btn-border {
-  border-color: #2ecc71;
-  color: #2ecc71;
-}
-
-.btn.btn-info.btn-border {
-  border-color: #81cfe0;
-  color: #81cfe0;
-}
-
-.btn.btn-warning.btn-border {
-  border-color: #EDD95F;
-  color: #D1C054;
-}
-
-.btn.btn-danger.btn-border {
-  border-color: #F04848;
-  color: #c0392b;
-}
-
-.btn.btn-border {
-  border: 2px solid;
-  background: transparent;
-}
-
-.btn.btn-primary:hover {
-  background-color: #53a7df;
-  color: #fff;
-}
-
-.btn.btn-success:hover {
-  background-color: #25a25a;
-  color: #fff;
-}
-
-.btn.btn-info:hover {
-  background-color: #58bfd6;
-  color: #fff;
-}
-
-.btn.btn-warning:hover {
-  background-color: #F5E062;
-  color: #fff;
-}
-
-.btn.btn-danger:hover {
-  background-color: #EB4646;
-  color: #fff;
-}
-
-.fa {
-  line-height: 40px;
-  vertical-align: middle;
-  font-size: 2.7em
-}
-
-input[type="checkbox"] {
-  width: 1.3em;
-  height: 1.8em;
-}
-
-.det-problem-modal .title {
-  margin-top: 0px;
-  margin-bottom: 30px;
-}
-
-.det-problem-modal .general, .problemBlock .general {
-  background-color: #eee;
-  padding: 15px;
-  margin-bottom: 10px;
-}
-
-.det-problem-modal .rate, .problemBlock .rate {
-  float: left;
-  font-size: 18px;
-}
-
-.det-problem-modal .solution, .problemBlock .solution {
-  float: right;
-  font-size: 18px;
-}
-
-.solved {
-  color: #008800;
-}
-
-.unsolved {
-  color: #880000;
-}
-
-.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
-  padding: 10px;
-}
-
-[ui-view].ng-enter, [ui-view].ng-leave {
-  position: absolute;
-  left: 0;
-  right: 0;
-  -webkit-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;
-}
-
-[ui-view].ng-enter {
-  opacity: 0;
-}
-
-[ui-view].ng-enter-active {
-  opacity: 1;
-}
-
-[ui-view].ng-leave {
-  opacity: 1;
-}
-
-[ui-view].ng-leave-active {
-  opacity: 0;
-}
-
-.admin {
-  position: absolute;
-  top: -100%;
-  left: 0;
-  height: 100vh;
-  width: 100%;
-  background-color: rgba(100, 100, 100, 0.1);
-  z-index: 99999999;
-}
-
-.problemBlock {
-  position: absolute;
-  right: 0px;
-  background-color: #fff;
-}
-
-.severity {
-  position: absolute;
-  top: 0.1em;
-  left: -2em;
-}
-
-.severity li {
-  list-style: none;
-  display: inline;
-  margin-right: 0.1em;
-}
-
-.selectSeverity {
-  color: red;
-}
-
-.login.panel-content, .register.panel-content {
-  padding: 20px;
-}
-
-.addProblem {
-  margin: 0;
-}
-
-.error-page-header {
-  font-size: 72px;
-  font-weight: 700;
-}
-
-.photos img {
-  width: 100px;
-  height: 100px;
-  margin: 10px;
-}
-
-
-/*Flex declaration*/
-
-.flex-container {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.flex-row {
-  flex-direction: row;
-}
-
-.flex-item-1 {
-  flex: 1;
-}
-
-.flex-item-2 {
-  flex: 2;
-}
-
-.overflow-on {
-  overflow-y: auto;
-}
-
-.toast-top-right {
-  top: 60px !important;
-  right: 12px;
-}
+  }*/
+
+
+  /*UserProfile styles*/
+
+  .user-profile {
+    margin-top: 30px;
+  }
+
+  .user-profile .user-info-brief {
+    text-align: center;
+    font-family: "LatoBold";
+    font-size: 20px;
+  }
+
+  .user-profile .list-group {
+    padding-top: 20px;
+  }
+
+  .user-profile img {
+    border-radius: 10%;
+    float: right;
+  }
+
+  .user-profile .change-photo {
+    clear: both;
+  }
+
+  .user-profile .user-info {
+    padding-left: 30px;
+  }
+
+  .user-profile .change-password, .user-profile .add-profile-photo {
+    background-color: #fff;
+    padding-top: 20px;
+  }
+
+  .user-profile .panel {
+    position: relative;
+  }
+
+  .user-profile .close-button {
+    font-size: 30px;
+    font-weight: 700;
+    position: absolute;
+    right: 20px;
+    top: 0;
+    text-decoration: none;
+    color: black;
+  }
+
+  .del, .def:hover {
+    color: red;
+  }
+
+  .fl-right {
+    float: right;
+  }
+
+  .clear {
+    clear: both;
+  }
+
+  .page-edit-form {
+    background-color: #fff;
+  }
+
+  .page-edit-form input {
+    width: 100%;
+  }
+
+  .error-404 {
+    text-align: center;
+  }
+
+  .error-404 .video-fluid {
+    width: 100%;
+    height: 600px;
+  }
+
+  .loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('http://bradsknutson.com/wp-content/uploads/2013/04/page-loader.gif') 50% 50% no-repeat rgb(249, 249, 249);
+  }
+
+  .btn.edit_btn {
+    margin-left: 10px;
+  }
+
+  .facebook {
+    background-color: #3b5998;
+    border-color: #335190;
+  }
+
+  .facebook:hover, .facebook:active, .facebook:focus {
+    background-color: #335190;
+  }
+
+  .btn.btn-default.btn-border {
+    border-color: #ffffff;
+    color: #fff;
+  }
+
+  .btn.btn-primary.btn-border {
+    border-color: #53a7df;
+    color: #3498db;
+  }
+
+  .btn.btn-success.btn-border {
+    border-color: #2ecc71;
+    color: #2ecc71;
+  }
+
+  .btn.btn-info.btn-border {
+    border-color: #81cfe0;
+    color: #81cfe0;
+  }
+
+  .btn.btn-warning.btn-border {
+    border-color: #EDD95F;
+    color: #D1C054;
+  }
+
+  .btn.btn-danger.btn-border {
+    border-color: #F04848;
+    color: #c0392b;
+  }
+
+  .btn.btn-border {
+    border: 2px solid;
+    background: transparent;
+  }
+
+  .btn.btn-primary:hover {
+    background-color: #53a7df;
+    color: #fff;
+  }
+
+  .btn.btn-success:hover {
+    background-color: #25a25a;
+    color: #fff;
+  }
+
+  .btn.btn-info:hover {
+    background-color: #58bfd6;
+    color: #fff;
+  }
+
+  .btn.btn-warning:hover {
+    background-color: #F5E062;
+    color: #fff;
+  }
+
+  .btn.btn-danger:hover {
+    background-color: #EB4646;
+    color: #fff;
+  }
+
+  .fa {
+    line-height: 40px;
+    vertical-align: middle;
+    font-size: 2.7em
+  }
+
+  input[type="checkbox"] {
+    width: 1.3em;
+    height: 1.8em;
+  }
+
+  .det-problem-modal .title {
+    margin-top: 0px;
+    margin-bottom: 30px;
+  }
+
+  .det-problem-modal .general, .problemBlock .general {
+    background-color: #eee;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
+  .det-problem-modal .rate, .problemBlock .rate {
+    float: left;
+    font-size: 18px;
+  }
+
+  .det-problem-modal .solution, .problemBlock .solution {
+    float: right;
+    font-size: 18px;
+  }
+
+  .solved {
+    color: #008800;
+  }
+
+  .unsolved {
+    color: #880000;
+  }
+
+  .det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+    padding: 10px;
+  }
+
+  [ui-view].ng-enter, [ui-view].ng-leave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  [ui-view].ng-enter {
+    opacity: 0;
+  }
+
+  [ui-view].ng-enter-active {
+    opacity: 1;
+  }
+
+  [ui-view].ng-leave {
+    opacity: 1;
+  }
+
+  [ui-view].ng-leave-active {
+    opacity: 0;
+  }
+
+  .admin {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(100, 100, 100, 0.1);
+    z-index: 99999999;
+  }
+
+  .problemBlock {
+    position: absolute;
+    right: 0px;
+    background-color: #fff;
+  }
+
+  .severity {
+    position: absolute;
+    top: 0.1em;
+    left: -2em;
+  }
+
+  .severity li {
+    list-style: none;
+    display: inline;
+    margin-right: 0.1em;
+  }
+
+  .selectSeverity {
+    color: red;
+  }
+
+  .login.panel-content, .register.panel-content {
+    padding: 20px;
+  }
+
+  .addProblem {
+    margin: 0;
+  }
+
+  .error-page-header {
+    font-size: 72px;
+    font-weight: 700;
+  }
+
+  .photos img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+  }
+
+
+  /*Flex declaration*/
+
+  .flex-container {
+    display: flex;
+  }
+
+  .flex-column {
+    flex-direction: column;
+  }
+
+  .flex-row {
+    flex-direction: row;
+  }
+
+  .flex-item-1 {
+    flex: 1;
+  }
+
+  .flex-item-2 {
+    flex: 2;
+  }
+
+  .overflow-on {
+    overflow-y: auto;
+  }
+
+  .toast-top-right {
+    top: 60px !important;
+    right: 12px;
+  }
+
+  .filter{
+    position: absolute;
+    top:0;
+    width: 30%;
+    left: -30%;
+    height: 91vh;
+    background-color: #fff;
+    transition:1s;
+  }
+  #filerToogle{
+    cursor: pointer;
+    position: absolute;
+    background-color: #fff;
+    padding-left: 5px;
+    height: 2em;
+    width: 6em;
+    border:1px solid #111;
+    border-radius: 5px 5px 0px 0;
+    transform: rotate(90deg);
+    right: -4em;
+    bottom: 2em;
+  }
+  .problemBlock img{
+    height: 2em;
+  }
+  .time {
+    text-align: right;
+    font-style: italic;
+
+  }
+  .showBlock{
+    height: 20vh;
+  }
+
+  .selectedType{
+    background-color: #111;
+  }
+  .showFilter{
+    left: 0%;
+  }
+  .problTypes , .status{
+    margin-left: -15%;
+    margin-top: 6%;
+  }
+  .problTypes li , .status li{
+    cursor: pointer;
+    width: 100%;
+    list-style: none;
+    margin-top: 0.3em;
+    padding-left: 0.55em;
+    font-size: 1.25em;
+    height: 1.75em;
+    background-color: #ccc;
+  }
+  .indicator{
+    float: right;
+    margin-right: 0.5em;
+    margin-top: 0.3em;
+
+  }
+  .full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+  }
+  .partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+  }
+  .input-group .form-control{
+    width: 185%;
+  }

@@ -30,6 +30,7 @@
     </form>
   </modal>
   <div class="row" ng-show="rolePermTable">
+  
     <div class="col-md-9 col-md-offset-1">
       <table class="table table-stripped" >
         <thead>
@@ -44,8 +45,7 @@
             <td>
               <button class="btn btn-danger edit_btn btn-border" ng-click="deleteRole(role_id)">видалити</button>
 
-              <button class="btn btn-warning edit_btn btn-border" ng-click="showEditRoleModal(role_name,role_id)">редагувати</button>
-              <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">права ролі</button>
+              <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">редагувати</button>
 
             </td>
           </tr>
@@ -66,7 +66,14 @@
       <div class="col-md-3">
         <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
       </div>
+
     </div>
+    <div class="row">
+       <div class="col-md-2 ">
+      <button class="btn btn-warning btn-block edit_btn btn-border" ng-click="showEditRoleModal(rolePermObj.name,rolePermObj.id)">змінити назву</button>
+    </div>
+    </div>
+   
     <div class="col-md-6">
 
       <div class="row">
@@ -79,7 +86,6 @@
                 <tr>
                   <td>Назва методу</td>
                   <td>Модифікатор доступу</td>
-                  <td>Id</td>
                   <td>Опис</td>
 
                 </tr>
@@ -88,7 +94,6 @@
                 <tr ng-repeat="perm in actualPermInRole | filter : searchWordActua" >
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>
-                  <td>{{perm.id || perm.permission_id}}</td>
                   <td>{{perm.description}}</td>
                   <td><button class="btn btn-danger btn-border"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                 </tr>
@@ -110,8 +115,6 @@
                 <tr>
                   <td></td>
                   <td>Назва методу</td>
-                  <td>Id</td>
-                  <td>Ресурс</td>
                   <td>Modifier</td>
                   <td>Опис</td>
                 </tr>
@@ -119,7 +122,9 @@
               <tbody>
                 <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.permission_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
-                  <td ng-repeat="perm_prop in perm" > {{perm_prop}}</td>
+                  <td>{{perm.action}}</td>
+                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.description}}</td>
                 </tr>
 
               </tbody>

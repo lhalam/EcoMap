@@ -4,7 +4,7 @@
     <title>Ecomap.org</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/icon" href="http://ecomap.org/images/icons/favicon.ico">
+    <!-- <link rel="icon" type="image/icon" href="http://ecomap.org/images/icons/favicon.ico"> -->
 
     <!-- Styles -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -17,6 +17,9 @@
     <link href="https://rawgit.com/alexk111/ngImgCrop/master/compile/unminified/ng-img-crop.css">
     <link rel="stylesheet" type="text/css" href="/css/image_crop.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/fonts/fontawesome-webfont.ttf">
+    <link rel="stylesheet" type="text/css" href="/fonts/fontawesome-webfont.ttf">
+    <link rel="stylesheet" href="https://rawgit.com/dalelotts/angular-bootstrap-datetimepicker/master/src/css/datetimepicker.css" />
 
     <!-- Non-angularJS scripts -->
     <script src="/js/libs/jquery.min.js"></script>
@@ -42,6 +45,8 @@
     <script src="/js/libs/lodash.min.js"></script>
     <script src="/js/libs/angular-resizable.js"></script>
     <script src="/js/libs/angular-ui-router-grant.min.js"></script>
+    <script src="https://rawgit.com/dalelotts/angular-bootstrap-datetimepicker/master/src/js/datetimepicker.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js"></script>
 
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload-shim.js"></script>
     <script src="https://angular-file-upload.appspot.com/js/ng-file-upload.js"></script>
@@ -80,7 +85,8 @@
     <script src='/js/controllers/AdminPermissionCtrl.js'></script>
     <script src='/js/controllers/AdminRoleCtrl.js'></script>
     <script src='/js/controllers/AdminUserCtrl.js'></script> 
-    <script src='/js/controllers/DetailedProblemCtrl.js'></script>   
+    <script src='/js/controllers/DetailedProblemCtrl.js'></script>
+    <script src='/js/controllers/RestorePasswordCtrl.js'></script>
 
   </head>
   <body ng-controller="MainCtrl">
@@ -129,7 +135,7 @@
       </nav>
       <toaster-container toaster-options="{'close-button': true}"></toaster-container>
       <div class="flex-container flex-row flex-item-1">
-        <div ui-view class="map-div flex-item-2 flex-container flex-column"></div>
+        <div ui-view class="map-div"></div>
         <div ui-view name="detailedProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('detailedProblem')"></div>
       </div>
 

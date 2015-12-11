@@ -67,7 +67,7 @@ def register():
     return response
 
 
-@app.route('api/user_roles/register', methods=['POST'])
+@app.route('/api/user_roles/register', methods=['POST'])
 def register_by_admin():
     """Method for registration new user in db by admin.
     Method checks if user is not exists and handle

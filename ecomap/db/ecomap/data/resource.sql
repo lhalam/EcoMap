@@ -1,25 +1,14 @@
-insert into resource(resource_name) VALUES ('/');
-insert into resource(resource_name) VALUES ('/api/role_permissions');
-insert into resource(resource_name) VALUES ('/api/all_permissions');
-insert into resource(resource_name) VALUES ('/api/change_password');
-insert into resource(resource_name) VALUES ('/api/problem_post');
-insert into resource(resource_name) VALUES ('/api/email_exist');
-insert into resource(resource_name) VALUES ('/api/permissions');
-insert into resource(resource_name) VALUES ('/api/addResource');
-insert into resource(resource_name) VALUES ('/api/user_avatar');
-insert into resource(resource_name) VALUES ('/api/user_roles');
-insert into resource(resource_name) VALUES ('/api/resources');
-insert into resource(resource_name) VALUES ('/api/user_page');
-insert into resource(resource_name) VALUES ('/api/getTitles');
-insert into resource(resource_name) VALUES ('/api/register');
-insert into resource(resource_name) VALUES ('/api/problems');
-insert into resource(resource_name) VALUES ('/api/logout');
-insert into resource(resource_name) VALUES ('/api/login');
-insert into resource(resource_name) VALUES ('/api/roles');
-insert into resource(resource_name) VALUES ('/api/problem_detailed_info/<problem_id>');
-insert into resource(resource_name) VALUES ('/api/user_detailed_info/<user_id>');
-insert into resource(resource_name) VALUES ('/api/deleteResource/<page_id>');
-insert into resource(resource_name) VALUES ('/api/editResource/<page_id>');
-insert into resource(resource_name) VALUES ('/api/usersProblem/<user_id>');
-insert into resource(resource_name) VALUES ('/api/authorize/<provider>');
-insert into resource(resource_name) VALUES ('/api/resources/<alias>');
+INSERT INTO `resource` VALUES (1,'/'),
+(8,'/api/addResource'),(3,'/api/all_permissions'),
+(24,'/api/authorize/:provider'),(4,'/api/change_password'),
+(21,'/api/deleteResource/:idPage'),(22,'/api/editResource/:idPage'),
+(6,'/api/email_exist'),(13,'/api/getTitles'),(17,'/api/login'),
+(16,'/api/logout'),(7,'/api/permissions'),(26,'/api/photo/:idProblem'),
+(15,'/api/problems'),(19,'/api/problem_detailed_info/:idProblem'),
+(5,'/api/problem_post'),(14,'/api/register'),
+(11,'/api/resources'),(25,'/api/resources/:alias'),
+(18,'/api/roles'),(2,'/api/role_permissions'),
+(23,'/api/usersProblem/:idUser'),(9,'/api/user_avatar'),
+(20,'/api/user_detailed_info/:idUser'),
+(12,'/api/user_page'),
+(10,'/api/user_roles');

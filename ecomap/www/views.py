@@ -57,7 +57,7 @@ def check_access():
                     'user ID:%s (%s), errors=%s)'
                     % (route, request.method, current_user.uid,
                         current_user.role, access_result['error']))
-        abort(403)
+        # abort(403)
 
 
 @app.route('/', methods=['GET'])

@@ -205,19 +205,22 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
 
     $scope.filterMarker()
   }
-  $scope.selectTime = function(){
-
+  $scope.selectTime = function(marker){
+    if(!$scope.dt){
+      return false
+    }
+    else if(marker.date > $scope.dt.from.getTime()/1000 && marker.date < $scope.dt.to.getTime()/1000){
+      console.log(marker.date > $scope.dt.from.getTime()/1000 && marker.date < $scope.dt.to.getTime()/1000)
+      return false
+    }
+    else return true
   }
   $scope.filterMarker = function(){
    angular.forEach($scope.markers, function(marker, key){   
-    if(!$scope.dt){
-      $scope.dt = {}
-    }
-    //console.log(marker.date < $scope.dt.from.getTime()/1000 || marker.date > $scope.dt.to.getTime()/1000)
     if($scope.selectedType.indexOf(marker.problem_type_Id+"") === -1 ||
-      $scope.selectedStatus.indexOf(marker['problemStatus']) === -1 || !$scope.dt.from  ||
-      marker.date < $scope.dt.from.getTime()/1000 || marker.date > $scope.dt.to.getTime()/1000
-      ){
+      $scope.selectedStatus.indexOf(marker['problemStatus']) === -1 || 
+      $scope.selectTime(marker)
+      ){ 
 
       marker.setVisible(false);
 

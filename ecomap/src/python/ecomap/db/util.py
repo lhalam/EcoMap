@@ -1002,6 +1002,7 @@ def get_user_id_by_hash(hash_sum):
 
 @retry_query(tries=3, delay=1)
 def get_change_pass_stats(last24h):
+    #getrestoredata
     """
     Gets statistic info from db about user's change password activity during
     the last 24hours.

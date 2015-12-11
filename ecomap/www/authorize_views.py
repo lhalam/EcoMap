@@ -29,7 +29,7 @@ def logout():
     """
     return jsonify(result=logout_user())
 
-
+ 
 @app.route('/api/register', methods=['POST'])
 def register():
     """Method for registration new user in db.
@@ -57,6 +57,42 @@ def register():
                                  data['last_name'],
                                  data['email'],
                                  data['password'])
+            msg = 'added %s %s' % (data['first_name'],
+                                   data['last_name'])
+            response = jsonify({'status_message': msg}), 201
+        else:
+            response = Response(json.dumps(valid),
+                                mimetype='application/json'), 400
+    return response
+
+
+@app.route('api/user_roles/register', methods=['POST'])
+def register_by_admin():
+    """Method for registration new user in db by admin.
+    Method checks if user is not exists and handle
+    registration processes.
+
+    :return:
+        - if one of the field is incorrect or empty:
+            json {'error':'Unauthorized'}
+            Status 401 - Unauthorized
+        - if user already exists
+            Status 400 - Bad Request
+            json {'status': 'user with this email already exists'}
+        - if registration was successful:
+            json {'status': added user <username>}
+            Status 200 - OK
+    """
+    response = jsonify(msg='unauthorized'), 400
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        valid = validator.user_registration_by_admin(data)
+        if valid['status']:
+            ecomap_user.register_by_admin(data['first_name'],
+                                 data['last_name'],
+                                 data['email'],
+                                 data['password'],
+                                 data['role_name'])
             msg = 'added %s %s' % (data['first_name'],
                                    data['last_name'])
             response = jsonify({'status_message': msg}), 201

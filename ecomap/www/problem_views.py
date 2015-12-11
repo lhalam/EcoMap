@@ -88,8 +88,7 @@ def post_problem():
         if valid['status']:
             logger.debug('Checks problem post validation. %s', valid)
             user_id = current_user.uid
-            now = time.time()
-            posted_date = int(now)
+            posted_date = int(time.time())
             last_id = db.problem_post(data['title'],
                                       data['content'],
                                       data['proposal'],

@@ -141,7 +141,7 @@ def get_user_problems(user_id):
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 
-@app.route('/api/all_usersProblem/', methods=['GET'])
+@app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
         :returns list of user's problem represented with next objects:

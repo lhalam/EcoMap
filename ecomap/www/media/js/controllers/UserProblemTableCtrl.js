@@ -20,12 +20,21 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
       return statuses[status];
     };
     $scope.loadProblems = function(user_id) {
+      if ($cookies.get("role")=="admin"){
+        $http({
+        method: 'GET',
+        url: 'api/all_usersProblem'
+      }).then(function successCallback(response) {
+        $scope.problems = response.data;
+      })
+      } else {
       $http({
         method: 'GET',
         url: 'api/usersProblem/' + user_id
       }).then(function successCallback(response) {
         $scope.problems = response.data;
-      });
+      })
+      }
     };
     $scope.loadProblems($cookies.get('id'));
     $scope.detailedInfoModal = false;

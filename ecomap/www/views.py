@@ -40,8 +40,9 @@ def check_access():
     """
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
-    # logger.debug(session)
-    # logger.debug(jsonify(session['access_control']))
+        # session['access_control'] = permission_control.reload_dct()
+    logger.debug(session)
+    logger.debug(jsonify(session['access_control']))
     access_rules = session['access_control']
     route = '/' + '/'.join(request.url.split('/')[3:])
 

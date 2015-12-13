@@ -445,18 +445,26 @@ def get_all_permissions():
 
     :return: list of json
     """
-    all_permissions = db.get_all_permissions()
-    perms_list = []
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    count = db.count_permissions()
+    all_permissions = db.get_all_permissions(offset, per_page)
+    permissions = []
+    total_count = {}
+
     if all_permissions:
         for perm in all_permissions:
-            perms_list.append({
+            permissions.append({
                 'permission_id': perm[0],
                 'resource_name': perm[1],
                 'action': perm[2],
                 'modifier': perm[3],
-                'description': perm[4]
-            })
-    return Response(json.dumps(perms_list), mimetype='application/json')
+                'description': perm[4]})
+    if count:
+        total_count = {'total_perm_count': count[0]}
+    return Response(json.dumps([permissions, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])

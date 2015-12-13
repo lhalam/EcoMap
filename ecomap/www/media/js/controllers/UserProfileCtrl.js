@@ -1,5 +1,5 @@
-app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster', 'Upload', '$timeout',
-  function($scope, $state, $cookies, $http, toaster, Upload, $timeout) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster',
+  function($scope, $state, $cookies, $http, toaster) {
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");

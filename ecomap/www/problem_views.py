@@ -141,6 +141,38 @@ def get_user_problems(user_id):
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 
+@app.route('/api/all_usersProblem/', methods=['GET'])
+def get_all_users_problems():
+    """This method retrieves all user's problem from db.
+        :returns list of user's problem represented with next objects:
+        [
+            {"id": 190,
+             "title": "name",
+             "latitude": 51.419765,
+             "longitude": 29.520264,
+             "problem_type_id": 1,
+             "status": 0,
+             "date": "2015-02-24T14:27:22.000Z",
+             "severity": '3',
+             "is_enabled": 1
+            },
+        ]
+    """
+    problems_list = []
+    problem_tuple = db.get_all_users_problems()
+    for problem in problem_tuple:
+        problems_list.append({'id': problem[0],
+                              'title': problem[1],
+                              'latitude': problem[2],
+                              'logitude': problem[3],
+                              'problem_type_id': problem[4],
+                              'status': problem[5],
+                              'date': problem[6] * 1000,
+                              'severity': problem[8],
+                              'is_enabled': problem[7]})
+    return Response(json.dumps(problems_list), mimetype='application/json')
+
+
 @app.route('/api/photo/<int:problem_id>', methods=['POST'])
 def problem_photo(problem_id):
     """Controller for handling adding problem photos.

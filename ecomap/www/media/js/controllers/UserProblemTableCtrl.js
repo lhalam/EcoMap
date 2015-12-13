@@ -9,7 +9,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         5: 'Загрози біорізноманіттю',
         6: 'Браконьєрство',
         7: 'Інші проблеми'
-      }
+      };
       return types[type_id];
     };
     $scope.getStatus = function(status) {
@@ -18,7 +18,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         'Solved': 'Вирішено'
       };
       return statuses[status];
-    }
+    };
     $scope.loadProblems = function(user_id) {
       $http({
         method: 'GET',
@@ -26,7 +26,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
       }).then(function successCallback(response) {
         $scope.problems = response.data;
       });
-    }
+    };
     $scope.loadProblems($cookies.get('id'));
     $scope.detailedInfoModal = false;
     $scope.triggerDetailModal = function(problem_id) {
@@ -40,4 +40,4 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
       })
     }
   }
-])
+]);

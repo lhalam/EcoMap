@@ -102,14 +102,35 @@ def resource_delete():
 @app.route("/api/resources", methods=['GET'])
 @login_required
 def resource_get():
-    """Function which returns all resources from database.
-       :return: {'resource_name': 'resource_id'}
+    """Function which returns resources list from db with pagination options.
+       :return: json such format:
+    [
+      [
+        {"resource_name": "name", "id": 1},
+        {"resource_name": "name_2", "id": 2}
+      ],
+      [
+       {"total_res_count": 2}
+      ]
+    ]
     """
-    query = db.get_all_resources()
-    parsed_data = {}
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    query = db.get_all_resources(offset, per_page)
+    count = db.count_resources()
+    total_count = {}
+    resources = []
+
     if query:
-        parsed_data = {res[1]: res[0] for res in query}
-    return jsonify(parsed_data)
+        for resource in query:
+            resources.append({'id': resource[0],
+                             'resource_name': resource[1]})
+    if count:
+        total_count = {'total_res_count': count[0]}
+
+    return Response(json.dumps([resources, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route("/api/roles", methods=['POST'])
@@ -424,18 +445,26 @@ def get_all_permissions():
 
     :return: list of json
     """
-    all_permissions = db.get_all_permissions()
-    perms_list = []
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    count = db.count_permissions()
+    all_permissions = db.get_all_permissions(offset, per_page)
+    permissions = []
+    total_count = {}
+
     if all_permissions:
         for perm in all_permissions:
-            perms_list.append({
+            permissions.append({
                 'permission_id': perm[0],
                 'resource_name': perm[1],
                 'action': perm[2],
                 'modifier': perm[3],
-                'description': perm[4]
-            })
-    return Response(json.dumps(perms_list), mimetype='application/json')
+                'description': perm[4]})
+    if count:
+        total_count = {'total_perm_count': count[0]}
+    return Response(json.dumps([permissions, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
@@ -533,21 +562,43 @@ def delete_page(page_id):
 
 
 @app.route("/api/user_page", methods=['GET'])
-def pagination():
-    """Returns a limit of users."""
-    offset = request.args.get('offset')
-    per_page = request.args.get('per_page')
+def get_all_users_info():
+    """Function which returns users list from db with pagination options.
+       :return: json such format:
+    [
+        [
+            {"role_name": "admin",
+            "first_name": "username",
+            "last_name": "UserSurname",
+            "id": 1,
+            "email": "email@name.ru"},
+            {"role_name": "user",
+            "first_name": "Username",
+            "last_name": "UserSurname",
+            "id": 2,
+            "email": "email@gmail.com"}
+        ],
+        [
+            {"total_users": 2}
+        ]
+    ]
+    """
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
 
     query = db.get_users_pagination(offset, per_page)
     count = db.count_users()
-    parsed_json = []
+    total_count = {}
+    users = []
+
     if query:
         for user_data in query:
-            parsed_json.append({'id': user_data[0], 'first_name': user_data[1],
-                                'last_name': user_data[2],
-                                'email': user_data[3],
-                                'role_name': user_data[4]})
+            users.append({'id': user_data[0], 'first_name': user_data[1],
+                          'last_name': user_data[2],
+                          'email': user_data[3],
+                          'role_name': user_data[4]})
     if count:
-        parsed_json.append({'total_users': count[0]})
+        total_count = {'total_users': count[0]}
 
-    return Response(json.dumps(parsed_json), mimetype='application/json')
+    return Response(json.dumps([users, [total_count]]),
+                    mimetype='application/json')

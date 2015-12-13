@@ -28,35 +28,37 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('current user is %s, %s', g.user.role, g.user)
+    logger.info('Current user is %s, role(%s)', g.user.role, g.user)
 
 
 # @app.before_request
-def check_access():
-    """Global decorator for each view.
-    Checks permissions to access app resources by each user's request.
-    Gets dynamic user info(user role, url, request method)from request context.
-    :return: nested function returns true or 403
-    """
-    if 'access_control' not in session:
-        session['access_control'] = permission_control.get_dct()
-    logger.debug(jsonify(session['access_control']))
-    access_rules = session['access_control']
-    route = '/' + '/'.join(request.url.split('/')[3:])
+# def check_access():
+#     """Global decorator for each view.
+#     Checks permissions to access app resources by each user's request.
+#     Gets dynamic user info(user role, url, request method)from request context.
+#     :return: nested function returns true or 403
+#     """
+#     if 'access_control' not in session:
+#         session['access_control'] = permission_control.get_dct()
+#         # session['access_control'] = permission_control.reload_dct()
+#     logger.debug(session)
+#     logger.debug(jsonify(session['access_control']))
+#     access_rules = session['access_control']
+#     route = '/' + '/'.join(request.url.split('/')[3:])
 
-    access_result = check_permissions(current_user.role,
-                                      route, request.method, access_rules)
-    if not access_result['error']:
-        access_status = access_result['status']
-        logger.info('ACCESS STATUS: %s DETAILS:(url= %s[%s], user ID:%s (%s))',
-                    access_status, route, request.method, current_user.uid,
-                    current_user.role)
-    else:
-        logger.debug('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s], '
-                     'user ID:%s (%s), errors=%s)'
-                     % (route, request.method, current_user.uid,
-                        current_user.role, access_result['error']))
-        abort(403)
+#     access_result = check_permissions(current_user.role,
+#                                       route, request.method, access_rules)
+#     if not access_result['error']:
+#         access_status = access_result['status']
+#         logger.info('ACCESS STATUS: %s DETAILS:(url= %s[%s], user ID:%s (%s))',
+#                     access_status, route, request.method, current_user.uid,
+#                     current_user.role)
+#     else:
+#         logger.info('ACCESS: FORBIDDEN! DETAILS:(url= %s[%s],'
+#                     'user ID:%s (%s), errors=%s)'
+#                     % (route, request.method, current_user.uid,
+#                         current_user.role, access_result['error']))
+#         abort(403)
 
 
 @app.route('/', methods=['GET'])

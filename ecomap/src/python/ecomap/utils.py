@@ -44,8 +44,16 @@ class Singleton(type):
         return cls._instance
 
 
-def send_email(app_name, app_key, user_name, user_surname, user_email,
-               user_password):
+def send_email(app_name, app_key, msg, user_email):
+    """Sends email."""
+    server = smtplib.SMTP_SSL('smtp.gmail.com')
+    server.login(app_name, app_key)
+    server.sendmail('admin@ecomap.com', user_email,
+                    msg.as_string())
+    server.quit()
+
+
+def registration_email(user_name, user_surname, user_email, user_password):
     """Sends email to new created users.
        :params: app_name - app's login
                 app_key - app's key
@@ -71,9 +79,112 @@ def send_email(app_name, app_key, user_name, user_surname, user_email,
     msg['Subject'] = 'Test email'
     msg['From'] = 'admin@ecomap.com'
     msg['To'] = user_email
+    return msg
 
-    server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(app_name, app_key)
-    server.sendmail('admin@ecomap.com', user_email,
-                    msg.as_string())
-    server.quit()
+
+def restore_password_email(user_name, user_surname, user_email, hashed):
+    """Sends to user's email message with link to restore user's password.
+       :params: app_name - app's login
+                app_key - app's key
+                user_name - user's name
+                user_surname - user's surname
+    """
+    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
+                                 'restore_password_template.html')
+    with open(TEMPLATE_PATH, 'rb') as template:
+        html = template.read().decode('utf-8')
+    html_decoded = html % (user_name, user_surname, hashed)
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
+
+    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
+
+    msg.attach(htmltext)
+    msg['Subject'] = 'Test email'
+    msg['From'] = 'admin@ecomap.com'
+    msg['To'] = user_email
+    return msg
+
+
+def admin_stats_email(data=None):
+    """Sends email to new created users.
+       :params: app_name - app's login
+                app_key - app's key
+                name - user name
+                surname - user surname
+                email - user email
+                password - user password
+    """
+    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
+                                 'admin_stats_template.html')
+
+    with open(TEMPLATE_PATH, 'rb') as template:
+        html = template.read()
+
+    mes = 'message noone changed </body>'
+    table_head = """<table>
+        <tr>
+            <th>користувач</th>
+            <th>mail</th>
+            <th>number request</th>
+        </tr>
+    """
+    table_row = """
+        <tr>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%d</td>
+        </tr>
+            """
+    if data:
+        html += table_head
+        for x in data:
+            html += table_row % (x[1].encode('utf-8'),
+                                 x[2].encode('utf-8'),
+                                 int(x[3]))
+        else:
+            html += '</table></body>'
+    else:
+        html += mes
+
+    html_decoded = html
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+
+    # htmltext = MIMEText(html_decoded, 'html', 'utf-8')
+
+    # msg.attach(htmltext)
+    msg['Subject'] = 'звіт за добу'
+    msg['From'] = 'admin@ecomap.com'
+    msg['To'] = 'vadime.padalko@gmail.com'
+
+    with app.app_context():
+    #     msg.body = render_template(template + '.txt')
+        msg.html = render_template('jinja_template.html', data=data)
+    #     # mail.send(msg)
+
+    return msg
+
+def admin_stats_email2(data=None):
+    """Sends email to new created users.
+       :params: app_name - app's login
+                app_key - app's key
+                name - user name
+                surname - user surname
+                email - user email
+                password - user password
+    """
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+
+    with app.app_context():
+        msg.html = render_template('jinja_template.html', data=data)
+
+    htmltext = MIMEText(msg.html, 'html', 'utf-8')
+
+    msg.attach(htmltext)
+    msg['Subject'] = 'звіт за добу'
+    msg['From'] = 'admin@ecomap.com'
+    msg['To'] = 'vadime.padalko@gmail.com'
+    return msg

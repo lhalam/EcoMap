@@ -50,7 +50,7 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
   };
 
   $scope.setDefaultPhoto = function() {
-    $scope.user.data.avatar = 'http://placehold.it/150x150';
+    $scope.user.data.avatar = 'http://placehold.it/200x200';
     $scope.deletePhoto($scope.user.id);
     return $scope.user.data.avatar;
   };

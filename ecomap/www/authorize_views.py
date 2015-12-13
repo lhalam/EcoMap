@@ -3,8 +3,9 @@
 """
 import json
 import requests
+import time
 
-from flask import request, jsonify, Response
+from flask import request, jsonify, Response, render_template
 from flask_login import login_user, logout_user, login_required
 
 from urlparse import parse_qsl
@@ -174,4 +175,49 @@ def oauth_login(provider):
                        token=user.get_auth_token(),
                        email=user.email)
 
+    return response
+
+
+@app.route('/api/restore_password', methods=['POST'])
+def restore_password_request():
+    """Function to restore forgotten password."""
+    json = request.get_json()
+    email = json['email']
+    user = ecomap_user.get_user_by_email(email)
+    if user:
+        ecomap_user.restore_password(user)
+        response = jsonify(message='Email was sended.'), 200
+    else:
+        response = jsonify(error='There is not such email.'), 401
+    return response
+
+
+@app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
+def restore_password_page(hashed):
+    """Renders page to restore password."""
+    creation_time = db.check_restore_password(hashed)
+
+    if creation_time:
+        elapsed = time.time() - creation_time[0]
+    if elapsed <= 900:
+        return render_template('passwordRestoringPass.html')
+    else:
+        return 'Out of date.'
+
+
+@app.route('/api/restore_password', methods=['PUT'])
+def restore_password():
+    """Updates user password."""
+    data = request.get_json()
+    valid = validator.change_password(data)
+
+    if valid:
+        user_id = db.get_user_id_by_hash(data['hash_sum'])
+    if user_id:
+        password = ecomap_user.hash_pass(data['password'])
+        db.restore_password(user_id[0], password)
+        response = jsonify(message='Password restored.')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
     return response

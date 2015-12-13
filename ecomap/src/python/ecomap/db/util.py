@@ -245,14 +245,15 @@ def get_user_role_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_resources():
+def get_all_resources(offset, per_page):
     """Get all resources.
     :return: tuple of resources
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `resource_name` FROM `resource`;"""
-        cursor.execute(query)
+        query = """SELECT `id`, `resource_name` FROM `resource`
+                   ORDER BY `id` LIMIT %s,%s;"""
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 
@@ -745,27 +746,6 @@ def get_users_pagination(offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
-def pagination_test(page, per_page):
-    """Users per page
-    """
-    if page == 1:
-        offset = 0
-    else:
-        offset = (page - 1) * per_page
-
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
-                   FROM  `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id=u.id
-                   INNER JOIN `role` AS r ON ur.role_id=r.id
-                   ORDER BY `id` LIMIT %s,%s;
-                """
-        cursor.execute(query % (offset, per_page))
-        return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
 def count_users():
     """Users per page
     """
@@ -1034,3 +1014,16 @@ def refresh_table(last24h, time_now):
                 """
         cursor.execute(query % (last24h, time_now))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def count_resources():
+    """
+
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `resource`;"""
+        cursor.execute(query)
+        return cursor.fetchone()

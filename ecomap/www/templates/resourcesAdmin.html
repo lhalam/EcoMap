@@ -1,4 +1,73 @@
 <div class="row" ng-controller="ResourceCtrl">
+  <div class="col-md-12">
+    <table class="table table-stripped">
+      <thead>
+        <tr>
+          <td>Назва ресурсу</td>
+          <td><button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
+            <i class="fa fa-plus "></i>&nbsp;&nbsp;додати ресурс</button></td>
+            <td>
+              <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
+              </select>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+         <tr ng-repeat="res in Resources">
+          <td>{{res.resource_name}}</td>
+          <td></td>
+          <td>
+            <button class="btn btn-primary edit_btn btn-border" ng-click="showeditResModal(res.resource_name,res.id)">редагувати</button>
+            <button class="btn btn-danger edit_btn btn-border" ng-click="deleteResource(res.id)">видалити</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row">
+      <div class="col-md-8 col-md-offset-4">
+        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+      </div>
+    </div>
+    <modal title="Додати ресурс" visible="addResModal">
+      <form  ng-submit="addResource(newResource)" name="addResForm" novalidate>
+        <div class="row">
+          <div class="col-md-12 ">
+            <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
+              <label for="" class="control-label" >Назва ресурса</label>
+              <div class="row">
+                <div class="col-md-11">
+                  <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
+                </div>
+                <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button></div>
+              </div>
+              <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </modal>
+    <modal title="Редагувати ресурс" visible="editResModal">
+      <form  ng-submit="editResource(editResObj)" name="editResForm" novalidate>
+        <div class="form-group" ng-class="{ 'has-error': (editResForm.resName.$touched || editResSub) && editResForm.resName.$invalid }">
+          <div class="row">
+            <div class="col-md-12"><label for="" class="control-label" >Назва ресурса</label></div>
+            <div class="col-md-11"><input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required></div>
+            <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="editResSub=true">змінити</button></div>
+          </div>
+          <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
+            <div ng-messages-include="/templates/error_msgs.html"></div>
+          </div>
+        </div>
+      </form>
+    </modal>
+  </div>
+</div>
+
+
+
+<!-- <div class="row" ng-controller="ResourceCtrl">
   <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 col-md-offset-2">
     <table class="table table-hover">
       <thead>
@@ -20,39 +89,6 @@
         </tr>
       </tbody>
     </table>
-  </div>
-  <modal title="Додати ресурс" visible="addResModal">
-  <form  ng-submit="addResource(newResource)" name="addResForm" novalidate>
-    <div class="row">
-      <div class="col-md-12 ">
-        <div class="form-group" ng-class="{ 'has-error': (addResForm.resName.$touched || addResSub) && addResForm.resName.$invalid }">
-          <label for="" class="control-label" >Назва ресурса</label>
-          <div class="row">
-            <div class="col-md-11">
-              <input type="text" class="form-control" name="resName" ng-model="newResource.name" ng-maxlength="255" required>
-            </div>
-            <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addResSub=true">додати</button></div>
-          </div>
-          <div class="help-block" ng-messages="addResForm.resName.$error" ng-show="addResForm.resName.$touched || addResSub">
-            <div ng-messages-include="/templates/error_msgs.html"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
-  </modal>
-  <modal title="Редагувати ресурс" visible="editResModal">
-  <form  ng-submit="editResource(editResObj)" name="editResForm" novalidate>
-    <div class="form-group" ng-class="{ 'has-error': (editResForm.resName.$touched || editResSub) && editResForm.resName.$invalid }">
-      <div class="row">
-        <div class="col-md-12"><label for="" class="control-label" >Назва ресурса</label></div>
-        <div class="col-md-11"><input type="text" class="form-control" name="resName" ng-model="editResObj.name" ng-maxlength="255" required></div>
-        <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="editResSub=true">змінити</button></div>
-      </div>
-      <div class="help-block" ng-messages="editResForm.resName.$error" ng-show="editResForm.resName.$touched || editResSub">
-        <div ng-messages-include="/templates/error_msgs.html"></div>
-      </div>
-    </div>
-  </form>
-  </modal>
-</div>
+  </div> -->
+
+  <!-- </div> -->

@@ -47,7 +47,8 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
         method: 'GET',
         url: '/api/resources'
       }).then(function successCallback(data) {
-        $scope.Resources = data.data
+        $scope.Resources = data.data[0]
+        console.log($scope.Resources)
       }, function errorCallback(response) {});
     }
 

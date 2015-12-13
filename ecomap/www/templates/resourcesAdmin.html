@@ -3,9 +3,11 @@
     <table class="table table-stripped">
       <thead>
         <tr>
-          <td>Назва ресурсу</td>
-          <td><button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
+          <td>Назва ресурсу <button class="btn btn-primary btn-border" ng-click="triggerAddResModal()">
             <i class="fa fa-plus "></i>&nbsp;&nbsp;додати ресурс</button></td>
+          <td></td>
+            
+
             <td>
               <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
               </select>

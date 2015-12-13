@@ -17,10 +17,10 @@
     </thead>
     <tbody>
       <tr ng-repeat="problem in problems track by $index">
-        <td ng-bind="problem.id"></td>
-        <td ng-bind="problem.title"></td>
-        <td ng-bind="getProblemType(problem.problem_type_id)"></td>
-        <td ng-bind="getStatus(problem.status)"></td>
+        <td ng-model="problem.id"></td>
+        <td ng-model="problem.title"></td>
+        <td ng-model="getProblemType(problem.problem_type_id)"></td>
+        <td ng-model="getStatus(problem.status)"></td>
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
       </tr>
@@ -28,14 +28,14 @@
   </table>
   <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
       <div class="title">
-        <h3 ng-bind="detailedProblem.title"></h3>
+        <h3 ng-model="detailedProblem.title"></h3>
       </div>
       <div class="general">
         <div class="rate">
           <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
         <div class="solution unsolved" >
-          <strong><span ng-bind="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
+          <strong><span ng-model="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
         </div>
         <div class="clear"></div>
       </div>
@@ -43,15 +43,15 @@
           <uib-tab heading="Детально">
               <div class="problem-type">
                 <p><strong>Тип проблеми:</strong></p>
-                <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+                <p ng-model="getProblemType(detailedProblem.problem_type_id)"></p>
               </div>
               <div class="description">
                 <p><strong>Опис проблеми:</strong></p>
-                <p ng-bind="detailedProblem.content"></p>
+                <p ng-model="detailedProblem.content"></p>
               </div>
               <div class="proposal">
                 <p><strong>Пропозиції щодо вирішення</strong></p>
-                <p ng-bind="detailedProblem.proposal"></p>
+                <p ng-model="detailedProblem.proposal"></p>
               </div>
           </uib-tab>
           <uib-tab heading="Коментарі">

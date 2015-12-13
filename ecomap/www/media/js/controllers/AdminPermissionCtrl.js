@@ -12,15 +12,15 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
         var stepCount = $scope.selectCount['selected']
         $http({
           method: "GET",
-          url: "/api/permissions",
+          url: "/api/all_permissions",
           params: {
             per_page: $scope.selectCount['selected'],
             offset: $scope.selectCount['selected'] * newValue - stepCount,
           }
         }).then(function successCallback(data) {
-          // $scope.Permision = data.data[0]
-          // $scope.permisLength = data.data[1][0]['total_res_count']
-          // $scope.bigTotalItems = $scope.permisLength / $scope.selectCount['selected'] * 10;
+          $scope.Permision = data.data[0]
+          $scope.permisLength = data.data[1][0]['total_perm_count']
+          $scope.bigTotalItems = $scope.permisLength / $scope.selectCount['selected'] * 10;
           console.log(data)
         }, function errorCallback(response) {
           $scope.msg.editError('користувача');
@@ -31,18 +31,6 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
       }
     }
     $scope.loadPagination ()
-
-
-
-
-
-
-
-
-
-
-
-
     $scope.addPermModal = false;
     $scope.msgError = msgError;
     $scope.msg = msg;
@@ -77,9 +65,9 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
           "description": $scope.perm['description']
         }
       }).then(function successCallback(data) {
-        $scope.loadPerm()
         $scope.addPermModal = false;
         $scope.msg.createSuccess('права');
+        $scope.loadPagination()
       }, function errorCallback(response) {
         console.log(response)
         $scope.msg.createError('права');
@@ -110,7 +98,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
     }).then(function successCallback(data) {
       $scope.editPermModal = false;
       $scope.msg.editSuccess('права');
-      $scope.loadPerm()
+      $scope.loadPagination()
     }, function errorCallback(response) {
       $scope.msg.editError('права');
     })
@@ -131,6 +119,8 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
       if (!data.data.error) {
         $scope.loadPerm()
         $scope.msg.deleteSuccess('права');
+        $scope.loadPagination()
+
       } else {
         $scope.msg.deleteError('права', $scope.msgError['alreadyBinded']);
       }

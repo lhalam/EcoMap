@@ -16,7 +16,7 @@ app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
             offset: $scope.selectCount['selected'] * newValue - stepCount,
           }
         }).then(function successCallback(data) {
-          var UsersObj = data.data
+          var UsersObj = data.data[0]
           var UsersLength = data.data.pop();
           $scope.UsersLength = UsersLength['total_users'];
           $scope.selectedUsers = UsersObj

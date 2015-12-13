@@ -7,8 +7,7 @@
           <td>Метод</td>
           <td>Модифікатор доступу</td>
           <td>Опис права</td>
-          <td>  <button class="btn btn-primary btn-border" ng-click="showAddPermModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати право</button></td>
-          <td>
+          <td>  <button class="btn btn-primary btn-border" ng-click="showAddPermModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати право</button>
             <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
             </select>
           </td>
@@ -16,7 +15,14 @@
       </thead>
       <tbody>
         <tr ng-repeat="perm in Permision">
-          <td>{{perm}}</td>
+        <td>{{perm.resource_name}}</td>
+        <td>{{perm.action | dictFilter}}</td>
+        <td>{{perm.modifier | dictFilter}}</td>
+        <td>{{perm.description}}</td>
+        <td> <button class="btn btn-primary edit_btn btn-border" ng-click="showEditPermModal(perm)">редагувати</button>
+          <button class="btn btn-danger edit_btn btn-border" ng-click="deletePerm(perm)">видалити</button>
+        </td>
+
         </tr>
       </tbody>
     </table>
@@ -34,12 +40,12 @@
           </div>
           <div class="form-group">
             <label class="control-label">Метод</label>
-            <select ng-model="perm.action" class="form-control" data-ng-options="meth as meth for meth in meth_obj">
+            <select ng-model="perm.action" class="form-control" data-ng-options="meth as (meth|dictFilter) for meth in meth_obj">
             </select>
           </div>
           <div class="form-group">
             <label class="control-label">Модифікатор доступу</label>
-            <select ng-model="perm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj">
+            <select ng-model="perm.modifier" class="form-control" data-ng-options="modif as (modif|dictFilter) for modif in modif_obj">
             </select>
           </div>
           <div class="form-group" ng-class="{ 'has-error': (addPerm.descr.$touched || addPermSub) && addPerm.descr.$invalid }">

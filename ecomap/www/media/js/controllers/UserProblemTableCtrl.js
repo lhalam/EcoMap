@@ -1,7 +1,6 @@
 app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
   function($scope, $http, $cookies) {
-    
-      
+    $scope.searchProble = "";
     $scope.getProblemType = function(type_id) {
       var types = {
         1: 'Проблеми лісів',

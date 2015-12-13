@@ -5,7 +5,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
       $scope.msg = msg
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
-
+      
       $scope.permisLength = $scope.selectCount['selected'];
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
         console.log($scope.selectCount['selected'])

@@ -142,6 +142,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       templateUrl: '/templates/passwordRestoringPass.html',
       controller: 'RestorePasswordCtrl'
     })
+    .state('registerAdmin', {
+      url: '/addUserByAdmin',
+      templateUrl: '/templates/RegisterUserByAdmin.html',
+      controller: 'AddUserByAdmin'
+    })     
     .state('register', {
       url: '/register',
       templateUrl: '/templates/register.html',
@@ -164,6 +169,6 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       display: 'popup',
       type: '2.0',
       popupOptions: { width: 580, height: 400 }
-    });  
+    }); 
 
 }]);

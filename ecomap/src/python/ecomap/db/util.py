@@ -245,14 +245,15 @@ def get_user_role_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_resources():
+def get_all_resources(offset, per_page):
     """Get all resources.
     :return: tuple of resources
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `resource_name` FROM `resource`;"""
-        cursor.execute(query)
+        query = """SELECT `id`, `resource_name` FROM `resource`
+                   ORDER BY `id` LIMIT %s,%s;"""
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 
@@ -351,7 +352,7 @@ def get_all_permissions_by_resource(resource_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_permissions():
+def get_all_permissions(offset, per_page):
     """Find all permissions by resource.
     :params: resource_id - id of resource
     :return: tuple, containing permissions
@@ -362,9 +363,10 @@ def get_all_permissions():
                    p.description
                    FROM `permission` as p
                    INNER JOIN `resource` as r
-                   ON p.resource_id=r.id;
+                   ON p.resource_id=r.id
+                   GROUP BY `id` LIMIT %s,%s;
                 """
-        cursor.execute(query)
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 
@@ -745,27 +747,6 @@ def get_users_pagination(offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
-def pagination_test(page, per_page):
-    """Users per page
-    """
-    if page == 1:
-        offset = 0
-    else:
-        offset = (page - 1) * per_page
-
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
-                   FROM  `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id=u.id
-                   INNER JOIN `role` AS r ON ur.role_id=r.id
-                   ORDER BY `id` LIMIT %s,%s;
-                """
-        cursor.execute(query % (offset, per_page))
-        return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
 def count_users():
     """Users per page
     """
@@ -866,7 +847,7 @@ def problem_post(title, content, proposal, latitude, longitude,
 
 
 @retry_query(tries=3, delay=1)
-def problem_activity_post(problem_id, created_date, user_id):
+def problem_activity_post(problem_id, created_date, user_id, act_type):
     """This method adds new problem_activity into db.
        :params: problem_id - id of problem
                 created_date - time of problem creation
@@ -878,9 +859,9 @@ def problem_activity_post(problem_id, created_date, user_id):
         query = """INSERT INTO `problem_activity`
                    (`problem_id`, `created_date`, `user_id`,
                     `activity_type`)
-                   VALUES (%s, %s, %s, 'Added');
+                   VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, created_date, user_id))
+        cursor.execute(query, (problem_id, created_date, user_id, act_type))
 
 
 @retry_query(tries=3, delay=1)
@@ -1002,6 +983,7 @@ def get_user_id_by_hash(hash_sum):
 
 @retry_query(tries=3, delay=1)
 def get_change_pass_stats(last24h):
+    #getrestoredata
     """
     Gets statistic info from db about user's change password activity during
     the last 24hours.
@@ -1036,6 +1018,85 @@ def refresh_table(last24h, time_now):
 
 
 @retry_query(tries=3, delay=1)
+def count_resources():
+    """
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `resource`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_permissions():
+    """
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(p.id) FROM permission AS p
+                   INNER JOIN resource AS r
+                   ON p.resource_id = r.id"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_users_problems():
+    """
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                   `severity` FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def add_comment(user_id, problem_id, content, created_date):
+    """Adds new comment to problem.
+       :params: user_id - user id
+                problem_id - id of problem
+                content - comment content
+                created_date - create time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `comment` (`user_id`, `problem_id`,
+                                          `content`, `created_date`)
+                   VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (user_id, problem_id, content, created_date))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_problem_id(problem_id):
+    """Get all comments of problem.
+       :params: problem_id - id of problem
+       :return: tuple of comments (id, content, problem id,
+                                   created date, user id,
+                                   user first name, user last name)
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT c.id, c.content, c.problem_id, c.created_date,
+                          c.user_id, u.first_name, u.last_name
+                   FROM `comment` AS c LEFT JOIN `user` as u
+                   ON c.user_id=u.id
+                   WHERE c.problem_id=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def get_problem_id_for_del(user_id):
     """Query for selecting tuple with problem_id, when
     User profile have to delete.
@@ -1053,8 +1114,8 @@ def select_anonim():
     """Query to select Anonimus User"""
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id` FROM `user` WHERE 'first_name' = "Анонім"
-                    AND `last_name` = "Анонім";"""
+        query = """SELECT `id` FROM `user` WHERE 'first_name' = "Anon"
+                    AND `last_name` = "Anon";"""
         cursor.execute(query)
         return cursor.fetchone()
 

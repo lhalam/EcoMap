@@ -1,54 +1,42 @@
 app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope) {
     /* Map & markers section */
-    $scope.mapParams = {
-      center: {
-        latitude: 49.357826,
-        longitude: 31.518239
-      },
-      zoom: 6
-    };
-    $scope.getMapParams = function() {
-      return $scope.mapParams;
-    };
+    if(!$rootScope.centerMap || !$rootScope.zoomMap){
+      $rootScope.centerMap = {
+        lat: 49.357826, 
+        lng: 31.518239
+      }
+      $rootScope.zoomMap = 6;
+    }
+
     $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
-    $scope.zoomMarker = function(data) {
-      $scope.mapParams = {
-        center: {
-          latitude: data.model.latitude,
-          longitude: data.model.longitude
-        },
-        zoom: 14
-      }
-    };
-    $scope.markers = [];
-    $scope.loadProblems = function() {
-      $http({
-        method: 'GET',
-        url: '/api/problems'
-      }).then(function successCallback(response) {
-        $scope.markers = response.data;
-        angular.forEach($scope.markers, function(value, key) {
-          $scope.markers[key].iconUrl = "/image/markers/" + value.problem_type_Id + ".png";
-        });
-      }, function errorCallback(error) {});
-    };
 
-    $scope.loadProblems();
-    $scope.map = {
-      events: {
-        click: function(map, eventName, originalEventArgs) {
-          var e = originalEventArgs[0];
-          var lat = e.latLng.lat(),
-            lon = e.latLng.lng();
-          $scope.newProblem.latitude = lat;
-          $scope.newProblem.longitude = lon;
-          $scope.$apply();
-        }
-      }
-    };
+    $rootScope.map.addListener('click', function(event) {
+      console.log(event)
+      console.log(this)
+      var lat = event.latLng.lat(),
+      lon = event.latLng.lng();
+      $scope.newProblem.latitude = lat;
+      $scope.newProblem.longitude = lon;
+      var latlng = new google.maps.LatLng(lat, lon);
+
+      $scope.marker.setPosition(latlng)
+      $scope.$apply();
+    })
+    // $scope.map = {
+    //   events: {
+    //     click: function(map, eventName, originalEventArgs) {
+    //       var e = originalEventArgs[0];
+    //       var lat = e.latLng.lat(),
+    //       lon = e.latLng.lng();
+    //       $scope.newProblem.latitude = lat;
+    //       $scope.newProblem.longitude = lon;
+    //       $scope.$apply();
+    //     }
+    //   }
+    // };
 
     $scope.newProblem = {
       "title": "",
@@ -60,13 +48,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
-    $scope.marker = {
-      id: Date.now(),
-      coords: {
-        latitude: $scope.newProblem.latitude,
-        longitude: $scope.newProblem.longitude
-      }
-    };
+    // $scope.marker = {
+    //   id: Date.now(),
+    //   coords: {
+    //     latitude: $scope.newProblem.latitude,
+    //     longitude: $scope.newProblem.longitude
+    //   }
+    // };
     $scope.problemTypes = [{
       name: 'Проблеми лісів',
       id: 1
@@ -97,12 +85,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       };
       $scope.coordsUpdates = 0;
       $scope.dynamicMoveCtr = 0;
-      $scope.marker = {
-        id: Date.now(),
-        coords: {
-          latitude: $scope.newProblem.latitude,
-          longitude: $scope.newProblem.longitude
+      $scope.marker = new google.maps.Marker({
+        position: {
+          lat: $scope.newProblem.latitude,
+          lng: $scope.newProblem.longitude
         },
+        map: $rootScope.map,
+        id: Date.now(),
         options: {
           draggable: true,
           labelContent: 'ваше місцезнаходження',
@@ -110,23 +99,54 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           labelClass: "marker-labels",
           icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
         },
-        events: {
-          drag: function(marker, eventName, args) {
-            console.log('marker dragend');
-            $scope.newProblem.latitude = marker.getPosition().lat();
-            $scope.newProblem.longitude = marker.getPosition().lng();
-            $scope.marker.options = {
-              draggable: true,
-              labelContent: 'location',
-              labelAnchor: "20 0",
-              labelClass: "marker-labels",
-              icon: 'https://2ip.com.ua/images/marker_map.png'
-            }
-          }
-        }
-      };
+      })
+      $scope.marker.addListener("drag",function(event){
+        console.log('marker dragend');
+        console.log(this.getPosition().lat())
+        $scope.newProblem.latitude = this.getPosition().lat();
+        $scope.newProblem.longitude = this.getPosition().lng();
+        // $scope.marker.options = {
+        //   draggable: true,
+        //   labelContent: 'location',
+        //   labelAnchor: "20 0",
+        //   labelClass: "marker-labels",
+        //   icon: 'https://2ip.com.ua/images/marker_map.png'
+        // }
+        $scope.$apply();
+      })
 
-      $scope.$watchCollection("marker.coords", function(newVal, oldVal) {
+
+      // $scope.marker = {
+      //   id: Date.now(),
+      //   coords: {
+      //     latitude: $scope.newProblem.latitude,
+      //     longitude: $scope.newProblem.longitude
+      //   },
+      //   options: {
+      //     draggable: true,
+      //     labelContent: 'ваше місцезнаходження',
+      //     labelAnchor: "65 0",
+      //     labelClass: "marker-labels",
+      //     icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
+      //   },
+      //   events: {
+      //     drag: function(marker, eventName, args) {
+      //       console.log('marker dragend');
+      //       $scope.newProblem.latitude = marker.getPosition().lat();
+      //       $scope.newProblem.longitude = marker.getPosition().lng();
+      //       $scope.marker.options = {
+      //         draggable: true,
+      //         labelContent: 'location',
+      //         labelAnchor: "20 0",
+      //         labelClass: "marker-labels",
+      //         icon: 'https://2ip.com.ua/images/marker_map.png'
+      //       }
+      //     }
+      //   }
+      // };
+
+      $scope.$watch($scope.newProblem, function(newVal, oldVal) {
+        console.log("updates")
         if (_.isEqual(newVal, oldVal)) {
           return;
         }
@@ -135,14 +155,23 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
 
     $scope.reloadPos = function() {
-      $scope.mapParams = {
-        center: {
-          latitude: $scope.newProblem.latitude,
-          longitude: $scope.newProblem.longitude
-        },
-        zoom: 7
-      };
-      $scope.createMarker();
+      $rootScope.centerMap = {
+        lat: $scope.newProblem.latitude,
+        lng: $scope.newProblem.longitude
+      }
+      $rootScope.zoomMap = 6;
+      // $rootScope.centerMap = {
+      //   center: {
+      //     lat: $scope.newProblem.latitude,
+      //     lng: $scope.newProblem.longitude
+      //   },
+      // };
+      if(!$scope.marker){
+        $scope.createMarker();
+      }
+      var latlng = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
+      $scope.marker.setPosition(latlng)
+
     };
     var options = {
       enableHighAccuracy: true,
@@ -164,6 +193,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         };
         $scope.newProblem.latitude = position.coords.latitude;
         $scope.newProblem.longitude = position.coords.longitude;
+
         if (width < 1000) {
           $scope.mapParams = {
             center: mapCenter,
@@ -176,7 +206,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           };
         }
         $scope.$apply();
-        $scope.createMarker()
+        if(!$scope.marker){
+          $scope.createMarker()
+        }
+        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        $scope.marker.setPosition(latlng)
+        console.log(latlng)
+        
       }
     };
     /*End of map & markers section*/
@@ -185,14 +221,14 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     $scope.addProblemTab = true;
     $scope.addPhotosTab = false;
     $scope.goToPhotos = function(form){
-        if(!form.$invalid){
-            $scope.addProblemTab = false;
-            $scope.addPhotosTab = true;
-        }
+      if(!form.$invalid){
+        $scope.addProblemTab = false;
+        $scope.addPhotosTab = true;
+      }
     };
     $scope.goToProblems = function(){
-        $scope.addProblemTab = true;
-        $scope.addPhotosTab = false;
+      $scope.addProblemTab = true;
+      $scope.addPhotosTab = false;
     };
 
     $scope.addProblem = function(newProblem, form, photos) {
@@ -214,12 +250,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.createdProblemId = response.data.problem_id;
         $scope.arrayUpload(photos);
         $rootScope.mapParams = {
-            center: {
-              latitude: newProblem.latitude,
-              longitude: newProblem.longitude
-            },
-            zoom: 14
-          };
+          center: {
+            latitude: newProblem.latitude,
+            longitude: newProblem.longitude
+          },
+          zoom: 14
+        };
       }, function errorCallback() {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі' + ' додавання проблеми виникла помилка!');
       })
@@ -282,4 +318,4 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       google.maps.event.trigger(maps, 'resize');
     });
   }
-]);
+  ]);

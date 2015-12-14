@@ -16,12 +16,7 @@ from email.mime.text import MIMEText
 
 def admin_stats_template(data=None):
     """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
+       :params: data - data from db with daily stats
     """
     msg = MIMEMultipart('alternative')
     msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
@@ -31,7 +26,6 @@ def admin_stats_template(data=None):
 
     htmltext = MIMEText(msg.html, 'html', 'utf-8')
     msg.attach(htmltext)
-    msg['Subject'] = 'звіт за добу'
     msg['From'] = 'admin@ecomap.com'
     msg['To'] = 'vadime.padalko@gmail.com'
     return msg

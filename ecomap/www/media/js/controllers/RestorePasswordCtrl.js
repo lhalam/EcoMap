@@ -1,7 +1,7 @@
-app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location',
-  function($scope, $state, $http, $location) {
-
+app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location', 'msg', 'toaster',
+  function($scope, $state, $http, $location, msg, toaster) {
     $scope.restore = {};
+    $scope.msg = msg
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){
             return;
@@ -12,9 +12,9 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location',
             url: '/api/restore_password',
             data: $scope.restore
         }).then(function successCallback(response){
-            //do what you need here
+            $scope.msg.sendSuccess('імейлу')
         }, function errorCallback(){
-            //error callback if you need
+            $scope.msg.sendError('імейлу')
         })
     };
 

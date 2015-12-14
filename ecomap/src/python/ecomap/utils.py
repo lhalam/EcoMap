@@ -76,13 +76,13 @@ def registration_email(user_name, user_surname, user_email, user_password):
     htmltext = MIMEText(html_decoded, 'html', 'utf-8')
 
     msg.attach(htmltext)
-    msg['Subject'] = 'Test email'
     msg['From'] = 'admin@ecomap.com'
     msg['To'] = user_email
     return msg
 
 
-def restore_password_email(user_name, user_surname, user_email, hashed):
+def restore_password_email(user_name, user_surname, user_email, hashed,
+                           from_email):
     """Sends to user's email message with link to restore user's password.
        :params: app_name - app's login
                 app_key - app's key
@@ -101,8 +101,7 @@ def restore_password_email(user_name, user_surname, user_email, hashed):
     htmltext = MIMEText(html_decoded, 'html', 'utf-8')
 
     msg.attach(htmltext)
-    msg['Subject'] = 'Test email'
-    msg['From'] = 'admin@ecomap.com'
+    msg['From'] = from_email
     msg['To'] = user_email
     return msg
 
@@ -165,6 +164,7 @@ def admin_stats_email(data=None):
     #     # mail.send(msg)
 
     return msg
+
 
 def admin_stats_email2(data=None):
     """Sends email to new created users.

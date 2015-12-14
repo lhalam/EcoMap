@@ -13,12 +13,14 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
 
-    $rootScope.map.addListener('click', function() {
-      var e = originalEventArgs[0];
-      var lat = e.latLng.lat(),
-      lon = e.latLng.lng();
+    $rootScope.map.addListener('click', function(event) {
+      console.log(event)
+      console.log(this)
+      var lat = event.latLng.lat(),
+      lon = event.latLng.lng();
       $scope.newProblem.latitude = lat;
       $scope.newProblem.longitude = lon;
+
       $scope.$apply();
     })
     // $scope.map = {
@@ -44,13 +46,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
-    $scope.marker = {
-      id: Date.now(),
-      coords: {
-        latitude: $scope.newProblem.latitude,
-        longitude: $scope.newProblem.longitude
-      }
-    };
+    // $scope.marker = {
+    //   id: Date.now(),
+    //   coords: {
+    //     latitude: $scope.newProblem.latitude,
+    //     longitude: $scope.newProblem.longitude
+    //   }
+    // };
     $scope.problemTypes = [{
       name: 'Проблеми лісів',
       id: 1
@@ -108,7 +110,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         //   labelClass: "marker-labels",
         //   icon: 'https://2ip.com.ua/images/marker_map.png'
         // }
-        })
+      })
 
 
       // $scope.marker = {
@@ -140,7 +142,8 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       //   }
       // };
 
-      $scope.$watchCollection("marker.coords", function(newVal, oldVal) {
+      $scope.$watch($scope.newProblem, function(newVal, oldVal) {
+        console.log("updates")
         if (_.isEqual(newVal, oldVal)) {
           return;
         }
@@ -149,13 +152,17 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
 
     $scope.reloadPos = function() {
-      $scope.mapParams = {
-        center: {
-          latitude: $scope.newProblem.latitude,
-          longitude: $scope.newProblem.longitude
-        },
-        zoom: 7
-      };
+      $rootScope.centerMap = {
+        lat: $scope.newProblem.latitude,
+        lng: $scope.newProblem.longitude
+      }
+      $rootScope.zoomMap = 6;
+      // $rootScope.centerMap = {
+      //   center: {
+      //     lat: $scope.newProblem.latitude,
+      //     lng: $scope.newProblem.longitude
+      //   },
+      // };
       $scope.createMarker();
     };
     var options = {

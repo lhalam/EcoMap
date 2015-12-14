@@ -3,7 +3,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     /* Map & markers section */
     if(!$rootScope.centerMap || !$rootScope.zoomMap){
       $rootScope.centerMap = {
-        lat: 49.357826, 
+        lat: 49.357826,
         lng: 31.518239
       }
       $rootScope.zoomMap = 6;

@@ -3,18 +3,17 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import render_template, session, request, Response, g
-from flask import abort
+from flask import abort, render_template, session, request, Response, g
 from flask_login import current_user
 
-from ecomap.app import app, logger
+from ecomap.app import app, logger, auto
 from authorize_views import *
 from admin_views import *
 from user_views import *
 from problem_views import *
-
 from ecomap.db import util as db
 from ecomap.permission import permission_control, check_permissions
+from ecomap.utils import parse_url
 
 
 @app.before_request
@@ -31,7 +30,7 @@ def load_users():
     logger.info('Current user is %s, role(%s)', g.user.role, g.user)
 
 
-#@app.before_request
+# @app.before_request
 def check_access():
     """Global decorator for each view.
     Checks permissions to access app resources by each user's request.
@@ -40,11 +39,8 @@ def check_access():
     """
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
-        # session['access_control'] = permission_control.reload_dct()
-    logger.debug(session)
-    logger.debug(jsonify(session['access_control']))
     access_rules = session['access_control']
-    route = '/' + '/'.join(request.url.split('/')[3:])
+    route = parse_url(request.url)
 
     access_result = check_permissions(current_user.role,
                                       route, request.method, access_rules)
@@ -62,6 +58,7 @@ def check_access():
 
 
 @app.route('/', methods=['GET'])
+@auto.doc()
 def index():
     """Controller starts main application page.
     return: renders html template with angular app.
@@ -70,6 +67,7 @@ def index():
 
 
 @app.route('/api/getTitles', methods=['GET'])
+@auto.doc()
 def get_titles():
     """This method returns short info about all defined static pages.
 
@@ -89,6 +87,7 @@ def get_titles():
 
 
 @app.route('/api/resources/<alias>', methods=['GET'])
+@auto.doc()
 def get_faq(alias):
     """This method retrieves exact faq page(ex-resource) via
        alias, passed to it.
@@ -113,6 +112,11 @@ def get_faq(alias):
             status_code = 200
         return Response(json.dumps(result), mimetype="application/json",
                         status=status_code)
+
+
+@app.route('/documentation')
+def documentation():
+    return auto.html()
 
 
 if __name__ == '__main__':

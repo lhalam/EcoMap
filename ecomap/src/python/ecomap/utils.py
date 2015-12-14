@@ -7,6 +7,7 @@ import random
 import string
 import smtplib
 
+from urlparse import urlparse
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -42,6 +43,21 @@ class Singleton(type):
         if not hasattr(cls, '_instance'):
             cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instance
+
+
+def parse_url(url_to_parse, get_arg=None, get_path=None):
+    """Function helps to parse url and splits parts of urls.
+    :param url_to_parse: input url
+    :param get_arg: [optional]
+    :param get_path: [optional]
+    :return: parsed url contains path
+    """
+    url = urlparse(url_to_parse)
+    if get_arg:
+        return url.path.split('/')[-1]
+    if get_path:
+        return '/'.join(url.path.split('/')[:-1])
+    return '?'.join((url.path, url.query)) if url.query else url.path
 
 
 def send_email(email_type, configs, args):

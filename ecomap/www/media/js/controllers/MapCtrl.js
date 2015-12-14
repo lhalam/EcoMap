@@ -11,7 +11,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
     }
 
     $scope.initMap = function () {
-      map = new google.maps.Map(document.getElementById('map'), {
+      $rootScope.map = new google.maps.Map(document.getElementById('map'), {
         center:$rootScope.centerMap,
         zoom: $rootScope.zoomMap,
         options:{
@@ -36,7 +36,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
           };
           var new_marker =  new google.maps.Marker({
             position: pos,
-            map: map,
+            map: $rootScope.map,
             id:key,
             problem_type_Id: marker.problem_type_Id,
             problemStatus : marker.status,

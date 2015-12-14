@@ -164,7 +164,7 @@ def get_all_users_problems():
         problems_list.append({'id': problem[0],
                               'title': problem[1],
                               'latitude': problem[2],
-                              'logitude': problem[3],
+                              'longitude': problem[3],
                               'problem_type_id': problem[4],
                               'status': problem[5],
                               'date': problem[6] * 1000,
@@ -179,7 +179,6 @@ def problem_photo(problem_id):
     :param problem_id - id of problem instance for uploading new photos.
     :return: json object with success message or message with error status.
     """
-
     response = jsonify(), 400
     extension = '.png'
     static_url = '/uploads/problems/%s/' % problem_id
@@ -199,6 +198,15 @@ def problem_photo(problem_id):
                 os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             problem_img.save(os.path.join(f_path, f_name))
             img_path = '%s%s' % (static_url, f_name)
+            from PIL import Image
+            from resizeimage import resizeimage
+
+            # fd_img = open('test-image.jpeg', 'r')
+            # img = Image.open(fd_img)
+            img = resizeimage.resize_cover(problem_img, [200, 100])
+            # img.save('test-image-cover.jpeg', img.format)
+            img.save(os.path.join(f_path, 'resized'))
+            # fd_img.close()
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
             response = json.dumps({'added_file': img_path})
         else:

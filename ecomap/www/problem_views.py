@@ -220,9 +220,9 @@ def problem_photo(problem_id):
 def post_comment():
     """Adds new comment to problem."""
     data = request.get_json()
-    valid = True
+    valid = validator.check_post_comment(data)
 
-    if valid:
+    if valid['status']:
         created_date = int(time.time())
         db.add_comment(current_user.uid,
                        data['problem_id'],
@@ -236,6 +236,7 @@ def post_comment():
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
+
     return response
 
 

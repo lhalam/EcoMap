@@ -44,7 +44,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       return types[type_id];
     };
     $scope.post_comment = function(comment) {
-      if (comment.text) {
+      if (comment) {
         $http({
           method: 'POST',
           url: '/api/problem/add_comment',

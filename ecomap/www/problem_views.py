@@ -40,8 +40,10 @@ def detailed_problem(problem_id):
     problem_data = db.get_problem_by_id(problem_id)
     activities_data = db.get_activity_by_problem_id(problem_id)
     photos_data = db.get_problem_photos(problem_id)
+    comments_data = db.get_comments_by_problem_id(problem_id)
     photos = []
     activities = {}
+    comments = []
 
     if problem_data:
         problems = {
@@ -61,12 +63,20 @@ def detailed_problem(problem_id):
             'activity_type': activities_data[3]}
     if photos_data:
         for photo_data in photos_data:
-            photos.append({
-                'url': photo_data[0],
-                'description': photo_data[1],
-                'user_id': photo_data[2]})
+            photos.append({'url': photo_data[0],
+                           'description': photo_data[1],
+                           'user_id': photo_data[2]})
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
 
-    response = Response(json.dumps([[problems], [activities], photos]),
+    response = Response(json.dumps([[problems], [activities],
+                                    photos, comments]),
                         mimetype='application/json')
     return response
 
@@ -100,7 +110,7 @@ def post_problem():
                                       user_id)
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
-                                         user_id)
+                                         user_id, 'Added')
             logger.debug('New problem post was created with id %s', last_id)
             response = jsonify(added_problem=data['title'],
                                problem_id=last_id)
@@ -214,16 +224,35 @@ def post_comment():
 
     if valid:
         created_date = int(time.time())
-        db.add_comment(data['user_id'],
+        db.add_comment(current_user.uid,
                        data['problem_id'],
                        data['content'],
                        created_date)
         db.problem_activity_post(data['problem_id'],
                                  created_date,
-                                 data['user_id'],
+                                 current_user.uid,
                                  'Updated')
-        response = jsonify(message='Comment successfully added.')
+        response = jsonify(message='Comment successfully added.'), 200
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
+    return response
+
+
+@app.route('/api/problem_comments/<int:problem_id>', methods=['GET'])
+def get_comments(problem_id):
+    """Return all problem comments."""
+    comments_data = db.get_comments_by_problem_id(problem_id)
+    comments = []
+
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
+    response = Response(json.dumps(comments),
+                        mimetype='application/json')
     return response

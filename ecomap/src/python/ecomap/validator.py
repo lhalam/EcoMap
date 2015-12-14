@@ -87,6 +87,26 @@ def user_registration(data):
     return status
 
 
+def restore_password_check(data):
+    """Validates if restore password hash has length of 64.
+       :params: data - hash, to check
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    if len(data) is not 64:
+        status['error'].append({'hash_sum': 'hash sum has wrong length.'})
+    elif not db.check_restore_password(data):
+        status['error'].append({'hash_sum': 'hash does not exist.'})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
 def user_login(data):
     """Validates user login form. Checks: email and password.
        :params: data - json object

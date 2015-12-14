@@ -18,5 +18,11 @@ app.factory('msg', function(toaster) {
     createError: function(msg, type) {
       toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!' + type);
     },
+    sendSuccess: function(msg, type) {
+      toaster.pop('success', 'Відправлення', 'Відправлення ' + msg + ' здійснено успішно!')
+    },
+    sendError: function(msg, type) {
+      toaster.pop('error', 'Відправлення', 'При відправленні ' + msg + ' виникла помилка!')
+    },
   };
 });

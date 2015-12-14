@@ -201,7 +201,7 @@ def restore_password_page(hashed):
     valid = validator.restore_password_check(hashed)
     page = render_template('index.html')
 
-    if not valid:
+    if valid:
         creation_time = db.check_restore_password(hashed)
         if creation_time:
             elapsed = time.time() - creation_time[0]

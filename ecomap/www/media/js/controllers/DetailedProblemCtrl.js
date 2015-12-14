@@ -10,6 +10,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
+      $scope.comments = response.data[3];
       $rootScope.centerMap = {
         lat: $scope.selectProblem['latitude'],
         lng: $scope.selectProblem['longitude']
@@ -58,6 +59,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
             url: '/api/problem_comments/' + $state.params['id']
           }).then(function successCallback(response) {
             $scope.comments = response.data;
+            comment.text = '';
           })
         }, function errorCallback() {
           $scope.msg.addCommentError('коммента');

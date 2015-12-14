@@ -20,7 +20,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       lon = event.latLng.lng();
       $scope.newProblem.latitude = lat;
       $scope.newProblem.longitude = lon;
+      var latlng = new google.maps.LatLng(lat, lon);
 
+      $scope.marker.setPosition(latlng)
       $scope.$apply();
     })
     // $scope.map = {
@@ -98,7 +100,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
         },
       })
-      $scope.marker.addListener("dragstart",function(event){
+      $scope.marker.addListener("drag",function(event){
         console.log('marker dragend');
         console.log(this.getPosition().lat())
         $scope.newProblem.latitude = this.getPosition().lat();
@@ -110,6 +112,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         //   labelClass: "marker-labels",
         //   icon: 'https://2ip.com.ua/images/marker_map.png'
         // }
+        $scope.$apply();
       })
 
 
@@ -163,7 +166,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       //     lng: $scope.newProblem.longitude
       //   },
       // };
-      $scope.createMarker();
+      if(!$scope.marker){
+        $scope.createMarker();
+      }
+      var latlng = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
+      $scope.marker.setPosition(latlng)
+
     };
     var options = {
       enableHighAccuracy: true,
@@ -185,6 +193,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         };
         $scope.newProblem.latitude = position.coords.latitude;
         $scope.newProblem.longitude = position.coords.longitude;
+
         if (width < 1000) {
           $scope.mapParams = {
             center: mapCenter,
@@ -197,7 +206,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           };
         }
         $scope.$apply();
-        $scope.createMarker()
+        if(!$scope.marker){
+          $scope.createMarker()
+        }
+        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        $scope.marker.setPosition(latlng)
+        console.log(latlng)
+        
       }
     };
     /*End of map & markers section*/

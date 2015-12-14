@@ -53,7 +53,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
           });
          });
           $scope.markers.push(new_marker)
-          new_marker.setMap(map);
+          new_marker.setMap($rootScope.map);
         },
         function errorCallback(){
 

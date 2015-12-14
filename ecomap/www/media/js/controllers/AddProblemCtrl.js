@@ -100,7 +100,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
         },
       })
-      $scope.marker.addListener("dragstart",function(event){
+      $scope.marker.addListener("drag",function(event){
         console.log('marker dragend');
         console.log(this.getPosition().lat())
         $scope.newProblem.latitude = this.getPosition().lat();
@@ -112,6 +112,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         //   labelClass: "marker-labels",
         //   icon: 'https://2ip.com.ua/images/marker_map.png'
         // }
+        $scope.$apply();
       })
 
 

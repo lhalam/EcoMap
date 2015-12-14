@@ -10,6 +10,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
+      $scope.comments = response.data[3];
       $rootScope.centerMap = {
         lat: $scope.selectProblem['latitude'],
         lng: $scope.selectProblem['longitude']
@@ -43,7 +44,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       return types[type_id];
     };
     $scope.post_comment = function(comment) {
-      if (comment.text) {
+      if (comment) {
         $http({
           method: 'POST',
           url: '/api/problem/add_comment',

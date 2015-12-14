@@ -9,7 +9,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       console.log($scope.selectProblem)
-      $rootScope.mapCenter = {
+      $rootScope.centerMap = {
         lat: $scope.selectProblem['latitude'],
         lng: $scope.selectProblem['longitude']
       },

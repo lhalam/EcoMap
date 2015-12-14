@@ -122,6 +122,7 @@ def delete_user():
         if problem_list:
             anon_tuple = db.select_anonim()
             anon_id = anon_tuple[0]
+
             for problem_id in problem_list:
                 db.change_problem_to_anon(anon_id,problem_id)
                 db.change_activity_to_anon(anon_id,problem_id)

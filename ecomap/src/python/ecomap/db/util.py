@@ -1114,9 +1114,8 @@ def select_anonim():
     """Query to select Anonimus User"""
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id` FROM `user` WHERE 'first_name' = "Anon"
-                    AND `last_name` = "Anon";"""
-        cursor.execute(query)
+        query = """SELECT `id` FROM `user` WHERE `first_name` = 'admin';"""
+        cursor.execute(query, )
         return cursor.fetchone()
 
 
@@ -1129,7 +1128,7 @@ def change_problem_to_anon(anon_id,problem_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
-        cursor.execute(query(anon_id,problem_id))
+        cursor.execute(query, (anon_id,problem_id))
         conn.commit()
 
 
@@ -1144,5 +1143,16 @@ def change_activity_to_anon(anon_id,problem_id):
         query = """UPDATE `problem_activity` SET `user_id`=%s 
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query(anon_id,problem_id))
+        cursor.execute(query, (anon_id,problem_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def delete_user(user_id):
+    """Deletes user_id by id from JSON
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user` WHERE id=%s;"""
+        cursor.execute(query, (user_id,))
         conn.commit()

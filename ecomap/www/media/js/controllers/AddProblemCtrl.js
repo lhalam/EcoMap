@@ -206,6 +206,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }
         var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         $scope.marker.setPosition(latlng)
+        console.log(latlng)
         
       }
     };

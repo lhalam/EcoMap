@@ -59,6 +59,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
             url: '/api/problem_comments/' + $state.params['id']
           }).then(function successCallback(response) {
             $scope.comments = response.data;
+            comment.text = '';
           })
         }, function errorCallback() {
           $scope.msg.addCommentError('коммента');

@@ -87,6 +87,42 @@ def user_registration(data):
     return status
 
 
+def check_post_comment(data):
+    """Validates if post comment request is valid.
+       :params: data - dictionary of keys and field need to validate
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_id', 'content']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif keyname is 'content':
+            if not check_string(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_string']
+                                        % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
 def restore_password_check(data):
     """Validates if restore password hash has length of 64.
        :params: data - hash, to check

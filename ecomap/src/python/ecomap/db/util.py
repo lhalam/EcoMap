@@ -847,7 +847,7 @@ def problem_post(title, content, proposal, latitude, longitude,
 
 
 @retry_query(tries=3, delay=1)
-def problem_activity_post(problem_id, created_date, user_id):
+def problem_activity_post(problem_id, created_date, user_id, act_type):
     """This method adds new problem_activity into db.
        :params: problem_id - id of problem
                 created_date - time of problem creation
@@ -859,9 +859,9 @@ def problem_activity_post(problem_id, created_date, user_id):
         query = """INSERT INTO `problem_activity`
                    (`problem_id`, `created_date`, `user_id`,
                     `activity_type`)
-                   VALUES (%s, %s, %s, 'Added');
+                   VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, created_date, user_id))
+        cursor.execute(query, (problem_id, created_date, user_id, act_type))
 
 
 @retry_query(tries=3, delay=1)
@@ -1058,4 +1058,42 @@ def get_all_users_problems():
                    `severity` FROM `problem`;
                 """
         cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def add_comment(user_id, problem_id, content, created_date):
+    """Adds new comment to problem.
+       :params: user_id - user id
+                problem_id - id of problem
+                content - comment content
+                created_date - create time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `comment` (`user_id`, `problem_id`,
+                                          `content`, `created_date`)
+                   VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (user_id, problem_id, content, created_date))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_problem_id(problem_id):
+    """Get all comments of problem.
+       :params: problem_id - id of problem
+       :return: tuple of comments (id, content, problem id,
+                                   created date, user id,
+                                   user first name, user last name)
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT c.id, c.content, c.problem_id, c.created_date,
+                          c.user_id, u.first_name, u.last_name
+                   FROM `comment` AS c LEFT JOIN `user` as u
+                   ON c.user_id=u.id
+                   WHERE c.problem_id=%s;
+                """
+        cursor.execute(query, (problem_id,))
         return cursor.fetchall()

@@ -15,6 +15,9 @@ import ecomap.user as ecomap_user
 from ecomap import validator
 from ecomap.app import app, logger
 from ecomap.db import util as db
+from ecomap.config import Config
+
+_CONFIG = Config().get_config()
 
 
 @app.route('/api/logout', methods=['POST', 'GET'])
@@ -195,14 +198,17 @@ def restore_password_request():
 @app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
 def restore_password_page(hashed):
     """Renders page to restore password."""
-    creation_time = db.check_restore_password(hashed)
+    valid = validator.restore_password_check(hashed)
+    page = render_template('index.html')
 
-    if creation_time:
-        elapsed = time.time() - creation_time[0]
-    if elapsed <= 900:
-        return render_template('passwordRestoringPass.html')
-    else:
-        return 'Out of date.'
+    if valid:
+        creation_time = db.check_restore_password(hashed)
+        if creation_time:
+            elapsed = time.time() - creation_time[0]
+            if elapsed <= _CONFIG['restore_password.lifetime']:
+                page = render_template('password_restoring_pass.html')
+
+    return page
 
 
 @app.route('/api/restore_password', methods=['PUT'])
@@ -213,10 +219,12 @@ def restore_password():
 
     if valid:
         user_id = db.get_user_id_by_hash(data['hash_sum'])
-    if user_id:
-        password = ecomap_user.hash_pass(data['password'])
-        db.restore_password(user_id[0], password)
-        response = jsonify(message='Password restored.')
+        if user_id:
+            password = ecomap_user.hash_pass(data['password'])
+            db.restore_password(user_id[0], password)
+            response = jsonify(message='Password restored.')
+        else:
+            response = jsonify(message='got error.'), 400
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

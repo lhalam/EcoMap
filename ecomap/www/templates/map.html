@@ -1,9 +1,59 @@
-<div class="map-container flex-item-1 flex-container flex-column" >
-    <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map" >
-        <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
-                         click="zoomMarker" doCluster="true"
-                         icon="'iconUrl'"></ui-gmap-markers>
-        </ui-gmap-markers>
-    
-    </ui-gmap-google-map>
+<div class="map-container" >
+	<div id="map">
+		
+	</div>
+</div>
+
+<div id="filterProb" class="filter"  id="filter">
+	<div class="row"></div>
+	<br>
+	<div class="row">
+	</div>
+	<div class="row">
+		
+		<br>
+		<div class="col-md-10 col-md-offset-1">
+			<p class="input-group">
+				<input type="date" class="form-control" uib-datepicker-popup ng-model="dt.from" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="filterMarker()"/>
+				<span class="input-group-btn">
+
+				</span>
+			</p>
+		</div>
+
+		<div class="col-md-10 col-md-offset-1">
+			<p class="input-group">
+				<input type="date" class="form-control" uib-datepicker-popup ng-model="dt.to" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="filterMarker()"/>
+				<span class="input-group-btn">
+
+				</span>
+			</p>
+		</div>
+	
+	</div>
+	
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<ul class="problTypes">
+				<li ng-repeat="(type_id, type) in Types" ng-click="toggleType(type_id)">
+					{{type}}
+					<i class="fa fa-check indicator" ng-if="selectedType.indexOf(type_id) !== -1"></i>
+				</li>
+			</ul>
+
+		</div>
+		<div class="col-md-10 col-md-offset-1">
+			<ul class="status">
+				<li ng-repeat="(status, status_descr) in Status" ng-click="toggleStatus(status)">
+					{{status_descr}}
+					<i class="fa fa-check indicator" ng-if="selectedStatus.indexOf(status) !== -1"></i>  
+				</li>
+			</ul>
+
+		</div>
+	</div>
+	<div id="filerToogle">
+		фільтрація
+	</div>
+</div>
 </div>

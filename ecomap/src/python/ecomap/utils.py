@@ -44,67 +44,41 @@ class Singleton(type):
         return cls._instance
 
 
-def send_email(app_name, app_key, msg, user_email):
+def send_email(email_type, configs, args):
     """Sends email."""
+    msg = MIMEMultipart('alternative')
+    complete_email = os.path.join(os.environ['CONFROOT'],
+                                  'email_template.html')
+
+    if email_type is 'registration':
+        email_body = os.path.join(os.environ['CONFROOT'],
+                                  'registration_email_template.html')
+        msg['Subject'] = Header('Реєстрація на ecomap.org', 'utf-8')
+    elif email_type is 'password_restore':
+        email_body = os.path.join(os.environ['CONFROOT'],
+                                  'restore_password_template.html')
+        msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
+
+    html = None
+    html_body = None
+    with open(complete_email, 'rb') as template:
+        html = template.read().decode('utf-8')
+
+    with open(email_body, 'rb') as template:
+        html_body = template.read().decode('utf-8')
+        html_body = html_body % tuple(args)
+
+    html_formatted = html % html_body
+    msg['From'] = configs[2]
+    msg['To'] = configs[3]
+    htmltext = MIMEText(html_formatted, 'html', 'utf-8')
+    msg.attach(htmltext)
+
     server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(app_name, app_key)
-    server.sendmail('admin@ecomap.com', user_email,
+    server.login(configs[0], configs[1])
+    server.sendmail('admin@ecomap.com', configs[3],
                     msg.as_string())
     server.quit()
-
-
-def registration_email(user_name, user_surname, user_email, user_password):
-    """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
-    """
-    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
-                                 'registration_email_template.html')
-
-    with open(TEMPLATE_PATH, 'rb') as template:
-        html = template.read().decode('utf-8')
-    html_decoded = html % (user_name, user_surname,
-                           user_email, user_password)
-
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('Реєстрація на ecomap.org', 'utf-8')
-
-    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
-
-    msg.attach(htmltext)
-    msg['Subject'] = 'Test email'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = user_email
-    return msg
-
-
-def restore_password_email(user_name, user_surname, user_email, hashed):
-    """Sends to user's email message with link to restore user's password.
-       :params: app_name - app's login
-                app_key - app's key
-                user_name - user's name
-                user_surname - user's surname
-    """
-    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
-                                 'restore_password_template.html')
-    with open(TEMPLATE_PATH, 'rb') as template:
-        html = template.read().decode('utf-8')
-    html_decoded = html % (user_name, user_surname, hashed)
-
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
-
-    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
-
-    msg.attach(htmltext)
-    msg['Subject'] = 'Test email'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = user_email
-    return msg
 
 
 def admin_stats_email(data=None):
@@ -165,6 +139,7 @@ def admin_stats_email(data=None):
     #     # mail.send(msg)
 
     return msg
+
 
 def admin_stats_email2(data=None):
     """Sends email to new created users.

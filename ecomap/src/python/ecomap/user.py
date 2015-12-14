@@ -248,10 +248,12 @@ def restore_password(user):
     util.insert_into_restore_password(hex_hash, user.uid, create_time)
 
     email_body = restore_password_email(user.first_name, user.last_name,
-                                        user.email, hex_hash)
+                                        user.email, hex_hash,
+                                        _CONFIG['restore_password.from_email'])
     send_email(_CONFIG['email.user_name'],
                _CONFIG['email.app_password'],
-               email_body, user.email)
+               email_body,
+               user.email)
 
 
 if __name__ == '__main__':

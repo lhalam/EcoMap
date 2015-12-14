@@ -96,7 +96,7 @@ def restore_password_check(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    if data.length is not 64:
+    if len(data) is not 64:
         status['error'].append({'hash_sum': 'hash sum has wrong length.'})
     elif not db.check_restore_password(data):
         status['error'].append({'hash_sum': 'hash does not exist.'})

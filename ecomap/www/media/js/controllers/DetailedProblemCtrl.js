@@ -41,5 +41,23 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       };
       return types[type_id];
     };
+    $scope.post_comment = function(comment) {
+      if (comment.text) {
+        $http({
+          method: 'POST',
+          url: '/api/problem/add_comment',
+          data: {
+            content: comment.text,
+            problem_id: $state.params['id']
+          }
+        }).then(function successCallback() {
+          // $scope.msg.addCommentSuccess('коммента');
+        }, function errorCallback() {
+          // $scope.msg.addCommentError('коммента');
+        });
+      } else {
+        return;
+      }
+    }
   }
   ]);

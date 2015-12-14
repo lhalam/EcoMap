@@ -28,7 +28,7 @@ app.factory('msg', function(toaster) {
       toaster.pop('success', 'Додавання', 'Додавання ' + msg + 'виконано успішно!');
     },
     addCommentError: function(msg, type) {
-      toaster.pop('error', 'Додавання', 'При додаванні ' + msg ' виникла помилка!');
+      toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
     },
   };
 });

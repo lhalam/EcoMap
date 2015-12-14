@@ -6,15 +6,14 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       "method": "GET",
       "url": "/api/problem_detailed_info/" + $state.params['id']
     }).then(function successCallback(response) {
-      $rootScope.selectProblem = response.data[0][0];
+      $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
-      $rootScope.mapParams = {
-        center: {
-          latitude: $rootScope.selectProblem['latitude'],
-          longitude: $rootScope.selectProblem['longitude']
-        },
-        zoom: 14
-      };
+      console.log($scope.selectProblem)
+      $rootScope.mapCenter = {
+        lat: $scope.selectProblem['latitude'],
+        lng: $scope.selectProblem['longitude']
+      },
+       $rootScope.zoomMap = 9
     }, function errorCallback(error) {
       $state.go('error404');
     });
@@ -31,16 +30,16 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       return statuses[status];
     }
     $scope.getProblemType = function(type_id) {
-    var types = {
-      1: 'Проблеми лісів',
-      2: 'Сміттєзвалища',
-      3: 'Незаконна забудова',
-      4: 'Проблеми водойм',
-      5: 'Загрози біорізноманіттю',
-      6: 'Браконьєрство',
-      7: 'Інші проблеми'
+      var types = {
+        1: 'Проблеми лісів',
+        2: 'Сміттєзвалища',
+        3: 'Незаконна забудова',
+        4: 'Проблеми водойм',
+        5: 'Загрози біорізноманіттю',
+        6: 'Браконьєрство',
+        7: 'Інші проблеми'
+      };
+      return types[type_id];
     };
-    return types[type_id];
-  };
   }
-]);
+  ]);

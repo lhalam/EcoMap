@@ -165,7 +165,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       //     lng: $scope.newProblem.longitude
       //   },
       // };
-      $scope.createMarker();
+      if(!$scope.marker){
+        $scope.createMarker();
+      }
+      var latlng = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
+      $scope.marker.setPosition(latlng)
+
     };
     var options = {
       enableHighAccuracy: true,

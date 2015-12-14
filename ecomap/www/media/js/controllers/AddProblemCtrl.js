@@ -20,7 +20,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       lon = event.latLng.lng();
       $scope.newProblem.latitude = lat;
       $scope.newProblem.longitude = lon;
+      var latlng = new google.maps.LatLng(lat, lon);
 
+      $scope.marker.setPosition(latlng)
       $scope.$apply();
     })
     // $scope.map = {
@@ -185,6 +187,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         };
         $scope.newProblem.latitude = position.coords.latitude;
         $scope.newProblem.longitude = position.coords.longitude;
+
         if (width < 1000) {
           $scope.mapParams = {
             center: mapCenter,
@@ -197,7 +200,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           };
         }
         $scope.$apply();
-        $scope.createMarker()
+        if(!$scope.marker){
+          $scope.createMarker()
+        }
+        var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        $scope.marker.setPosition(latlng)
+        
       }
     };
     /*End of map & markers section*/

@@ -40,8 +40,10 @@ def detailed_problem(problem_id):
     problem_data = db.get_problem_by_id(problem_id)
     activities_data = db.get_activity_by_problem_id(problem_id)
     photos_data = db.get_problem_photos(problem_id)
+    comments_data = db.get_comments_by_problem_id(problem_id)
     photos = []
     activities = {}
+    comments = []
 
     if problem_data:
         problems = {
@@ -61,12 +63,20 @@ def detailed_problem(problem_id):
             'activity_type': activities_data[3]}
     if photos_data:
         for photo_data in photos_data:
-            photos.append({
-                'url': photo_data[0],
-                'description': photo_data[1],
-                'user_id': photo_data[2]})
+            photos.append({'url': photo_data[0],
+                           'description': photo_data[1],
+                           'user_id': photo_data[2]})
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
 
-    response = Response(json.dumps([[problems], [activities], photos]),
+    response = Response(json.dumps([[problems], [activities],
+                                    photos, comments]),
                         mimetype='application/json')
     return response
 
@@ -234,4 +244,23 @@ def post_comment():
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
+    return response
+
+
+@app.route('/api/problem_comments/<int:problem_id>', methods=['GET'])
+def get_comments(problem_id):
+    """Return all problem comments."""
+    comments_data = db.get_comments_by_problem_id(problem_id)
+    comments = []
+
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
+    response = Response(json.dumps(comments),
+                        mimetype='application/json')
     return response

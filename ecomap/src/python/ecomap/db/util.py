@@ -1077,3 +1077,23 @@ def add_comment(user_id, problem_id, content, created_date):
                 """
         cursor.execute(query, (user_id, problem_id, content, created_date))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_problem_id(problem_id):
+    """Get all comments of problem.
+       :params: problem_id - id of problem
+       :return: tuple of comments (id, content, problem id,
+                                   created date, user id,
+                                   user first name, user last name)
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT c.id, c.content, c.problem_id, c.created_date,
+                          c.user_id, u.first_name, u.last_name
+                   FROM `comment` AS c LEFT JOIN `user` as u
+                   ON c.user_id=u.id
+                   WHERE c.problem_id=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchall()

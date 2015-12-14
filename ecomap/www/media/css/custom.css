@@ -738,3 +738,6 @@ input[type="checkbox"] {
   table .form-control{
     width: 50%
   }
+  .table th{
+    cursor: pointer;
+  }

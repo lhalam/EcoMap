@@ -100,7 +100,7 @@ def post_problem():
                                       user_id)
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
-                                         user_id)
+                                         user_id, 'Added')
             logger.debug('New problem post was created with id %s', last_id)
             response = jsonify(added_problem=data['title'],
                                problem_id=last_id)
@@ -222,15 +222,15 @@ def post_comment():
 
     if valid:
         created_date = int(time.time())
-        db.add_comment(data['user_id'],
+        db.add_comment(current_user.uid,
                        data['problem_id'],
                        data['content'],
                        created_date)
         db.problem_activity_post(data['problem_id'],
                                  created_date,
-                                 data['user_id'],
+                                 current_user.uid,
                                  'Updated')
-        response = jsonify(message='Comment successfully added.')
+        response = jsonify(message='Comment successfully added.'), 200
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

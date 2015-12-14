@@ -36,8 +36,8 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
           };
           var new_marker =  new google.maps.Marker({
             position: pos,
-            map: map,
-            id:key,
+            map: $rootScope.map,
+            id:key+1,
             problem_type_Id: marker.problem_type_Id,
             problemStatus : marker.status,
             doCluster:true,

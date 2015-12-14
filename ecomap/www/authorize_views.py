@@ -198,16 +198,16 @@ def restore_password_request():
 @app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
 def restore_password_page(hashed):
     """Renders page to restore password."""
-    creation_time = db.check_restore_password(hashed)
+    valid = validator.restore_password_check(hashed)
+    page = render_template('index.html')
 
-    if creation_time:
-        elapsed = time.time() - creation_time[0]
-        if elapsed <= _CONFIG['restore_password.lifetime']:
-            page = render_template('passwordRestoringPass.html')
-        else:
-            page = render_template('index.html')
-    else:
-        page = render_template('index.html')
+    if valid:
+        creation_time = db.check_restore_password(hashed)
+        if creation_time:
+            elapsed = time.time() - creation_time[0]
+            if elapsed <= _CONFIG['restore_password.lifetime']:
+                page = render_template('password_restoring_pass.html')
+
     return page
 
 

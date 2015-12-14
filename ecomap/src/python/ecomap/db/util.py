@@ -847,7 +847,7 @@ def problem_post(title, content, proposal, latitude, longitude,
 
 
 @retry_query(tries=3, delay=1)
-def problem_activity_post(problem_id, created_date, user_id):
+def problem_activity_post(problem_id, created_date, user_id, act_type):
     """This method adds new problem_activity into db.
        :params: problem_id - id of problem
                 created_date - time of problem creation
@@ -859,9 +859,9 @@ def problem_activity_post(problem_id, created_date, user_id):
         query = """INSERT INTO `problem_activity`
                    (`problem_id`, `created_date`, `user_id`,
                     `activity_type`)
-                   VALUES (%s, %s, %s, 'Added');
+                   VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, created_date, user_id))
+        cursor.execute(query, (problem_id, created_date, user_id, act_type))
 
 
 @retry_query(tries=3, delay=1)

@@ -40,6 +40,10 @@
       </div>
       </uib-tab>
       <uib-tab heading="Коментарі">
+        <form>
+          <textarea ng-model="comment.text" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
+          <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
+        </form>
       </uib-tab>
       </uib-tabset>
     </div>

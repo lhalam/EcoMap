@@ -1048,3 +1048,40 @@ def get_problem_id_for_del(user_id):
         return cursor.fetchall()
 
 
+@retry_query(tries=3, delay=1)
+def select_anonim():
+    """Query to select Anonimus User"""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `user` WHERE 'first_name' = "Анонім"
+                    AND `last_name` = "Анонім";"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+
+@retry_query(tries=3, delay=1)
+def change_problem_to_anon(anon_id,problem_id):
+    """Query for change user_id in problem table to id of Anonimus User,
+    when we deleting User-owner of this problem.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
+        cursor.execute(query(anon_id,problem_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def change_activity_to_anon(anon_id,problem_id):
+    """Query for change user_id in problem_activity 
+    table to id of Anonimus User,
+    when we deleting User-owner of this problem.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `problem_activity` SET `user_id`=%s 
+                    WHERE `problem_id`=%s;
+                """
+        cursor.execute(query(anon_id,problem_id))
+        conn.commit()

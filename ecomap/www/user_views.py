@@ -120,9 +120,11 @@ def delete_user():
             for problem_id in tuple_with_problem_id:
                     problem_list.append(problem_id)
         if problem_list:
+            anon_tuple = db.select_anonim()
+            anon_id = anon_tuple[0]
             for problem_id in problem_list:
-                db.change_problem_to_anon(problem_id)
-                db.change_activity_to_anon(problem_id)
+                db.change_problem_to_anon(anon_id,problem_id)
+                db.change_activity_to_anon(anon_id,problem_id)
             db.delete_user(data['user_id'])
             logger.info('User with id %s has been deleted' % data['user_id'])
             response = jsonify(msg='success', deleted_user=data['user_id'])

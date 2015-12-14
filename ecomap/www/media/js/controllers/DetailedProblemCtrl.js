@@ -1,14 +1,16 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster',
-  function($scope, $rootScope, $state, $http, toaster) {
+app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg',
+  function($scope, $rootScope, $state, $http, toaster, msg) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
+    $scope.comments = [];
+    $scope.msg = msg;
     $http({
       "method": "GET",
       "url": "/api/problem_detailed_info/" + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
-      console.log($scope.selectProblem)
+      $scope.comments = response.data[3]
       $rootScope.mapCenter = {
         lat: $scope.selectProblem['latitude'],
         lng: $scope.selectProblem['longitude']
@@ -51,9 +53,15 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
             problem_id: $state.params['id']
           }
         }).then(function successCallback() {
-          // $scope.msg.addCommentSuccess('коммента');
+          $scope.msg.addCommentSuccess('коммента');
+          $http({
+            method: 'GET',
+            url: '/api/problem_comments/' + $state.params['id']
+          }).then(function successCallback(response) {
+            $scope.comments = response.data;
+          })
         }, function errorCallback() {
-          // $scope.msg.addCommentError('коммента');
+          $scope.msg.addCommentError('коммента');
         });
       } else {
         return;

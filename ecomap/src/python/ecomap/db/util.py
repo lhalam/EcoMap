@@ -1059,3 +1059,21 @@ def get_all_users_problems():
                 """
         cursor.execute(query)
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def add_comment(user_id, problem_id, content, created_date):
+    """Adds new comment to problem.
+       :params: user_id - user id
+                problem_id - id of problem
+                content - comment content
+                created_date - create time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `comment` (`user_id`, `problem_id`,
+                                          `content`, `created_date`)
+                   VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (user_id, problem_id, content, created_date))
+        conn.commit()

@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 
 from ecomap.db import util as db
 from ecomap import validator
-from ecomap.app import app
+from ecomap.app import app, logger
 
 
 @app.route('/api/change_password', methods=['POST'])
@@ -103,3 +103,35 @@ def delete_profile_photo():
             response = Response(json.dumps(valid),
                                 mimetype='application/json'), 400
     return response
+
+
+@app.route('/api/user_delete', methods=['DELETE'])
+def delete_user():
+    """Controller for handling deletion of user profile by
+    profile owner.
+    :return: json object with success message or message with error
+    """
+    data = request.get_json()
+    valid = validator.user_deletion(data)
+    if valid['status']:
+        tuple_of_problems = db.get_problem_id_for_del(data['user_id'])
+        problem_list = []
+        for tuple_with_problem_id in tuple_of_problems:
+            for problem_id in tuple_with_problem_id:
+                    problem_list.append(problem_id)
+        if problem_list:
+            for problem_id in problem_list:
+                db.change_problem_to_anon(problem_id)
+                db.change_activity_to_anon(problem_id)
+            db.delete_user(data['user_id'])
+            logger.info('User with id %s has been deleted' % data['user_id'])
+            response = jsonify(msg='success', deleted_user=data['user_id'])
+        else:
+            db.delete_user(data['user_id'])
+            logger.info('User with id %s has been deleted' % data['user_id'])
+            response = jsonify(msg='success', deleted_user = data['user_id'])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response
+

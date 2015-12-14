@@ -264,8 +264,8 @@ def get_resource_id(resource_name):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        cursor.execute(sql, (resource_name,))
+        query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        cursor.execute(query, (resource_name,))
         return cursor.fetchone()
 
 
@@ -1033,3 +1033,18 @@ def refresh_table(last24h, time_now):
                 """
         cursor.execute(query % (last24h, time_now))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_id_for_del(user_id):
+    """Query for selecting tuple with problem_id, when
+    User profile have to delete.
+    :return:tuple with problem_id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchall()
+
+

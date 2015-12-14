@@ -5,12 +5,13 @@ from flask import request, jsonify, Response, session
 from flask_login import login_required
 
 from ecomap import validator
-from ecomap.app import app, logger
+from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
 
 
 @app.route("/api/resources", methods=['POST'])
+@auto.doc()
 @login_required
 def resource_post():
     """Function which edits resource name.
@@ -42,6 +43,7 @@ def resource_post():
 
 
 @app.route("/api/resources", methods=['PUT'])
+@auto.doc()
 @login_required
 def resource_put():
     """Function which edits resource name.
@@ -71,6 +73,7 @@ def resource_put():
 
 
 @app.route("/api/resources", methods=['DELETE'])
+@auto.doc()
 @login_required
 def resource_delete():
     """Function which deletes resource from database.
@@ -100,6 +103,7 @@ def resource_delete():
 
 
 @app.route("/api/resources", methods=['GET'])
+@auto.doc()
 @login_required
 def resource_get():
     """Function which returns resources list from db with pagination options.

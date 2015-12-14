@@ -741,3 +741,12 @@ input[type="checkbox"] {
   .table th{
     cursor: pointer;
   }
+
+.comment-input{
+  width: 100%;
+}
+
+.comment-block{
+  width: 100%;
+  overflow: auto;
+}

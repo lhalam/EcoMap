@@ -3,9 +3,12 @@ import json
 import hashlib
 import time
 import os
+import PIL
+
 
 from flask import request, jsonify, Response
 from flask_login import current_user
+from PIL import Image
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -208,15 +211,15 @@ def problem_photo(problem_id):
                 os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             problem_img.save(os.path.join(f_path, f_name))
             img_path = '%s%s' % (static_url, f_name)
-            from PIL import Image
-            from resizeimage import resizeimage
 
-            # fd_img = open('test-image.jpeg', 'r')
-            # img = Image.open(fd_img)
-            img = resizeimage.resize_cover(problem_img, [200, 100])
-            # img.save('test-image-cover.jpeg', img.format)
-            img.save(os.path.join(f_path, 'resized'))
-            # fd_img.close()
+            basewidth = 200
+            img = Image.open(os.path.join(f_path, f_name))
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            f_name = '%s%s%s' % (hashed_name.hexdigest(), '_resized', extension)
+            img.save(os.path.join(f_path, f_name))
+
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
             response = json.dumps({'added_file': img_path})
         else:

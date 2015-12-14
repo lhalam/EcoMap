@@ -10,8 +10,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
-      $scope.comments = response.data[3]
-      $rootScope.mapCenter = {
+      $rootScope.centerMap = {
         lat: $scope.selectProblem['latitude'],
         lng: $scope.selectProblem['longitude']
       },

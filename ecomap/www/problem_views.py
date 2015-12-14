@@ -204,3 +204,26 @@ def problem_photo(problem_id):
         else:
             response = jsonify(error='error with import file'), 400
     return response
+
+
+@app.route('/api/problem/add_comment', methods=['POST'])
+def post_comment():
+    """Adds new comment to problem."""
+    data = request.get_json()
+    valid = True
+
+    if valid:
+        created_date = int(time.time())
+        db.add_comment(data['user_id'],
+                       data['problem_id'],
+                       data['content'],
+                       created_date)
+        db.problem_activity_post(data['problem_id'],
+                                 created_date,
+                                 data['user_id'],
+                                 'Updated')
+        response = jsonify(message='Comment successfully added.')
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response

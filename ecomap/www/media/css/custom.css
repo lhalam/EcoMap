@@ -671,7 +671,7 @@ input[type="checkbox"] {
 }
 .filter{
   position: absolute;
-  top:0;
+  top:9%;
   width: 30%;
   left: -30%;
   height: 91vh;

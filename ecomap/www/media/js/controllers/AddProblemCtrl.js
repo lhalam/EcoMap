@@ -21,7 +21,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       $scope.newProblem.latitude = lat;
       $scope.newProblem.longitude = lon;
       var latlng = new google.maps.LatLng(lat, lon);
-
+      if(!$scope.marker){
+        $scope.createMarker()
+      }
       $scope.marker.setPosition(latlng)
       $scope.$apply();
     })

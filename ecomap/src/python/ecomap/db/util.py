@@ -1,4 +1,5 @@
 """This module contains functions for interacting with Database."""
+import time
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -244,14 +245,15 @@ def get_user_role_by_id(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_resources():
+def get_all_resources(offset, per_page):
     """Get all resources.
     :return: tuple of resources
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `resource_name` FROM `resource`;"""
-        cursor.execute(query)
+        query = """SELECT `id`, `resource_name` FROM `resource`
+                   ORDER BY `id` LIMIT %s,%s;"""
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 
@@ -350,7 +352,7 @@ def get_all_permissions_by_resource(resource_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_permissions():
+def get_all_permissions(offset, per_page):
     """Find all permissions by resource.
     :params: resource_id - id of resource
     :return: tuple, containing permissions
@@ -361,9 +363,10 @@ def get_all_permissions():
                    p.description
                    FROM `permission` as p
                    INNER JOIN `resource` as r
-                   ON p.resource_id=r.id;
+                   ON p.resource_id=r.id
+                   GROUP BY `id` LIMIT %s,%s;
                 """
-        cursor.execute(query)
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 
@@ -744,27 +747,6 @@ def get_users_pagination(offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
-def pagination_test(page, per_page):
-    """Users per page
-    """
-    if page == 1:
-        offset = 0
-    else:
-        offset = (page - 1) * per_page
-
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
-                   FROM  `user_role` AS ur
-                   INNER JOIN `user` AS u ON ur.user_id=u.id
-                   INNER JOIN `role` AS r ON ur.role_id=r.id
-                   ORDER BY `id` LIMIT %s,%s;
-                """
-        cursor.execute(query % (offset, per_page))
-        return cursor.fetchall()
-
-
-@retry_query(tries=3, delay=1)
 def count_users():
     """Users per page
     """
@@ -865,7 +847,7 @@ def problem_post(title, content, proposal, latitude, longitude,
 
 
 @retry_query(tries=3, delay=1)
-def problem_activity_post(problem_id, created_date, user_id):
+def problem_activity_post(problem_id, created_date, user_id, act_type):
     """This method adds new problem_activity into db.
        :params: problem_id - id of problem
                 created_date - time of problem creation
@@ -877,9 +859,9 @@ def problem_activity_post(problem_id, created_date, user_id):
         query = """INSERT INTO `problem_activity`
                    (`problem_id`, `created_date`, `user_id`,
                     `activity_type`)
-                   VALUES (%s, %s, %s, 'Added');
+                   VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, created_date, user_id))
+        cursor.execute(query, (problem_id, created_date, user_id, act_type))
 
 
 @retry_query(tries=3, delay=1)
@@ -937,3 +919,182 @@ def get_problem_owner(problem_id):
         query = """SELECT `user_id` FROM `problem` WHERE `id`=%s;"""
         cursor.execute(query, (problem_id,))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def insert_into_restore_password(hashed, user_id, create_time):
+    """Inserts info restore_password table new line."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `password_restore` (`creation_date`,
+                                                   `hash_sum`,
+                                                   `user_id`)
+                   VALUES (%s, %s, %s);
+                """
+        cursor.execute(query, (create_time, hashed, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def check_restore_password(hashed):
+    """Returns restore password request time.
+       :params: hashed - hash sum
+       :return: time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `creation_date`
+                   FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hashed,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=3)
+def restore_password(user_id, password):
+    """Updates user password.
+       :params: user_id - user id
+                password - new password
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `password`=%s
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (password, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_user_id_by_hash(hash_sum):
+    """Get user id by hash sum from restore password table.
+       :params: hash_sum - hash sum
+       :return: user id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `user_id` FROM `password_restore`
+                   WHERE `hash_sum`=%s;
+                """
+        cursor.execute(query, (hash_sum,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_stored_data(startime, endtime):
+
+    """
+    Gets statistic info from db about user's change password activity during
+    the last 24hours.
+    :return: tuple(creation_time(timestamp), user_name, user_email, number
+             of change tries)    #getrestoredata
+
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
+                   FROM `password_restore` AS p
+                   INNER JOIN user AS u ON p.user_id = u.id
+                   GROUP BY u.id
+                   HAVING p.creation_date BETWEEN %d AND %d;
+                """
+        cursor.execute(query, (startime, endtime))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def refresh_table(last24h, time_now):
+    """Deletes statistics info from db for last 24 hours.
+    :return:
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `password_restore` WHERE `creation_date`
+                   BETWEEN %s AND %s;
+                """
+        cursor.execute(query % (last24h, time_now))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def count_resources():
+    """
+
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `resource`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_permissions():
+    """
+
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(p.id) FROM permission AS p
+                   INNER JOIN resource AS r
+                   ON p.resource_id = r.id"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_users_problems():
+    """
+
+    :return:
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                   `severity` FROM `problem`;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def add_comment(user_id, problem_id, content, created_date):
+    """Adds new comment to problem.
+       :params: user_id - user id
+                problem_id - id of problem
+                content - comment content
+                created_date - create time
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `comment` (`user_id`, `problem_id`,
+                                          `content`, `created_date`)
+                   VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (user_id, problem_id, content, created_date))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_problem_id(problem_id):
+    """Get all comments of problem.
+       :params: problem_id - id of problem
+       :return: tuple of comments (id, content, problem id,
+                                   created date, user id,
+                                   user first name, user last name)
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT c.id, c.content, c.problem_id, c.created_date,
+                          c.user_id, u.first_name, u.last_name
+                   FROM `comment` AS c LEFT JOIN `user` as u
+                   ON c.user_id=u.id
+                   WHERE c.problem_id=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchall()

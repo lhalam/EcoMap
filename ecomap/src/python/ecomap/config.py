@@ -13,7 +13,7 @@ from ConfigParser import SafeConfigParser
 from ecomap.utils import Singleton
 
 REFRESH_TIME = 900
-PASSWORD = ['password', 'facebook_secret']
+PASSWORD = ['password', 'facebook_secret', 'from_email']
 CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
 
 

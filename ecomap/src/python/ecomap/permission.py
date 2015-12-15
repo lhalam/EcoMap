@@ -9,10 +9,9 @@ and compares it with dynamic permission App JSON object.
 import ecomap.utils
 import ecomap.db.util as db
 
-from flask import abort
 from flask_login import current_user
-
 from ecomap.app import logger
+from ecomap.utils import parse_url
 
 
 def make_json(sql_list):
@@ -42,13 +41,23 @@ def get_id_problem_owner(problem_id):
 
 
 def get_current_user_id(user_id):
-    """returns id of current user
+    """Returns id of current user.
     :param user_id - user id to check
     :return: id of problem owner
     """
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
+
+def allow_alias(alias):
+    """Checks access rules for dynamic route.
+    :return: True if user is not Anonymous
+    """
+    return True if current_user.uid != 2 else False
+
 RULEST_DICT = {':idUser': get_current_user_id,
+               ':alias': allow_alias,
+               ':idPage': allow_alias,
+               ':provider': allow_alias,
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']
@@ -96,10 +105,10 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :return: access - dictionary with checking status and results.
     """
     if ':' in str(route):
-        pattern = route.split('/')[-1]
-        dynamic_res_host = '/'.join(route.split('/')[:-1])
-        request_res_arg = resource.split('/')[-1]
-        request_res_host = '/'.join(resource.split('/')[:-1])
+        pattern = parse_url(route, get_arg=True)
+        dynamic_res_host = parse_url(route, get_path=True)
+        request_res_arg = parse_url(resource, get_arg=True)
+        request_res_host = parse_url(resource, get_path=True)
 
         if request_res_host == dynamic_res_host \
                 and pattern in RULEST_DICT:

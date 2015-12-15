@@ -3,9 +3,12 @@ import json
 import hashlib
 import time
 import os
+import PIL
+
 
 from flask import request, jsonify, Response
 from flask_login import current_user
+from PIL import Image
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -40,8 +43,10 @@ def detailed_problem(problem_id):
     problem_data = db.get_problem_by_id(problem_id)
     activities_data = db.get_activity_by_problem_id(problem_id)
     photos_data = db.get_problem_photos(problem_id)
+    comments_data = db.get_comments_by_problem_id(problem_id)
     photos = []
     activities = {}
+    comments = []
 
     if problem_data:
         problems = {
@@ -61,12 +66,20 @@ def detailed_problem(problem_id):
             'activity_type': activities_data[3]}
     if photos_data:
         for photo_data in photos_data:
-            photos.append({
-                'url': photo_data[0],
-                'description': photo_data[1],
-                'user_id': photo_data[2]})
+            photos.append({'url': photo_data[0],
+                           'description': photo_data[1],
+                           'user_id': photo_data[2]})
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
 
-    response = Response(json.dumps([[problems], [activities], photos]),
+    response = Response(json.dumps([[problems], [activities],
+                                    photos, comments]),
                         mimetype='application/json')
     return response
 
@@ -99,7 +112,7 @@ def post_problem():
                                       user_id)
             if last_id:
                 db.problem_activity_post(last_id, posted_date,
-                                         user_id)
+                                         user_id, 'Added')
             logger.debug('New problem post was created with id %s', last_id)
             response = jsonify(added_problem=data['title'],
                                problem_id=last_id)
@@ -140,11 +153,43 @@ def get_user_problems(user_id):
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 
+@app.route('/api/all_usersProblem', methods=['GET'])
+def get_all_users_problems():
+    """This method retrieves all user's problem from db.
+        :returns list of user's problem represented with next objects:
+        [
+            {"id": 190,
+             "title": "name",
+             "latitude": 51.419765,
+             "longitude": 29.520264,
+             "problem_type_id": 1,
+             "status": 0,
+             "date": "2015-02-24T14:27:22.000Z",
+             "severity": '3',
+             "is_enabled": 1
+            },
+        ]
+    """
+    problems_list = []
+    problem_tuple = db.get_all_users_problems()
+    for problem in problem_tuple:
+        problems_list.append({'id': problem[0],
+                              'title': problem[1],
+                              'latitude': problem[2],
+                              'longitude': problem[3],
+                              'problem_type_id': problem[4],
+                              'status': problem[5],
+                              'date': problem[6] * 1000,
+                              'severity': problem[8],
+                              'is_enabled': problem[7]})
+    return Response(json.dumps(problems_list), mimetype='application/json')
+
+
 @app.route('/api/photo/<int:problem_id>', methods=['POST'])
 def problem_photo(problem_id):
-    """ Connected with problem_post. Creating for uploading photos
-        with problem.
-        :return: json with success if photo have been uploaded
+    """Controller for handling adding problem photos.
+    :param problem_id - id of problem instance for uploading new photos.
+    :return: json object with success message or message with error status.
     """
     response = jsonify(), 400
     extension = '.png'
@@ -165,8 +210,60 @@ def problem_photo(problem_id):
                 os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             problem_img.save(os.path.join(f_path, f_name))
             img_path = '%s%s' % (static_url, f_name)
+
+            basewidth = 200
+            img = Image.open(os.path.join(f_path, f_name))
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            f_name = '%s%s%s' % (hashed_name.hexdigest(), '_resized', extension)
+            img.save(os.path.join(f_path, f_name))
+
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
             response = json.dumps({'added_file': img_path})
         else:
             response = jsonify(error='error with import file'), 400
+    return response
+
+
+@app.route('/api/problem/add_comment', methods=['POST'])
+def post_comment():
+    """Adds new comment to problem."""
+    data = request.get_json()
+    valid = validator.check_post_comment(data)
+
+    if valid['status']:
+        created_date = int(time.time())
+        db.add_comment(current_user.uid,
+                       data['problem_id'],
+                       data['content'],
+                       created_date)
+        db.problem_activity_post(data['problem_id'],
+                                 created_date,
+                                 current_user.uid,
+                                 'Updated')
+        response = jsonify(message='Comment successfully added.'), 200
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+
+    return response
+
+
+@app.route('/api/problem_comments/<int:problem_id>', methods=['GET'])
+def get_comments(problem_id):
+    """Return all problem comments."""
+    comments_data = db.get_comments_by_problem_id(problem_id)
+    comments = []
+
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'user_id': comment[4],
+                             'name': '%s %s' % (comment[5], comment[6])})
+    response = Response(json.dumps(comments),
+                        mimetype='application/json')
     return response

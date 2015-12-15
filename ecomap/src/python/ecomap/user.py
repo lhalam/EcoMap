@@ -1,5 +1,6 @@
 """This module holds User class"""
 import hashlib
+import time
 
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
@@ -165,8 +166,13 @@ def register(first_name, last_name, email, password):
                                         email, salted_pass)
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
-    send_email(_CONFIG['email.user_name'], _CONFIG['email.app_password'],
-               first_name, last_name, email, password)
+
+    send_email('registration',
+               [_CONFIG['email.user_name'],
+                _CONFIG['email.app_password'],
+                _CONFIG['email.from_email'],
+                email],
+               [first_name, last_name, email, password])
     return get_user_by_id(register_user_id)
 
 
@@ -190,8 +196,13 @@ def facebook_register(first_name, last_name, email, provider, uid):
         if register_user_id:
             util.add_users_role(register_user_id, role_id[0])
             user = get_user_by_oauth_id(uid)
-        send_email(_CONFIG['email.user_name'], _CONFIG['email.app_password'],
-                   first_name, last_name, email, password)
+
+        send_email('registration',
+                   [_CONFIG['email.user_name'],
+                    _CONFIG['email.app_password'],
+                    _CONFIG['email.from_email'],
+                    email],
+                   [first_name, last_name, email, password])
     else:
         util.add_oauth_to_user(user.uid, provider, uid)
     return user
@@ -225,6 +236,22 @@ def load_token(token):
     if user and data[1] == user.password:
         return user
     return None
+
+
+def restore_password(user):
+    """Funtion send's email to user with link to restore password."""
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
+    hex_hash = hashed.hexdigest()
+
+    util.insert_into_restore_password(hex_hash, user.uid, create_time)
+
+    send_email('password_restore',
+               [_CONFIG['email.user_name'],
+                _CONFIG['email.app_password'],
+                _CONFIG['email.from_email'],
+                user.email],
+               [user.first_name, user.last_name, hex_hash])
 
 
 if __name__ == '__main__':

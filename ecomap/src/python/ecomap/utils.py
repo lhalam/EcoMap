@@ -60,26 +60,12 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
     return '?'.join((url.path, url.query)) if url.query else url.path
 
 
-def send_email(email_type, configs, args):
+def generate_email(email_type, from_email, to_email, args):
     """Sends email."""
     msg = MIMEMultipart('alternative')
     complete_email = os.path.join(os.environ['CONFROOT'],
                                   'email_template.html')
-
-    if email_type is 'registration':
-        email_body = os.path.join(os.environ['CONFROOT'],
-                                  'registration_email_template.html')
-        msg['Subject'] = Header('Реєстрація на ecomap.org', 'utf-8')
-    elif email_type is 'password_restore':
-        email_body = os.path.join(os.environ['CONFROOT'],
-                                  'restore_password_template.html')
-        msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
-    elif email_type is 'daily_report':
-        make_template(args)
-        args = ''
-        email_body = os.path.join(os.environ['CONFROOT'],
-                                  'new_template.html')
-        msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+    email_body = os.path.join(os.environ['CONFROOT'], '%s.html' % email_type)
 
     html = None
     html_body = None
@@ -87,19 +73,29 @@ def send_email(email_type, configs, args):
         html = template.read().decode('utf-8')
 
     with open(email_body, 'rb') as template:
-        html_body = template.read().decode('utf-8')
-        html_body = html_body % tuple(args)
+        html_body = template.read().decode('utf-8') % args
 
     html_formatted = html % html_body
-    msg['From'] = configs[2]
-    msg['To'] = configs[3]
+    msg['Subject'] = Header('%s' % email_type, 'utf-8')
+    msg['From'] = from_email
+    msg['To'] = to_email
     htmltext = MIMEText(html_formatted, 'html', 'utf-8')
     msg.attach(htmltext)
 
+    return msg
+
+
+def send_email(login, app_key, from_email, to_email, email):
+    """Sends email.
+       :params: login - email server login
+                app_key - email server key
+                sender - email of sender
+                receiver - email of receiver
+                email - body of email
+    """
     server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(configs[0], configs[1])
-    server.sendmail('admin@ecomap.com', configs[3],
-                    msg.as_string())
+    server.login(login, app_key)
+    server.sendmail(from_email, to_email, email.as_string())
     server.quit()
 
 

@@ -1,45 +1,54 @@
 # coding=utf-8
+
 import time
 import logging
-from ecomap.app import app
-from flask import render_template
+import os
+import optparse
+import sys
+from datetime import datetime
 
 import ecomap.db.util as db
-
 from ecomap.config import Config
 from ecomap.utils import send_email
 
-from email.header import Header
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-
-
-def admin_stats_template(data=None):
-    """Sends email to new created users.
-       :params: data - data from db with daily stats
-    """
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
-
-    with app.app_context():
-        msg.html = render_template('admin_report.html', data=data)
-
-    htmltext = MIMEText(msg.html, 'html', 'utf-8')
-    msg.attach(htmltext)
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = 'vadime.padalko@gmail.com'
-    return msg
 
 _CONFIG = Config().get_config()
-last24h = int(time.time())-86400
-now = int(time.time())
 
-data = db.get_change_pass_stats(last24h)
+parser = optparse.OptionParser(version='0.1',
+                               description='Some text')
+parser.add_option('-d', '--date', type='string', dest='file',
+                  help='Input file for additional data')
 
-# Insert here admins email_variable.
-email = 'vadime.padalko@gmail.com'
-send_email(_CONFIG['email.user_name'],
-           _CONFIG['email.app_password'],
-           admin_stats_template(data), email)
 
-refresh_table = db.refresh_table(last24h, now)
+def get_password_stats(date=None):
+    if date:
+        time.mktime(datetime.strptime(date, "%d/%m/%Y").timetuple())
+        day_start = int(time.mktime(datetime.strptime(date, "%d/%m/%Y").timetuple()))
+        day_end = day_start + 84600
+        data = db.get_stored_data(day_start, day_end)
+    else:
+        last24h = int(time.time())-86400
+        now = int(time.time())
+        data = db.get_stored_data(last24h, now)
+
+    email = 'vadime.padalko@gmail.com'
+    send_email('daily_report',
+               [_CONFIG['email.user_name'],
+                _CONFIG['email.app_password'],
+                _CONFIG['email.from_email'],
+                email],
+               data)
+
+
+def refresh_table():
+    last24h = int(time.time())-86400
+    now = int(time.time())
+    refresh_table = db.refresh_table(last24h, now)
+
+
+def main():
+    get_password_stats()
+    refresh_table()
+
+if __name__ == "__main__":
+    sys.exit(main())

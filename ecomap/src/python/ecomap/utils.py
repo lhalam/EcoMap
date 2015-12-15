@@ -74,6 +74,12 @@ def send_email(email_type, configs, args):
         email_body = os.path.join(os.environ['CONFROOT'],
                                   'restore_password_template.html')
         msg['Subject'] = Header('Відновлення паролю до ecomap.org', 'utf-8')
+    elif email_type is 'daily_report':
+        make_template(args)
+        args = ''
+        email_body = os.path.join(os.environ['CONFROOT'],
+                                  'new_template.html')
+        msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
 
     html = None
     html_body = None
@@ -95,6 +101,40 @@ def send_email(email_type, configs, args):
     server.sendmail('admin@ecomap.com', configs[3],
                     msg.as_string())
     server.quit()
+
+
+def make_template(data):
+    with open((os.path.join(os.environ['CONFROOT'],
+              "new_template.html")), "w") as html:
+        html.write('')
+        mes = '<h1>Жоден з користувачів пароль не змінював.</h1>'
+        table_head = """<table>
+            <tr>
+                <th>користувач</th>
+                <th>mail</th>
+                <th>number request</th>
+                <th>time</th>
+            </tr>
+        """
+        table_row = """
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%d</td>
+                <td>%d</td>
+            </tr>
+        """
+        if data:
+            html.write(table_head)
+            for x in data:
+                html.write(table_row % (x[1].encode('utf-8'),
+                                        x[2].encode('utf-8'),
+                                        int(x[3]),
+                                        int(x[0])))
+            else:
+                html.write('</table>')
+        else:
+            html.write(mes)
 
 
 def admin_stats_email(data=None):
@@ -149,33 +189,33 @@ def admin_stats_email(data=None):
     msg['From'] = 'admin@ecomap.com'
     msg['To'] = 'vadime.padalko@gmail.com'
 
-    with app.app_context():
+    # with app.app_context():
     #     msg.body = render_template(template + '.txt')
-        msg.html = render_template('jinja_template.html', data=data)
+    #     msg.html = render_template('jinja_template.html', data=data)
     #     # mail.send(msg)
 
     return msg
 
 
-def admin_stats_email2(data=None):
-    """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
-    """
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
-
-    with app.app_context():
-        msg.html = render_template('jinja_template.html', data=data)
-
-    htmltext = MIMEText(msg.html, 'html', 'utf-8')
-
-    msg.attach(htmltext)
-    msg['Subject'] = 'звіт за добу'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = 'vadime.padalko@gmail.com'
-    return msg
+# def admin_stats_email2(data=None):
+#     """Sends email to new created users.
+#        :params: app_name - app's login
+#                 app_key - app's key
+#                 name - user name
+#                 surname - user surname
+#                 email - user email
+#                 password - user password
+#     """
+#     msg = MIMEMultipart('alternative')
+#     msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
+#
+#     with app.app_context():
+#         msg.html = render_template('jinja_template.html', data=data)
+#
+#     htmltext = MIMEText(msg.html, 'html', 'utf-8')
+#
+#     msg.attach(htmltext)
+#     msg['Subject'] = 'звіт за добу'
+#     msg['From'] = 'admin@ecomap.com'
+#     msg['To'] = 'vadime.padalko@gmail.com'
+#     return msg

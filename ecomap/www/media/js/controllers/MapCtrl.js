@@ -1,5 +1,5 @@
-app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope','uiGmapIsReady',"$state",
-  function($scope, $http, uiGmapGoogleMapApi,$rootScope, uiGmapIsReady,$state) {
+app.controller('MapCtrl', ['$scope', '$http', '$rootScope',"$state", '$map',
+  function($scope, $http, $rootScope, $state, $map) {
     $scope.markers = [];
     console.log('$rootScope.centerMap')
     if(!$rootScope.centerMap || !$rootScope.zoomMap){
@@ -10,6 +10,7 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
       $rootScope.zoomMap = 6;
     }
 
+    console.log($map);
     $scope.initMap = function () {
       $rootScope.map = new google.maps.Map(document.getElementById('map'), {
         center:$rootScope.centerMap,

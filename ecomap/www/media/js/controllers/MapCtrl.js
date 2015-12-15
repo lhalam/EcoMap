@@ -22,6 +22,11 @@ app.controller('MapCtrl', ['$scope', '$http', 'uiGmapGoogleMapApi','$rootScope',
 
         }
      });
+      google.maps.event.addListenerOnce($rootScope.map, 'idle', function() {
+        console.log("Resizing map...");
+        google.maps.event.trigger($rootScope.map, 'resize');
+      });
+      
       $scope.loadProblems()
     }
     $scope.loadProblems = function() {

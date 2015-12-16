@@ -11,6 +11,7 @@ import ecomap.db.util as db
 
 from flask_login import current_user
 from ecomap.app import logger
+from ecomap.utils import parse_url
 
 
 def make_json(sql_list):
@@ -104,10 +105,10 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :return: access - dictionary with checking status and results.
     """
     if ':' in str(route):
-        pattern = route.split('/')[-1]
-        dynamic_res_host = '/'.join(route.split('/')[:-1])
-        request_res_arg = resource.split('/')[-1]
-        request_res_host = '/'.join(resource.split('/')[:-1])
+        pattern = parse_url(route, get_arg=True)
+        dynamic_res_host = parse_url(route, get_path=True)
+        request_res_arg = parse_url(resource, get_arg=True)
+        request_res_host = parse_url(resource, get_path=True)
 
         if request_res_host == dynamic_res_host \
                 and pattern in RULEST_DICT:

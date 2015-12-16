@@ -982,23 +982,24 @@ def get_user_id_by_hash(hash_sum):
 
 
 @retry_query(tries=3, delay=1)
-def get_change_pass_stats(last24h):
-    #getrestoredata
+def get_stored_data(startime, endtime):
+
     """
     Gets statistic info from db about user's change password activity during
-    the last 24hours.
+    the last 24hours or any specified date between 2 timestamp objects.
     :return: tuple(creation_time(timestamp), user_name, user_email, number
-             of change tries)
-    """
+             of change tries)    #getrestoredata
 
+    """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
                    FROM `password_restore` AS p
                    INNER JOIN user AS u ON p.user_id = u.id
-                   HAVING p.creation_date > %d;
+                   GROUP BY u.id
+                   HAVING p.creation_date BETWEEN %d AND %d;
                 """
-        cursor.execute(query % last24h)
+        cursor.execute(query % (startime, endtime))
         return cursor.fetchall()
 
 

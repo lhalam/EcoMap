@@ -1,9 +1,7 @@
 <script src="/js/libs/jquery.swipebox.min.js"></script>
 <link rel="stylesheet" href="/css/swipebox.min.css">
 
-<div class="flex-item-1 flex-container flex-column">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 problemBlock " >
+<div class="flex-item-1 flex-container flex-column problemBlock">
       <i class="fa fa-times fa-2x close" ng-click="close()"></i>
       <h3>{{selectProblem.title}}</h3>
       <div class="general">
@@ -19,12 +17,12 @@
       <uib-tab heading="Детально">
       <div class="row problem-type">
         <div class="col-md-12"><strong>Тип проблеми:</strong></div>
-        <div class="col-md-12 showBlock">{{getProblemType(selectProblem.problem_type_id)}}
+        <div class="col-md-12 ">{{getProblemType(selectProblem.problem_type_id)}}
         </div>
       </div>
       <div class="row description">
         <div class="col-md-12"><strong>Опис проблеми:</strong></div>
-        <div class="col-md-12 showBlock">{{selectProblem.content}}
+        <div class="col-md-12 ">{{selectProblem.content}}
         </div>
       </div>
       <div class="row proposal">
@@ -41,7 +39,7 @@
       </uib-tab>
       <uib-tab heading="Коментарі">
         <form>
-          <textarea ng-model="comment.text" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
+          <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
           <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
         </form>
         <div ng-repeat='comment in comments'>
@@ -50,7 +48,7 @@
             <div class="panel-heading">
             <strong>{{comment.name}}</strong> <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
             </div>
-          <div class="panel-body">
+          <div class="panel-body comment-block">
             {{comment.content}}
           </div>
           </div>
@@ -58,8 +56,6 @@
         </div>
       </uib-tab>
       </uib-tabset>
-    </div>    
-  </div>
 </div>
 
 <script type="text/javascript">

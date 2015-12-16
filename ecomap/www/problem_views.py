@@ -3,9 +3,12 @@ import json
 import hashlib
 import time
 import os
+import PIL
+
 
 from flask import request, jsonify, Response
 from flask_login import current_user
+from PIL import Image
 
 from ecomap import validator
 from ecomap.app import app, logger
@@ -173,7 +176,7 @@ def get_all_users_problems():
         problems_list.append({'id': problem[0],
                               'title': problem[1],
                               'latitude': problem[2],
-                              'logitude': problem[3],
+                              'longitude': problem[3],
                               'problem_type_id': problem[4],
                               'status': problem[5],
                               'date': problem[6] * 1000,
@@ -188,7 +191,6 @@ def problem_photo(problem_id):
     :param problem_id - id of problem instance for uploading new photos.
     :return: json object with success message or message with error status.
     """
-
     response = jsonify(), 400
     extension = '.png'
     static_url = '/uploads/problems/%s/' % problem_id
@@ -208,6 +210,15 @@ def problem_photo(problem_id):
                 os.makedirs(os.path.dirname('%s%s' % (f_path, f_name)))
             problem_img.save(os.path.join(f_path, f_name))
             img_path = '%s%s' % (static_url, f_name)
+
+            basewidth = 200
+            img = Image.open(os.path.join(f_path, f_name))
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            f_name = '%s%s%s' % (hashed_name.hexdigest(), '_resized', extension)
+            img.save(os.path.join(f_path, f_name))
+
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)
             response = json.dumps({'added_file': img_path})
         else:

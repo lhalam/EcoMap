@@ -211,12 +211,12 @@ def problem_photo(problem_id):
             problem_img.save(os.path.join(f_path, f_name))
             img_path = '%s%s' % (static_url, f_name)
 
-            basewidth = 200
+            basewidth = 100
             img = Image.open(os.path.join(f_path, f_name))
             wpercent = (basewidth/float(img.size[0]))
             hsize = int((float(img.size[1])*float(wpercent)))
             img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
-            f_name = '%s%s%s' % (hashed_name.hexdigest(), '_resized', extension)
+            f_name = '%s%s%s' % (hashed_name.hexdigest(), '.min', extension)
             img.save(os.path.join(f_path, f_name))
 
             db.add_problem_photo(problem_id, img_path, photo_descr, user_id)

@@ -8,7 +8,7 @@ from datetime import datetime
 
 import ecomap.db.util as db
 from ecomap.config import Config
-from ecomap.utils import send_email, get_logger
+from ecomap.utils import send_email, get_logger, generate_email
 
 _CONFIG = Config().get_config()
 
@@ -31,6 +31,8 @@ Default date value is today's date from 00:00.
 
 
 def _get_date_params(date=None):
+    print 'initial from get date'
+    print date
     if date:
         try:
             dt = time.mktime(datetime.strptime(date, "%Y-%m-%d").timetuple())
@@ -48,9 +50,48 @@ def _get_date_params(date=None):
     return [day_start, day_end]
 
 
+def make_template(data):
+    with open((os.path.join(os.environ['CONFROOT'],
+              "new_template.html")), "w") as html:
+        html.write('')
+        mes = '<h1>Жоден з користувачів пароль не змінював.</h1>'
+        table_head = """<table>
+            <tr>
+                <th>користувач</th>
+                <th>mail</th>
+                <th>number request</th>
+                <th>time</th>
+            </tr>
+        """
+        table_row = """
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%d</td>
+                <td>%d</td>
+            </tr>
+        """
+        if data:
+            html.write(table_head)
+            for x in data:
+                html.write(table_row % (x[1].encode('utf-8'),
+                                        x[2].encode('utf-8'),
+                                        int(x[3]),
+                                        int(x[0])))
+            else:
+                html.write('</table>')
+        else:
+            html.write(mes)
+
+
 def get_password_stats(date):
-    start = _get_date_params(date)[0]
-    end = _get_date_params(date)[1]
+    print 'initial date from get pass stat'
+    print date
+    custom_date = _get_date_params(date)
+    start = custom_date[0]
+    end = custom_date[1]
+    print 'start is %s' % start
+    print 'end is %s' % end
     # print type(start)
     # print type(end)
     data = db.get_stored_data(start, end)
@@ -59,6 +100,20 @@ def get_password_stats(date):
     print 'OUTPUT:'
     print data
     logger.log(logger.level, 'TEST FROM CRON!!!!')
+
+    # message = generate_email('registration', _CONFIG['email.from_email'],
+    #                          email, data)
+
+    # mes2 = generate_email('registration', _CONFIG['email.from_email'],
+    #                          email, (first_name, last_name, email, password))
+
+    # send_email(_CONFIG['email.user_name'],
+    #            _CONFIG['email.app_password'],
+    #            _CONFIG['email.from_email'],
+    #            email,
+    #            generate_email)
+
+
     # send_email('daily_report',
     #            [_CONFIG['email.user_name'],
     #             _CONFIG['email.app_password'],

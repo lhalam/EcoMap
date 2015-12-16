@@ -1,7 +1,7 @@
 app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location', 'msg', 'toaster',
   function($scope, $state, $http, $location, msg, toaster) {
     $scope.restore = {};
-    $scope.msg = msg
+    $scope.msg = msg;
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){
             return;
@@ -50,7 +50,8 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location',
         }
       })
       .then(function successCallback(response){
-        window.location.href = 'http://134.249.141.35:81/#/login'
+        //$state.go('login');
+        window.location.href = 'http://ecomap.new:81/#/login'
       }, function errorCallback(){
         //error callback if you need
       })

@@ -1,18 +1,16 @@
-app.factory('$map', ['', function() {
-    console.log('hello from map service');
+app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
   var instance = {};
   instance.centerMap = {
-    lat: 49.357826,
-    lng: 31.518239
+    lat: 50.468077,
+    lng: 30.521018
   };
   instance.zoom = 6;
-
   instance.initMap = function(centerMap, zoom) {
-    if(centerMap === undefined){
-        centerMap = instance.centerMap;
+    if (centerMap === undefined) {
+      centerMap = instance.centerMap;
     }
-    if(zoom === undefined){
-        zoom = instance.zoom;
+    if (zoom === undefined) {
+      zoom = instance.zoom;
     }
     instance.mapInstance = new google.maps.Map(document.getElementById('map'), {
       center: centerMap,
@@ -24,17 +22,14 @@ app.factory('$map', ['', function() {
         mapTypeControl: true,
       }
     });
-
     instance.centerMap.lat = centerMap.lat;
     instance.centerMap.lng = centerMap.lng;
     instance.zoom = zoom;
   }
-
-  instance.getInst = function(){
-    if(instance.mapInstance){
-        return instance.mapInstance;
+  instance.getInst = function() {
+    if (instance.mapInstance) {
+      return instance.mapInstance;
     }
-
     instance.mapInstance = new google.maps.Map(document.getElementById('map'), {
       center: instance.centerMap,
       zoom: instance.zoom,
@@ -46,17 +41,44 @@ app.factory('$map', ['', function() {
       }
     });
   }
-
   instance.turnResizeOn = function() {
     google.maps.event.addListenerOnce(instance.mapInstance, 'idle', function() {
       console.log("Resizing map...");
       google.maps.event.trigger(instance.mapInstance, 'resize');
-    });    
+    });
   }
-
-  return {
-    init: instance.initMap,
-    turnResizeOn: isntance.turnResizeOn,
-    getInst: instance.getInst
-  };
-}])
+  instance.loadProblems = function() {
+    var markers = [];
+    $http({
+      method: 'GET',
+      url: '/api/problems'
+    }).then(function successCallback(response) {
+      angular.forEach(response.data, function(marker, key) {
+        var pos = {
+          lat: marker.latitude,
+          lng: marker.longitude
+        };
+        var new_marker = new google.maps.Marker({
+          position: pos,
+          map: instance.getInst(),
+          id: marker.problem_id,
+          problem_type_Id: marker.problem_type_Id,
+          problemStatus: marker.status,
+          doCluster: true,
+          date: marker.date,
+          icon: "/image/markers/" + marker.problem_type_Id + ".png",
+        });
+        new_marker.addListener('click', function() {
+          var problem_id = this['id'];
+          $state.go("detailedProblem", {
+            'id': problem_id
+          });
+        });
+        markers.push(new_marker);
+        new_marker.setMap(instance.getInst());
+      }, function errorCallback() {})
+    })
+    return markers;
+  }
+  return instance;
+}]);

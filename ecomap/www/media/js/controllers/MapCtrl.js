@@ -1,73 +1,78 @@
-app.controller('MapCtrl', ['$scope', '$http', '$rootScope',"$state", '$map',
-  function($scope, $http, $rootScope, $state, $map) {
+app.controller('MapCtrl', ['$scope', '$http', '$rootScope',"$state", 'MapFactory',
+  function($scope, $http, $rootScope, $state, MapFactory) {
     $scope.markers = [];
-    console.log('$rootScope.centerMap')
-    if(!$rootScope.centerMap || !$rootScope.zoomMap){
-      $rootScope.centerMap = {
-        lat: 49.357826, 
-        lng: 31.518239
-      }
-      $rootScope.zoomMap = 6;
-    }
+    // console.log('$rootScope.centerMap')
+    // if(!$rootScope.centerMap || !$rootScope.zoomMap){
+    //   $rootScope.centerMap = {
+    //     lat: 49.357826, 
+    //     lng: 31.518239
+    //   }
+    //   $rootScope.zoomMap = 6;
+    // }
 
-    console.log($map);
-    $scope.initMap = function () {
-      $rootScope.map = new google.maps.Map(document.getElementById('map'), {
-        center:$rootScope.centerMap,
-        zoom: $rootScope.zoomMap,
-        options:{
-          panControl    : true,
-          zoomControl   : true,
-          scaleControl  : true,
-          mapTypeControl: true,
+    // $scope.initMap = function () {
+    //   $rootScope.map = new google.maps.Map(document.getElementById('map'), {
+    //     center:$rootScope.centerMap,
+    //     zoom: $rootScope.zoomMap,
+    //     options:{
+    //       panControl    : true,
+    //       zoomControl   : true,
+    //       scaleControl  : true,
+    //       mapTypeControl: true,
 
-        }
-     });
-      google.maps.event.addListenerOnce($rootScope.map, 'idle', function() {
-        console.log("Resizing map...");
-        google.maps.event.trigger($rootScope.map, 'resize');
-      });
+    //     }
+    //  });
+    //   google.maps.event.addListenerOnce($rootScope.map, 'idle', function() {
+    //     console.log("Resizing map...");
+    //     google.maps.event.trigger($rootScope.map, 'resize');
+    //   });
       
-      $scope.loadProblems()
-    }
-    $scope.loadProblems = function() {
-      $http({
-        method: 'GET',
-        url: '/api/problems'
-      }).then(function successCallback(response) {
-        angular.forEach(response.data,function(marker,key){
-          var pos = {
-            lat: marker.latitude,
-            lng: marker.longitude
-          };
-          var new_marker =  new google.maps.Marker({
-            position: pos,
-            map: $rootScope.map,
-            id:marker.problem_id,
-            problem_type_Id: marker.problem_type_Id,
-            problemStatus : marker.status,
-            doCluster:true,
-            date:marker.date,
-            icon : "/image/markers/" + marker.problem_type_Id + ".png",
+    //   $scope.loadProblems()
+    // }
 
-          })
-          new_marker.addListener('click', function() {
-           var problem_id = this['id'];
-           console.log(problem_id)
-           $state.go("detailedProblem",{
-            'id':problem_id
-          });
-         });
-          $scope.markers.push(new_marker)
-          new_marker.setMap($rootScope.map);
-        },
-        function errorCallback(){
 
-        })
-      })
-    }
+    // $scope.loadProblems = function() {
+    //   $http({
+    //     method: 'GET',
+    //     url: '/api/problems'
+    //   }).then(function successCallback(response) {
+    //     angular.forEach(response.data,function(marker,key){
+    //       var pos = {
+    //         lat: marker.latitude,
+    //         lng: marker.longitude
+    //       };
+    //       var new_marker =  new google.maps.Marker({
+    //         position: pos,
+    //         map: MapFactory.getInst(),
+    //         id:marker.problem_id,
+    //         problem_type_Id: marker.problem_type_Id,
+    //         problemStatus : marker.status,
+    //         doCluster:true,
+    //         date:marker.date,
+    //         icon : "/image/markers/" + marker.problem_type_Id + ".png",
 
-    $scope.initMap()
+    //       })
+    //       new_marker.addListener('click', function() {
+    //        var problem_id = this['id'];
+    //        console.log(problem_id)
+    //        $state.go("detailedProblem",{
+    //         'id':problem_id
+    //       });
+    //      });
+    //       $scope.markers.push(new_marker)
+    //       new_marker.setMap(MapFactory.getInst());
+    //     },
+    //     function errorCallback(){
+
+    //     })
+    //   })
+    // }
+    MapFactory.initMap({lat: 54.468077, lng:30.521018}, 6);
+    MapFactory.turnResizeOn();
+    $scope.markers = MapFactory.loadProblems();
+    // $scope.loadProblems();
+
+    // $scope.initMap()
     // FILTER
     $("#filerToogle").click(function(){
       console.log("clic")

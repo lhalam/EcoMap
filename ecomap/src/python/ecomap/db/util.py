@@ -986,7 +986,7 @@ def get_stored_data(startime, endtime):
 
     """
     Gets statistic info from db about user's change password activity during
-    the last 24hours.
+    the last 24hours or any specified date between 2 timestamp objects.
     :return: tuple(creation_time(timestamp), user_name, user_email, number
              of change tries)    #getrestoredata
 
@@ -999,7 +999,7 @@ def get_stored_data(startime, endtime):
                    GROUP BY u.id
                    HAVING p.creation_date BETWEEN %d AND %d;
                 """
-        cursor.execute(query, (startime, endtime))
+        cursor.execute(query % (startime, endtime))
         return cursor.fetchall()
 
 

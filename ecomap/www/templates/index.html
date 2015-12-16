@@ -87,7 +87,7 @@
 
 </head>
 <body ng-controller="MainCtrl">
-  <div class="wrapper">
+  <div class="wrapper flex-container flex-column">
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -132,11 +132,10 @@
   </nav>
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
   <div class="flex-container flex-row flex-item-1">
-    <div ui-view class="map-div"></div>
+    <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
     <div ui-view name="detailedProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('detailedProblem')"></div>
     <div ui-view name="addProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('addProblem')"></div>
   </div>
-
 </div>
 </body>
 </html>

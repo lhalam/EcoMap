@@ -8,7 +8,6 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     //   }
     //   $rootScope.zoomMap = 6;
     // }
-    MapFactory.initMap();
     $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };

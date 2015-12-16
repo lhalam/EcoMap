@@ -80,5 +80,11 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     })
     return markers;
   }
+  instance.setCenter = function(centerMap){
+    instance.centerMap = centerMap;
+    var map = instance.getInst();
+
+    map.setCenter(centerMap);
+  };
   return instance;
 }]);

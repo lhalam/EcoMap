@@ -1,5 +1,5 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg',
-  function($scope, $rootScope, $state, $http, toaster, msg) {
+app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
+  function($scope, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
@@ -11,11 +11,19 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
-      $rootScope.centerMap = {
-        lat: $scope.selectProblem['latitude'],
-        lng: $scope.selectProblem['longitude']
-      },
-       $rootScope.zoomMap = 9
+
+      MapFactory.setCenter({lat: $scope.selectProblem.latitude, 
+        lng: $scope.selectProblem.longitude});
+      // MapFactory.initMap({lat: $scope.selectProblem.latitude, 
+        // lng: $scope.selectProblem.longitude}, 9);
+      // MapFactory.turnResizeOn();
+      // $scope.markers = MapFactory.loadProblems();
+      // $rootScope.centerMap = {
+      //   lat: $scope.selectProblem['latitude'],
+      //   lng: $scope.selectProblem['longitude']
+      // },
+      //  $rootScope.zoomMap = 9
+
     }, function errorCallback(error) {
       $state.go('error404');
     });

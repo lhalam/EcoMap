@@ -99,40 +99,6 @@ def send_email(login, app_key, from_email, to_email, email):
     server.quit()
 
 
-def make_template(data):
-    with open((os.path.join(os.environ['CONFROOT'],
-              "new_template.html")), "w") as html:
-        html.write('')
-        mes = '<h1>Жоден з користувачів пароль не змінював.</h1>'
-        table_head = """<table>
-            <tr>
-                <th>користувач</th>
-                <th>mail</th>
-                <th>number request</th>
-                <th>time</th>
-            </tr>
-        """
-        table_row = """
-            <tr>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%d</td>
-                <td>%d</td>
-            </tr>
-        """
-        if data:
-            html.write(table_head)
-            for x in data:
-                html.write(table_row % (x[1].encode('utf-8'),
-                                        x[2].encode('utf-8'),
-                                        int(x[3]),
-                                        int(x[0])))
-            else:
-                html.write('</table>')
-        else:
-            html.write(mes)
-
-
 def admin_stats_email(data=None):
     """Sends email to new created users.
        :params: app_name - app's login

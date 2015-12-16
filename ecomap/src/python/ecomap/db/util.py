@@ -995,9 +995,9 @@ def get_stored_data(startime, endtime):
         cursor = conn.cursor()
         query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
                    FROM `password_restore` AS p
-                   INNER JOIN user AS u ON p.user_id = u.id
-                   GROUP BY u.id
-                   HAVING p.creation_date BETWEEN %d AND %d;
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE p.creation_date BETWEEN %d AND %d
+                   GROUP BY u.id;
                 """
         cursor.execute(query % (startime, endtime))
         return cursor.fetchall()

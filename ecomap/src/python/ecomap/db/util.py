@@ -1119,7 +1119,6 @@ def select_anonim():
         return cursor.fetchone()
 
 
-
 @retry_query(tries=3, delay=1)
 def change_problem_to_anon(anon_id,problem_id):
     """Query for change user_id in problem table to id of Anonimus User,

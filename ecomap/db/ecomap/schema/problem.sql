@@ -16,5 +16,6 @@ CREATE TABLE IF NOT EXISTS `problem` (
  `created_date` int(11) unsigned NOT NULL, # date of creation
  `problem_type_id` int(10) unsigned NOT NULL,
  `user_id` int(10) unsigned NOT NULL,
+ `update_date`  int(11) unsigned,
  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

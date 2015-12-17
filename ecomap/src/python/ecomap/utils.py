@@ -60,12 +60,20 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
     return '?'.join((url.path, url.query)) if url.query else url.path
 
 
-def generate_email(email_type, from_email, to_email, args):
+def generate_email(email_type, from_email, to_email, args,
+                   custom_template=None):
     """Sends email."""
+    get_logger()
+    logger = logging.getLogger('email')
     msg = MIMEMultipart('alternative')
     complete_email = os.path.join(os.environ['CONFROOT'],
                                   'email_template.html')
-    email_body = os.path.join(os.environ['CONFROOT'], '%s.html' % email_type)
+    if custom_template:
+        email_body = custom_template
+        args = ''
+    else:
+        email_body = os.path.join(os.environ['CONFROOT'],
+                                  '%s.html' % email_type)
 
     html = None
     html_body = None
@@ -73,7 +81,10 @@ def generate_email(email_type, from_email, to_email, args):
         html = template.read().decode('utf-8')
 
     with open(email_body, 'rb') as template:
-        html_body = template.read().decode('utf-8') % args
+        if args:
+            html_body = template.read().decode('utf-8') % args
+        else:
+            html_body = template.read().decode('utf-8')
 
     html_formatted = html % html_body
     msg['Subject'] = Header('%s' % email_type, 'utf-8')
@@ -97,87 +108,3 @@ def send_email(login, app_key, from_email, to_email, email):
     server.login(login, app_key)
     server.sendmail(from_email, to_email, email.as_string())
     server.quit()
-
-
-def admin_stats_email(data=None):
-    """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
-    """
-    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
-                                 'admin_stats_template.html')
-
-    with open(TEMPLATE_PATH, 'rb') as template:
-        html = template.read()
-
-    mes = 'message noone changed </body>'
-    table_head = """<table>
-        <tr>
-            <th>користувач</th>
-            <th>mail</th>
-            <th>number request</th>
-        </tr>
-    """
-    table_row = """
-        <tr>
-            <td>%s</td>
-            <td>%s</td>
-            <td>%d</td>
-        </tr>
-            """
-    if data:
-        html += table_head
-        for x in data:
-            html += table_row % (x[1].encode('utf-8'),
-                                 x[2].encode('utf-8'),
-                                 int(x[3]))
-        else:
-            html += '</table></body>'
-    else:
-        html += mes
-
-    html_decoded = html
-    msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
-
-    # htmltext = MIMEText(html_decoded, 'html', 'utf-8')
-
-    # msg.attach(htmltext)
-    msg['Subject'] = 'звіт за добу'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = 'vadime.padalko@gmail.com'
-
-    # with app.app_context():
-    #     msg.body = render_template(template + '.txt')
-    #     msg.html = render_template('jinja_template.html', data=data)
-    #     # mail.send(msg)
-
-    return msg
-
-
-# def admin_stats_email2(data=None):
-#     """Sends email to new created users.
-#        :params: app_name - app's login
-#                 app_key - app's key
-#                 name - user name
-#                 surname - user surname
-#                 email - user email
-#                 password - user password
-#     """
-#     msg = MIMEMultipart('alternative')
-#     msg['Subject'] = Header('звіт адміністратора на ecomap.org', 'utf-8')
-#
-#     with app.app_context():
-#         msg.html = render_template('jinja_template.html', data=data)
-#
-#     htmltext = MIMEText(msg.html, 'html', 'utf-8')
-#
-#     msg.attach(htmltext)
-#     msg['Subject'] = 'звіт за добу'
-#     msg['From'] = 'admin@ecomap.com'
-#     msg['To'] = 'vadime.padalko@gmail.com'
-#     return msg

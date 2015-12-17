@@ -27,7 +27,7 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is %s, role(%s)', g.user.role, g.user)
+    logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
 
 
 # @app.before_request

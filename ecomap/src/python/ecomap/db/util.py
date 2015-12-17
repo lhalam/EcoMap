@@ -926,7 +926,7 @@ def insert_into_restore_password(hashed, user_id, create_time):
     """Inserts info restore_password table new line."""
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """INSERT INTO `password_restore` (`creation_date`,
+        query = """INSERT INTO `user_operation` (`creation_date`,
                                                    `hash_sum`,
                                                    `user_id`)
                    VALUES (%s, %s, %s);
@@ -944,7 +944,7 @@ def check_restore_password(hashed):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `creation_date`
-                   FROM `password_restore`
+                   FROM `user_operation`
                    WHERE `hash_sum`=%s;
                 """
         cursor.execute(query, (hashed,))
@@ -974,7 +974,7 @@ def get_user_id_by_hash(hash_sum):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `user_id` FROM `password_restore`
+        query = """SELECT `user_id` FROM `user_operation`
                    WHERE `hash_sum`=%s;
                 """
         cursor.execute(query, (hash_sum,))
@@ -982,21 +982,22 @@ def get_user_id_by_hash(hash_sum):
 
 
 @retry_query(tries=3, delay=1)
-def get_stored_data(startime, endtime):
+def get_hash_data(startime, endtime):
 
     """
     Gets statistic info from db about user's change password activity during
     the last 24hours or any specified date between 2 timestamp objects.
     :return: tuple(creation_time(timestamp), user_name, user_email, number
-             of change tries)    #getrestoredata
+             of change tries)
 
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
-                   FROM `password_restore` AS p
+                   FROM `user_operation` AS p
                    INNER JOIN `user` AS u ON p.user_id = u.id
                    WHERE p.creation_date BETWEEN %d AND %d
+                   AND p.activity_type = 1
                    GROUP BY u.id;
                 """
         cursor.execute(query % (startime, endtime))
@@ -1004,17 +1005,56 @@ def get_stored_data(startime, endtime):
 
 
 @retry_query(tries=3, delay=1)
-def refresh_table(last24h, time_now):
-    """Deletes statistics info from db for last 24 hours.
+def get_deletion_data(startime, endtime):
+
+    """Gets statistic info from db about user's deletion profile activity
+    during the last 24hours or any specified date between 2 timestamp objects.
+    :return: tuple(creation_time(timestamp), user_name, user_email, number
+             of tries)
+
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
+                   FROM `user_operation` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE p.creation_date BETWEEN %d AND %d
+                   AND p.activity_type = 2
+                   GROUP BY u.id;
+                """
+        cursor.execute(query % (startime, endtime))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def clear_password_hash(startime, endtime):
+    """Deletes statistics info from db for defined time period.
     :return:
     """
 
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """DELETE FROM `password_restore` WHERE `creation_date`
-                   BETWEEN %s AND %s;
+        query = """DELETE FROM `user_operation`
+                   WHERE `creation_date` BETWEEN %d AND %d
+                   AND activity_type = 1;
                 """
-        cursor.execute(query % (last24h, time_now))
+        cursor.execute(query % (startime, endtime))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def clear_user_deletion_hash(startime, endtime):
+    """Deletes statistics info from db for defined time period.
+    :return:
+    """
+
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user_operation`
+                   WHERE `creation_date` BETWEEN %d AND %d
+                   AND activity_type = 2;
+                """
+        cursor.execute(query % (startime, endtime))
         conn.commit()
 
 

@@ -46,7 +46,7 @@ class User(UserMixin):
         self.avatar = avatar
 
     def __repr__(self):
-        return self.first_name
+        return unicode(self.first_name)
 
     def get_auth_token(self):
         """This method encodes a secure token from a cookie.

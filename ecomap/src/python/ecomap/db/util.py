@@ -997,7 +997,7 @@ def get_hash_data(startime, endtime):
                    FROM `user_operation` AS p
                    INNER JOIN `user` AS u ON p.user_id = u.id
                    WHERE p.creation_date BETWEEN %d AND %d
-                   AND p.activity_type = 1
+                   AND p.type = 'password'
                    GROUP BY u.id;
                 """
         cursor.execute(query % (startime, endtime))
@@ -1019,7 +1019,7 @@ def get_deletion_data(startime, endtime):
                    FROM `user_operation` AS p
                    INNER JOIN `user` AS u ON p.user_id = u.id
                    WHERE p.creation_date BETWEEN %d AND %d
-                   AND p.activity_type = 2
+                   AND p.type = 'delete'
                    GROUP BY u.id;
                 """
         cursor.execute(query % (startime, endtime))
@@ -1036,7 +1036,7 @@ def clear_password_hash(startime, endtime):
         cursor = conn.cursor()
         query = """DELETE FROM `user_operation`
                    WHERE `creation_date` BETWEEN %d AND %d
-                   AND activity_type = 1;
+                   AND `type` = 'password';
                 """
         cursor.execute(query % (startime, endtime))
         conn.commit()
@@ -1052,7 +1052,7 @@ def clear_user_deletion_hash(startime, endtime):
         cursor = conn.cursor()
         query = """DELETE FROM `user_operation`
                    WHERE `creation_date` BETWEEN %d AND %d
-                   AND activity_type = 2;
+                   AND `type` = 'delete';
                 """
         cursor.execute(query % (startime, endtime))
         conn.commit()

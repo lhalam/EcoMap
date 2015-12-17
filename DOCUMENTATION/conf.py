@@ -15,6 +15,7 @@
 import sys
 import os
 import shlex
+print sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/www')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

@@ -7,5 +7,4 @@ export PYTHON=${PYTHON:-/etc/python}
 export PYTHON_EGG_CACHE=${PYTHON_EGG_CACHE:-/tmp/.python-eggs}
 export STATICROOT=${STATICROOT:-${PRODROOT}/www/}
 
-/usr/bin/python $PYTHONPATH/ecomap/clear_temporary_hash.py -t password "$1" "$2" "$3" "$4"
-
+/usr/bin/python $PYTHONPATH/ecomap/bin/clear_temporary_hash.py -t password $*

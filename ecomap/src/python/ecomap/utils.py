@@ -61,10 +61,8 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
 
 
 def generate_email(email_type, from_email, to_email, args,
-                   custom_template=None):
+                   custom_template=None, template_str=None, header=None):
     """Sends email."""
-    get_logger()
-    logger = logging.getLogger('email')
     msg = MIMEMultipart('alternative')
     complete_email = os.path.join(os.environ['CONFROOT'],
                                   'email_template.html')
@@ -74,7 +72,6 @@ def generate_email(email_type, from_email, to_email, args,
     else:
         email_body = os.path.join(os.environ['CONFROOT'],
                                   '%s.html' % email_type)
-
     html = None
     html_body = None
     with open(complete_email, 'rb') as template:
@@ -86,8 +83,14 @@ def generate_email(email_type, from_email, to_email, args,
         else:
             html_body = template.read().decode('utf-8')
 
+    if template_str:
+        html_body = template_str.decode('utf-8')
+
     html_formatted = html % html_body
-    msg['Subject'] = Header('%s' % email_type, 'utf-8')
+    if header:
+        msg['Subject'] = Header('%s' % header, 'utf-8')
+    else:
+        msg['Subject'] = Header('%s' % email_type, 'utf-8')
     msg['From'] = from_email
     msg['To'] = to_email
     htmltext = MIMEText(html_formatted, 'html', 'utf-8')

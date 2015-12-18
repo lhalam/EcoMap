@@ -946,10 +946,26 @@ def insert_into_restore_password(hashed, user_id, create_time):
         cursor = conn.cursor()
         query = """INSERT INTO `user_operation` (`creation_date`,
                                                    `hash_sum`,
-                                                   `user_id`)
-                   VALUES (%s, %s, %s);
+                                                   `user_id`,
+                                                   `type`)
+                   VALUES (%s, %s, %s, 'password');
                 """
         cursor.execute(query, (create_time, hashed, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def insert_into_hash_delete(hex_hash, user_id, create_time):
+    """Inserts into user_operation table new line."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `user_operation`(`creation_date`,
+                                                  `hash_sum`,
+                                                  `user_id`,
+                                                  `type`)
+                    VALUES (%s, %s, %s, 'delete');
+                """
+        cursor.execute(query,(create_time, hashed , user_id))
         conn.commit()
 
 

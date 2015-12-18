@@ -276,5 +276,23 @@ def restore_password(user):
                message)
 
 
+def delete_user(user):
+    """Funtion send's email to user with link to delete him."""
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
+    hex_hash = hashed.hexdigest()
+    util.insert_into_hash_delete(hex_hash, user.uid, create_time)
+    massage = generate_email('delete_user',
+                             _CONFIG['email.from_email'],
+                             user.email,
+                             (user.first_name, user.last_name, hex_hash))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               user.email,
+               massage)
+    
+
 if __name__ == '__main__':
     register('user1', 'user1', 'next@gmail.com', 'pass')
+# 

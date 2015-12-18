@@ -273,3 +273,32 @@ def restore_password():
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400
     return response
+
+
+@app.route('/api/delete_user', methods=['DELETE'])
+def find_to_delete():
+    """Function to send email with delete link"""
+    data = request.get_json()
+    search_id = data['user_id']
+    user = ecomap_user.get_user_by_id(search_id)
+    if search_id == ecomap_user.get_id():
+        ecomap_user.delete_user(user)
+        response = jsonify(message='Email was sended.'), 200
+    else:
+        response = jsonify(error="You can't do that"), 400
+    return response
+
+
+# @app.route('/api/restore_password', methods=['POST'])
+# @auto.doc()
+# def restore_password_request():
+#     """Function to restore forgotten password."""
+#     json = request.get_json()
+#     email = json['email']
+#     user = ecomap_user.get_user_by_email(email)
+#     if user:
+#         ecomap_user.restore_password(user)
+#         response = jsonify(message='Email was sended.'), 200
+#     else:
+#         response = jsonify(error='There is not such email.'), 401
+#     return response

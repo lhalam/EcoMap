@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Документація API &mdash; ecomap 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+    <link rel="top" title="ecomap 0.1 documentation" href="index.html"/>
+        <link rel="next" title="Про проект" href="about.html"/>
+        <link rel="prev" title="Welcome to Ecomap.org documentation! ТЕСТ" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ecomap
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Документація API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quickstart">Quickstart</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#admin-api">Admin API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api-resources"><strong>/api/resources</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api-permissions"><strong>/api/permissions</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#user-api">User API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1"><strong>/</strong></a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">Про проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto.html">HEADER FROM AUTO</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ecomap</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Документація API</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/documentation.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api">
+<h1>Документація API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
+<p>Заголовок содержит главную тему и отделяется символами &#8216;=&#8217;.
+Их количество должно быть не меньше, чем количество символов
+в заголовке.</p>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>Подзаголовки отделяются символами &#8216;-&#8216;. Их количество должно
+быть тем же, что и количество символов в подзаголовке
+(так же, как и в случае с заголовками).</p>
+<p>Списки могут быть маркированными:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Элемент Foo</li>
+<li>Элемент Bar</li>
+</ul>
+</div></blockquote>
+<p>Или же автоматически пронумерованными:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Элемент 1</li>
+<li>Элемент 2</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="admin-api">
+<h1>Admin API<a class="headerlink" href="#admin-api" title="Permalink to this headline">¶</a></h1>
+<p>Слова можно выделять <em>наклонным</em> или <strong>полужирным</strong> шрифтами.
+Фрагменты кода (например, примеры команд) можно заключать в обратные кавычки, например:
+команда <code class="docutils literal"><span class="pre">sudo</span></code> дает вам привилегии суперпользователя!</p>
+<div class="section" id="api-resources">
+<h2><strong>/api/resources</strong><a class="headerlink" href="#api-resources" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>METHOD: <em>GET</em></li>
+</ul>
+<blockquote>
+<div><p>ARGUMENTS: None</p>
+<p>DESCRIPTION: Function which returns resources list from db with pagination options.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"><dl class="first last docutils">
+<dt>json such format:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">[</span> <span class="pre">[{&quot;resource_name&quot;:</span> <span class="pre">&quot;name&quot;,</span> <span class="pre">&quot;id&quot;:</span> <span class="pre">1},</span> <span class="pre">{&quot;resource_name&quot;:</span>
+<span class="pre">&quot;name_2&quot;,&quot;id&quot;:</span> <span class="pre">2}],</span> <span class="pre">[{&quot;total_res_count&quot;:</span> <span class="pre">2}]</span> <span class="pre">]</span></code></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<ul class="simple">
+<li>METHOD: <em>POST</em></li>
+</ul>
+<blockquote>
+<div><p>ARGUMENTS: None</p>
+<p>DESCRIPTION: Function which edits resource name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"><dl class="first last docutils">
+<dt>If there is already resource with this name:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'error':</span> <span class="pre">'resource</span> <span class="pre">already</span> <span class="pre">exists'},</span> <span class="pre">400</span></code></p>
+</dd>
+<dt>If request data is invalid:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'status':</span> <span class="pre">False,</span> <span class="pre">'error':</span> <span class="pre">[list</span> <span class="pre">of</span> <span class="pre">errors]},</span> <span class="pre">400</span></code></p>
+</dd>
+<dt>If all ok:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'added_resource':</span> <span class="pre">'resource_name','resource_id':</span> <span class="pre">'resource_id'}</span></code></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="api-permissions">
+<h2><strong>/api/permissions</strong><a class="headerlink" href="#api-permissions" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>METHOD:</dt>
+<dd><p class="first"><em>DELETE</em></p>
+<dl class="docutils">
+<dt>ARGUMENTS:</dt>
+<dd>None</dd>
+<dt>DESCRIPTION:</dt>
+<dd>Function which edits permission.</dd>
+</dl>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"><dl class="first last docutils">
+<dt>If permission is binded with any role:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'error':</span> <span class="pre">'Cannot</span> <span class="pre">delete!'}</span></code></p>
+</dd>
+<dt>If request data is invalid:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'status':</span> <span class="pre">False,</span> <span class="pre">'error':</span> <span class="pre">[list</span> <span class="pre">of</span> <span class="pre">errors]},</span> <span class="pre">400</span></code></p>
+</dd>
+<dt>If all ok:</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">{'status':</span> <span class="pre">'success','edited_perm_id':</span> <span class="pre">'permission_id'}</span></code></p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">method:</th><td class="field-body"><p class="first"><em>GET</em></p>
+<table class="last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">arguments:</th><td class="field-body">None</td>
+</tr>
+<tr class="field-even field"><th class="field-name">description:</th><td class="field-body">Function which gets all permissions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">return:</th><td class="field-body"><code class="docutils literal"><span class="pre">{'permission_id':</span> <span class="pre">'permission_id',</span> <span class="pre">'action':</span> <span class="pre">'action',</span>
+<span class="pre">'modifier':</span> <span class="pre">'modifier',</span> <span class="pre">'description':</span> <span class="pre">'description'}</span></code></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="user-api">
+<h1>User API<a class="headerlink" href="#user-api" title="Permalink to this headline">¶</a></h1>
+<p>Слова можно выделять <em>наклонным</em> или <strong>полужирным</strong> шрифтами.
+Фрагменты кода (например, примеры команд) можно заключать в обратные кавычки, например:
+команда <code class="docutils literal"><span class="pre">sudo</span></code> дает вам привилегии суперпользователя!</p>
+<div class="section" id="id1">
+<h2><strong>/</strong><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>METHOD: <em>GET</em></li>
+</ul>
+<blockquote>
+<div><p>ARGUMENTS: None</p>
+<p>DESCRIPTION: Enter to site Renders a main template for single-page application.</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="about.html" class="btn btn-neutral float-right" title="Про проект" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Ecomap.org documentation! ТЕСТ" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, lv-164.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

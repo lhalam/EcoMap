@@ -18,8 +18,8 @@ from ecomap.utils import parse_url
 
 @app.before_request
 def load_users():
-    """Function to check if user is authenticated, else creates
-       Anonymous user.
+    """Function-decorator checks if user is authenticated, else creates
+       Anonymous user instance.
        Launches before requests.
     """
     if current_user.is_authenticated:
@@ -27,15 +27,16 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is %s, role(%s)', g.user.role, g.user)
+    logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
 
 
 # @app.before_request
 def check_access():
     """Global decorator for each view.
-    Checks permissions to access app resources by each user's request.
-    Gets dynamic user info(user role, url, request method)from request context.
-    :return: nested function returns true or 403
+    Checks user permission to access application resources before each request.
+    Gets dynamic request params(user role, url, request method) from each
+    request context and compares it with admin permissions stored in db.
+    :return: nested function returns true or 403 status and denies access.
     """
     if 'access_control' not in session:
         session['access_control'] = permission_control.get_dct()
@@ -61,7 +62,9 @@ def check_access():
 @auto.doc()
 def index():
     """Controller starts main application page.
-    return: renders html template with angular app.
+    Shows initial data of application, renders template with built-in Angular
+    JS.
+    :return: renders html template with angular app.
     """
     return render_template('index.html')
 
@@ -71,8 +74,17 @@ def index():
 def get_titles():
     """This method returns short info about all defined static pages.
 
-      :returns list of dicts with title, id, alias and is_enabled
-      values.
+    :returns list of dicts with title, id, alias and is_enabled
+    json sample:
+    :return
+    [{'is_enabled': 1,
+      'alias': 'alias_Tag',
+      'id': 1,
+      'title': 'Custom_Title'},
+      {'is_enabled': 1,
+      'alias': 'Tag',
+      'id': 2,
+      'title': 'AnotherTitle'}]
     """
     if request.method == 'GET':
         pages = db.get_pages_titles()
@@ -92,9 +104,18 @@ def get_faq(alias):
     """This method retrieves exact faq page(ex-resource) via
        alias, passed to it.
 
-        :params - alias - url path to exact page.
+       :param alias: url path to specific static page.
 
-        :returns object with all page's attributes within a list.
+       :returns: object with all page's attributes within a list or ``404`` status.
+       :rtype: JSON
+       :JSON sample:
+           `[{'id': 1, 'title': 'title', 'alias': 'tag',
+           'description': 'small description of page',
+           'content': 'main article content',
+           'meta_keywords': 'keyword1, keyword2',
+           'meta_description': 'meta-description of content',
+           'is_enabled': 1}]`
+
     """
     if request.method == 'GET':
         page = db.get_page_by_alias(alias)

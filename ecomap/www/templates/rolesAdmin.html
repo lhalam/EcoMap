@@ -21,7 +21,7 @@
         <div class="row">
           <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
           <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
-          <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSub=true">Змінити</button></div>
+          <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSubFunc()">Змінити</button></div>
         </div>
         <div class="help-block" ng-messages="editRoleForm.roleName.$error" ng-show="editRoleForm.roleName.$touched || editRoleSub">
           <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -44,8 +44,8 @@
             <td>
               <button class="btn btn-danger edit_btn btn-border" ng-click="deleteRole(role_id)">видалити</button>
 
-              <button class="btn btn-warning edit_btn btn-border" ng-click="showEditRoleModal(role_name,role_id)">редагувати</button>
-              <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">права ролі</button>
+          
+              <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">змінити</button>
 
             </td>
           </tr>
@@ -62,9 +62,16 @@
     <div class="row">
       <div class="col-md-8">
         <div class="well well-sm">Роль : {{rolePermObj.name}}</div>
+
+
       </div>
       <div class="col-md-3">
         <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+         <button class="btn btn-warning btn-block edit_btn btn-border" ng-click="showEditRoleModal(rolePermObj.name,rolePermObj.id)">редагувати назву</button>
       </div>
     </div>
     <div class="col-md-6">

@@ -1,9 +1,8 @@
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
   var instance = {};
-  instance.centerMap = {
-    lat: 50.468077,
-    lng: 30.521018
-  };
+  instance.lat = 54.468077;
+  instance.lng = 30.521018;
+  instance.centerMap = new google.maps.LatLng(instance.lat, instance.lng);
   instance.zoom = 6;
   instance.initMap = function(centerMap, zoom) {
     if (centerMap === undefined) {
@@ -22,9 +21,15 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         mapTypeControl: true,
       }
     });
-    instance.centerMap.lat = centerMap.lat;
-    instance.centerMap.lng = centerMap.lng;
+    instance.lat = centerMap.lat;
+    instance.lng = centerMap.lng;
     instance.zoom = zoom;
+    google.maps.event.addListener(instance.mapInstance, 'dragend', function() {
+      instance.centerMap = instance.mapInstance.getCenter();
+    });
+    google.maps.event.addListener(instance.mapInstance, 'zoom_changed', function() {
+      instance.zoom = instance.mapInstance.getZoom();
+    });
   }
   instance.getInst = function() {
     if (instance.mapInstance) {
@@ -54,10 +59,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
       url: '/api/problems'
     }).then(function successCallback(response) {
       angular.forEach(response.data, function(marker, key) {
-        var pos = {
-          lat: marker.latitude,
-          lng: marker.longitude
-        };
+        var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,
           map: instance.getInst(),
@@ -75,16 +77,16 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           });
         });
         markers.push(new_marker);
-        new_marker.setMap(instance.getInst());
       }, function errorCallback() {})
     })
     return markers;
   }
-  instance.setCenter = function(centerMap){
+  instance.setCenter = function(centerMap, zoom) {
     instance.centerMap = centerMap;
+    instance.zoom = zoom;
     var map = instance.getInst();
-
-    map.setCenter(centerMap);
+    map.setZoom(instance.zoom);
+    map.setCenter(instance.centerMap);
   };
   return instance;
 }]);

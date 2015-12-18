@@ -9,7 +9,7 @@ from ecomap.db import util
 
 from ecomap.app import app
 from ecomap.config import Config
-from ecomap.utils import random_password, send_email
+from ecomap.utils import random_password, generate_email, send_email
 
 _CONFIG = Config().get_config()
 LOGIN_SERIALIZER = URLSafeTimedSerializer(app.secret_key)
@@ -46,7 +46,7 @@ class User(UserMixin):
         self.avatar = avatar
 
     def __repr__(self):
-        return self.first_name
+        return unicode(self.first_name)
 
     def get_auth_token(self):
         """This method encodes a secure token from a cookie.
@@ -166,13 +166,13 @@ def register(first_name, last_name, email, password):
                                         email, salted_pass)
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
-
-    send_email('registration',
-               [_CONFIG['email.user_name'],
-                _CONFIG['email.app_password'],
-                _CONFIG['email.from_email'],
-                email],
-               [first_name, last_name, email, password])
+    message = generate_email('registration', _CONFIG['email.from_email'],
+                             email, (first_name, last_name, email, password))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               email,
+               message)
     return get_user_by_id(register_user_id)
 
 
@@ -197,12 +197,14 @@ def facebook_register(first_name, last_name, email, provider, uid):
             util.add_users_role(register_user_id, role_id[0])
             user = get_user_by_oauth_id(uid)
 
-        send_email('registration',
-                   [_CONFIG['email.user_name'],
-                    _CONFIG['email.app_password'],
-                    _CONFIG['email.from_email'],
-                    email],
-                   [first_name, last_name, email, password])
+        message = generate_email('registration', _CONFIG['email.from_email'],
+                                 email,
+                                 (first_name, last_name, email, password))
+        send_email(_CONFIG['email.user_name'],
+                   _CONFIG['email.app_password'],
+                   _CONFIG['email.from_email'],
+                   email,
+                   message)
     else:
         util.add_oauth_to_user(user.uid, provider, uid)
     return user
@@ -263,13 +265,15 @@ def restore_password(user):
     hex_hash = hashed.hexdigest()
 
     util.insert_into_restore_password(hex_hash, user.uid, create_time)
-
-    send_email('password_restore',
-               [_CONFIG['email.user_name'],
-                _CONFIG['email.app_password'],
-                _CONFIG['email.from_email'],
-                user.email],
-               [user.first_name, user.last_name, hex_hash])
+    message = generate_email('restore_password',
+                             _CONFIG['email.from_email'],
+                             user.email,
+                             (user.first_name, user.last_name, hex_hash))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               user.email,
+               message)
 
 
 if __name__ == '__main__':

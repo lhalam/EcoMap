@@ -1,34 +1,37 @@
-<div class="row">
-  <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4">
-    <form role="form" name="loginForm" ng-submit="Login(user)" novalidate>    
-      <div class="panel-default panel">
-        <div class="panel-heading">Увійти</div>
-        <div class="panel-content login">
-          <div class="form-group" ng-class="{ 'has-error': (loginForm.email.$touched || submitted) && loginForm.email.$invalid || getInvalidPasswordEmail() }">
-            <label for="email" class="control-label">Електронна адреса</label>
-            <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
-            <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched || submitted">
-              <div ng-messages-include="/templates/error_msgs.html"></div>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4">
+      <form role="form" name="loginForm" ng-submit="Login(user)" novalidate>    
+        <div class="panel-default panel">
+          <div class="panel-heading">Увійти</div>
+          <div class="panel-content login">
+            <div class="form-group" ng-class="{ 'has-error': (loginForm.email.$touched || submitted) && loginForm.email.$invalid || getInvalidPasswordEmail() }">
+              <label for="email" class="control-label">Електронна адреса</label>
+              <input type="email"  ng-model="user.email"  name="email" ng-maxlength="100" ng-change="changeInvalidPasswordEmail()" class="form-control" id="email" placeholder="Електронна адреса" required/>
+              <div class="help-block" ng-messages="loginForm.email.$error" ng-show="loginForm.email.$touched || submitted">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
             </div>
-          </div>
 
-          <div class="form-group" ng-class="{ 'has-error': ((loginForm.password.$touched || submitted) && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
-            <label for="password" class="control-label">Пароль</label> <strong><a href="/#/restore_email">(забули пароль?)</a></strong> 
-            <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
-            <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched || submitted">
-              <div ng-messages-include="/templates/error_msgs.html"></div>
+            <div class="form-group" ng-class="{ 'has-error': ((loginForm.password.$touched || submitted) && loginForm.password.$invalid) || getInvalidPasswordEmail() }">
+              <label for="password" class="control-label">Пароль</label> <strong><a href="/#/restore_email">(забули пароль?)</a></strong> 
+              <input type="password" name="password" ng-model="user.password" ng-minlength="6" ng-change="changeInvalidPasswordEmail()" class="form-control" id="password" placeholder="Пароль" required/>
+              <div class="help-block" ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched || submitted">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
+              <div class="help-block">
+                <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>
+              </div>
             </div>
-            <div class="help-block">
-              <p ng-show="getInvalidPasswordEmail()">Невірна електронна пошта чи пароль!</p>
-            </div>
-          </div>
 
-          <br>
-          <button type="submit" class="btn btn-primary">Увійти</button>
-          <button type="button" class="btn btn-primary facebook" ng-click="authenticate('facebook')"><i class="fa fa-facebook-square"></i> Увійти через Facebook</button>
+            <br>
+            <button type="submit" class="btn btn-primary">Увійти</button>
+            <button type="button" class="btn btn-primary facebook" ng-click="authenticate('facebook')"><i class="fa fa-facebook-square"></i> Увійти через Facebook</button>
+          </div>
         </div>
-      </div>
-    </form>
-    
+      </form>
+      
+    </div>
   </div>
+  
 </div>

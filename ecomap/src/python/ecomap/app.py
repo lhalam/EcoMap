@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from flask import Flask
 from flask.ext.triangle import Triangle
+from flask.ext.autodoc import Autodoc
 
 from ecomap.config import Config
 from ecomap.utils import get_logger
@@ -14,6 +15,7 @@ _CONFIG = Config().get_config()
 TEMPLATE_FOLDER = os.path.join(os.environ['PRODROOT'], 'www/templates/')
 app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 Triangle(app)
+auto = Autodoc(app)
 
 get_logger()
 logger = logging.getLogger('flask_app')

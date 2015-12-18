@@ -69,6 +69,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       $scope.loadRole();
       $scope.rolePermObj['name'] = $scope.editRoleObj['name'];
       $scope.msg.editSuccess('ролі');
+      $scope.rolePermObj.name = $scope.editRoleObj['name'];
       $scope.editRoleModal = false;
     }, function errorCallback(response) {
       $scope.msg.editError('ролі', $scope.msgError['alreadyExist']);
@@ -105,7 +106,9 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     $scope.rolePermTable = true;
     $scope.rolePermBlock = false;
   }
-
+  $scope.editRoleSubFunc =  function () {
+    $scope.editRoleSub = true;
+  }
   $scope.rolePermTable = true;
   $scope.rolePermBlock = false;
   $scope.showRolePerm = function(name, id) {

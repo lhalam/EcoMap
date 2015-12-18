@@ -5,12 +5,13 @@ from flask import request, jsonify, Response, session
 from flask_login import login_required
 
 from ecomap import validator
-from ecomap.app import app, logger
+from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
 
 
 @app.route("/api/resources", methods=['POST'])
+@auto.doc()
 @login_required
 def resource_post():
     """Function which edits resource name.
@@ -42,6 +43,7 @@ def resource_post():
 
 
 @app.route("/api/resources", methods=['PUT'])
+@auto.doc()
 @login_required
 def resource_put():
     """Function which edits resource name.
@@ -71,6 +73,7 @@ def resource_put():
 
 
 @app.route("/api/resources", methods=['DELETE'])
+@auto.doc()
 @login_required
 def resource_delete():
     """Function which deletes resource from database.
@@ -100,6 +103,7 @@ def resource_delete():
 
 
 @app.route("/api/resources", methods=['GET'])
+@auto.doc()
 @login_required
 def resource_get():
     """Function which returns resources list from db with pagination options.
@@ -134,6 +138,7 @@ def resource_get():
 
 
 @app.route("/api/roles", methods=['POST'])
+@auto.doc()
 @login_required
 def role_post():
     """Function which adds new role into database.
@@ -165,6 +170,7 @@ def role_post():
 
 
 @app.route("/api/roles", methods=['PUT'])
+@auto.doc()
 @login_required
 def role_put():
     """Function which edits role name.
@@ -193,6 +199,7 @@ def role_put():
 
 
 @app.route("/api/roles", methods=['DELETE'])
+@auto.doc()
 @login_required
 def role_delete():
     """Function which deletes role from database.
@@ -222,6 +229,7 @@ def role_delete():
 
 
 @app.route("/api/roles", methods=['GET'])
+@auto.doc()
 @login_required
 def role_get():
     """Function which gets all roles from database.
@@ -235,6 +243,7 @@ def role_get():
 
 
 @app.route("/api/permissions", methods=['POST'])
+@auto.doc()
 @login_required
 def permission_post():
     """Function which adds new permission into database.
@@ -267,6 +276,7 @@ def permission_post():
 
 
 @app.route("/api/permissions", methods=['PUT'])
+@auto.doc()
 @login_required
 def permission_put():
     """Function which edits permission.
@@ -295,6 +305,7 @@ def permission_put():
 
 
 @app.route("/api/permissions", methods=['DELETE'])
+@auto.doc()
 @login_required
 def permission_delete():
     """Function which edits permission.
@@ -325,6 +336,7 @@ def permission_delete():
 
 
 @app.route("/api/permissions", methods=['GET'])
+@auto.doc()
 @login_required
 def permission_get():
     """Function which gets all permissions.
@@ -344,6 +356,7 @@ def permission_get():
 
 
 @app.route("/api/role_permissions", methods=['POST'])
+@auto.doc()
 @login_required
 def role_permission_post():
     """Function which binds permission with role.
@@ -367,6 +380,7 @@ def role_permission_post():
 
 
 @app.route("/api/role_permissions", methods=['PUT'])
+@auto.doc()
 @login_required
 def role_permission_put():
     """Function which sets list of permission to role. Before sets
@@ -388,6 +402,7 @@ def role_permission_put():
 
 
 @app.route("/api/role_permissions", methods=['DELETE'])
+@auto.doc()
 @login_required
 def role_permission_delete():
     """Function to delete permissions."""
@@ -410,6 +425,7 @@ def role_permission_delete():
 
 
 @app.route("/api/role_permissions", methods=['GET'])
+@auto.doc()
 @login_required
 def role_permission_get():
     """Function which gets all permissions from database and all actual
@@ -419,7 +435,7 @@ def role_permission_get():
     """
     role_id = request.args.get('role_id')
     permissions_of_role = db.get_role_permission(role_id)
-    all_permissions = db.get_all_permissions()
+    all_permissions = db.get_all_permission_list()
     parsed_json = {}
     if all_permissions:
         parsed_json['all_permissions'] = []
@@ -439,6 +455,7 @@ def role_permission_get():
 
 
 @app.route("/api/all_permissions", methods=['GET'])
+@auto.doc()
 @login_required
 def get_all_permissions():
     """Handler for sending all created permissions to frontend.
@@ -468,6 +485,7 @@ def get_all_permissions():
 
 
 @app.route("/api/user_roles", methods=['GET', 'POST'])
+@auto.doc()
 @login_required
 def get_all_users():
     """Function, used to get all users.
@@ -499,6 +517,7 @@ def get_all_users():
 
 
 @app.route('/api/editResource/<int:page_id>', methods=['PUT'])
+@auto.doc()
 @login_required
 def edit_page(page_id):
     """This method makes changes to given page(ex-resource).
@@ -520,6 +539,7 @@ def edit_page(page_id):
 
 
 @app.route('/api/addResource', methods=['POST'])
+@auto.doc()
 @login_required
 def add_page():
     """This method adds new page to db."""
@@ -545,6 +565,7 @@ def add_page():
 
 
 @app.route('/api/deleteResource/<page_id>', methods=['DELETE'])
+@auto.doc()
 @login_required
 def delete_page(page_id):
     """This method deletes page by it's id."""
@@ -562,6 +583,8 @@ def delete_page(page_id):
 
 
 @app.route("/api/user_page", methods=['GET'])
+@auto.doc()
+@login_required
 def get_all_users_info():
     """Function which returns users list from db with pagination options.
        :return: json such format:

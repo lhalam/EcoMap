@@ -1,6 +1,5 @@
 app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactory',
   function($scope, $http, $rootScope, $state, MapFactory) {
-    $scope.markers = [];
     MapFactory.initMap();
     MapFactory.turnResizeOn();
     $scope.markers = MapFactory.loadProblems();

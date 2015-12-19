@@ -23,7 +23,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     });
     instance.lat = centerMap.lat;
     instance.lng = centerMap.lng;
-    instance.zoom = zoom;
+    instance.zoom = zoom;    
     google.maps.event.addListener(instance.mapInstance, 'dragend', function() {
       instance.centerMap = instance.mapInstance.getCenter();
     });
@@ -54,6 +54,8 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   }
   instance.loadProblems = function() {
     var markers = [];
+    var mcOptions = {gridSize: 80};
+    var cluster = new MarkerClusterer(instance.getInst(), [], mcOptions);    
     $http({
       method: 'GET',
       url: '/api/problems'
@@ -76,6 +78,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
             'id': problem_id
           });
         });
+        cluster.addMarker(new_marker);
         markers.push(new_marker);
       }, function errorCallback() {})
     })

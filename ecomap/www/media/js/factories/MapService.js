@@ -77,7 +77,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           $state.go("detailedProblem", {
             'id': problem_id
           });
-        });
+        });  
         cluster.addMarker(new_marker);
         markers.push(new_marker);
       }, function errorCallback() {})

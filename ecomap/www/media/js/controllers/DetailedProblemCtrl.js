@@ -37,6 +37,12 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       };
       return types[type_id];
     };
+
+    $scope.getMinPhoto = function(url){
+      var parts = url.split('.');
+      var min_url = parts[0] + '.min.' + parts[1];
+      return min_url;
+    };
     $scope.post_comment = function(comment) {
       if (comment) {
         $http({

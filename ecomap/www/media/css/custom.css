@@ -520,8 +520,12 @@ input[type="checkbox"] {
 
 .det-problem-modal .general, .problemBlock .general {
   background-color: #eee;
-  padding: 15px;
+  padding: 7px;
   margin-bottom: 10px;
+}
+.general .row{
+  height:2.7em;
+  min-height: 2.7em;
 }
 
 .det-problem-modal .rate, .problemBlock .rate {

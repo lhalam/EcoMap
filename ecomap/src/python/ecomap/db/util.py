@@ -371,6 +371,24 @@ def get_all_permissions(offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
+def get_all_permission_list():
+    """Find all permissions by resource.
+    :params: resource_id - id of resource
+    :return: tuple, containing permissions
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, r.resource_name, p.action, p.modifier,
+                   p.description
+                   FROM `permission` as p
+                   INNER JOIN `resource` as r
+                   ON p.resource_id=r.id
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def insert_permission(resource_id, action, modifier, description):
     """Insert new permission.
     :params: resource_id - id of resource

@@ -13,7 +13,7 @@ from urlparse import parse_qsl
 import ecomap.user as ecomap_user
 
 from ecomap import validator
-from ecomap.app import app, logger
+from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.config import Config
 
@@ -21,6 +21,7 @@ _CONFIG = Config().get_config()
 
 
 @app.route('/api/logout', methods=['POST', 'GET'])
+@auto.doc()
 @login_required
 def logout():
     """Method for user's log out.
@@ -35,6 +36,7 @@ def logout():
 
 
 @app.route('/api/register', methods=['POST'])
+@auto.doc()
 def register():
     """Method for registration new user in db.
     Method checks if user is not exists and handle
@@ -71,6 +73,7 @@ def register():
 
 
 @app.route('/api/email_exist', methods=['POST'])
+@auto.doc()
 def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
@@ -83,6 +86,7 @@ def email_exist():
 
 
 @app.route('/api/login', methods=['POST'])
+@auto.doc()
 def login():
     """Login processes handler.
     Log user in or shows error messages.
@@ -129,6 +133,7 @@ def login():
 
 
 @app.route('/api/authorize/<provider>', methods=['POST', 'GET'])
+@auto.doc()
 def oauth_login(provider):
     """Provides facebook authorization.
        Retrieves user info from facebook, check if there is
@@ -182,6 +187,7 @@ def oauth_login(provider):
 
 
 @app.route('/api/restore_password', methods=['POST'])
+@auto.doc()
 def restore_password_request():
     """Function to restore forgotten password."""
     json = request.get_json()
@@ -196,6 +202,7 @@ def restore_password_request():
 
 
 @app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
+@auto.doc()
 def restore_password_page(hashed):
     """Renders page to restore password."""
     valid = validator.restore_password_check(hashed)
@@ -212,6 +219,7 @@ def restore_password_page(hashed):
 
 
 @app.route('/api/restore_password', methods=['PUT'])
+@auto.doc()
 def restore_password():
     """Updates user password."""
     data = request.get_json()

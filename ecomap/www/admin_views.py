@@ -435,7 +435,7 @@ def role_permission_get():
     """
     role_id = request.args.get('role_id')
     permissions_of_role = db.get_role_permission(role_id)
-    all_permissions = db.get_all_permissions()
+    all_permissions = db.get_all_permission_list()
     parsed_json = {}
     if all_permissions:
         parsed_json['all_permissions'] = []

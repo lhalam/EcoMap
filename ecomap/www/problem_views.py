@@ -11,7 +11,7 @@ from flask_login import current_user
 from PIL import Image
 
 from ecomap import validator
-from ecomap.app import app, logger
+from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 
 

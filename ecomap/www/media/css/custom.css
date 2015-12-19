@@ -670,26 +670,35 @@ input[type="checkbox"] {
   right: 12px;
 }
 .filter{
-  position: absolute;
-  top:9%;
-  width: 30%;
-  left: -30%;
-  height: 91vh;
+  height: 92vh;
   background-color: #fff;
   transition:1s;
+  position: relative;
 }
-#filerToogle{
+
+.filter-controllers{
+  padding: 20px;
+  width: 300px;
+}
+.filter-controllers .heading{
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.filter-toogle{
+  z-index:9999;
   cursor: pointer;
   position: absolute;
   background-color: #fff;
   padding-left: 5px;
   height: 2em;
   width: 6em;
-  border:1px solid #111;
+  border:2px solid #bbb;
+  border-bottom: none;
   border-radius: 5px 5px 0px 0;
   transform: rotate(90deg);
-  right: -4em;
-  bottom: 2em;
+  right: -55px;
+  bottom: 70px;
 }
 .time {
   text-align: right;
@@ -718,7 +727,6 @@ input[type="checkbox"] {
   padding-left: 0.55em;
   font-size: 1.25em;
   height: 1.75em;
-  background-color: #ccc;
 }
 .indicator{
   float: right;

@@ -165,8 +165,8 @@ def check_post_comment(data):
 
     return status
 
-def restore_password_check(data):
-    """Validates if restore password hash has length of 64.
+def hash_check(data):
+    """Validates if restore password/user_deletion hash has length of 64.
        :params: data - hash, to check
        :return: dictionary with status keyname and error keys. By
                 default status is True, and error is empty.
@@ -176,7 +176,7 @@ def restore_password_check(data):
     status = {'status': True, 'error': []}
     if len(data) is not 64:
         status['error'].append({'hash_sum': 'hash sum has wrong length.'})
-    elif not db.check_restore_password(data):
+    elif not db.check_hash_in_db(data):
         status['error'].append({'hash_sum': 'hash does not exist.'})
 
     if status['error']:
@@ -697,10 +697,7 @@ def user_deletion(data):
     elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
         status['error'].append({keyname: ERROR_MSG['check_maximum_length']
                                 % keyname})
-    elif role_name_exists(data[keyname]):
-        status['error'].append({keyname: ERROR_MSG['name_exists']
-                                % data[keyname]})
-
+    
     if status['error']:
         status['status'] = False
 

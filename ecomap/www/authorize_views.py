@@ -241,14 +241,14 @@ def restore_password_request():
 @auto.doc()
 def restore_password_page(hashed):
     """Renders page to restore password."""
-    valid = validator.restore_password_check(hashed)
+    valid = validator.hash_check(hashed)
     page = render_template('index.html')
 
     if valid:
-        creation_time = db.check_restore_password(hashed)
+        creation_time = db.check_hash_in_db(hashed)
         if creation_time:
             elapsed = time.time() - creation_time[0]
-            if elapsed <= _CONFIG['restore_password.lifetime']:
+            if elapsed <= _CONFIG['hash_options.lifetime']:
                 page = render_template('password_restoring_pass.html')
 
     return page
@@ -275,7 +275,8 @@ def restore_password():
     return response
 
 
-@app.route('/api/delete_user', methods=['DELETE'])
+@app.route('/api/delete_user_request', methods=['DELETE'])
+@auto.doc()
 def find_to_delete():
     """Function to send email with delete link"""
     data = request.get_json()
@@ -289,16 +290,47 @@ def find_to_delete():
     return response
 
 
-# @app.route('/api/restore_password', methods=['POST'])
-# @auto.doc()
-# def restore_password_request():
-#     """Function to restore forgotten password."""
-#     json = request.get_json()
-#     email = json['email']
-#     user = ecomap_user.get_user_by_email(email)
-#     if user:
-#         ecomap_user.restore_password(user)
-#         response = jsonify(message='Email was sended.'), 200
-#     else:
-#         response = jsonify(error='There is not such email.'), 401
-#     return response
+@app.route('/api/delete_user_page/<string:hashed>', methods=['GET'])
+@auto.doc()
+def delete_user_page(hashed):
+    """Renders page to confirmation of deleting user"""
+    valid = validator.check_hash(hashed)
+    page = render_template('index.html')
+
+    if valid:
+        creation_time = db.check_hash_in_db(hashed)
+        if creation_time:
+            elapsed = time.time() - creation_time[0]
+            if elapsed <= _CONFIG['hash_options.lifetime']:
+                page = render_template('success_user_delete.html')
+    return page
+
+
+@app.route('/api/user_delete', methods=['DELETE'])
+def delete_user():
+    """Controller for handling deletion of user profile by
+    profile owner.
+    :return: json object with success message or message with error
+    """
+    data = request.get_json()
+    valid = validator.user_deletion(data)
+    if valid['status']:
+        tuple_of_problems = db.get_problem_id_for_del(data['user_id'])
+        problem_list = []
+        for tuple_with_problem_id in tuple_of_problems:
+            problem_list.append(tuple_with_problem_id[0])
+        if problem_list:
+            for problem_id in problem_list:
+                db.change_problem_to_anon(problem_id)
+                db.change_activity_to_anon(problem_id)
+            db.delete_user(data['user_id'])
+            logger.info('User with id %s has been deleted' % data['user_id'])
+            response = jsonify(msg='success', deleted_user=data['user_id'])
+        else:
+            db.delete_user(data['user_id'])
+            logger.info('User with id %s has been deleted' % data['user_id'])
+            response = jsonify(msg='success', deleted_user = data['user_id'])
+    else:
+        response = Response(json.dumps(valid),
+                            mimetype='application/json'), 400
+    return response

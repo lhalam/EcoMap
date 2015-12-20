@@ -970,7 +970,7 @@ def insert_into_hash_delete(hex_hash, user_id, create_time):
 
 
 @retry_query(tries=3, delay=1)
-def check_restore_password(hashed):
+def check_hash_in_db(hashed):
     """Returns restore password request time.
        :params: hashed - hash sum
        :return: time
@@ -1185,39 +1185,29 @@ def get_problem_id_for_del(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def select_anonim():
-    """Query to select Anonimus User"""
-    with db_pool().manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT `id` FROM `user` WHERE `first_name` = 'admin';"""
-        cursor.execute(query, )
-        return cursor.fetchone()
-
-
-@retry_query(tries=3, delay=1)
-def change_problem_to_anon(anon_id,problem_id):
+def change_problem_to_anon(problem_id):
     """Query for change user_id in problem table to id of Anonimus User,
     when we deleting User-owner of this problem.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (anon_id,problem_id))
+        query = """UPDATE `problem` SET `user_id`=%d WHERE `id`=%s;"""
+        cursor.execute(query, (2,problem_id))
         conn.commit()
 
 
 @retry_query(tries=3, delay=1)
-def change_activity_to_anon(anon_id,problem_id):
+def change_activity_to_anon(problem_id):
     """Query for change user_id in problem_activity 
     table to id of Anonimus User,
     when we deleting User-owner of this problem.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `problem_activity` SET `user_id`=%s 
+        query = """UPDATE `problem_activity` SET `user_id`=%d 
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query, (anon_id,problem_id))
+        cursor.execute(query, (2,problem_id))
         conn.commit()
 
 

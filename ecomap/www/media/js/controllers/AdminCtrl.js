@@ -57,7 +57,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
         method: "GET",
         url: '/api/all_permissions',
       }).then(function successCallback(data) {
-        $scope.Permisions = data.data;
+        $scope.Permisions = data.data[0];
         console.log($scope.Permisions)
       }, function errorCallback(response) {})
     }

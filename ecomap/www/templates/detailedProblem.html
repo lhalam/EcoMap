@@ -2,60 +2,69 @@
 <link rel="stylesheet" href="/css/swipebox.min.css">
 
 <div class="flex-item-1 flex-container flex-column problemBlock">
-      <i class="fa fa-times fa-2x close" ng-click="close()"></i>
-      <h3>{{selectProblem.title}}</h3>
-      <div class="general">
+  <i class="fa fa-times fa-2x close" ng-click="close()"></i>
+  <h3>{{selectProblem.title}}</h3>
+  <div class="general">
+    <div class="row">
+    <div class="col-md-5 ">
         <div class="rate">
           <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
+      </div>
+      <div class="col-md-5 col-md-offset-2">
         <div class="solution unsolved" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
         </div>
-        <div class="clear"></div>
       </div>
-      <uib-tabset justified="true" class="tabs">
-      <uib-tab heading="Детально">
-      <div class="row problem-type">
-        <div class="col-md-12"><strong>Тип проблеми:</strong></div>
-        <div class="col-md-12 ">{{getProblemType(selectProblem.problem_type_id)}}
-        </div>
+    </div>
+
+
+    <div class="clear"></div>
+
+  </div>
+  <uib-tabset justified="true" class="tabs">
+  <uib-tab heading="Детально">
+  <div class="row problem-type">
+    <div class="col-md-12"><strong>Тип проблеми:</strong></div>
+    <div class="col-md-12 ">{{getProblemType(selectProblem.problem_type_id)}}
+    </div>
+  </div>
+  <div class="row description">
+    <div class="col-md-12"><strong>Опис проблеми:</strong></div>
+    <div class="col-md-12 ">{{selectProblem.content}}
+    </div>
+  </div>
+  <div class="row proposal">
+    <div class="col-md-12"><strong>Пропозиція шодо вирішення:</strong></div>
+    <div class="col-md-12 ">{{selectProblem.proposal}}
+    </div>
+  </div>
+  <div class="row photos">
+    <div class="col-md-12"><strong>Фото:</strong></div>     
+    <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}" ng-repeat="photo in photos">
+      <img src="{{getMinPhoto(photo.url)}}" alt="{{photo.description}}" height="100" width="100">
+    </a>
+  </div>
+</uib-tab>
+<uib-tab heading="Коментарі">
+<form>
+  <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
+  <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
+</form>
+<div ng-repeat='comment in comments'>
+  <div class="col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <strong>{{comment.name}}</strong> <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
       </div>
-      <div class="row description">
-        <div class="col-md-12"><strong>Опис проблеми:</strong></div>
-        <div class="col-md-12 ">{{selectProblem.content}}
-        </div>
+      <div class="panel-body comment-block">
+        {{comment.content}}
       </div>
-      <div class="row proposal">
-        <div class="col-md-12"><strong>Пропозиція шодо вирішення:</strong></div>
-        <div class="col-md-12 ">{{selectProblem.proposal}}
-        </div>
-      </div>
-      <div class="row photos">
-        <div class="col-md-12"><strong>Фото:</strong></div>     
-          <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}" ng-repeat="photo in photos">
-            <img src="{{photo.url}}" alt="{{photo.description}}" height="100" width="100">
-          </a>
-      </div>
-      </uib-tab>
-      <uib-tab heading="Коментарі">
-        <form>
-          <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
-          <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
-        </form>
-        <div ng-repeat='comment in comments'>
-          <div class="col-sm-12">
-            <div class="panel panel-default">
-            <div class="panel-heading">
-            <strong>{{comment.name}}</strong> <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-            </div>
-          <div class="panel-body comment-block">
-            {{comment.content}}
-          </div>
-          </div>
-          </div>
-        </div>
-      </uib-tab>
-      </uib-tabset>
+    </div>
+  </div>
+</div>
+</uib-tab>
+</uib-tabset>
 </div>
 
 <script type="text/javascript">

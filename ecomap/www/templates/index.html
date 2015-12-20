@@ -23,7 +23,8 @@
   <script src="/js/libs/bootstrap.min.js"></script>
   <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-Wwj3Nk7crgNakQ424rCJCykh0YZYfs&libraries=geometry">
-</script>
+  </script>
+  <script src="/js/libs/markerclusterer_compiled.js"></script>
 
 
 <!-- AngularJS modules -->
@@ -137,8 +138,7 @@
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
   <div class="flex-container flex-row flex-item-1">
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
-    <div ui-view name="detailedProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('detailedProblem')"></div>
-    <div ui-view name="addProblem" class="flex-item-1 flex-container flex-column" ng-if="checkState('addProblem')"></div>
+    <div ui-view="sidebar" class="flex-item-1 flex-container flex-column" ng-show="checkState('detailedProblem') || checkState('addProblem')"></div>
   </div>
 </div>
 </body>

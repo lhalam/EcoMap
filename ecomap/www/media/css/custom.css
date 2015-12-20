@@ -520,8 +520,12 @@ input[type="checkbox"] {
 
 .det-problem-modal .general, .problemBlock .general {
   background-color: #eee;
-  padding: 15px;
+  padding: 7px;
   margin-bottom: 10px;
+}
+.general .row{
+  height:2.7em;
+  min-height: 2.7em;
 }
 
 .det-problem-modal .rate, .problemBlock .rate {
@@ -670,29 +674,35 @@ input[type="checkbox"] {
   right: 12px;
 }
 .filter{
-  position: absolute;
-  top:9%;
-  width: 30%;
-  left: -30%;
-  height: 91vh;
+  height: 92vh;
   background-color: #fff;
   transition:1s;
+  position: relative;
 }
-#filerToogle{
+
+.filter-controllers{
+  padding: 20px;
+  width: 300px;
+}
+.filter-controllers .heading{
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.filter-toogle{
+  z-index:9999;
   cursor: pointer;
   position: absolute;
   background-color: #fff;
   padding-left: 5px;
   height: 2em;
   width: 6em;
-  border:1px solid #111;
+  border:2px solid #bbb;
+  border-bottom: none;
   border-radius: 5px 5px 0px 0;
   transform: rotate(90deg);
-  right: -4em;
-  bottom: 2em;
-}
-.problemBlock img{
-  height: 2em;
+  right: -55px;
+  bottom: 70px;
 }
 .time {
   text-align: right;
@@ -721,7 +731,6 @@ input[type="checkbox"] {
   padding-left: 0.55em;
   font-size: 1.25em;
   height: 1.75em;
-  background-color: #ccc;
 }
 .indicator{
   float: right;
@@ -755,77 +764,6 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-#filerToogle{
-  cursor: pointer;
-  position: absolute;
-  background-color: #fff;
-  padding-left: 5px;
-  height: 2em;
-  width: 6em;
-  border:1px solid #111;
-  border-radius: 5px 5px 0px 0;
-  transform: rotate(90deg);
-  right: -4em;
-  bottom: 2em;
-}
-.problemBlock img{
-  height: 2em;
-}
-.time {
-  text-align: right;
-  font-style: italic;
-
-}
-.showBlock{
-  height: 20vh;
-}
-
-.selectedType{
-  background-color: #111;
-}
-.showFilter{
-  left: 0%;
-}
-.problTypes , .status{
-  margin-left: -15%;
-  margin-top: 6%;
-}
-.problTypes li , .status li{
-  cursor: pointer;
-  width: 100%;
-  list-style: none;
-  margin-top: 0.3em;
-  padding-left: 0.55em;
-  font-size: 1.25em;
-  height: 1.75em;
-  background-color: #ccc;
-}
-.indicator{
-  float: right;
-  margin-right: 0.5em;
-  margin-top: 0.3em;
-
-}
-.full button span {
-  background-color: limegreen;
-  border-radius: 32px;
-  color: black;
-}
-.partially button span {
-  background-color: orange;
-  border-radius: 32px;
-  color: black;
-}
-.input-group .form-control{
-  width: 185%;
-}
-table .form-control{
-  width: 50%
-}
-.table th{
-  cursor: pointer;
-}
-
 .comment-input{
   width: 100%;
 }

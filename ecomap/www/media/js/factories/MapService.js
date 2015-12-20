@@ -4,6 +4,9 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   instance.lng = 30.521018;
   instance.centerMap = new google.maps.LatLng(instance.lat, instance.lng);
   instance.zoom = 6;
+  instance.markers = [];
+  instance.cluster = null;
+
   instance.initMap = function(centerMap, zoom) {
     if (centerMap === undefined) {
       centerMap = instance.centerMap;
@@ -18,12 +21,12 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         panControl: true,
         zoomControl: true,
         scaleControl: true,
-        mapTypeControl: true,
+        mapTypeControl: false,
       }
     });
     instance.lat = centerMap.lat;
     instance.lng = centerMap.lng;
-    instance.zoom = zoom;
+    instance.zoom = zoom;    
     google.maps.event.addListener(instance.mapInstance, 'dragend', function() {
       instance.centerMap = instance.mapInstance.getCenter();
     });
@@ -42,7 +45,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         panControl: true,
         zoomControl: true,
         scaleControl: true,
-        mapTypeControl: true,
+        mapTypeControl: false,
       }
     });
   }
@@ -54,6 +57,8 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   }
   instance.loadProblems = function() {
     var markers = [];
+    var mcOptions = {gridSize: 80};
+    instance.cluster = new MarkerClusterer(instance.getInst(), [], mcOptions);    
     $http({
       method: 'GET',
       url: '/api/problems'
@@ -75,12 +80,22 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           $state.go("detailedProblem", {
             'id': problem_id
           });
-        });
+        });  
+        instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
       }, function errorCallback() {})
     })
+    instance.markers = markers;
     return markers;
   }
+  instance.refreshCluster = function(){
+    instance.cluster.clearMarkers();
+    angular.forEach(instance.markers, function(marker, key) {
+        if (marker.getVisible()) {
+          instance.cluster.addMarker(marker);
+        }
+      });
+  };
   instance.setCenter = function(centerMap, zoom) {
     instance.centerMap = centerMap;
     instance.zoom = zoom;

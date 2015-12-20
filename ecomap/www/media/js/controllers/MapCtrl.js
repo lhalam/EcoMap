@@ -1,13 +1,12 @@
 app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactory',
   function($scope, $http, $rootScope, $state, MapFactory) {
-    $scope.markers = [];
     MapFactory.initMap();
     MapFactory.turnResizeOn();
     $scope.markers = MapFactory.loadProblems();
-    $("#filerToogle").click(function() {
-      console.log("clic")
-      $("#filterProb").toggleClass("showFilter");
-    })
+    $scope.filterTrigger = false;
+    $scope.toogleFilter = function() {
+      $scope.filterTrigger = !$scope.filterTrigger;
+    }
     $scope.Types = {
       '1': 'Проблеми лісів',
       '2': 'Сміттєзвалища',
@@ -29,12 +28,10 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
     for (s in $scope.Status) {
       $scope.selectedStatus.push(s)
     }
-    console.log($scope.selectedStatus)
     $scope.toggleType = function(type_id) {
       if ($scope.selectedType.indexOf(type_id + "") !== -1) {
         $scope.selectedType.splice($scope.selectedType.indexOf(type_id), 1)
       } else {
-        console.log("else")
         $scope.selectedType.push(type_id)
       }
       $scope.filterMarker()
@@ -52,7 +49,6 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
       if (!$scope.dt) {
         return false
       } else if (marker.date > $scope.dt.from.getTime() / 1000 && marker.date < $scope.dt.to.getTime() / 1000) {
-        console.log(marker.date > $scope.dt.from.getTime() / 1000 && marker.date < $scope.dt.to.getTime() / 1000)
         return false
       } else return true
     }
@@ -63,7 +59,8 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
         } else {
           marker.setVisible(true);
         }
-      })
+      });
+      MapFactory.refreshCluster();
     }
   }
 ]);

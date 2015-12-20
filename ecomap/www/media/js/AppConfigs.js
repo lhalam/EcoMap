@@ -106,7 +106,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
   .state('addProblem', {
     url: '/addProblem',
     views:{
-      "addProblem":{
+      "sidebar":{
         "templateUrl":"/templates/addProblem.html",
         "controller":"AddProblemCtrl"
       },
@@ -124,7 +124,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
   .state("detailedProblem",{
     url:"/detailedProblem/:id",
     views:{
-      "detailedProblem":{
+      "sidebar":{
         "templateUrl":"/templates/detailedProblem.html",
         "controller":"DetailedProblemCtrl"
       },

@@ -965,7 +965,7 @@ def insert_into_hash_delete(hex_hash, user_id, create_time):
                                                   `type`)
                     VALUES (%s, %s, %s, 'delete');
                 """
-        cursor.execute(query,(create_time, hashed , user_id))
+        cursor.execute(query,(create_time, hex_hash , user_id))
         conn.commit()
 
 

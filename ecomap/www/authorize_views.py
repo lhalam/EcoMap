@@ -282,7 +282,7 @@ def find_to_delete():
     data = request.get_json()
     search_id = data['user_id']
     user = ecomap_user.get_user_by_id(search_id)
-    if search_id == ecomap_user.get_id():
+    if search_id == ecomap_user.User.get_id(user):
         ecomap_user.delete_user(user)
         response = jsonify(message='Email was sended.'), 200
     else:
@@ -294,7 +294,7 @@ def find_to_delete():
 @auto.doc()
 def delete_user_page(hashed):
     """Renders page to confirmation of deleting user"""
-    valid = validator.check_hash(hashed)
+    valid = validator.hash_check(hashed)
     page = render_template('index.html')
 
     if valid:
@@ -302,7 +302,7 @@ def delete_user_page(hashed):
         if creation_time:
             elapsed = time.time() - creation_time[0]
             if elapsed <= _CONFIG['hash_options.lifetime']:
-                page = render_template('success_user_delete.html')
+                page = render_template('user_deleting.html')
     return page
 
 

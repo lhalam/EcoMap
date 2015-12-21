@@ -66,7 +66,27 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         }
       });
     };
-
+    $scope.userDelete = function(){
+      console.log("ENTERED")
+      var data = {}
+      data.id = $cookies.get('id');
+      console.log(data.id)
+      $http({
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        url: "/api/delete_user_request",
+        data: {
+          'user_id': data.id
+        }
+      }).then(function successCallback(data) {
+        $scope.msg.deleteSuccess('користувача');
+      }, function errorCallback(response) {
+        $scope.msg.deleteError('користувача', $scope.msgError['alreadyBinded']);
+      })
+    };
+    
     $scope.redirect = function(state){
       $state.go(state);
     };

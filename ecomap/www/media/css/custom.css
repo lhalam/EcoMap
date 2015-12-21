@@ -473,9 +473,20 @@ form {
 }
 
 .btn.btn-border {
+
   border: 2px solid;
   background: transparent;
 }
+.respons{
+    max-width:150px; 
+    min-width: 100px;
+}
+@media screen and (max-width: 750px) {
+  .respons{
+    margin-top: 10px;
+  }
+}
+
 
 .btn.btn-primary:hover {
   background-color: #53a7df;
@@ -546,8 +557,9 @@ input[type="checkbox"] {
   color: #880000;
 }
 
-.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+.det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
+  word-wrap : break-word;
 }
 
 [ui-view].ng-enter, [ui-view].ng-leave {
@@ -591,10 +603,15 @@ input[type="checkbox"] {
 .add-photo{
   padding: 10px;
 }
+.descrBlock{
+  word-wrap: break-word;
+  max-width: 200px !important;
+
+}
 .problemBlock {
   padding: 10px 5px;
   overflow-y:auto;
-  overflow-x:none !important; 
+  overflow-x:hidden !important; 
   background-color: #fff;
 }
 

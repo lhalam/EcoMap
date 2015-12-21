@@ -1,9 +1,9 @@
-app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster',
-  function($scope, $state, $cookies, $http, toaster) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster',
+  function($scope, $state, $cookies, $http, msg, toaster) {
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
-
+    $scope.msg = msg;
     $scope.tabs = [
       { heading: "Профіль користувача", route:"user_profile.info", active:false, showToUser: true},
       { heading: "Мої проблеми", route:"user_profile.problems", active:false, showToUser: true },
@@ -69,6 +69,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
     $scope.userDelete = function(){
       console.log("ENTERED")
       var data = {}
+      $scope.msg = msg;
       data.id = $cookies.get('id');
       console.log(data.id)
       $http({
@@ -80,11 +81,12 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         data: {
           'user_id': data.id
         }
-      }).then(function successCallback(data) {
-        $scope.msg.deleteSuccess('користувача');
-      }, function errorCallback(response) {
-        $scope.msg.deleteError('користувача', $scope.msgError['alreadyBinded']);
-      })
+      }).then(function successCallback(response){
+            
+            $scope.msg.sendSuccess('імейлу')
+        }, function errorCallback(){
+            $scope.msg.sendError('імейлу')
+        })
     };
     
     $scope.redirect = function(state){

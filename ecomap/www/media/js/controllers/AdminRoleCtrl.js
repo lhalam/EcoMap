@@ -82,7 +82,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       "id": id
     }
     $scope.editRoleModal = true;
-    $scope.listToSend = [];
+    // $scope.listToSend = [];
   }
   $scope.rolePerm = false
   $scope.selectPerm = function(ev, perm) {

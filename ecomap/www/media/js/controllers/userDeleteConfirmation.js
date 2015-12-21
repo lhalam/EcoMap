@@ -3,7 +3,6 @@ app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http'
     $scope.hashParam = $stateParams.hash_sum
     $scope.user = {}; 
     $scope.user.id = $cookies.get("id");
-    alert($scope.hashParam)
     $scope.Logout = function() {
       $http({
         method: 'POST',
@@ -27,17 +26,30 @@ app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http'
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         },
-          url : '/api/delete_user_page/' + $scope.hashParam,
-          data: {
+        url : '/api/delete_user_page/' + $scope.hashParam,
+        data: {
           'user_id': data.id
         }
       }).then(function successCallback(responce){
         $scope.Logout();
       }, function errorCallback(data) {});
       };
-    console.log("asjfbksfaksvfk");
-    $scope.userDeleteConfirmation();
+    $scope.userDeleteFinal = function(){
+      $http({
+        method: 'DELETE',
+        headers: {
+          'Content-Type':'application/json;charset=utf-8'
+        },
+        url:'/api/user_delete',
+        data: {
+          'hash_sum' : $scope.hashParam
+        }
+      });
+    }
+    $scope.userDeleteConfirmation()
+    $scope.userDeleteFinal();
     
+        
 
   }]);
 

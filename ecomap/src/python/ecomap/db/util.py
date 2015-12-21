@@ -1191,8 +1191,8 @@ def change_problem_to_anon(problem_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `problem` SET `user_id`=%d WHERE `id`=%s;"""
-        cursor.execute(query, (2,problem_id))
+        query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
+        cursor.execute(query, ("2",problem_id))
         conn.commit()
 
 
@@ -1204,10 +1204,10 @@ def change_activity_to_anon(problem_id):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `problem_activity` SET `user_id`=%d 
+        query = """UPDATE `problem_activity` SET `user_id`=%s 
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query, (2,problem_id))
+        cursor.execute(query, ("2",problem_id))
         conn.commit()
 
 

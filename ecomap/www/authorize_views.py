@@ -303,8 +303,7 @@ def delete_user_page(hashed):
             elapsed = time.time() - creation_time[0]
             if elapsed <= _CONFIG['hash_options.lifetime']:
                 
-                # # logout()
-                # page = render_template('index.html')
+                page = render_template('index.html')
     return page
 
 
@@ -315,9 +314,11 @@ def delete_user():
     :return: json object with success message or message with error
     """
     data = request.get_json()
-    valid = validator.user_deletion(data)
+    valid = validator.hash_check(data['hash_sum'])
     if valid['status']:
-        tuple_of_problems = db.get_problem_id_for_del(data['user_id'])
+        user_id = db.get_user_id_by_hash(data['hash_sum'])
+        logger.warning(user_id)
+        tuple_of_problems = db.get_problem_id_for_del(user_id[0])
         problem_list = []
         for tuple_with_problem_id in tuple_of_problems:
             problem_list.append(tuple_with_problem_id[0])
@@ -325,13 +326,13 @@ def delete_user():
             for problem_id in problem_list:
                 db.change_problem_to_anon(problem_id)
                 db.change_activity_to_anon(problem_id)
-            db.delete_user(data['user_id'])
-            logger.info('User with id %s has been deleted' % data['user_id'])
-            response = jsonify(msg='success', deleted_user=data['user_id'])
+            db.delete_user(user_id[0])
+            logger.info('User with id %s has been deleted' % user_id[0])
+            response = jsonify(msg='success', deleted_user=user_id[0])
         else:
-            db.delete_user(data['user_id'])
-            logger.info('User with id %s has been deleted' % data['user_id'])
-            response = jsonify(msg='success', deleted_user = data['user_id'])
+            db.delete_user(user_id[0])
+            logger.info('User with id %s has been deleted' % user_id[0])
+            response = jsonify(msg='success', deleted_user = user_id[0])
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

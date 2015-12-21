@@ -89,30 +89,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             $scope.msg.sendError('імейлу')
         })
        
-    // $scope.newPass = {};
-    // $scope.confirmDelete = function(pass){
-    //   hash_sum = window.location.href.split('/')[5];
-    //   if(!pass.pass || !pass.confirmPass){
-    //       return;
-    //   }
-
-    //   $http({
-    //     method: 'GET',
-    //     url: '/api/restore_password',
-    //     data: {
-    //       password: pass.pass,
-    //       confirm_pass: pass.confirmPass,
-    //       hash_sum: hash_sum.slice(0, -1)
-    //     }
-    //   })
-    //   .then(function successCallback(response){
-    //     //$state.go('login');
-    //     window.location.href = 'http://ecomap.new/#/login'
-    //   }, function errorCallback(){
-    //     //error callback if you need
-    //   })
-    // }
-
     };
     
     $scope.redirect = function(state){

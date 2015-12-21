@@ -302,7 +302,9 @@ def delete_user_page(hashed):
         if creation_time:
             elapsed = time.time() - creation_time[0]
             if elapsed <= _CONFIG['hash_options.lifetime']:
-                page = render_template('user_deleting.html')
+                
+                # # logout()
+                # page = render_template('index.html')
     return page
 
 

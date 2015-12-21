@@ -1,4 +1,4 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', 
  function($stateProvider, $urlRouterProvider, $authProvider) {
 
   $stateProvider
@@ -153,7 +153,12 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       url: '/addUserByAdmin',
       templateUrl: '/templates/RegisterUserByAdmin.html',
       controller: 'AddUserByAdmin'
+    }) 
+    .state('userDeleteConfirmation', {
+      url: '/userConfirm?hash_sum',
+      controller: 'userDeleteConfirmation'
     })     
+
     .state('register', {
       url: '/register',
       templateUrl: '/templates/register.html',

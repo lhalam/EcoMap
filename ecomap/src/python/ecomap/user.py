@@ -210,6 +210,24 @@ def facebook_register(first_name, last_name, email, provider, uid):
     return user
 
 
+def register_by_admin(first_name, last_name, email, password, role_name):
+    """This function register user from admin menu.
+    It will insert user's data via insert_user function
+    from util.
+
+        :returns True if transaction finished successfully.
+    """
+    salted_pass = hash_pass(password)
+    role_id = util.get_role_id(role_name)
+    register_user_id = util.insert_user(first_name, last_name,
+                                        email, salted_pass)
+    if register_user_id:
+        util.add_users_role(register_user_id, role_id[0])
+    send_email(_CONFIG['email.user_name'], _CONFIG['email.app_password'],
+               first_name, last_name, email, password)
+    return get_user_by_id(register_user_id)
+
+
 @LOGIN_MANAGER.user_loader
 def load_user(uid):
     """This method is callback, which is used in
@@ -256,7 +274,25 @@ def restore_password(user):
                _CONFIG['email.from_email'],
                user.email,
                message)
+# 
 
+def delete_user(user):
+    """Funtion send's email to user with link to delete him."""
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
+    hex_hash = hashed.hexdigest()
+    util.insert_into_hash_delete(hex_hash, user.uid, create_time)
+    message = generate_email('delete_user',
+                             _CONFIG['email.from_email'],
+                             user.email,
+                             (user.first_name, user.last_name, hex_hash))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               user.email,
+               message)
+    
 
 if __name__ == '__main__':
     register('user1', 'user1', 'next@gmail.com', 'pass')
+# 

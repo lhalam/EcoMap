@@ -1,9 +1,9 @@
-app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toaster',
-  function($scope, $state, $cookies, $http, toaster) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster',
+  function($scope, $state, $cookies, $http, msg, toaster, $auth) {
 
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
-
+    $scope.msg = msg;
     $scope.tabs = [
       { heading: "Профіль користувача", route:"user_profile.info", active:false, showToUser: true},
       { heading: "Мої проблеми", route:"user_profile.problems", active:false, showToUser: true },
@@ -66,7 +66,31 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'toa
         }
       });
     };
-
+    
+    $scope.userDelete = function(){
+      console.log("ENTERED")
+      var data = {}
+      $scope.msg = msg;
+      data.id = $cookies.get('id');
+      console.log(data.id)
+      $http({
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        url: "/api/delete_user_request",
+        data: {
+          'user_id': data.id
+        }
+      }).then(function successCallback(response){
+            
+            $scope.msg.sendSuccess('імейлу')
+        }, function errorCallback(){
+            $scope.msg.sendError('імейлу')
+        })
+       
+    };
+    
     $scope.redirect = function(state){
       $state.go(state);
     };

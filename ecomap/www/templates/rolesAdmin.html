@@ -30,6 +30,7 @@
     </form>
   </modal>
   <div class="row" ng-show="rolePermTable">
+  
     <div class="col-md-9 col-md-offset-1">
       <table class="table table-stripped" >
         <thead>
@@ -44,7 +45,6 @@
             <td>
               <button class="btn btn-danger edit_btn btn-border" ng-click="deleteRole(role_id)">видалити</button>
 
-          
               <button class="btn btn-primary edit_btn btn-border" ng-click="showRolePerm(role_name,role_id)">змінити</button>
 
             </td>
@@ -68,6 +68,12 @@
       <div class="col-md-3">
         <button class="btn btn-primary btn-border" ng-click="backToRole()"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp; повернутись до ролей</button>
       </div>
+
+    </div>
+    <div class="row">
+       <div class="col-md-2 ">
+      <button class="btn btn-warning btn-block edit_btn btn-border" ng-click="showEditRoleModal(rolePermObj.name,rolePermObj.id)">змінити назву</button>
+    </div>
     </div>
     <div class="row">
       <div class="col-md-2">

@@ -51,7 +51,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location',
       })
       .then(function successCallback(response){
         //$state.go('login');
-        window.location.href = 'http://ecomap.new:81/#/login'
+        window.location.href = 'http://ecomap.new/#/login'
       }, function errorCallback(){
         //error callback if you need
       })

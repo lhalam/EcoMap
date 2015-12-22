@@ -1,4 +1,4 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', 
  function($stateProvider, $urlRouterProvider, $authProvider) {
 
   $stateProvider
@@ -132,46 +132,55 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
-    }
+    }  
+    })
+    .state('login', {
+      url: '/login',
+      templateUrl: '/templates/login.html',
+      controller: 'LoginCtrl'
+    })
+    .state('restore_email', {
+      url: '/restore_email',
+      templateUrl: '/templates/password_restoring_email.html',
+      controller: 'RestorePasswordCtrl'
+    })
+    .state('restore_pass', {
+      url: '/restore_password/:hash_sum',
+      templateUrl: '/templates/password_restoring_pass.html',
+      controller: 'RestorePasswordCtrl'
+    })
+    .state('registerAdmin', {
+      url: '/addUserByAdmin',
+      templateUrl: '/templates/RegisterUserByAdmin.html',
+      controller: 'AddUserByAdmin'
+    }) 
+    .state('userDeleteConfirmation', {
+      url: '/userConfirm?hash_sum',
+      controller: 'userDeleteConfirmation'
+    })     
 
-  })
-  .state('login', {
-    url: '/login',
-    templateUrl: '/templates/login.html',
-    controller: 'LoginCtrl'
-  })
-  .state('restore_email', {
-    url: '/restore_email',
-    templateUrl: '/templates/password_restoring_email.html',
-    controller: 'RestorePasswordCtrl'
-  })
-  .state('restore_pass', {
-    url: '/restore_password/:hash_sum',
-    templateUrl: '/templates/password_restoring_pass.html',
-    controller: 'RestorePasswordCtrl'
-  })
-  .state('register', {
-    url: '/register',
-    templateUrl: '/templates/register.html',
-    controller: 'RegisterCtrl'
-  });    
-  $urlRouterProvider.otherwise('map');
+    .state('register', {
+      url: '/register',
+      templateUrl: '/templates/register.html',
+      controller: 'RegisterCtrl'
+    });    
+    $urlRouterProvider.otherwise('map');
 
 
-  $authProvider.loginUrl = '/api/login';
-  $authProvider.signupUrl = '/api/register';
-  $authProvider.facebook({
-    clientId: '1525737571082521',
-    url: '/api/authorize/facebook',
-    name: 'facebook',
-    authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
-    redirectUri: window.location.origin + '/',
-    requiredUrlParams: ['display', 'scope'],
-    scope: ['email'],
-    scopeDelimiter: ',',
-    display: 'popup',
-    type: '2.0',
-    popupOptions: { width: 580, height: 400 }
-  });  
+    $authProvider.loginUrl = '/api/login';
+    $authProvider.signupUrl = '/api/register';
+    $authProvider.facebook({
+      clientId: '1525737571082521',
+      url: '/api/authorize/facebook',
+      name: 'facebook',
+      authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
+      redirectUri: window.location.origin + '/',
+      requiredUrlParams: ['display', 'scope'],
+      scope: ['email'],
+      scopeDelimiter: ',',
+      display: 'popup',
+      type: '2.0',
+      popupOptions: { width: 580, height: 400 }
+    }); 
 
 }]);

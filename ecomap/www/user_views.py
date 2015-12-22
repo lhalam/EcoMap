@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 
 from ecomap.db import util as db
 from ecomap import validator
-from ecomap.app import app, auto
+from ecomap.app import app, auto, logger
 
 
 @app.route('/api/change_password', methods=['POST'])

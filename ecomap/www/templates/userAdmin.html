@@ -1,13 +1,13 @@
 <h3>Таблиця користувачів</h3>
 <div class="row" ng-controller="UserCtrl">
   <div class="col-md-12">
+  <a href="/#/addUserByAdmin"><button class="btn btn-info">Реєстрація</button></a>
     <table class="table table-stripped">
       <thead>
         <tr>
           <td>Ім’я</td>
           <td>Прізвище</td>
           <td>e-mail</td>
-          <td>Id</td>
           <td>Роль</td>
           <td>
             <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
@@ -20,13 +20,15 @@
           <td>{{user.first_name}}</td>
           <td>{{user.last_name}}</td>
           <td>{{user.email}}</td>
-          <td>{{user.id}}</td>
           <td>
             <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles">
             </select>
           </td>
           <td>
             <button class="btn btn-primary btn-border" ng-click="changeRole(user)">Змінити роль</button>
+          </td>
+          <td>
+            <!-- <button class="btn btn-danger btn-border" ng-click=></button> -->
           </td>
         </tr>
       </tbody>
@@ -38,3 +40,4 @@
     </div>
   </div>
 </div>
+<!--  -->

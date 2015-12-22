@@ -265,8 +265,8 @@ def get_resource_id(resource_name):
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        sql = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
-        cursor.execute(sql, (resource_name,))
+        query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
+        cursor.execute(query, (resource_name,))
         return cursor.fetchone()
 
 
@@ -946,15 +946,31 @@ def insert_into_restore_password(hashed, user_id, create_time):
         cursor = conn.cursor()
         query = """INSERT INTO `user_operation` (`creation_date`,
                                                    `hash_sum`,
-                                                   `user_id`)
-                   VALUES (%s, %s, %s);
+                                                   `user_id`,
+                                                   `type`)
+                   VALUES (%s, %s, %s, 'password');
                 """
         cursor.execute(query, (create_time, hashed, user_id))
         conn.commit()
 
 
 @retry_query(tries=3, delay=1)
-def check_restore_password(hashed):
+def insert_into_hash_delete(hex_hash, user_id, create_time):
+    """Inserts into user_operation table new line."""
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """INSERT INTO `user_operation`(`creation_date`,
+                                                  `hash_sum`,
+                                                  `user_id`,
+                                                  `type`)
+                    VALUES (%s, %s, %s, 'delete');
+                """
+        cursor.execute(query,(create_time, hex_hash , user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def check_hash_in_db(hashed):
     """Returns restore password request time.
        :params: hashed - hash sum
        :return: time
@@ -1079,7 +1095,6 @@ def clear_user_deletion_hash(startime, endtime):
 @retry_query(tries=3, delay=1)
 def count_resources():
     """
-
     :return:
     """
     with db_pool().manager() as conn:
@@ -1092,7 +1107,6 @@ def count_resources():
 @retry_query(tries=3, delay=1)
 def count_permissions():
     """
-
     :return:
     """
     with db_pool().manager() as conn:
@@ -1107,7 +1121,6 @@ def count_permissions():
 @retry_query(tries=3, delay=1)
 def get_all_users_problems():
     """
-
     :return:
     """
     with db_pool().manager() as conn:
@@ -1156,3 +1169,54 @@ def get_comments_by_problem_id(problem_id):
                 """
         cursor.execute(query, (problem_id,))
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_id_for_del(user_id):
+    """Query for selecting tuple with problem_id, when
+    User profile have to delete.
+    :return:tuple with problem_id
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def change_problem_to_anon(problem_id):
+    """Query for change user_id in problem table to id of Anonimus User,
+    when we deleting User-owner of this problem.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
+        cursor.execute(query, ("2",problem_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def change_activity_to_anon(problem_id):
+    """Query for change user_id in problem_activity 
+    table to id of Anonimus User,
+    when we deleting User-owner of this problem.
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `problem_activity` SET `user_id`=%s 
+                    WHERE `problem_id`=%s;
+                """
+        cursor.execute(query, ("2",problem_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def delete_user(user_id):
+    """Deletes user_id by id from JSON
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user` WHERE id=%s;"""
+        cursor.execute(query, (user_id,))
+        conn.commit()

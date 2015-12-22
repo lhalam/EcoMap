@@ -16,24 +16,6 @@ app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http'
         $state.go('map');
       }, function errorCallback(data) {});
     };
-    $scope.userDeleteConfirmation = function () {
-      var data = {};
-      data.id = $cookies.get('id');
-      console.log("Logout and sent id");
-      console.log(data.id);
-      $http({
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        url : '/api/delete_user_page/' + $scope.hashParam,
-        data: {
-          'user_id': data.id
-        }
-      }).then(function successCallback(responce){
-        $scope.Logout();
-      }, function errorCallback(data) {});
-      };
     $scope.userDeleteFinal = function(){
       $http({
         method: 'DELETE',
@@ -45,10 +27,26 @@ app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http'
           'hash_sum' : $scope.hashParam
         }
       });
-    }
-    $scope.userDeleteConfirmation()
-    $scope.userDeleteFinal();
+    };
+    $scope.userDeleteConfirmation = function () {
+      var data = {};
+      data.id = $cookies.get('id');
+      $http({
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        url : '/api/delete_user_page/' + $scope.hashParam,
+        data: {
+          'user_id': data.id
+        }
+      }).then(function successCallback(responce){
+        $scope.Logout();
+        $scope.userDeleteFinal();
+      }, function errorCallback(data) {});
+      };
     
-        
+    
+      $scope.userDeleteConfirmation();      
 
   }]);

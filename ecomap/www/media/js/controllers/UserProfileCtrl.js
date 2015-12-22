@@ -68,7 +68,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
     };
     
     $scope.userDelete = function(){
-      console.log("ENTERED")
       var data = {}
       $scope.msg = msg;
       data.id = $cookies.get('id');

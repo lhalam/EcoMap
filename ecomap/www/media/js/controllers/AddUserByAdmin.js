@@ -1,4 +1,4 @@
-app.controller('RegisterCtrl', ['$scope', '$http', '$state','$auth'
+app.controller('RegisterCtrl', ['$scope', '$http', '$state','$auth',
   function($scope, $http, $state, $auth) {
     $scope.newUser = {};
     $scope.Register = function(user) {

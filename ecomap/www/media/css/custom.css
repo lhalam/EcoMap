@@ -527,6 +527,7 @@ input[type="checkbox"] {
 .det-problem-modal .title {
   margin-top: 0px;
   margin-bottom: 30px;
+  word-wrap : break-word;  
 }
 
 .det-problem-modal .general, .problemBlock .general {
@@ -788,4 +789,9 @@ table .form-control{
 .comment-block{
   width: 100%;
   overflow: auto;
+}
+
+.problem-title{
+  word-wrap: break-word;
+  max-width: 350px;
 }

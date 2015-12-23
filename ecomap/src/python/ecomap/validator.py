@@ -28,6 +28,7 @@ LENGTHS = {'email': [5, 100],
            'title': [2, 255],
            'content': [2, 255],
            'problem_type_id': [1, 255],
+           'user_id' : [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],
            'longitude': [-180.0, 180.0]}
@@ -57,6 +58,48 @@ def user_registration(data):
     """
     status = {'status': True, 'error': []}
     keys = ['email', 'first_name', 'last_name', 'password', 'pass_confirm']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif not check_string(data[keyname]):
+            status['error'].append({keyname: ERROR_MSG['check_string']
+                                    % keyname})
+        elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+            status['error'].append({keyname: ERROR_MSG['check_minimum_length']
+                                    % keyname})
+        elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+            status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+                                    % keyname})
+        elif keyname is 'email':
+            if not check_email(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_email']
+                                        % keyname})
+            elif check_email_exist(data[keyname]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_email_exist']})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
+def user_registration_by_admin(data):
+    """Validates user registration form. Checks: email, password,
+       confirm password, first name, last name.
+       :params: data - json object
+       :return: dictionary with status key and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keynamename saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['email', 'first_name', 'last_name', 'password', 'pass_confirm',
+            'role_name']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -122,9 +165,8 @@ def check_post_comment(data):
 
     return status
 
-
-def restore_password_check(data):
-    """Validates if restore password hash has length of 64.
+def hash_check(data):
+    """Validates if restore password/user_deletion hash has length of 64.
        :params: data - hash, to check
        :return: dictionary with status keyname and error keys. By
                 default status is True, and error is empty.
@@ -134,7 +176,7 @@ def restore_password_check(data):
     status = {'status': True, 'error': []}
     if len(data) is not 64:
         status['error'].append({'hash_sum': 'hash sum has wrong length.'})
-    elif not db.check_restore_password(data):
+    elif not db.check_hash_in_db(data):
         status['error'].append({'hash_sum': 'hash does not exist.'})
 
     if status['error']:

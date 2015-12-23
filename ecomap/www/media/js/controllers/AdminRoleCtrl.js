@@ -67,6 +67,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }
     }).then(function successCallback(data) {
       $scope.loadRole();
+      $scope.rolePermObj['name'] = $scope.editRoleObj['name'];
       $scope.msg.editSuccess('ролі');
       $scope.rolePermObj.name = $scope.editRoleObj['name'];
       $scope.editRoleModal = false;
@@ -82,7 +83,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       "id": id
     }
     $scope.editRoleModal = true;
-    $scope.listToSend = [];
+    // $scope.listToSend = [];
   }
   $scope.rolePerm = false
   $scope.selectPerm = function(ev, perm) {

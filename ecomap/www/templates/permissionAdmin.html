@@ -7,7 +7,7 @@
           <td>Метод</td>
           <td>Модифікатор доступу</td>
           <td>Опис права</td>
-          <td>  <button class="btn btn-primary btn-border" ng-click="showAddPermModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати право</button>
+          <td>  <button class="btn btn-primary btn-border" ng-click="showAddPermModal()"> <i class="fa fa-plus "></i>&nbsp;&nbsp;додати</button>
             <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
             </select>
           </td>
@@ -18,9 +18,9 @@
         <td>{{perm.resource_name}}</td>
         <td>{{perm.action | dictFilter}}</td>
         <td>{{perm.modifier | dictFilter}}</td>
-        <td>{{perm.description}}</td>
-        <td> <button class="btn btn-primary edit_btn btn-border" ng-click="showEditPermModal(perm)">редагувати</button>
-          <button class="btn btn-danger edit_btn btn-border" ng-click="deletePerm(perm)">видалити</button>
+        <td class="descrBlock">{{perm.description}}</td>
+        <td> <button class="btn btn-primary edit_btn btn-border respons" ng-click="showEditPermModal(perm)">редагувати</button>
+          <button class="btn btn-danger edit_btn btn-border respons" ng-click="deletePerm(perm)">видалити</button>
         </td>
 
         </tr>

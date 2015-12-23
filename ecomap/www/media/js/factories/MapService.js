@@ -1,6 +1,6 @@
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
   var instance = {};
-  instance.lat = 54.468077;
+  instance.lat = 49.468077;
   instance.lng = 30.521018;
   instance.centerMap = new google.maps.LatLng(instance.lat, instance.lng);
   instance.zoom = 6;

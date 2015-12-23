@@ -48,6 +48,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
       url: '/api/problem_detailed_info/' + problem_id
     }).then(function successCallback(response) {
       $scope.detailedProblem = response.data[0][0];
+      $scope.comments = response.data[3];
       console.log($scope.detailedProblem);
     })
   }

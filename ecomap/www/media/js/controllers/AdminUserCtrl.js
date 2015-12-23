@@ -1,6 +1,7 @@
 app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
   function($scope, $http, toaster, $rootScope, msg) {
     $scope.loadPagination = function() {
+      
       $scope.msg = msg
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;

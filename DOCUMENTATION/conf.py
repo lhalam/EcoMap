@@ -15,7 +15,7 @@
 import sys
 import os
 import shlex
-print sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/www')
+sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/www')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -31,6 +31,8 @@ print sys.path.insert(0, '/home/padalko/ss_projects/Lv-164.UI/ecomap/www')
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinxcontrib.httpdomain',
+    'sphinxcontrib.autohttp.flask',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',

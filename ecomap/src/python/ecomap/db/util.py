@@ -354,7 +354,8 @@ def get_all_permissions_by_resource(resource_id):
 @retry_query(tries=3, delay=1)
 def get_all_permissions(offset, per_page):
     """Find all permissions by resource.
-    :params: resource_id - id of resource
+    :params: - offset - pagination option
+             - per_page - pagination option
     :return: tuple, containing permissions
     """
     with db_pool().manager() as conn:
@@ -1105,19 +1106,34 @@ def count_permissions():
 
 
 @retry_query(tries=3, delay=1)
-def get_all_users_problems():
+def get_all_users_problems(offset, per_page):
+    """Function selects from db all problems created by user.
+
+    :return: tuple with problem data
+    """
+    with db_pool().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
+                   `severity` FROM `problem`
+                   GROUP BY `id` LIMIT %s,%s;
+                """
+        cursor.execute(query % (offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def count_problems():
     """
 
     :return:
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `latitude`, `longitude`,
-                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity` FROM `problem`;
+        query = """SELECT COUNT(id) FROM `problem`;
                 """
         cursor.execute(query)
-        return cursor.fetchall()
+        return cursor.fetchone()
 
 
 @retry_query(tries=3, delay=1)

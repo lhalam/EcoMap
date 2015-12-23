@@ -24,7 +24,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         'Solved': 'Вирішено'
       };
       return statuses[status];
-    }
+    };
     $scope.getProblemType = function(type_id) {
       var types = {
         1: 'Проблеми лісів',

@@ -800,3 +800,12 @@ table .form-control{
 table.UserProblemTable select{
   width: 100%;
 }
+
+.delete-account{
+  padding: 18px;
+}
+
+.avatar{
+  width:150px;
+  height: 150px;
+}

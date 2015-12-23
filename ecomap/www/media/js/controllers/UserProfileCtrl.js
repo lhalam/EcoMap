@@ -31,7 +31,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
         method: 'GET'
       }).success(function(response) {
         $scope.user.data = response;
-        $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/200x200';
+        $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/150x150';
       });
     }
 

@@ -3,7 +3,7 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import abort, render_template, session, request, Response, g
+from flask import abort, render_template, session, url_for, request, Response, g
 from flask_login import current_user
 
 from ecomap.app import app, logger, auto
@@ -64,6 +64,7 @@ def index():
     """Controller starts main application page.
     Shows initial data of application, renders template with built-in Angular
     JS.
+
     :return: renders html template with angular app.
     """
     return render_template('index.html')
@@ -74,17 +75,18 @@ def index():
 def get_titles():
     """This method returns short info about all defined static pages.
 
-    :returns list of dicts with title, id, alias and is_enabled
-    json sample:
-    :return
-    [{'is_enabled': 1,
-      'alias': 'alias_Tag',
-      'id': 1,
-      'title': 'Custom_Title'},
-      {'is_enabled': 1,
-      'alias': 'Tag',
-      'id': 2,
-      'title': 'AnotherTitle'}]
+    :return: list of dicts with title, id, alias and is_enabled
+    :rtype: JSON
+    :JSON sample:
+        `[{'is_enabled': 1,
+        'alias': 'alias_Tag',
+        'id': 1,
+        'title': 'Custom_Title'},
+        {'is_enabled': 1,
+        'alias': 'Tag',
+        'id': 2,
+        'title': 'AnotherTitle'}]`
+
     """
     if request.method == 'GET':
         pages = db.get_pages_titles()
@@ -102,19 +104,20 @@ def get_titles():
 @auto.doc()
 def get_faq(alias):
     """This method retrieves exact faq page(ex-resource) via
-       alias, passed to it.
+    alias, passed to it.
 
-       :param alias: url path to specific static page.
+    :param alias: url path to specific static page.
 
-       :returns: object with all page's attributes within a list or ``404`` status.
-       :rtype: JSON
-       :JSON sample:
-           `[{'id': 1, 'title': 'title', 'alias': 'tag',
-           'description': 'small description of page',
-           'content': 'main article content',
-           'meta_keywords': 'keyword1, keyword2',
-           'meta_description': 'meta-description of content',
-           'is_enabled': 1}]`
+    :return: object with all page's attributes within a list or ``404``
+        status.
+    :rtype: JSON
+    :JSON sample:
+       ``[{'id': 1, 'title': 'title', 'alias': 'tag',
+       'description': 'small description of page',
+       'content': 'main article content',
+       'meta_keywords': 'keyword1, keyword2',
+       'meta_description': 'meta-description of content',
+       'is_enabled': 1}]``
 
     """
     if request.method == 'GET':
@@ -139,6 +142,19 @@ def get_faq(alias):
 def documentation():
     return auto.html()
 
+
+@app.route("/site-map")
+def site_map():
+    links = []
+    for rule in app.url_map.iter_rules():
+        # Filter out rules we can't navigate to in a browser
+        # and rules that require parameters
+        # if "GET" in rule.methods:
+        #     url = url_for(rule.endpoint, **(rule.defaults or {}))
+        links.append((rule.endpoint))
+    # links is now a list of url, endpoint tuples
+    return Response(json.dumps(links),
+                                mimetype='application/json'), 400
 
 if __name__ == '__main__':
     app.run()

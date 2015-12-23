@@ -170,19 +170,29 @@ def get_all_users_problems():
             },
         ]
     """
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    count = db.count_problems()
+    total_count = {}
     problems_list = []
-    problem_tuple = db.get_all_users_problems()
-    for problem in problem_tuple:
-        problems_list.append({'id': problem[0],
-                              'title': problem[1],
-                              'latitude': problem[2],
-                              'longitude': problem[3],
-                              'problem_type_id': problem[4],
-                              'status': problem[5],
-                              'date': problem[6] * 1000,
-                              'severity': problem[8],
-                              'is_enabled': problem[7]})
-    return Response(json.dumps(problems_list), mimetype='application/json')
+    problem_tuple = db.get_all_users_problems(offset, per_page)
+
+    if problem_tuple:
+        for problem in problem_tuple:
+            problems_list.append({'id': problem[0],
+                                  'title': problem[1],
+                                  'latitude': problem[2],
+                                  'longitude': problem[3],
+                                  'problem_type_id': problem[4],
+                                  'status': problem[5],
+                                  'date': problem[6] * 1000,
+                                  'severity': problem[8],
+                                  'is_enabled': problem[7]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+
+    return Response(json.dumps([problems_list, [total_count]]), mimetype='application/json')
 
 
 @app.route('/api/photo/<int:problem_id>', methods=['POST'])

@@ -26,11 +26,13 @@ _CONFIG = Config().get_config()
 def logout():
     """Method for user's log out.
 
+    :rtype: JSON
     :return:
         - if logging out was successful:
-            json {result:True}
+            ``{result:True}``
         - in case of problems:
-            json {result:False}
+            ``{result:False}``
+
     """
     return jsonify(result=logout_user())
 
@@ -42,16 +44,23 @@ def register():
     Method checks if user is not exists and handle
     registration processes.
 
+    :rtype: JSON
+    :request args: `{'first_name': 'Ivan',
+                     'last_name': 'Sirko',
+                     'email': 'email@test.com',
+                     'password': 'passw'}`
     :return:
         - if one of the field is incorrect or empty:
-            json {'error':'Unauthorized'}
+            ``{'error':'Unauthorized'}``
             Status 401 - Unauthorized
         - if user already exists
-            Status 400 - Bad Request
-            json {'status': 'user with this email already exists'}
+            ``{'status': 'user with this email already exists'}``
         - if registration was successful:
-            json {'status': added user <username>}
-            Status 200 - OK
+            ``{'status': added user <username>}``
+    :statuscode 401: form is invalid or empty
+    :statuscode 400: user already exists
+    :statuscode 200: registration successful
+
     """
     response = jsonify(msg='unauthorized'), 400
     if request.method == 'POST' and request.get_json():
@@ -127,17 +136,24 @@ def login():
     """Login processes handler.
     Log user in or shows error messages.
 
+    :rtype: JSON
+    :request args: `{'email': 'username@mail.com',
+                     'password': 'userpaswd'}`
     :return:
-        - if log in succeed:
-            json with user data from db.
-            Status 200 - OK
-        - if user with entered email isn't exists
-            or password was invalid:
-            json with error message
-            {'error':'message'}
-            Status 401 - Unauthorized
-        - if login data has invalid format:
-            Status 400 - Bad Request
+        - if credentials are ok and log in successful:
+            ``{"email": "username@mail.com",
+            "iat": "???",
+            "id": 6,
+            "name": "oleg",
+            "role": "admin",
+            "surname": "lyashko",
+            "token": "hashed_auth_token"}``
+        - if user with entered email isn't exists or password was invalid:
+            ``{'error':'message'}``
+    :statuscode 401: user doesn't exist or password is invalid
+    :statuscode 400: login data has invalid format:
+    :statuscode 200: credentials are ok
+
     """
     response = jsonify(), 401
     if request.method == 'POST' and request.get_json():
@@ -172,17 +188,18 @@ def login():
 @auto.doc()
 def oauth_login(provider):
     """Provides facebook authorization.
-       Retrieves user info from facebook, check if there is
-       user with retrieved from facebook user id,
-       if yes:
+    Retrieves user info from facebook, check if there is
+    user with retrieved from facebook user id,
+       - if yes:
            skips to next step
-       if not:
+       - if not:
            checks if there is user with retrieved email
-           if yes:
+           - if yes:
                adds oauth credentials to this user
-           if not:
+           - if not:
                creates new user
-       After all function loggins user and return it's params
+       After all function logging in user into app and return it's params
+
     """
 
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
@@ -225,7 +242,19 @@ def oauth_login(provider):
 @app.route('/api/restore_password', methods=['POST'])
 @auto.doc()
 def restore_password_request():
-    """Function to restore forgotten password."""
+    """Function to restore forgotten password.
+
+    :rtype: JSON
+    :request args: `{'email': 'username@mail.com'}`
+    :return:
+        - if credentials are ok and checking successful:
+            ``{message='Email was sended.'}``
+        - if user's email isn't exists:
+            ``{'error':'There is not such email.'}``
+    :statuscode 401: no email
+    :statuscode 200: email sended
+
+    """
     json = request.get_json()
     email = json['email']
     user = ecomap_user.get_user_by_email(email)
@@ -240,7 +269,10 @@ def restore_password_request():
 @app.route('/api/restore_password_page/<string:hashed>', methods=['GET'])
 @auto.doc()
 def restore_password_page(hashed):
-    """Renders page to restore password."""
+    """Renders page template to restore password.
+    :param hashed: unique hash to identify user via sending it to email.
+
+    """
     valid = validator.hash_check(hashed)
     page = render_template('index.html')
 
@@ -257,7 +289,10 @@ def restore_password_page(hashed):
 @app.route('/api/restore_password', methods=['PUT'])
 @auto.doc()
 def restore_password():
-    """Updates user password."""
+    """Updates user password.
+
+
+    """
     data = request.get_json()
     valid = validator.change_password(data)
 

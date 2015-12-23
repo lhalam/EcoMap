@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Ecomap.org documentation! ТЕСТ
-=========================================
+Welcome to Ecomap.org documentation! ТЕСТ 2
+===========================================
 
 .. image:: _static/ecomap_logo.jpg
 
@@ -12,9 +12,10 @@ Welcome to Ecomap.org documentation! ТЕСТ
 ------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   documentation
+   flask
+
 
 Про Проект
 ----------
@@ -24,4 +25,3 @@ Welcome to Ecomap.org documentation! ТЕСТ
 
    about
 
-   auto

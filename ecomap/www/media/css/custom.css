@@ -338,24 +338,9 @@ form {
 
 
 /*Map styles*/
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
+.map-div{
+  width: 100%;
 }
-
-.angular-google-map {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.angular-google-map-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 
 /*UserProfile styles*/
 
@@ -488,9 +473,20 @@ form {
 }
 
 .btn.btn-border {
+
   border: 2px solid;
   background: transparent;
 }
+.respons{
+    max-width:150px; 
+    min-width: 100px;
+}
+@media screen and (max-width: 750px) {
+  .respons{
+    margin-top: 10px;
+  }
+}
+
 
 .btn.btn-primary:hover {
   background-color: #53a7df;
@@ -531,12 +527,17 @@ input[type="checkbox"] {
 .det-problem-modal .title {
   margin-top: 0px;
   margin-bottom: 30px;
+  word-wrap : break-word;  
 }
 
 .det-problem-modal .general, .problemBlock .general {
   background-color: #eee;
-  padding: 15px;
+  padding: 7px;
   margin-bottom: 10px;
+}
+.general .row{
+  height:2.7em;
+  min-height: 2.7em;
 }
 
 .det-problem-modal .rate, .problemBlock .rate {
@@ -557,8 +558,9 @@ input[type="checkbox"] {
   color: #880000;
 }
 
-.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+.det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
+  word-wrap : break-word;
 }
 
 [ui-view].ng-enter, [ui-view].ng-leave {
@@ -594,11 +596,29 @@ input[type="checkbox"] {
   background-color: rgba(100, 100, 100, 0.1);
   z-index: 99999999;
 }
-
-.problemBlock {
-  position: absolute;
-  right: 0px;
+.addProblemBlock{
+  padding: 10px 5px;
+  overflow-y: auto;
   background-color: #fff;
+}
+.add-photo{
+  padding: 10px;
+}
+.descrBlock{
+  word-wrap: break-word;
+  max-width: 200px !important;
+
+}
+.problemBlock {
+  padding: 10px 5px;
+  overflow-y:auto;
+  overflow-x:hidden !important; 
+  background-color: #fff;
+}
+
+.problemBlock .close{
+  position: absolute;
+  right: 5px;
 }
 
 .severity {
@@ -659,6 +679,10 @@ input[type="checkbox"] {
   flex: 2;
 }
 
+.flex-item-3 {
+  flex: 3;
+}
+
 .overflow-on {
   overflow-y: auto;
 }
@@ -666,4 +690,122 @@ input[type="checkbox"] {
 .toast-top-right {
   top: 60px !important;
   right: 12px;
+}
+.filter{
+  height: 92vh;
+  background-color: #fff;
+  transition:1s;
+  position: relative;
+}
+
+.filter-controllers{
+  padding: 20px;
+  width: 300px;
+}
+.filter-controllers .heading{
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.filter-toogle{
+  z-index:9999;
+  cursor: pointer;
+  position: absolute;
+  background-color: #fff;
+  padding-left: 5px;
+  height: 2em;
+  width: 6em;
+  border:2px solid #bbb;
+  border-bottom: none;
+  border-radius: 5px 5px 0px 0;
+  transform: rotate(90deg);
+  right: -55px;
+  bottom: 70px;
+}
+.time {
+  text-align: right;
+  font-style: italic;
+
+}
+.showBlock{
+  height: 20vh;
+}
+
+.selectedType{
+  background-color: #111;
+}
+.showFilter{
+  left: 0%;
+}
+.problTypes , .status{
+  margin-left: -15%;
+  margin-top: 6%;
+}
+.problTypes li , .status li{
+  cursor: pointer;
+  width: 100%;
+  list-style: none;
+  margin-top: 0.3em;
+  padding-left: 0.55em;
+  font-size: 1.25em;
+  height: 1.75em;
+}
+.indicator{
+  float: right;
+  margin-right: 0.5em;
+  margin-top: 0.3em;
+
+}
+.full button span {
+  background-color: limegreen;
+  border-radius: 32px;
+  color: black;
+}
+.partially button span {
+  background-color: orange;
+  border-radius: 32px;
+  color: black;
+}
+.input-group .form-control{
+  width: 185%;
+}
+table .form-control{
+  width: 50%
+}
+.table th{
+  cursor: pointer;
+  position: absolute;
+  top:0;
+  width: 30%;
+  left: -30%;
+  height: 91vh;
+  background-color: #fff;
+  transition:1s;
+}
+.comment-input{
+  width: 100%;
+  word-wrap : break-word;
+}
+
+.comment-block{
+  width: 100%;
+  overflow: auto;
+  word-wrap : break-word;
+}
+
+.problem-title{
+  word-wrap: break-word;
+  max-width: 350px;
+}
+table.UserProblemTable select{
+  width: 100%;
+}
+
+.delete-account{
+  padding: 18px;
+}
+
+.avatar{
+  width:150px;
+  height: 150px;
 }

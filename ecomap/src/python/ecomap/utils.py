@@ -7,6 +7,7 @@ import random
 import string
 import smtplib
 
+from urlparse import urlparse
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -44,36 +45,69 @@ class Singleton(type):
         return cls._instance
 
 
-def send_email(app_name, app_key, user_name, user_surname, user_email,
-               user_password):
-    """Sends email to new created users.
-       :params: app_name - app's login
-                app_key - app's key
-                name - user name
-                surname - user surname
-                email - user email
-                password - user password
+def parse_url(url_to_parse, get_arg=None, get_path=None):
+    """Function helps to parse url and splits parts of urls.
+    :param url_to_parse: input url
+    :param get_arg: [optional]
+    :param get_path: [optional]
+    :return: parsed url contains path
     """
-    TEMPLATE_PATH = os.path.join(os.environ['CONFROOT'],
-                                 'registration_email_template.html')
+    url = urlparse(url_to_parse)
+    if get_arg:
+        return url.path.split('/')[-1]
+    if get_path:
+        return '/'.join(url.path.split('/')[:-1])
+    return '?'.join((url.path, url.query)) if url.query else url.path
 
-    with open(TEMPLATE_PATH, 'rb') as template:
-        html = template.read().decode('utf-8')
-    html_decoded = html % (user_name, user_surname,
-                           user_email, user_password)
 
+def generate_email(email_type, from_email, to_email, args,
+                   custom_template=None, template_str=None, header=None):
+    """Sends email."""
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header('Реєстрація на ecomap.org', 'utf-8')
+    complete_email = os.path.join(os.environ['CONFROOT'],
+                                  'email_template.html')
+    if custom_template:
+        email_body = custom_template
+        args = ''
+    else:
+        email_body = os.path.join(os.environ['CONFROOT'],
+                                  '%s.html' % email_type)
+    html = None
+    html_body = None
+    with open(complete_email, 'rb') as template:
+        html = template.read().decode('utf-8')
 
-    htmltext = MIMEText(html_decoded, 'html', 'utf-8')
+    with open(email_body, 'rb') as template:
+        if args:
+            html_body = template.read().decode('utf-8') % args
+        else:
+            html_body = template.read().decode('utf-8')
 
+    if template_str:
+        html_body = template_str.decode('utf-8')
+
+    html_formatted = html % html_body
+    if header:
+        msg['Subject'] = Header('%s' % header, 'utf-8')
+    else:
+        msg['Subject'] = Header('%s' % email_type, 'utf-8')
+    msg['From'] = from_email
+    msg['To'] = to_email
+    htmltext = MIMEText(html_formatted, 'html', 'utf-8')
     msg.attach(htmltext)
-    msg['Subject'] = 'Test email'
-    msg['From'] = 'admin@ecomap.com'
-    msg['To'] = user_email
 
+    return msg
+
+
+def send_email(login, app_key, from_email, to_email, email):
+    """Sends email.
+       :params: login - email server login
+                app_key - email server key
+                sender - email of sender
+                receiver - email of receiver
+                email - body of email
+    """
     server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(app_name, app_key)
-    server.sendmail('admin@ecomap.com', user_email,
-                    msg.as_string())
+    server.login(login, app_key)
+    server.sendmail(from_email, to_email, email.as_string())
     server.quit()

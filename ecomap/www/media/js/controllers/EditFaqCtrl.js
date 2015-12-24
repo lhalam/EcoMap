@@ -2,14 +2,13 @@ app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$s
   function($scope, $stateParams, $http, toaster, $state) {
     $scope.page = {};
     $scope.editPage = function(page) {
-      console.log(page);
       $http({
         method: 'PUT',
         url: '/api/editResource/' + page.id,
         data: page
       }).then(function successCallback(response) {
         toaster.pop('success', 'Інструкцію відредаговано', 'Інструкцію відредаговано успішно!');
-        $state.go('user_profile');
+        $state.go('user_profile.faq');
       }, function errorCallback() {
         toaster.pop('error', 'Помилка', 'Інструкцію не вдалось відредагувати через помилку!');
       });

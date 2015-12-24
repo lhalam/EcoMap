@@ -1,61 +1,93 @@
 <div ng-controller="UserProblemTableCtrl">
-  <h3>Проблеми користувача {{user.data.surname}} {{user.data.name}}</h3>
+  <h3>Проблеми  {{user.data.surname}} {{user.data.name}}</h3>
   <hr>
-  <!-- To do list -->
-  <!-- Show date normally -->
-  <!-- Implement changing of showing -->
-  <table class="table table-hover">
+  <table class="table table-stripped UserProblemTable">
     <thead>
       <tr>
-        <td><strong>Номер</strong></td>
-        <td><strong>Заголовок</strong></td>
-        <td><strong>Тип проблеми</strong> </td>
-        <td><strong>Статус</strong></td>
-        <td><strong>Дата створення</strong> </td>
-        <td><strong>Детальне інфо</strong> </td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="problem in problems track by $index">
-        <td ng-bind="problem.id"></td>
-        <td ng-bind="problem.title"></td>
-        <td ng-bind="getProblemType(problem.problem_type_id)"></td>
-        <td ng-bind="getStatus(problem.status)"></td>
-        <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
-        <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
-      </tr>
-    </tbody>
-  </table>
-  <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
-      <div class="title">
-        <h3 ng-bind="detailedProblem.title"></h3>
-      </div>
-      <div class="general">
-        <div class="rate">
-          <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
-        </div>
-        <div class="solution unsolved" >
-          <strong><span ng-bind="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
-        </div>
-        <div class="clear"></div>
-      </div>
-      <uib-tabset justified="true">
+       <td ng-click="sortType = 'id';sortReverse = !sortReverse"><strong>Номер</strong>
+         <span ng-show="sortType == 'id' && !sortReverse" class="fa fa-caret-down"></span>
+         <span ng-show="sortType == 'id' && sortReverse" class="fa fa-caret-up"></span></td>
+         <td ng-click="sortType = 'title';sortReverse = !sortReverse"><strong>Заголовок</strong>
+           <span ng-show="sortType == 'title' && !sortReverse" class="fa fa-caret-down"></span>
+           <span ng-show="sortType == 'title' && sortReverse" class="fa fa-caret-up"></span></td>
+           <td><strong ng-click="sortType = 'type';sortReverse = !sortReverse">Тип проблеми</strong>
+             <span ng-show="sortType == 'type' && !sortReverse" class="fa fa-caret-down"></span>
+             <span ng-show="sortType == 'type' && sortReverse" class="fa fa-caret-up"></span></td>
+             <td ng-click="sortType = 'status';sortReverse = !sortReverse"><strong>Статус</strong>
+               <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
+               <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span></td>
+
+               <td ng-click="sortType = 'date';sortReverse = !sortReverse"><strong>Дата створення</strong>
+                 <span ng-show="sortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
+                 <span ng-show="sortType == 'date' && sortReverse" class="fa fa-caret-up"></span></td>
+                 <td><strong>Детальне інфо</strong> </td>
+                 <td>
+                  <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadProblems()">
+                  </select>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tbody>
+                <tr ng-repeat="problem in problems | orderBy:sortType:sortReverse">
+                  <td ng-model="problem.id">{{problem.id}}</td>
+                  <td ng-model="problem.title" class="problem-title">{{problem.title}}</td>
+                  <td ng-model="getProblemType(problem.problem_type_id)">{{getProblemType(problem.problem_type_id)}}</td>
+                  <td ng-model="getStatus(problem.status)">{{getStatus(problem.status)}}</td>
+                  <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
+                  <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </tbody>
+          </table>
+          <div class="row">
+            <div class="col-md-8 col-md-offset-4">
+              <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+            </div>
+          </div>
+        <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
+          <div class="title">
+            <h3 ng-bind="detailedProblem.title"></h3>
+          </div>
+          <div class="general">
+            <div class="rate">
+              <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
+            </div>
+            <div class="solution unsolved" >
+              <strong><span ng-bind="getStatus(detailedProblem.status)" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <uib-tabset justified="true">
           <uib-tab heading="Детально">
-              <div class="problem-type">
-                <p><strong>Тип проблеми:</strong></p>
-                <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+          <div class="problem-type">
+            <p><strong>Тип проблеми:</strong></p>
+            <p ng-bind="getProblemType(detailedProblem.problem_type_id)"></p>
+          </div>
+          <div class="description">
+            <p><strong>Опис проблеми:</strong></p>
+            <p ng-bind="detailedProblem.content"></p>
+          </div>
+          <div class="proposal">
+            <p><strong>Пропозиції щодо вирішення</strong></p>
+            <p ng-bind="detailedProblem.proposal"></p>
+          </div>
+        </uib-tab>
+        <uib-tab heading="Коментарі">
+        <div class="row">
+          <div class="col-sm-12" ng-repeat='comment in comments'>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <strong>{{comment.name}}</strong> <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
               </div>
-              <div class="description">
-                <p><strong>Опис проблеми:</strong></p>
-                <p ng-bind="detailedProblem.content"></p>
+              <div class="panel-body comment-block">
+                {{comment.content}}
               </div>
-              <div class="proposal">
-                <p><strong>Пропозиції щодо вирішення</strong></p>
-                <p ng-bind="detailedProblem.proposal"></p>
-              </div>
-          </uib-tab>
-          <uib-tab heading="Коментарі">
-          </uib-tab>
-      </uib-tabset>
+            </div>
+          </div>
+        </div>
+      </uib-tab>
+    </uib-tabset>
   </modal>
 </div>

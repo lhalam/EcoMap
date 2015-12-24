@@ -8,6 +8,7 @@
     <span>змінити фото</span>
     </span>
 
+
     <modal title="Додати фотографію профілю" visible="photo"  >
     <form name="uploadPhoto">
       <div class="modal-resize">
@@ -44,7 +45,7 @@
 <hr>
 <div class="row">
   <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-    <form  class="change-password" ng-submit='changePassword(password)' name="changePasswordForm" novalidate>
+    <form  class="change-password" ng-submit='changePassword(password, changePasswordForm);submitted=false' name="changePasswordForm" novalidate>
       <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.old_pass.$touched || submitted) && changePasswordForm.old_pass.$invalid || getWrongPass()}">
         <label for="old_pass" class="control-label">Старий пароль:</label>
         <input type="password" id="old_pass" name="old_pass" ng-model='password.old_pass' class="form-control" ng-change="changeWrongPass()" required>
@@ -72,5 +73,17 @@
       <button class="btn btn-default" type='submit' ng-click="submitted=true">Змінити</button>
     </form>
 
+  </div>
+</div>
+
+<br>
+<h3>Видалення аккаунта</h3>
+<hr>
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="form-group delete-account">
+      <button class="btn btn-danger " ng-click="userDelete()">Видалити аккаунт</button>
+      <p>*вам буде надіслано лист на електронну пошту із подальшими інструкціями.</p>
+    </div>    
   </div>
 </div>

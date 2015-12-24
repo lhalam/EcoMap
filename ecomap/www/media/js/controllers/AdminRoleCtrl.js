@@ -67,7 +67,9 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }
     }).then(function successCallback(data) {
       $scope.loadRole();
+      $scope.rolePermObj['name'] = $scope.editRoleObj['name'];
       $scope.msg.editSuccess('ролі');
+      $scope.rolePermObj.name = $scope.editRoleObj['name'];
       $scope.editRoleModal = false;
     }, function errorCallback(response) {
       $scope.msg.editError('ролі', $scope.msgError['alreadyExist']);
@@ -81,7 +83,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       "id": id
     }
     $scope.editRoleModal = true;
-    $scope.listToSend = [];
+    // $scope.listToSend = [];
   }
   $scope.rolePerm = false
   $scope.selectPerm = function(ev, perm) {
@@ -104,7 +106,9 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     $scope.rolePermTable = true;
     $scope.rolePermBlock = false;
   }
-
+  $scope.editRoleSubFunc =  function () {
+    $scope.editRoleSub = true;
+  }
   $scope.rolePermTable = true;
   $scope.rolePermBlock = false;
   $scope.showRolePerm = function(name, id) {
@@ -123,7 +127,9 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
         role_id: $scope.rolePermObj.id
       }
     }).then(function successCallback(data) {
-      $scope.actualPermInRole = data.data.actual
+      $scope.actualPermInRole = data.data.actual;
+      //$scope.Permisions = data.data.all_permissions
+      
       for (var i = 0; i < $scope.actualPermInRole.length; i++) {
         if ($scope.listToSend.indexOf($scope.actualPermInRole[i].id) === -1) {
           $scope.listToSend.push($scope.actualPermInRole[i].permission_id)

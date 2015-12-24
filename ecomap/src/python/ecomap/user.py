@@ -1,14 +1,17 @@
 """This module holds User class"""
 import hashlib
+import time
 
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
 from ecomap.db import util
-from ecomap.email_sender import send_email
-from ecomap.app import app
-from ecomap.utils import random_password
 
+from ecomap.app import app
+from ecomap.config import Config
+from ecomap.utils import random_password, generate_email, send_email
+
+_CONFIG = Config().get_config()
 LOGIN_SERIALIZER = URLSafeTimedSerializer(app.secret_key)
 LOGIN_MANAGER = LoginManager(app)
 LOGIN_MANAGER.login_view = "login"
@@ -43,7 +46,7 @@ class User(UserMixin):
         self.avatar = avatar
 
     def __repr__(self):
-        return self.first_name
+        return unicode(self.first_name)
 
     def get_auth_token(self):
         """This method encodes a secure token from a cookie.
@@ -159,9 +162,18 @@ def register(first_name, last_name, email, password):
     """
     salted_pass = hash_pass(password)
     role_id = util.get_role_id('user')
-    # send_email(first_name, last_name, email, password)
-    return util.insert_user(first_name, last_name, email, salted_pass,
-                            role_id[0])
+    register_user_id = util.insert_user(first_name, last_name,
+                                        email, salted_pass)
+    if register_user_id:
+        util.add_users_role(register_user_id, role_id[0])
+    message = generate_email('registration', _CONFIG['email.from_email'],
+                             email, (first_name, last_name, email, password))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               email,
+               message)
+    return get_user_by_id(register_user_id)
 
 
 def facebook_register(first_name, last_name, email, provider, uid):
@@ -174,15 +186,27 @@ def facebook_register(first_name, last_name, email, provider, uid):
     if not user:
         user = get_user_by_email(email)
     if not user:
-        salted_pass = hash_pass(random_password(10))
+        password = random_password(10)
+        salted_pass = hash_pass(password)
         role_id = util.get_role_id('user')
-        util.facebook_insert(first_name, last_name, email,
-                             salted_pass, role_id[0],
-                             provider, uid)
-        user = get_user_by_oauth_id(uid)
+        register_user_id = util.facebook_insert(first_name,
+                                                last_name, email,
+                                                salted_pass,
+                                                provider, uid)
+        if register_user_id:
+            util.add_users_role(register_user_id, role_id[0])
+            user = get_user_by_oauth_id(uid)
+
+        message = generate_email('registration', _CONFIG['email.from_email'],
+                                 email,
+                                 (first_name, last_name, email, password))
+        send_email(_CONFIG['email.user_name'],
+                   _CONFIG['email.app_password'],
+                   _CONFIG['email.from_email'],
+                   email,
+                   message)
     else:
         util.add_oauth_to_user(user.uid, provider, uid)
-    # send_email(first_name, last_name, email, password)
     return user
 
 
@@ -216,5 +240,36 @@ def load_token(token):
     return None
 
 
-if __name__ == '__main__':
-    register('user1', 'user1', 'next@gmail.com', 'pass')
+def restore_password(user):
+    """Funtion send's email to user with link to restore password."""
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
+    hex_hash = hashed.hexdigest()
+
+    util.insert_into_restore_password(hex_hash, user.uid, create_time)
+    message = generate_email('restore_password',
+                             _CONFIG['email.from_email'],
+                             user.email,
+                             (user.first_name, user.last_name, hex_hash))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               user.email,
+               message)
+
+
+def delete_user(user):
+    """Funtion send's email to user with link to delete him."""
+    create_time = str(time.time())
+    hashed = hashlib.sha256(user.email + user.password + create_time)
+    hex_hash = hashed.hexdigest()
+    util.insert_into_hash_delete(hex_hash, user.uid, create_time)
+    message = generate_email('delete_user',
+                             _CONFIG['email.from_email'],
+                             user.email,
+                             (user.first_name, user.last_name, hex_hash))
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               user.email,
+               message)

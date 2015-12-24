@@ -22,10 +22,10 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
     }
 
     $scope.tabs = [
-      { heading: "Ресурси", route:"admin.resources", active:false },
-      { heading: "Права", route:"admin.permissions", active:false },
-      { heading: "Ролі", route:"admin.roles", active:false },
-      { heading: "Користувачі", route:"admin.users", active:false }
+    { heading: "Ресурси", route:"admin.resources", active:false },
+    { heading: "Права", route:"admin.permissions", active:false },
+    { heading: "Ролі", route:"admin.roles", active:false },
+    { heading: "Користувачі", route:"admin.users", active:false }
     ];
 
     $scope.$on("$stateChangeSuccess", function() {
@@ -45,9 +45,26 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
     $scope.loadRes = function() {
       $http({
         method: 'GET',
-        url: '/api/resources'
+        url: '/api/resources',
+        params:{
+          per_page: 10,
+          offset:0,
+        }
       }).then(function successCallback(data) {
-        $scope.Resources = data.data
+        $scope.resLength = data.data[1][0]['total_res_count']
+        $http({
+          method: 'GET',
+          url: '/api/resources',
+          params:{
+           per_page: $scope.resLength,
+           offset:0,
+         }
+       }).then(function successCallback(data) {
+        $scope.Resources = data.data[0]
+       },function errorCallback (response){
+
+       })
+
       }, function errorCallback(response) {});
     }
 
@@ -56,7 +73,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
         method: "GET",
         url: '/api/all_permissions',
       }).then(function successCallback(data) {
-        $scope.Permisions = data.data;
+        $scope.Permisions = data.data[0];
       }, function errorCallback(response) {})
     }
 
@@ -75,4 +92,4 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
       $scope.loadPerm()
     }
     $scope.loadData()
-}]);
+  }]);

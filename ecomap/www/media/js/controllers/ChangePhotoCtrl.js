@@ -50,7 +50,7 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
   };
 
   $scope.setDefaultPhoto = function() {
-    $scope.user.data.avatar = 'http://placehold.it/150x150';
+    $scope.user.data.avatar = 'http://placehold.it/200x200';
     $scope.deletePhoto($scope.user.id);
     return $scope.user.data.avatar;
   };
@@ -64,7 +64,6 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
     $scope.showStatus = false;
     $scope.uploadButton = false;
     $scope.result = '';
-    console.log(picFile);
     uploadForm.file = null;
     picFile = null;
     return ctx.clearRect(0, 0, cnv2.width, cnv2.height);
@@ -125,7 +124,7 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
         toaster.pop('error', 'Фото', 'Виникла помилка!');
       }
     }, function errorCallback(response) {
-      console.log(response)
+      
     })
   };
 

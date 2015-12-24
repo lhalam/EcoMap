@@ -1,9 +1,41 @@
-<div class="map-container" >
-    <ui-gmap-google-map center='getMapParams().center' zoom='getMapParams().zoom' id="map" >
-        <ui-gmap-markers models='markers' idkey="'problem_id'" coords="'self'"
-                         click="zoomMarker" doCluster="true" 
-                         icon="'iconUrl'"></ui-gmap-markers>
-        </ui-gmap-markers>
-    
-    </ui-gmap-google-map>
+<aside id="filterProb" class="filter">
+  <div class="filter-controllers animate-show" ng-show="filterTrigger">
+    <p class="heading">
+    Фільтрація за датою:
+    </p>
+    <div class="form-group">
+      <label for="" class="control-label">Показати з:</label>
+      <input type="date" class="form-control" uib-datepicker-popup ng-model="dt.from" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="filterMarker()"/>
+    </div>
+    <div class="form-group">
+      <label for="" class="control-label">Показати до:</label>
+      <input type="date" class="form-control" uib-datepicker-popup ng-model="dt.to" is-open="status.opened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" ng-change="filterMarker()"/>
+    </div>
+    <p class="heading">
+    Тип проблеми:
+    </p>
+    <ul class="problTypes">
+      <li ng-repeat="(type_id, type) in Types" ng-click="toggleType(type_id)">
+        {{type}}
+        <i class="fa fa-check indicator" ng-if="selectedType.indexOf(type_id) !== -1"></i>
+      </li>
+    </ul>
+
+    <p class="heading">
+    Статус проблеми:
+    </p>
+    <ul class="status">
+      <li ng-repeat="(status, status_descr) in Status" ng-click="toggleStatus(status)">
+        {{status_descr}}
+        <i class="fa fa-check indicator" ng-if="selectedStatus.indexOf(status) !== -1"></i>
+      </li>
+    </ul>
+  </div>
+  <div class="filter-toogle" ng-click="toogleFilter()">
+    фільтрація
+  </div>
+</aside>
+<div class="map-container flex-item-1 flex-container flex-row" >
+  <div id="map" class="flex-item-1 flex-container flex-column">
+  </div>
 </div>

@@ -68,12 +68,12 @@
           </div>
           <div class="form-group">
             <label class="control-label">Метод</label>
-            <select ng-model="editPerm.action" class="form-control" data-ng-options="meth as meth for meth in meth_obj">
+            <select ng-model="editPerm.action" class="form-control" data-ng-options="meth as (meth|dictFilter) for meth in meth_obj">
             </select>
           </div>
           <div class="form-group">
             <label class="control-label">Модифікатор доступу</label>
-            <select ng-model="editPerm.modifier" class="form-control" data-ng-options="modif as modif for modif in modif_obj">
+            <select ng-model="editPerm.modifier" class="form-control" data-ng-options="modif as (modif|dictFilter) for modif in modif_obj">
             </select>
           </div>
           <div class="form-group" ng-class="{ 'has-error': (editPerm.descr.$touched || editPermSub) && editPerm.descr.$invalid }">

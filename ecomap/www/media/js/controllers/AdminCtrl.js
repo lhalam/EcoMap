@@ -52,7 +52,6 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
         }
       }).then(function successCallback(data) {
         $scope.resLength = data.data[1][0]['total_res_count']
-        console.log($scope.resLength)
         $http({
           method: 'GET',
           url: '/api/resources',
@@ -61,7 +60,8 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
            offset:0,
          }
        }).then(function successCallback(data) {
-        $scope.Resources = data.data[0]
+        $scope.Resources = data.data[0];
+        console.log($scope.Resources)
        },function errorCallback (response){
 
        })
@@ -75,7 +75,6 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
         url: '/api/all_permissions',
       }).then(function successCallback(data) {
         $scope.Permisions = data.data[0];
-        console.log($scope.Permisions)
       }, function errorCallback(response) {})
     }
 

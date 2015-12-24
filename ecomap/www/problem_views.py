@@ -18,9 +18,21 @@ from ecomap.db import util as db
 @app.route('/api/problems')
 def problems():
     """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance
-    :return: list of problems with id, title, latitude, longitude,
-    problem type, status and date of creation
+    Used by Google Map instance.
+
+    :rtype: JSON
+    :return:
+        -If problems list not empty:
+            ``[{"status": "Unsolved", "problem_type_Id": 2,
+            "title": "problem 1","longitude": 25.9717, "date": 1450735578,
+            "latitude": 50.2893, "problem_id": 75},
+            {"status": "Unsolved", "problem_type_Id": 3,
+            "title": "problem 2", "longitude": 24.7852, "date": 1450738061,
+            "latitude": 49.205, "problem_id": 76}]``
+        -If problem list is empty:
+            ``[]``
+    :statuscode 200: no errors
+
     """
     problem_tuple = db.get_all_problems()
     parsed_json = []
@@ -36,9 +48,28 @@ def problems():
 
 @app.route('/api/problem_detailed_info/<int:problem_id>', methods=['GET'])
 def detailed_problem(problem_id):
-    """This method returns json object with detailed problem data.
-    :params problem_id - id of selected problem
-    :return json with detailed info about problem
+    """This method returns object with detailed problem data.
+    
+    :rtype: JSON
+    :request args: `{problem_id: 82}`
+    :return:
+            - If problem exists:
+                ``[[{"content": "Text with situation", "status": "Unsolved",
+                "date": 1450954447, "severity": "1", "title": "problem",
+                "latitude": 52.7762, "proposal": "proposal how to solve",
+                "problem_type_id": 3, "problem_id": 82, "longitude": 34.2114}],
+                [{"activity_type": "Added", "user_id": 5,
+                "problem_id": 82, "created_date": 1450954447}], 
+                [{"url": "/uploads/problems/82/0d0d3ef56a16bd069efabeb76e20411f.png",
+                "user_id": 5, "description": "description to photo"}], 
+                [{"user_id": 5, "name": "User", "problem_id": 82,
+                "content": "Comment", "created_date": 1450954929000,
+                "id": 5}]]``
+            - If problem not exists:
+                ``{"message": " resource not exists"}``
+    :statuscode 404: problem not exists
+    :statuscode 200: problem displayed
+
     """
     problem_data = db.get_problem_by_id(problem_id)
     activities_data = db.get_activity_by_problem_id(problem_id)
@@ -87,11 +118,35 @@ def detailed_problem(problem_id):
 @app.route('/api/problem_post', methods=['POST'])
 def post_problem():
     """Function which adds data from problem form to DB.
-    :return: If request data is invalid:
-    {'status': False, 'error': [list of errors]}, 400
-    If all ok:
-    {'added_problem': 'problem_title'
-    'problem_id': 'problem_id'}
+    :rtype: multipart/form-data
+    :request args: `-----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="title"
+        Title of problem
+        -----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="type"     
+        3
+        -----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="latitude"
+        49.8256101
+        -----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="longitude"
+        24.060054299999997
+        -----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="content"
+        description of problem
+        -----------------------------12226331501079089041586497122
+        Content-Disposition: form-data; name="proposal"
+        proposal to solve
+        -----------------------------12226331501079089041586497122--`
+    :return:
+            - If request data is invalid:
+                    ``{'status': False, 'error': [list of errors]}``
+            - If all ok:
+                    ``{"added_problem": "problem title", "problem_id": 83}``
+    
+    :statuscode 400: request is invalid
+    :statuscode 200: problem was successfully posted
+
     """
     if request.method == 'POST' and request.form:
         data = request.form
@@ -124,18 +179,25 @@ def post_problem():
 
 @app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
 def get_user_problems(user_id):
-    """This method retrieves all user's problem from db.
-        :returns list of user's problem represented with next objects:
-        {"id": 190,
-         "title": "name",
-         "latitude": 51.419765,
-         "longitude": 29.520264,
-         "problem_type_id": 1,
-         "status": 0,
-         "date": "2015-02-24T14:27:22.000Z",
-         "severity": '3',
-         "is_enabled": 1
-        }
+     """This method retrieves all user's problem from db.
+        :rtype: JSON
+        :request args: `{user_id: 190}`
+        :return:
+            - If user have problems:
+                ``[{"id": 190,"title": "name",
+                "latitude": 51.419765,
+                "longitude": 29.520264,
+                "problem_type_id": 1,
+                "status": 0,
+                "date": "2015-02-24T14:27:22.000Z",
+                "severity": '3',
+                "is_enabled": 1
+                },{...}]``
+            - If user haven't:
+                ``[]``
+
+        :statuscode 200: no errors
+        
     """
     problems_list = []
     problem_tuple = db.get_user_problems(user_id)

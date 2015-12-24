@@ -47,11 +47,16 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
       if (!perm.action || !perm.modifier || !perm.description) {
         return;
       }
-      for(res_id in $scope.Resources){
-        if($scope.Resources[res_id] === $scope.perm.resource_name){
-          var id = res_id;
+      for(var i =0;i<$scope.Resources.length;i++){
+
+        console.log($scope.perm.resource_name['resource_name'])
+        if($scope.Resources[i]['resource_name']=== $scope.perm.resource_name['resource_name']){
+          
+          var id = $scope.Resources[i]["id"]
         }
       }
+      console.log($scope.perm.resource_name)
+      console.log($scope.Resources)
       $http({
         method: "POST",
         headers: {

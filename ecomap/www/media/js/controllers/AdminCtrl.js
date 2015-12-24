@@ -61,7 +61,6 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
          }
        }).then(function successCallback(data) {
         $scope.Resources = data.data[0];
-        console.log($scope.Resources)
        },function errorCallback (response){
 
        })

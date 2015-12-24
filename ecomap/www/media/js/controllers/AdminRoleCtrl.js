@@ -128,7 +128,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }
     }).then(function successCallback(data) {
       $scope.actualPermInRole = data.data.actual;
-      //$scope.Permisions = data.data.all_permissions
+      $scope.Permisions = data.data.all_permissions
       
       for (var i = 0; i < $scope.actualPermInRole.length; i++) {
         if ($scope.listToSend.indexOf($scope.actualPermInRole[i].id) === -1) {

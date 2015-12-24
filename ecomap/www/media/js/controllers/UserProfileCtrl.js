@@ -67,7 +67,9 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
       });
     };
     
+    
     $scope.userDelete = function(){
+      if (confirm("Ви бажаєте видалити користувача?")){
       var data = {}
       $scope.msg = msg;
       data.id = $cookies.get('id');
@@ -88,7 +90,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             $scope.msg.sendError('імейлу')
         })
        
-    };
+    }};
     
     $scope.redirect = function(state){
       $state.go(state);

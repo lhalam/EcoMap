@@ -16,7 +16,6 @@ from ecomap.permission import permission_control
 def resource_post():
     """Function which adds new site resource to site-map in admin panel.
 
-
     :rtype: JSON
     :request agrs: `{resource_name: "/res_name"}`
     :return:
@@ -631,8 +630,13 @@ def get_all_users():
     """Function, used to get all users.
 
     :return: list of all users with id, first name, last name, email and role
+    [{"role": "admin", "first_name": "Vova", "last_name": "Putin", "user_id": 3,
+    "email": "putin@huilo.ru"},
+     {"role": "user", "first_name": "Oleg", "last_name": "Lyashko",
+    "user_id": 4, "email": "radical@gmail.com"},
 
     :statuscode 200: no errors
+    :statuscode 400: invalid request
 
 
     """

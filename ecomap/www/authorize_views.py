@@ -81,42 +81,6 @@ def register():
     return response
 
 
-@app.route('/api/user_roles/register', methods=['POST'])
-def register_by_admin():
-    """Method for registration new user in db by admin.
-    Method checks if user is not exists and handle
-    registration processes.
-
-    :return:
-        - if one of the field is incorrect or empty:
-            json {'error':'Unauthorized'}
-            Status 401 - Unauthorized
-        - if user already exists
-            Status 400 - Bad Request
-            json {'status': 'user with this email already exists'}
-        - if registration was successful:
-            json {'status': added user <username>}
-            Status 200 - OK
-    """
-    response = jsonify(msg='unauthorized'), 400
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
-        valid = validator.user_registration_by_admin(data)
-        if valid['status']:
-            ecomap_user.register_by_admin(data['first_name'],
-                                 data['last_name'],
-                                 data['email'],
-                                 data['password'],
-                                 data['role_name'])
-            msg = 'added %s %s' % (data['first_name'],
-                                   data['last_name'])
-            response = jsonify({'status_message': msg}), 201
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-    return response
-
-
 @app.route('/api/email_exist', methods=['POST'])
 @auto.doc()
 def email_exist():
@@ -367,7 +331,7 @@ def delete_user():
         else:
             db.delete_user(user_id[0])
             logger.info('User with id %s has been deleted' % user_id[0])
-            response = jsonify(msg='success', deleted_user = user_id[0])
+            response = jsonify(msg='success', deleted_user=user_id[0])
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

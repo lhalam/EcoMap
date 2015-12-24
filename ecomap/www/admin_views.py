@@ -630,6 +630,7 @@ def get_all_users():
     """Function, used to get all users.
 
     :return: list of all users with id, first name, last name, email and role
+
     [{"role": "admin", "first_name": "Vova", "last_name": "Putin", "user_id": 3,
     "email": "putin@huilo.ru"},
      {"role": "user", "first_name": "Oleg", "last_name": "Lyashko",
@@ -669,9 +670,28 @@ def get_all_users():
 @auto.doc()
 @login_required
 def edit_page(page_id):
-    """This method makes changes to given page(ex-resource).
+    """This method makes changes to given page(ex-resource) via
+    page_id, passed to it.
 
-        :returns confirmation.
+    :param page_id: id of specific page to edit.
+
+    :request agrs example: `{'id': 1, 'title': 'title', 'alias': 'tag',
+       'description': 'small description of page',
+       'content': 'main article content',
+       'meta_keywords': 'keyword1, keyword2',
+       'meta_description': 'meta-description of content',
+       'is_enabled': 1}`
+
+    :return: confirmation object
+    :rtype: JSON
+    :JSON sample:
+       ``{'result': true}``
+       or
+       ``{'result': false}``
+
+    :statuscode 200: successfully edited
+    :statuscode 404: no page by given id
+
     """
     if request.method == 'PUT' and request.get_json():
         data = request.get_json()
@@ -691,7 +711,31 @@ def edit_page(page_id):
 @auto.doc()
 @login_required
 def add_page():
-    """This method adds new page to db."""
+    """This method adds new page to db.
+
+    :rtype: JSON
+    :request agrs: `{'title': 'title', 'alias': 'tag',
+                    'description': 'small description of page',
+                    'content': 'main article content',
+                    'meta_keywords': 'keyword1, keyword2',
+                    'meta_description': 'meta-description of content',
+                    'is_enabled': 1}`
+
+    :return:
+        - If there is already page with this name:
+               ``{'result': 'False',
+               'msg': 'Page already exists!'}``
+        - If request data is invalid:
+              ``{'result': 'False',
+               'msg': 'Couldn't add new page!'}``
+        - If all ok:
+              ``{'result': 'True',
+               'msg': 'Succesfully added!'}``
+
+    :statuscode 200: check status in response json object
+
+    """
+
     result = None
     msg = None
     if request.method == 'POST' and request.get_json():
@@ -717,7 +761,26 @@ def add_page():
 @auto.doc()
 @login_required
 def delete_page(page_id):
-    """This method deletes page by it's id."""
+    """This method deletes page by it's id.
+
+    :param page_id: id of specific page to delete.
+
+    :request agrs example: `{'id': 1}`
+
+    :return: confirmation object
+    :rtype: JSON
+    :JSON sample:
+       ``{'result': true,
+       'msg': 'Page was deleted successfully!'}``
+       or
+       ``{'result': false,
+       'msg': 'Couldn't delete the page'}``
+
+    :statuscode 200: successfully edited
+    :statuscode 404: no page by given id
+
+    """
+
     msg = None
     result = None
     if request.method == 'DELETE':
@@ -727,7 +790,7 @@ def delete_page(page_id):
             msg = 'Page was deleted successfully!'
         else:
             result = False
-            msg = "Couldn't delete the page!"
+            msg = 'Couldn\'t delete the page!'
     return jsonify(result=result, msg=msg)
 
 

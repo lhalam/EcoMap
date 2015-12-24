@@ -1,11 +1,10 @@
 app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg', 
   'msgError', function($scope, $http, toaster, msg, msgError) {
-    $scope.loadRes()
+    $scope.loadRes();
+    $scope.bigCurrentPage = 1;
     $scope.loadPagination = function() {
       $scope.msg = msg
-      $scope.fromPage = 1;
-      $scope.bigCurrentPage = 1;
-      
+      $scope.fromPage = 1;    
       $scope.permisLength = $scope.selectCount['selected'];
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
        

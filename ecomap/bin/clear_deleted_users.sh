@@ -8,4 +8,3 @@ export PYTHON_EGG_CACHE=${PYTHON_EGG_CACHE:-/tmp/.python-eggs}
 export STATICROOT=${STATICROOT:-${PRODROOT}/www/}
 
 /usr/bin/python $PYTHONPATH/ecomap/bin/clear_temporary_hash.py -t delete $*
-

@@ -101,7 +101,8 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :param role: role of user given from each request.
     :param resource: resource url requested by user to check.
     :param method: request method of resource url.
-    :param route: resource url extracted from db to compare with user request url.
+    :param route: resource url extracted from db to compare with user request
+    url.
     :return: access - dictionary with checking status and results.
     """
     if ':' in str(route):

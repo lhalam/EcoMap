@@ -274,7 +274,7 @@ def restore_password(user):
                _CONFIG['email.from_email'],
                user.email,
                message)
-# 
+
 
 def delete_user(user):
     """Funtion send's email to user with link to delete him."""
@@ -291,8 +291,3 @@ def delete_user(user):
                _CONFIG['email.from_email'],
                user.email,
                message)
-    
-
-if __name__ == '__main__':
-    register('user1', 'user1', 'next@gmail.com', 'pass')
-# 

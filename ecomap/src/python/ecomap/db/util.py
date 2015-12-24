@@ -1,5 +1,4 @@
 """This module contains functions for interacting with Database."""
-import time
 from ecomap.db.db_pool import db_pool, retry_query
 
 
@@ -966,7 +965,7 @@ def insert_into_hash_delete(hex_hash, user_id, create_time):
                                                   `type`)
                     VALUES (%s, %s, %s, 'delete');
                 """
-        cursor.execute(query,(create_time, hex_hash , user_id))
+        cursor.execute(query, (create_time, hex_hash, user_id))
         conn.commit()
 
 
@@ -1209,22 +1208,22 @@ def change_problem_to_anon(problem_id):
     with db_pool().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
-        cursor.execute(query, ("2",problem_id))
+        cursor.execute(query, ("2", problem_id))
         conn.commit()
 
 
 @retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):
-    """Query for change user_id in problem_activity 
+    """Query for change user_id in problem_activity
     table to id of Anonimus User,
     when we deleting User-owner of this problem.
     """
     with db_pool().manager() as conn:
         cursor = conn.cursor()
-        query = """UPDATE `problem_activity` SET `user_id`=%s 
+        query = """UPDATE `problem_activity` SET `user_id`=%s
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query, ("2",problem_id))
+        cursor.execute(query, ("2", problem_id))
         conn.commit()
 
 

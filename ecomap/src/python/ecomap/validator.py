@@ -28,7 +28,7 @@ LENGTHS = {'email': [5, 100],
            'title': [2, 255],
            'content': [2, 255],
            'problem_type_id': [1, 255],
-           'user_id' : [1, 255],
+           'user_id': [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],
            'longitude': [-180.0, 180.0]}
@@ -164,6 +164,7 @@ def check_post_comment(data):
         status['status'] = False
 
     return status
+
 
 def hash_check(data):
     """Validates if restore password/user_deletion hash has length of 64.

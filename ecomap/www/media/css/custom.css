@@ -784,14 +784,28 @@ table .form-control{
 }
 .comment-input{
   width: 100%;
+  word-wrap : break-word;
 }
 
 .comment-block{
   width: 100%;
   overflow: auto;
+  word-wrap : break-word;
 }
 
 .problem-title{
   word-wrap: break-word;
   max-width: 350px;
+}
+table.UserProblemTable select{
+  width: 100%;
+}
+
+.delete-account{
+  padding: 18px;
+}
+
+.avatar{
+  width:150px;
+  height: 150px;
 }

@@ -18,8 +18,6 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
           $scope.Resources = data.data[0]
           $scope.ResourceLength = data.data[1][0]['total_res_count']
           $scope.bigTotalItems = $scope.ResourceLength / $scope.selectCount['selected'] * 10;
-          console.log($scope.ResourceLength / $scope.selectCount['selected'])
-          console.log($scope.bigTotalItems)
         }, function errorCallback(response) {
           $scope.msg.editError('користувача');
         })
@@ -39,7 +37,6 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     };
     $scope.editResModal = false;
     $scope.showeditResModal = function(name, id) {
-      console.log("click")
       $scope.editResObj = {
         'name': name,
         'id': id
@@ -60,7 +57,6 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
         }
       }).then(function successCallback(data) {
         $scope.loadPagination()
-        console.log(data)
         $scope.editResModal = false;
         $scope.msg.editSuccess('ресурсу');
       }, function errorCallback(response) {
@@ -89,7 +85,6 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       if (!newResource.name) {
         return;
       }
-      console.log($scope.newResource.name)
       $http({
         method: "POST",
         url: "/api/resources",
@@ -99,7 +94,6 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }).then(function successCallback(data) {
         $scope.addResModal = false;
         $scope.Resources[data.data.added_resource] = data.data.resource_id
-        console.log($scope.Resources)
         $scope.addResModal = false
         $scope.msg.createSuccess('ресурсу');
       }, function errorCallback(response) {

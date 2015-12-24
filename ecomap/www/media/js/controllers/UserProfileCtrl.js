@@ -71,7 +71,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
       var data = {}
       $scope.msg = msg;
       data.id = $cookies.get('id');
-      console.log(data.id)
       $http({
         method: "DELETE",
         headers: {

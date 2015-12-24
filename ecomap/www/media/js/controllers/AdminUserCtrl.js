@@ -18,7 +18,7 @@ app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
           }
         }).then(function successCallback(data) {
           var UsersObj = data.data[0];
-          console.log(data)
+          
           // var UsersLength = data.data.pop();
           $scope.UsersLength = data.data[1][0]['total_users'];
           $scope.selectedUsers = UsersObj

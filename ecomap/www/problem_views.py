@@ -179,7 +179,7 @@ def post_problem():
 
 @app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
 def get_user_problems(user_id):
-     """This method retrieves all user's problem from db.
+    """This method retrieves all user's problem from db.
         :rtype: JSON
         :request args: `{user_id: 190}`
         :return:

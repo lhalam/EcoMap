@@ -1,6 +1,6 @@
 app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg', 
   'msgError', function($scope, $http, toaster, msg, msgError) {
-    
+    $scope.loadRes()
     $scope.loadPagination = function() {
       $scope.msg = msg
       $scope.fromPage = 1;

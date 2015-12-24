@@ -1,7 +1,7 @@
 app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
   function($scope, $http, toaster, $rootScope, msg) {
     $scope.loadPagination = function() {
-      
+
       $scope.msg = msg
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
@@ -18,8 +18,6 @@ app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
           }
         }).then(function successCallback(data) {
           var UsersObj = data.data[0];
-          
-          // var UsersLength = data.data.pop();
           $scope.UsersLength = data.data[1][0]['total_users'];
           $scope.selectedUsers = UsersObj
           $scope.bigTotalItems = $scope.UsersLength / $scope.selectCount['selected'] * 10;
@@ -55,4 +53,4 @@ app.controller("UserCtrl", ['$scope', '$http', 'toaster', '$rootScope', 'msg',
       })
     }
   }
-])
+  ])

@@ -1,6 +1,6 @@
 app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg', 
   'msgError', function($scope, $http, toaster, msg, msgError) {
-    console.log('$scope.Permision')
+    
     $scope.loadPagination = function() {
       $scope.msg = msg
       $scope.fromPage = 1;
@@ -8,7 +8,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
       
       $scope.permisLength = $scope.selectCount['selected'];
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
-        console.log($scope.selectCount['selected'])
+       
         var stepCount = $scope.selectCount['selected']
         $http({
           method: "GET",
@@ -21,7 +21,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
           $scope.Permision = data.data[0]
           $scope.permisLength = data.data[1][0]['total_perm_count']
           $scope.bigTotalItems = $scope.permisLength / $scope.selectCount['selected'] * 10;
-          console.log(data)
+         
         }, function errorCallback(response) {
           $scope.msg.editError('користувача');
         })
@@ -69,7 +69,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
         $scope.msg.createSuccess('права');
         $scope.loadPagination()
       }, function errorCallback(response) {
-        console.log(response)
+        
         $scope.msg.createError('права');
       });
     };
@@ -115,7 +115,7 @@ app.controller("PermisionCtrl", ['$scope', '$http', 'toaster', 'msg',
         "permission_id": perm.permission_id
       }
     }).then(function successCallback(data) {
-      console.log(data)
+      
       if (!data.data.error) {
         $scope.loadPerm()
         $scope.msg.deleteSuccess('права');

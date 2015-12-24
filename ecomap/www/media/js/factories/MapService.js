@@ -51,7 +51,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   }
   instance.turnResizeOn = function() {
     google.maps.event.addListenerOnce(instance.mapInstance, 'idle', function() {
-      console.log("Resizing map...");
       google.maps.event.trigger(instance.mapInstance, 'resize');
     });
   }

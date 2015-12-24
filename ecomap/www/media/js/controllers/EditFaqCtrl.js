@@ -2,7 +2,6 @@ app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$s
   function($scope, $stateParams, $http, toaster, $state) {
     $scope.page = {};
     $scope.editPage = function(page) {
-      console.log(page);
       $http({
         method: 'PUT',
         url: '/api/editResource/' + page.id,

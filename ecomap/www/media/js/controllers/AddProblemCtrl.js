@@ -75,7 +75,6 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           $scope.$apply();
         })
       $scope.$watch($scope.newProblem, function(newVal, oldVal) {
-        console.log("updates")
         if (_.isEqual(newVal, oldVal)) {
           return;
         }
@@ -118,7 +117,6 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }
         var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
         $scope.marker.setPosition(latlng)
-        console.log(latlng)
       }
     };
     /*End of map & markers section*/

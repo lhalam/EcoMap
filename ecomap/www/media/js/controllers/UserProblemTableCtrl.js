@@ -32,7 +32,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         return statuses[status];
       };
       $scope.loadProblems = function(user_id) {
-        console.log($scope.selectCountObj)
         $scope.msg = msg
         $scope.fromPage = 1;
         $scope.bigCurrentPage = 1;
@@ -52,8 +51,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
               $scope.problems = response.data[0];
               $scope.problemsLength = response.data[1][0]['total_problem_count']
               $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-              console.log('$scope.bigTotalItems')
-              console.log($scope.bigTotalItems)
             })
           } else {
             $http({
@@ -83,7 +80,6 @@ $scope.triggerDetailModal = function(problem_id) {
   }).then(function successCallback(response) {
     $scope.detailedProblem = response.data[0][0];
     $scope.comments = response.data[3];
-    console.log($scope.detailedProblem);
   })
 }
 }

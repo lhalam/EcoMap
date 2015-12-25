@@ -86,16 +86,16 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
   }
   $scope.rolePerm = false
   $scope.selectPerm = function(ev, perm) {
-    if ($scope.listToSend.indexOf(perm.permission_id) === -1) {
-      $scope.listToSend.push(perm.permission_id);
+    if ($scope.listToSend.indexOf(perm.resource_id) === -1) {
+      $scope.listToSend.push(perm.resource_id);
     } else {
-      $scope.listToSend.splice($scope.listToSend.indexOf(perm.permission_id), 1)
+      $scope.listToSend.splice($scope.listToSend.indexOf(perm.resource_id), 1)
     }
   }
 
   $scope.isChecked = function(perm) {
     if ($scope.listToSend) {
-      if ($scope.listToSend.indexOf(perm.permission_id) !== -1) {
+      if ($scope.listToSend.indexOf(perm.resource_id) !== -1) {
         return true;
       }
     }

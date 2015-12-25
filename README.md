@@ -7,5 +7,5 @@ To create new version of documentation:
     <li>make some change if it needed in DOCUMENTATION <code>.rst</code> autodoc files</li>
     <li>run in terminal <code>make html</code></li>
     <li>commit and push changes to this branch</li>
-    <li>go to <a href='http://lhalam.github.io/EcoMap'>ecomap.docs</a></li>
+    <li>go to <a href='http://lhalam.github.io/EcoMap'>lhalam.github.io/EcoMap</a></li>
 </ul>

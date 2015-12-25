@@ -66,6 +66,7 @@ Apache server on your server or local machine.
 
 #. Run following command:
      ``sudo gedit /etc/apache2/sites-available/ecomap.conf``
+
      This command will create file ecomap.conf - this is config file of your site. You can set any name you want!
 
 #. Add content from apache.conf file, which is situated in -  ``ecomap/etc/apache.conf``  to ``/etc/apache2/sites-available/ecomap.conf``
@@ -73,8 +74,7 @@ Apache server on your server or local machine.
 #. Enable your site: ``sudo a2ensite ecomap``
 
 #. Make your own copy of ecomap.wsgi (situated in  ecomap/www/ecomap.wsgi ).
-Also read comments in that file, since they are important! This is your main wsgi script which apache will use to run         application. It has already configured for our project structure. You can set your own path to templates folder and          you'll see test site.
-
+   Also read comments in that file, since they are important! This is your main wsgi script which apache will use to run         application. It has already configured for our project structure. You can set your own path to templates folder and          you'll see test site.
 
 **views.py**  - this is main flask application file.
 

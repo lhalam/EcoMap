@@ -67,6 +67,7 @@ RULEST_DICT = {':idUser': get_current_user_id,
                ':alias': allow_any_param,
                ':idPage': allow_any_param,
                ':provider': allow_any_param,
+               ':hash': allow_any_param,
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']

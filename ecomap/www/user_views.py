@@ -17,7 +17,14 @@ from ecomap.app import app, auto, logger
 @login_required
 def change_password():
     """Function, used to change user password.
-       :return: response - json object.
+
+    :rtype: JSON
+    :request agrs: `{id: "6", old_pass: "oldpasswd", password: "newpasswd"}`
+    :return:
+
+        :statuscode 400: request is invalid or old password not confirmed
+        :statuscode 200: password was successfully changed
+
     """
     response = jsonify(), 400
     if request.method == 'POST' and request.get_json():
@@ -42,7 +49,23 @@ def change_password():
 @auto.doc()
 @login_required
 def get_user_info(user_id):
-    """This method returns json object with user data."""
+    """This method returns json object with user data.
+
+    :param user_id: id of user for viewing detailed info
+    :rtype: JSON
+    :return:
+        - If user exists and data provided:
+            ``{"avatar": "/uploads/user_profile/userid_6/profile_id6.png",
+            "email": "email@email.com", "name": "Firstname", "role": "admin",
+            "surname": "Lastname"}``
+        - If there is no user with given email:
+            ``{status:'There is no user with given email'}``
+
+
+    :statuscode 401: there is no user with given email
+    :statuscode 200: user exists and data provided
+
+    """
     if request.method == 'GET':
         user = ecomap_user.get_user_by_id(user_id)
         if user:
@@ -60,7 +83,23 @@ def get_user_info(user_id):
 @login_required
 def add_profile_photo():
     """Controller provides add and edit function for user's profile photo.
+
+    :content-type: multipart/form-data
+
+    :fparam name: name of image file ('photo.jpg')
+    :fparam file: image file in base64. Content-Type: image/png
+
+    :rtype: JSON
     :return: json object with image path if success or 400 error message
+
+        - If request data is invalid:
+            ``{'error': 'error with import file'}``
+        - If all ok:
+            ``{added_file: "/uploads/user_profile/userid_6/profile_id6.png"}``
+
+    :statuscode 400: request is invalid
+    :statuscode 200: photo was successfully added
+
     """
     response = jsonify(), 400
     extension = '.png'
@@ -87,7 +126,17 @@ def add_profile_photo():
 @login_required
 def delete_profile_photo():
     """Controller for handling deleting user's profile photo.
+
+    :request args: `{'user_id': '6'}`
+    :rtype: JSON
     :return: json object with success message or message with error status
+
+        - If all ok:
+            ``{deleted_avatar: "6", msg: "success"}``
+
+    :statuscode 400: request invalid
+    :statuscode 200: successfully deleted
+
     """
     response = jsonify(), 400
     extension = '.png'

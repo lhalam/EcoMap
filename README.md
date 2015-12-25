@@ -3,6 +3,8 @@
 <h2>About this project</h2>
 <p>This repository is source code of the small web project, which is named 'EcoMap'. This website allows you to publish information about ecological issues around Ukraine to dynamic map. Officials of the Ministry of Environment use this website to collect info about problems and contact with citizens, who publish info to this website. <br>
 Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
+<p>Ecomap Rest Api docimentation <a href="http://lhalam.github.io/EcoMap/i">lhalam.github.io/EcoMap/</a></p>
+
 <h2>Dependencies</h2>
 <p>We're assumming that you're using bash & you already have installed such packages: </p>
 <ul>
@@ -36,6 +38,8 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
     <li>Run following command: <code>SOURCE INSERT_DATA.sql;</code> - this command will populate all data you need for the beginning of work</li>
     <li>Now you have working Database!</li>
 </ol>
+<h2>Database scheme</h2>
+<img src="https://raw.githubusercontent.com/lhalam/EcoMap/pagination/ecomap_db.png">
 <h2>Ecomap application runs on Apache Web Server v2.4</h2>
 <p>
     This is a short manual, which tells how to configure WSGI-Flask application and Apache server on your server or local        machine.

@@ -30,7 +30,7 @@ def load_users():
     logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
 
 
-# @app.before_request
+@app.before_request
 def check_access():
     """Global decorator for each view.
     Checks user permission to access application resources before each request.
@@ -78,14 +78,14 @@ def get_titles():
     :return: list of dicts with title, id, alias and is_enabled
     :rtype: JSON
     :JSON sample:
-        `[{'is_enabled': 1,
+        ``[{'is_enabled': 1,
         'alias': 'alias_Tag',
         'id': 1,
         'title': 'Custom_Title'},
         {'is_enabled': 1,
         'alias': 'Tag',
         'id': 2,
-        'title': 'AnotherTitle'}]`
+        'title': 'AnotherTitle'}]``
 
     """
     if request.method == 'GET':
@@ -140,21 +140,11 @@ def get_faq(alias):
 
 @app.route('/documentation')
 def documentation():
+    """Hepler route for auto_documentation module.
+    :return: rendered html with documentation api list.
+    """
     return auto.html()
 
-
-@app.route("/site-map")
-def site_map():
-    links = []
-    for rule in app.url_map.iter_rules():
-        # Filter out rules we can't navigate to in a browser
-        # and rules that require parameters
-        # if "GET" in rule.methods:
-        #     url = url_for(rule.endpoint, **(rule.defaults or {}))
-        links.append((rule.endpoint))
-    # links is now a list of url, endpoint tuples
-    return Response(json.dumps(links),
-                                mimetype='application/json'), 400
 
 if __name__ == '__main__':
     app.run()

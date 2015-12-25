@@ -122,7 +122,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.permission_id)">
+                <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.resource_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
                   <td>{{perm.action}}</td>
                   <td>{{perm.modifier}}</td>

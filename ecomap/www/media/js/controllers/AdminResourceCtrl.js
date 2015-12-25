@@ -74,7 +74,7 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
           "resource_id": id
         }
       }).then(function successCallback(data) {
-        $scope.loadRes()
+        $scope.loadPagination();
         $scope.msg.deleteSuccess('ресурсу');
       }, function errorCallback(response) {
         $scope.msg.deleteError('ресурсу', $scope.msgError['alreadyBinded']);
@@ -94,6 +94,7 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }).then(function successCallback(data) {
         $scope.addResModal = false;
         $scope.Resources[data.data.added_resource] = data.data.resource_id
+        $scope.loadPagination();
         $scope.addResModal = false
         $scope.msg.createSuccess('ресурсу');
       }, function errorCallback(response) {

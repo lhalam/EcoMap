@@ -15,9 +15,11 @@ from ecomap.utils import parse_url
 
 
 def make_json(sql_list):
-    """Function providing transform data given from db into JSON object.
-    :param sql_list: tuple of tuples from db.
-    :return: json
+    """Function providing transform data given from db into JSON object. Calls
+    in Permission Singleton class.
+    :param sql_list: tuple of tuples given from db.
+    :return: formatted json-like object with DB data.
+
     """
     dct = {}
     for (role, resource, method, perm) in sql_list:
@@ -32,7 +34,8 @@ def make_json(sql_list):
 
 def get_id_problem_owner(problem_id):
     """Method for checking custom dynamic url pattern.
-    Returns id of problem owner
+    Returns id of problem owner. Need for confirmation user identity according
+    to permission modifier (any, own, none). Need to be inserted in RULES_DICT.
     :param problem_id - problem id
     :return: id of problem owner
     """
@@ -41,23 +44,30 @@ def get_id_problem_owner(problem_id):
 
 
 def get_current_user_id(user_id):
-    """Returns id of current user.
+    """Returns id of current user. Need for confirmation user identity according
+    to permission modifier (any, own, none). Need to be inserted in RULES_DICT.
     :param user_id - user id to check
     :return: id of problem owner
+
     """
     return current_user.uid if int(user_id) == int(current_user.uid) else False
 
 
-def allow_alias(alias):
-    """Checks access rules for dynamic route.
+def allow_any_param(universal_key):
+    """Checks access rules for dynamic route. Allows to acces with any url
+    param. Note:user_id 2 is reserved in database for instance of anonymus user.
+    Need to be inserted in RULES_DICT.
+    :param universal_key - any url param
     :return: True if user is not Anonymous
+
     """
     return True if current_user.uid != 2 else False
 
 RULEST_DICT = {':idUser': get_current_user_id,
-               ':alias': allow_alias,
-               ':idPage': allow_alias,
-               ':provider': allow_alias,
+               ':alias': allow_any_param,
+               ':idPage': allow_any_param,
+               ':provider': allow_any_param,
+               ':hash': allow_any_param,
                ':idProblem': get_id_problem_owner}
 
 MODIFIERS = ['None', 'Own', 'Any']
@@ -78,6 +88,7 @@ def check_static_route(dct, access, role, resource, method):
     :param resource: resource url requested by user to check.
     :param method: request method of resource url.
     :return: access - dictionary with checking status and results.
+
     """
     permissions = dct[role][resource]
     for i in permissions:
@@ -104,6 +115,7 @@ def check_dynamic_route(dct, access, role, route, resource, method):
     :param route: resource url extracted from db to compare with user request
     url.
     :return: access - dictionary with checking status and results.
+
     """
     if ':' in str(route):
         pattern = parse_url(route, get_arg=True)
@@ -145,6 +157,7 @@ def check_permissions(role, resource, method, dct):
     formatted into json-like object
     :return: True if access is allowed or status 403
     and error message otherwise
+
     """
     access = {'status': None, 'error': None}
     if role in dct:

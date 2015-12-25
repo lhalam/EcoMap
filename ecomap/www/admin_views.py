@@ -16,7 +16,6 @@ from ecomap.permission import permission_control
 def resource_post():
     """Function which adds new site resource to site-map in admin panel.
 
-
     :rtype: JSON
     :request agrs: `{resource_name: "/res_name"}`
     :return:
@@ -145,6 +144,7 @@ def resource_get():
             [{"total_res_count": 2}]]``
         - If there are no resources:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -183,6 +183,7 @@ def role_post():
         - If all ok:
             ``{'added_role': 'role_name',
             'added_role_id': 'role_id'}``
+
     :statuscode 400: If role with this name exists or request is invalid
     :statuscode 200: If no errors
 
@@ -221,6 +222,7 @@ def role_put():
             ``{'status': False, 'error': [list of errors]}``
         - If all ok:
             ``{'status': 'success', 'edited': 'resource_name'}``
+
     :statuscode 400: if role with this name exists or request is invalid
     :statuscode 200: if no errors
 
@@ -257,6 +259,7 @@ def role_delete():
             ``{'status': False, error: [list of errors]}``
         - If all ok:
             ``{'status': 'success', 'deleted_role': 'role_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -290,7 +293,8 @@ def role_get():
         - If no roles in DB:
             ``{}``
         - If roles exists:
-            ``{'role_name': 'role_id'}``
+            ``{'role_name': 'role_id',..., 'role_name2': 'role_id'}``
+
     :statuscode 200: if no errors
 
     """
@@ -318,6 +322,7 @@ def permission_post():
         - If all ok:
             ``{'added_permission': 'description',
             'permission_id': 'permission_id'}``
+
     :statuscode 400: invalid request
     :statuscode 200: permission has been successfully added
 
@@ -400,6 +405,7 @@ def permission_delete():
         - If all ok:
             ``{'status': 'success',
             'edited_perm_id': 'permission_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -437,6 +443,7 @@ def permission_get():
             'modifier': 'modifier', 'description': 'description'}``
         - If there are no permissions for selected resource_id:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -465,6 +472,7 @@ def role_permission_post():
             ``{'status': False, 'error': [list of errors]}``
         - If all ok:
             ``{'added_role_permission_for_role': 'role_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -599,6 +607,7 @@ def get_all_permissions():
             [{"total_perm_count": 46}]]``
         - If there are no permissions:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -632,7 +641,14 @@ def get_all_users():
 
     :return: list of all users with id, first name, last name, email and role
 
+    ``[{"role": "admin", "first_name": "Admin", "last_name": "Administrator",
+    "user_id": 3, "email": "admin@ecomap.com"}
+    ...
+    {"role": "user", "first_name": "Oleg", "last_name": "Lyashko",
+    "user_id": 4, "email": "radical@gmail.com"}``
+
     :statuscode 200: no errors
+    :statuscode 400: invalid request
 
 
     """
@@ -665,9 +681,28 @@ def get_all_users():
 @auto.doc()
 @login_required
 def edit_page(page_id):
-    """This method makes changes to given page(ex-resource).
+    """This method makes changes to given page(ex-resource) via
+    page_id, passed to it.
 
-        :returns confirmation.
+    :param page_id: id of specific page to edit.
+
+    :request agrs example: `{'id': 1, 'title': 'title', 'alias': 'tag',
+       'description': 'small description of page',
+       'content': 'main article content',
+       'meta_keywords': 'keyword1, keyword2',
+       'meta_description': 'meta-description of content',
+       'is_enabled': 1}`
+
+    :return: confirmation object
+    :rtype: JSON
+    :JSON sample:
+       ``{'result': true}``
+       or
+       ``{'result': false}``
+
+    :statuscode 200: successfully edited
+    :statuscode 404: no page by given id
+
     """
     if request.method == 'PUT' and request.get_json():
         data = request.get_json()
@@ -687,7 +722,28 @@ def edit_page(page_id):
 @auto.doc()
 @login_required
 def add_page():
-    """This method adds new page to db."""
+    """This method adds new page to db.
+
+    :rtype: JSON
+    :request agrs: `{'title': 'new page', 'alias': 'tag',
+                    'description': 'short description of page',
+                    'content': 'main article content',
+                    'meta_keywords': 'keyword1, keyword2',
+                    'meta_description': 'meta-description of content',
+                    'is_enabled': 1}`
+
+    :return:
+        - If there is already page with this name:
+               ``{'result': 'False', 'msg': 'Page already exists!'}``
+        - If request data is invalid:
+              ``{'result': 'False', 'msg': 'Couldn't add new page!'}``
+        - If all ok:
+              ``{'result': 'True', 'msg': 'Succesfully added!'}``
+
+    :statuscode 200: check status in response json object
+
+    """
+
     result = None
     msg = None
     if request.method == 'POST' and request.get_json():
@@ -713,7 +769,24 @@ def add_page():
 @auto.doc()
 @login_required
 def delete_page(page_id):
-    """This method deletes page by it's id."""
+    """This method deletes page by it's id.
+
+    :param page_id: id of specific page to delete.
+
+    :request agrs example: `{'id': 1}`
+
+    :return: confirmation object
+    :rtype: JSON
+    :JSON sample:
+       ``{'result': true, 'msg': 'Page was deleted successfully!'}``
+    or
+       ``{'result': false, 'msg': 'Couldn't delete the page'}``
+
+    :statuscode 200: successfully edited
+    :statuscode 404: no page by given id
+
+    """
+
     msg = None
     result = None
     if request.method == 'DELETE':
@@ -723,7 +796,7 @@ def delete_page(page_id):
             msg = 'Page was deleted successfully!'
         else:
             result = False
-            msg = "Couldn't delete the page!"
+            msg = 'Couldn\'t delete the page!'
     return jsonify(result=result, msg=msg)
 
 

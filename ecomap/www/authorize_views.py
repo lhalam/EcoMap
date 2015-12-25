@@ -52,11 +52,11 @@ def register():
     :return:
         - if one of the field is incorrect or empty:
             ``{'error':'Unauthorized'}``
-            Status 401 - Unauthorized
         - if user already exists
             ``{'status': 'user with this email already exists'}``
         - if registration was successful:
             ``{'status': added user <username>}``
+
     :statuscode 401: form is invalid or empty
     :statuscode 400: user already exists
     :statuscode 200: registration successful
@@ -81,48 +81,13 @@ def register():
     return response
 
 
-@app.route('/api/user_roles/register', methods=['POST'])
-def register_by_admin():
-    """Method for registration new user in db by admin.
-    Method checks if user is not exists and handle
-    registration processes.
-
-    :return:
-        - if one of the field is incorrect or empty:
-            json {'error':'Unauthorized'}
-            Status 401 - Unauthorized
-        - if user already exists
-            Status 400 - Bad Request
-            json {'status': 'user with this email already exists'}
-        - if registration was successful:
-            json {'status': added user <username>}
-            Status 200 - OK
-    """
-    response = jsonify(msg='unauthorized'), 400
-    if request.method == 'POST' and request.get_json():
-        data = request.get_json()
-        valid = validator.user_registration_by_admin(data)
-        if valid['status']:
-            ecomap_user.register_by_admin(data['first_name'],
-                                 data['last_name'],
-                                 data['email'],
-                                 data['password'],
-                                 data['role_name'])
-            msg = 'added %s %s' % (data['first_name'],
-                                   data['last_name'])
-            response = jsonify({'status_message': msg}), 201
-        else:
-            response = Response(json.dumps(valid),
-                                mimetype='application/json'), 400
-    return response
-
-
 @app.route('/api/email_exist', methods=['POST'])
 @auto.doc()
 def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
     :return: json with status 200 or 400
+
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
@@ -150,6 +115,7 @@ def login():
             "token": "hashed_auth_token"}``
         - if user with entered email isn't exists or password was invalid:
             ``{'error':'message'}``
+
     :statuscode 401: user doesn't exist or password is invalid
     :statuscode 400: login data has invalid format:
     :statuscode 200: credentials are ok
@@ -190,6 +156,8 @@ def oauth_login(provider):
     """Provides facebook authorization.
     Retrieves user info from facebook, check if there is
     user with retrieved from facebook user id,
+    :param provider: Oauth provider (Facebook by default)
+
        - if yes:
            skips to next step
        - if not:
@@ -251,6 +219,7 @@ def restore_password_request():
             ``{message='Email was sended.'}``
         - if user's email isn't exists:
             ``{'error':'There is not such email.'}``
+
     :statuscode 401: no email
     :statuscode 200: email sended
 
@@ -271,6 +240,8 @@ def restore_password_request():
 def restore_password_page(hashed):
     """Renders page template to restore password.
     :param hashed: unique hash to identify user via sending it to email.
+
+    :return redirect to main page with rendered template.
 
     """
     valid = validator.hash_check(hashed)
@@ -367,7 +338,7 @@ def delete_user():
         else:
             db.delete_user(user_id[0])
             logger.info('User with id %s has been deleted' % user_id[0])
-            response = jsonify(msg='success', deleted_user = user_id[0])
+            response = jsonify(msg='success', deleted_user=user_id[0])
     else:
         response = Response(json.dumps(valid),
                             mimetype='application/json'), 400

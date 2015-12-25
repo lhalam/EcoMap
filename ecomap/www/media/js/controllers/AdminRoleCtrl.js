@@ -83,25 +83,24 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       "id": id
     }
     $scope.editRoleModal = true;
-    // $scope.listToSend = [];
   }
   $scope.rolePerm = false
   $scope.selectPerm = function(ev, perm) {
-    if ($scope.listToSend.indexOf(perm.permission_id) === -1) {
-      $scope.listToSend.push(perm.permission_id);
+    if ($scope.listToSend.indexOf(perm.resource_id) === -1) {
+      $scope.listToSend.push(perm.resource_id);
     } else {
-      $scope.listToSend.splice($scope.listToSend.indexOf(perm.permission_id), 1)
+      $scope.listToSend.splice($scope.listToSend.indexOf(perm.resource_id), 1)
     }
   }
 
   $scope.isChecked = function(perm) {
     if ($scope.listToSend) {
-      if ($scope.listToSend.indexOf(perm.permission_id) !== -1) {
+      if ($scope.listToSend.indexOf(perm.resource_id) !== -1) {
         return true;
       }
     }
   }
-
+   $scope.allPrerm=[]
   $scope.backToRole = function() {
     $scope.rolePermTable = true;
     $scope.rolePermBlock = false;
@@ -128,8 +127,8 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       }
     }).then(function successCallback(data) {
       $scope.actualPermInRole = data.data.actual;
-      //$scope.Permisions = data.data.all_permissions
-      
+      $scope.Permisions = data.data.all_permissions;
+
       for (var i = 0; i < $scope.actualPermInRole.length; i++) {
         if ($scope.listToSend.indexOf($scope.actualPermInRole[i].id) === -1) {
           $scope.listToSend.push($scope.actualPermInRole[i].permission_id)

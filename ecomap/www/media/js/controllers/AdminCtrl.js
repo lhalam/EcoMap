@@ -60,7 +60,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', "$rootScope",
            offset:0,
          }
        }).then(function successCallback(data) {
-        $scope.Resources = data.data[0]
+        $scope.Resources = data.data[0];
        },function errorCallback (response){
 
        })

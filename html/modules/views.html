@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>views &mdash; Ecomap 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="Ecomap 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Ecomap
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../flask.html">Ecomap API Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About Project</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sourcecode.html">View Sourcecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide.html">Installation Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Ecomap</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>views</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for views</h1><div class="highlight"><pre>
+<span class="c"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module holds all views controls for</span>
+<span class="sd">ecomap project.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">abort</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">url_for</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">g</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">current_user</span>
+
+<span class="kn">from</span> <span class="nn">ecomap.app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">authorize_views</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">admin_views</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">user_views</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">problem_views</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">ecomap.db</span> <span class="kn">import</span> <span class="n">util</span> <span class="k">as</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">ecomap.permission</span> <span class="kn">import</span> <span class="n">permission_control</span><span class="p">,</span> <span class="n">check_permissions</span>
+<span class="kn">from</span> <span class="nn">ecomap.utils</span> <span class="kn">import</span> <span class="n">parse_url</span>
+
+
+<span class="nd">@app.before_request</span>
+<span class="k">def</span> <span class="nf">load_users</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function-decorator checks if user is authenticated, else creates</span>
+<span class="sd">       Anonymous user instance.</span>
+<span class="sd">       Launches before requests.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">current_user</span><span class="o">.</span><span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">current_user</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">anon</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">Anonymous</span><span class="p">()</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">anon</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Current user is (</span><span class="si">%s</span><span class="s">), role(</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="p">))</span>
+
+
+<span class="nd">@app.before_request</span>
+<span class="k">def</span> <span class="nf">check_access</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Global decorator for each view.</span>
+<span class="sd">    Checks user permission to access application resources before each request.</span>
+<span class="sd">    Gets dynamic request params(user role, url, request method) from each</span>
+<span class="sd">    request context and compares it with admin permissions stored in db.</span>
+<span class="sd">    :return: nested function returns true or 403 status and denies access.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s">&#39;access_control&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span><span class="p">:</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">get_dct</span><span class="p">()</span>
+    <span class="n">access_rules</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span>
+    <span class="n">route</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+
+    <span class="n">access_result</span> <span class="o">=</span> <span class="n">check_permissions</span><span class="p">(</span><span class="n">current_user</span><span class="o">.</span><span class="n">role</span><span class="p">,</span>
+                                      <span class="n">route</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">access_rules</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">access_result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]:</span>
+        <span class="n">access_status</span> <span class="o">=</span> <span class="n">access_result</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;ACCESS STATUS: </span><span class="si">%s</span><span class="s"> DETAILS:(url= </span><span class="si">%s</span><span class="s">[</span><span class="si">%s</span><span class="s">], user ID:</span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">))&#39;</span><span class="p">,</span>
+                    <span class="n">access_status</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                    <span class="n">current_user</span><span class="o">.</span><span class="n">role</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;ACCESS: FORBIDDEN! DETAILS:(url= </span><span class="si">%s</span><span class="s">[</span><span class="si">%s</span><span class="s">],&#39;</span>
+                    <span class="s">&#39;user ID:</span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">), errors=</span><span class="si">%s</span><span class="s">)&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                        <span class="n">current_user</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">access_result</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]))</span>
+        <span class="n">abort</span><span class="p">(</span><span class="mi">403</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<div class="viewcode-block" id="index"><a class="viewcode-back" href="../flask.html#views.index">[docs]</a><span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Controller starts main application page.</span>
+<span class="sd">    Shows initial data of application, renders template with built-in Angular</span>
+<span class="sd">    JS.</span>
+
+<span class="sd">    :return: renders html template with angular app.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/getTitles&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">get_titles</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method returns short info about all defined static pages.</span>
+
+<span class="sd">    :return: list of dicts with title, id, alias and is_enabled</span>
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :JSON sample:</span>
+<span class="sd">        ``[{&#39;is_enabled&#39;: 1,</span>
+<span class="sd">        &#39;alias&#39;: &#39;alias_Tag&#39;,</span>
+<span class="sd">        &#39;id&#39;: 1,</span>
+<span class="sd">        &#39;title&#39;: &#39;Custom_Title&#39;},</span>
+<span class="sd">        {&#39;is_enabled&#39;: 1,</span>
+<span class="sd">        &#39;alias&#39;: &#39;Tag&#39;,</span>
+<span class="sd">        &#39;id&#39;: 2,</span>
+<span class="sd">        &#39;title&#39;: &#39;AnotherTitle&#39;}]``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">pages</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_pages_titles</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">pages</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">pages</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                               <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                               <span class="s">&#39;alias&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                               <span class="s">&#39;is_enabled&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">3</span><span class="p">]})</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;application/json&quot;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/resources/&lt;alias&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">get_faq</span><span class="p">(</span><span class="n">alias</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This method retrieves exact faq page(ex-resource) via</span>
+<span class="sd">    alias, passed to it.</span>
+
+<span class="sd">    :param alias: url path to specific static page.</span>
+
+<span class="sd">    :return: object with all page&#39;s attributes within a list or ``404``</span>
+<span class="sd">        status.</span>
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :JSON sample:</span>
+<span class="sd">       ``[{&#39;id&#39;: 1, &#39;title&#39;: &#39;title&#39;, &#39;alias&#39;: &#39;tag&#39;,</span>
+<span class="sd">       &#39;description&#39;: &#39;small description of page&#39;,</span>
+<span class="sd">       &#39;content&#39;: &#39;main article content&#39;,</span>
+<span class="sd">       &#39;meta_keywords&#39;: &#39;keyword1, keyword2&#39;,</span>
+<span class="sd">       &#39;meta_description&#39;: &#39;meta-description of content&#39;,</span>
+<span class="sd">       &#39;is_enabled&#39;: 1}]``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_page_by_alias</span><span class="p">(</span><span class="n">alias</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="mi">404</span>
+        <span class="k">if</span> <span class="n">page</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                       <span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="s">&#39;alias&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                       <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                       <span class="s">&#39;content&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                       <span class="s">&#39;meta_keywords&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                       <span class="s">&#39;meta_description&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                       <span class="s">&#39;is_enabled&#39;</span><span class="p">:</span> <span class="n">page</span><span class="p">[</span><span class="mi">7</span><span class="p">]}]</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&quot;application/json&quot;</span><span class="p">,</span>
+                        <span class="n">status</span><span class="o">=</span><span class="n">status_code</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/documentation&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">documentation</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Hepler route for auto_documentation module.</span>
+<span class="sd">    :return: rendered html with documentation api list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">auto</span><span class="o">.</span><span class="n">html</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, lv-164.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

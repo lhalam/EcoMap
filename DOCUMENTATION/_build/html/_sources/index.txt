@@ -34,5 +34,5 @@ View Sourcecode
    :maxdepth: 2
 
    sourcecode
-
+   guide
 

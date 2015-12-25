@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>authorize_views &mdash; Ecomap 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="Ecomap 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Ecomap
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../flask.html">Ecomap API Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About Project</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sourcecode.html">View Sourcecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide.html">Installation Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Ecomap</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>authorize_views</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for authorize_views</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Module contains routes for user authorization,</span>
+<span class="sd">   registering and logout.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">render_template</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">login_user</span><span class="p">,</span> <span class="n">logout_user</span><span class="p">,</span> <span class="n">login_required</span>
+
+<span class="kn">from</span> <span class="nn">urlparse</span> <span class="kn">import</span> <span class="n">parse_qsl</span>
+
+<span class="kn">import</span> <span class="nn">ecomap.user</span> <span class="kn">as</span> <span class="nn">ecomap_user</span>
+
+<span class="kn">from</span> <span class="nn">ecomap</span> <span class="kn">import</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">ecomap.app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">ecomap.db</span> <span class="kn">import</span> <span class="n">util</span> <span class="k">as</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">ecomap.config</span> <span class="kn">import</span> <span class="n">Config</span>
+
+<span class="n">_CONFIG</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span><span class="o">.</span><span class="n">get_config</span><span class="p">()</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/logout&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">logout</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Method for user&#39;s log out.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - if logging out was successful:</span>
+<span class="sd">            ``{result:True}``</span>
+<span class="sd">        - in case of problems:</span>
+<span class="sd">            ``{result:False}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">logout_user</span><span class="p">())</span>
+
+ 
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/register&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<div class="viewcode-block" id="register"><a class="viewcode-back" href="../flask.html#authorize_views.register">[docs]</a><span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Method for registration new user in db.</span>
+<span class="sd">    Method checks if user is not exists and handle</span>
+<span class="sd">    registration processes.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{&#39;first_name&#39;: &#39;Ivan&#39;,</span>
+<span class="sd">                     &#39;last_name&#39;: &#39;Sirko&#39;,</span>
+<span class="sd">                     &#39;email&#39;: &#39;email@test.com&#39;,</span>
+<span class="sd">                     &#39;password&#39;: &#39;passw&#39;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - if one of the field is incorrect or empty:</span>
+<span class="sd">            ``{&#39;error&#39;:&#39;Unauthorized&#39;}``</span>
+<span class="sd">        - if user already exists</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;user with this email already exists&#39;}``</span>
+<span class="sd">        - if registration was successful:</span>
+<span class="sd">            ``{&#39;status&#39;: added user &lt;username&gt;}``</span>
+
+<span class="sd">    :statuscode 401: form is invalid or empty</span>
+<span class="sd">    :statuscode 400: user already exists</span>
+<span class="sd">    :statuscode 200: registration successful</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;unauthorized&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">user_registration</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">ecomap_user</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;first_name&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;last_name&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">])</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;added </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;first_name&#39;</span><span class="p">],</span>
+                                   <span class="n">data</span><span class="p">[</span><span class="s">&#39;last_name&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">({</span><span class="s">&#39;status_message&#39;</span><span class="p">:</span> <span class="n">msg</span><span class="p">}),</span> <span class="mi">201</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/email_exist&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">email_exist</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function for AJAX call from frontend.</span>
+<span class="sd">    Validates unique email identifier before registering a new user</span>
+<span class="sd">    :return: json with status 200 or 400</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">get_user_by_email</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">isValid</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/login&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">login</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Login processes handler.</span>
+<span class="sd">    Log user in or shows error messages.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{&#39;email&#39;: &#39;username@mail.com&#39;,</span>
+<span class="sd">                     &#39;password&#39;: &#39;userpaswd&#39;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - if credentials are ok and log in successful:</span>
+<span class="sd">            ``{&quot;email&quot;: &quot;username@mail.com&quot;,</span>
+<span class="sd">            &quot;iat&quot;: &quot;???&quot;,</span>
+<span class="sd">            &quot;id&quot;: 6,</span>
+<span class="sd">            &quot;name&quot;: &quot;oleg&quot;,</span>
+<span class="sd">            &quot;role&quot;: &quot;admin&quot;,</span>
+<span class="sd">            &quot;surname&quot;: &quot;lyashko&quot;,</span>
+<span class="sd">            &quot;token&quot;: &quot;hashed_auth_token&quot;}``</span>
+<span class="sd">        - if user with entered email isn&#39;t exists or password was invalid:</span>
+<span class="sd">            ``{&#39;error&#39;:&#39;message&#39;}``</span>
+
+<span class="sd">    :statuscode 401: user doesn&#39;t exist or password is invalid</span>
+<span class="sd">    :statuscode 400: login data has invalid format:</span>
+<span class="sd">    :statuscode 200: credentials are ok</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(),</span> <span class="mi">401</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">user_login</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">get_user_by_email</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">user</span> <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">verify_password</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]):</span>
+                <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">remember</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                                   <span class="n">name</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                                   <span class="n">surname</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span>
+                                   <span class="n">role</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">iat</span><span class="o">=</span><span class="s">&quot;???&quot;</span><span class="p">,</span>
+                                   <span class="n">token</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_auth_token</span><span class="p">(),</span>
+                                   <span class="n">email</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;if not user&#39;</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;There is no user with given email.&#39;</span><span class="p">,</span>
+                                   <span class="n">logined</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="p">),</span> <span class="mi">401</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">verify_password</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;if not user verify&#39;</span><span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Invalid password, try again.&#39;</span><span class="p">,</span>
+                                   <span class="n">logined</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mi">401</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/authorize/&lt;provider&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">,</span> <span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">oauth_login</span><span class="p">(</span><span class="n">provider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provides facebook authorization.</span>
+<span class="sd">    Retrieves user info from facebook, check if there is</span>
+<span class="sd">    user with retrieved from facebook user id,</span>
+<span class="sd">    :param provider: Oauth provider (Facebook by default)</span>
+
+<span class="sd">       - if yes:</span>
+<span class="sd">           skips to next step</span>
+<span class="sd">       - if not:</span>
+<span class="sd">           checks if there is user with retrieved email</span>
+<span class="sd">           - if yes:</span>
+<span class="sd">               adds oauth credentials to this user</span>
+<span class="sd">           - if not:</span>
+<span class="sd">               creates new user</span>
+<span class="sd">       After all function logging in user into app and return it&#39;s params</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">access_token_url</span> <span class="o">=</span> <span class="s">&#39;https://graph.facebook.com/oauth/access_token&#39;</span>
+    <span class="n">graph_api_url</span> <span class="o">=</span> <span class="s">&#39;https://graph.facebook.com/v2.5/me?fields=email,&#39;</span>\
+                    <span class="s">&#39;first_name,last_name,id,picture.type(large)&#39;</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;client_id&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s">&#39;clientId&#39;</span><span class="p">],</span>
+        <span class="s">&#39;redirect_uri&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s">&#39;redirectUri&#39;</span><span class="p">],</span>
+        <span class="s">&#39;client_secret&#39;</span><span class="p">:</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;OAUTH_CREDENTIALS&#39;</span><span class="p">][</span><span class="s">&#39;facebook&#39;</span><span class="p">][</span><span class="s">&#39;secret&#39;</span><span class="p">],</span>
+        <span class="s">&#39;code&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">json</span><span class="p">[</span><span class="s">&#39;code&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">access_token_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">access_token</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parse_qsl</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+    <span class="n">resource</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">graph_api_url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">access_token</span><span class="p">)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s">&#39;picture&#39;</span><span class="p">][</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="s">&#39;url&#39;</span><span class="p">])</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">facebook_register</span><span class="p">(</span><span class="n">profile</span><span class="p">[</span><span class="s">&#39;first_name&#39;</span><span class="p">],</span>
+                                         <span class="n">profile</span><span class="p">[</span><span class="s">&#39;last_name&#39;</span><span class="p">],</span>
+                                         <span class="n">profile</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">],</span>
+                                         <span class="n">provider</span><span class="p">,</span>
+                                         <span class="n">profile</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">insert_user_avatar</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">profile</span><span class="p">[</span><span class="s">&#39;picture&#39;</span><span class="p">][</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="s">&#39;url&#39;</span><span class="p">])</span>
+
+    <span class="n">login_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">remember</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+                       <span class="n">name</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+                       <span class="n">surname</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span>
+                       <span class="n">role</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="n">iat</span><span class="o">=</span><span class="s">&quot;???&quot;</span><span class="p">,</span>
+                       <span class="n">token</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_auth_token</span><span class="p">(),</span>
+                       <span class="n">email</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/restore_password&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">restore_password_request</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function to restore forgotten password.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{&#39;email&#39;: &#39;username@mail.com&#39;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - if credentials are ok and checking successful:</span>
+<span class="sd">            ``{message=&#39;Email was sended.&#39;}``</span>
+<span class="sd">        - if user&#39;s email isn&#39;t exists:</span>
+<span class="sd">            ``{&#39;error&#39;:&#39;There is not such email.&#39;}``</span>
+
+<span class="sd">    :statuscode 401: no email</span>
+<span class="sd">    :statuscode 200: email sended</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s">&#39;email&#39;</span><span class="p">]</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">get_user_by_email</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+        <span class="n">ecomap_user</span><span class="o">.</span><span class="n">restore_password</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;Email was sended.&#39;</span><span class="p">),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;There is not such email.&#39;</span><span class="p">),</span> <span class="mi">401</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/restore_password_page/&lt;string:hashed&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">restore_password_page</span><span class="p">(</span><span class="n">hashed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders page template to restore password.</span>
+<span class="sd">    :param hashed: unique hash to identify user via sending it to email.</span>
+
+<span class="sd">    :return redirect to main page with rendered template.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">hash_check</span><span class="p">(</span><span class="n">hashed</span><span class="p">)</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+        <span class="n">creation_time</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">check_hash_in_db</span><span class="p">(</span><span class="n">hashed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">creation_time</span><span class="p">:</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">creation_time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;=</span> <span class="n">_CONFIG</span><span class="p">[</span><span class="s">&#39;hash_options.lifetime&#39;</span><span class="p">]:</span>
+                <span class="n">page</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;password_restoring_pass.html&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">page</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/restore_password&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">restore_password</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Updates user password.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">change_password</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_id_by_hash</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;hash_sum&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">user_id</span><span class="p">:</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">hash_pass</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">])</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">restore_password</span><span class="p">(</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">password</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;Password restored.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;got error.&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/delete_user_request&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">find_to_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function to send email with delete link&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">search_id</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;user_id&#39;</span><span class="p">]</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">get_user_by_id</span><span class="p">(</span><span class="n">search_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">search_id</span> <span class="o">==</span> <span class="n">ecomap_user</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+        <span class="n">ecomap_user</span><span class="o">.</span><span class="n">delete_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;Email was sended.&#39;</span><span class="p">),</span> <span class="mi">200</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&quot;You can&#39;t do that&quot;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/delete_user_page/&lt;string:hashed&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">delete_user_page</span><span class="p">(</span><span class="n">hashed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Renders page to confirmation of deleting user&quot;&quot;&quot;</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">hash_check</span><span class="p">(</span><span class="n">hashed</span><span class="p">)</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+        <span class="n">creation_time</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">check_hash_in_db</span><span class="p">(</span><span class="n">hashed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">creation_time</span><span class="p">:</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">creation_time</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&lt;=</span> <span class="n">_CONFIG</span><span class="p">[</span><span class="s">&#39;hash_options.lifetime&#39;</span><span class="p">]:</span>
+                
+                <span class="n">page</span> <span class="o">=</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">page</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/user_delete&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">delete_user</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Controller for handling deletion of user profile by</span>
+<span class="sd">    profile owner.</span>
+<span class="sd">    :return: json object with success message or message with error</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">hash_check</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;hash_sum&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_user_id_by_hash</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;hash_sum&#39;</span><span class="p">])</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="n">tuple_of_problems</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_problem_id_for_del</span><span class="p">(</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">problem_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">tuple_with_problem_id</span> <span class="ow">in</span> <span class="n">tuple_of_problems</span><span class="p">:</span>
+            <span class="n">problem_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tuple_with_problem_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">problem_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">problem_id</span> <span class="ow">in</span> <span class="n">problem_list</span><span class="p">:</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">change_problem_to_anon</span><span class="p">(</span><span class="n">problem_id</span><span class="p">)</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">change_activity_to_anon</span><span class="p">(</span><span class="n">problem_id</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;User with id </span><span class="si">%s</span><span class="s"> has been deleted&#39;</span> <span class="o">%</span> <span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span> <span class="n">deleted_user</span><span class="o">=</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;User with id </span><span class="si">%s</span><span class="s"> has been deleted&#39;</span> <span class="o">%</span> <span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span> <span class="n">deleted_user</span><span class="o">=</span><span class="n">user_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, lv-164.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,1047 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>admin_views &mdash; Ecomap 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="../about.html"/>
+    <link rel="top" title="Ecomap 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="Module code" href="index.html"/> 
+
+  
+  <script src="../static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Ecomap
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../flask.html">Ecomap API Documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About Project</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../sourcecode.html">View Sourcecode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide.html">Installation Guide</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Ecomap</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      
+    <li>admin_views</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for admin_views</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Module contains routes, used for admin page.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span> <span class="nn">flask_login</span> <span class="kn">import</span> <span class="n">login_required</span>
+
+<span class="kn">from</span> <span class="nn">ecomap</span> <span class="kn">import</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">ecomap.app</span> <span class="kn">import</span> <span class="n">app</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span> <span class="nn">ecomap.db</span> <span class="kn">import</span> <span class="n">util</span> <span class="k">as</span> <span class="n">db</span>
+<span class="kn">from</span> <span class="nn">ecomap.permission</span> <span class="kn">import</span> <span class="n">permission_control</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/resources&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="resource_post"><a class="viewcode-back" href="../flask.html#admin_views.resource_post">[docs]</a><span class="k">def</span> <span class="nf">resource_post</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which adds new site resource to site-map in admin panel.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request agrs: `{resource_name: &quot;/res_name&quot;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If there is already resource with this name:</span>
+<span class="sd">               ``{&#39;error&#39;: &#39;resource already exists&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">              ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">              ``{&#39;added_resource&#39;: &#39;resource_name&#39;,</span>
+<span class="sd">              &#39;resource_id&#39;: &#39;resource_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: resource already exists or request is invalid</span>
+<span class="sd">    :statuscode 200: resource was successfully posted</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">resource_post</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_resource_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Resource already exists&#39;</span><span class="p">),</span> <span class="mi">400</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">])</span>
+        <span class="n">added_res_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_resource_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">added_resource</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">],</span>
+                           <span class="n">resource_id</span><span class="o">=</span><span class="n">added_res_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/resources&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">resource_put</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which edits resource name by its id.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{resource_name: &quot;new_res_name&quot;, resource_id: 29}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">            - If there is already resource with this name:</span>
+<span class="sd">                 ``{&#39;error&#39;: &#39;this name already exists&#39;}``</span>
+<span class="sd">            - If request data is invalid:</span>
+<span class="sd">                 ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">            - If all ok:</span>
+<span class="sd">                 ``{&#39;status&#39;: &#39;success&#39;, &#39;edited&#39;: &#39;resource_name&#39;}``</span>
+
+<span class="sd">    :statuscode 400: resource already exists or request is invalid</span>
+<span class="sd">    :statuscode 200: resource was successfully posted</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">resource_put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_resource_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;this name already exists&#39;</span><span class="p">),</span> <span class="mi">400</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">edit_resource_name</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">],</span>
+                              <span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                           <span class="n">edited</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_name&#39;</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/resources&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">resource_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which deletes resource from database by id.</span>
+<span class="sd">    Before delete checks if resource have any permissions.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{resource_id: 29}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If resource has assigned permissions:</span>
+<span class="sd">            ``{&#39;error&#39;: &#39;Cannot delete!&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;success&#39;, &#39;deleted_resource&#39;: &#39;resource_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: if resource has assigned permissions or request invalid</span>
+<span class="sd">    :statuscode 200: resource was deleted successfully</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">resource_delete</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">check_resource_deletion</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">]):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete_resource_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                               <span class="n">deleted_resource</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Cannot delete!&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/resources&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">resource_get</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which returns resources list from db with pagination options.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :query offset: offset number. default is 0</span>
+<span class="sd">    :query limit: limit number. default is 5</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If resource list is not empty:</span>
+<span class="sd">            ``[[{&quot;resource_name&quot;: &quot;name&quot;, &quot;id&quot;: 1},</span>
+<span class="sd">            {&quot;resource_name&quot;: &quot;name_2&quot;, &quot;id&quot;: 2}],</span>
+<span class="sd">            [{&quot;total_res_count&quot;: 2}]]``</span>
+<span class="sd">        - If there are no resources:</span>
+<span class="sd">            ``{}``</span>
+
+<span class="sd">    :statuscode 200: no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;offset&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+    <span class="n">per_page</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;per_page&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">5</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_resources</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">per_page</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">count_resources</span><span class="p">()</span>
+    <span class="n">total_count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">resource</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">resources</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">resource</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                             <span class="s">&#39;resource_name&#39;</span><span class="p">:</span> <span class="n">resource</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+    <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;total_res_count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">resources</span><span class="p">,</span> <span class="p">[</span><span class="n">total_count</span><span class="p">]]),</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/roles&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="role_post"><a class="viewcode-back" href="../flask.html#admin_views.role_post">[docs]</a><span class="k">def</span> <span class="nf">role_post</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which adds new role into database.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{&quot;role_name&quot;:&quot;test&quot;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If there is already role with this name:</span>
+<span class="sd">            ``{&#39;error&#39;: &#39;role already exists&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;added_role&#39;: &#39;role_name&#39;,</span>
+<span class="sd">            &#39;added_role_id&#39;: &#39;role_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: If role with this name exists or request is invalid</span>
+<span class="sd">    :statuscode 200: If no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">role_post</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_role_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;role already exists&#39;</span><span class="p">),</span> <span class="mi">400</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">insert_role</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">])</span>
+        <span class="n">added_role_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_role_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">])</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">added_role</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">],</span>
+                           <span class="n">added_role_id</span><span class="o">=</span><span class="n">added_role_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/roles&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_put</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which edits role name by it id.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{role_name: &quot;new_name&quot;, role_id: 5}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If there is already resource with this name:</span>
+<span class="sd">            ``{&#39;error&#39;: &#39;this name already exists&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;success&#39;, &#39;edited&#39;: &#39;resource_name&#39;}``</span>
+
+<span class="sd">    :statuscode 400: if role with this name exists or request is invalid</span>
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">role_put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_role_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;this name already exists&#39;</span><span class="p">),</span> <span class="mi">400</span>
+
+        <span class="n">db</span><span class="o">.</span><span class="n">edit_role</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                           <span class="n">edited</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_name&#39;</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/roles&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which deletes role from database by it id.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args: `{role_id: 5}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If role has permissions:</span>
+<span class="sd">            ``{&#39;error&#39;: &#39;Cannot delete!&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, error: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;success&#39;, &#39;deleted_role&#39;: &#39;role_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: if role has assigned permissions or request invalid</span>
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">role_delete</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">check_role_deletion</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">]):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete_role_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                                   <span class="n">deleted_role</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Cannot delete!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/roles&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_get</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which gets all roles of user from database.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If no roles in DB:</span>
+<span class="sd">            ``{}``</span>
+<span class="sd">        - If roles exists:</span>
+<span class="sd">            ``{&#39;role_name&#39;: &#39;role_id&#39;,..., &#39;role_name2&#39;: &#39;role_id&#39;}``</span>
+
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_roles</span><span class="p">()</span>
+    <span class="n">parsed_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+        <span class="n">parsed_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">query</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">parsed_data</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="permission_post"><a class="viewcode-back" href="../flask.html#admin_views.permission_post">[docs]</a><span class="k">def</span> <span class="nf">permission_post</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which adds new permission into database.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{action: &quot;DELETE&quot;,</span>
+<span class="sd">        description: &quot;TEST&quot;,</span>
+<span class="sd">        modifier: &quot;None&quot;,</span>
+<span class="sd">        resource_id: &quot;33&quot;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;added_permission&#39;: &#39;description&#39;,</span>
+<span class="sd">            &#39;permission_id&#39;: &#39;permission_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: invalid request</span>
+<span class="sd">    :statuscode 200: permission has been successfully added</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">permission_post</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">insert_permission</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;action&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;modifier&#39;</span><span class="p">],</span>
+                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">])</span>
+            <span class="n">added_perm_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_permission_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;resource_id&#39;</span><span class="p">],</span>
+                                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;action&#39;</span><span class="p">],</span>
+                                                 <span class="n">data</span><span class="p">[</span><span class="s">&#39;modifier&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">added_permission_for</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">],</span>
+                               <span class="n">permission_id</span><span class="o">=</span><span class="n">added_perm_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">permission_put</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which edits permission.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{action: &quot;POST&quot;,</span>
+<span class="sd">        description: &quot;edited description&quot;,</span>
+<span class="sd">        modifier: &quot;Any&quot;,</span>
+<span class="sd">        resource_id: &quot;33&quot;}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;success&#39;,</span>
+<span class="sd">            &#39;edited_perm_id&#39;: &#39;permission_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: invalid request</span>
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;PUT&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">permission_put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">edit_permission</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;action&#39;</span><span class="p">],</span>
+                               <span class="n">data</span><span class="p">[</span><span class="s">&#39;modifier&#39;</span><span class="p">],</span>
+                               <span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">],</span>
+                               <span class="n">data</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                               <span class="n">edited_perm_id</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">permission_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which deletes permission by it id.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{permission_id: 5}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If permission was binded to some role:</span>
+<span class="sd">            ``{&#39;error&#39;: &#39;Cannot delete!&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;status&#39;: &#39;success&#39;,</span>
+<span class="sd">            &#39;edited_perm_id&#39;: &#39;permission_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: if role has assigned permissions or request invalid</span>
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;DELETE&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">permission_delete</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">check_permission_deletion</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">]):</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">delete_permission_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">])</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                                   <span class="n">deleted_permission</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">])</span>
+                <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Cannot delete!&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">permission_get</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which gets all permissions.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :query resource_id: id of site resource(int)</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        - If resource list is not empty for this id:</span>
+<span class="sd">            ``{&#39;permission_id&#39;: &#39;permission_id&#39;, &#39;action&#39;: &#39;action&#39;,</span>
+<span class="sd">            &#39;modifier&#39;: &#39;modifier&#39;, &#39;description&#39;: &#39;description&#39;}``</span>
+<span class="sd">        - If there are no permissions for selected resource_id:</span>
+<span class="sd">            ``{}``</span>
+
+<span class="sd">    :statuscode 200: no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resource_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;resource_id&#39;</span><span class="p">)</span>
+    <span class="n">permission_tuple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_permissions_by_resource</span><span class="p">(</span><span class="n">resource_id</span><span class="p">)</span>
+    <span class="n">parsed_json</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">permission_tuple</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">permission_tuple</span><span class="p">:</span>
+            <span class="n">parsed_json</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;permission_id&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                <span class="s">&#39;action&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                <span class="s">&#39;modifier&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">3</span><span class="p">]})</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed_json</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/role_permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="role_permission_post"><a class="viewcode-back" href="../flask.html#admin_views.role_permission_post">[docs]</a><span class="k">def</span> <span class="nf">role_permission_post</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which binds permission with role.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{permission_id: 5, role_id: 4}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If request data is not valid:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;added_role_permission_for_role&#39;: &#39;role_id&#39;}``</span>
+
+<span class="sd">    :statuscode 400: if role has assigned permissions or request invalid</span>
+<span class="sd">    :statuscode 200: if no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">role_permission_post</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">add_role_permission</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">],</span>
+                               <span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">])</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">added_role_permission_for_role</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+        <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/role_permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_permission_put</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which sets list of permission to role. Before sets</span>
+<span class="sd">    removes all permissions from role.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{permission_id: 5, role_id: 4}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If request data is not invalid&#39;:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;msg&#39;: &#39;edited permission&#39;}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Role permission has been changed.&#39;</span><span class="p">)</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">delete_permissions_by_role_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">perm_id</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;permission_id&#39;</span><span class="p">]:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">add_role_permission</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">],</span> <span class="n">perm_id</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;edited permission&#39;</span><span class="p">)</span>
+    <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/role_permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_permission_delete</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function to delete permissions by role id.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request args example: `{role_id: 4}`</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If request data is not invalid&#39;:</span>
+<span class="sd">            ``{&#39;status&#39;: False, &#39;error&#39;: [list of errors]}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">            ``{&#39;msg&#39;: &#39;deleted permission&#39;}``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">role_permission_delete</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">check_role_deletion</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">]):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">delete_role_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                               <span class="n">deleted_role</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">error</span><span class="o">=</span><span class="s">&#39;Cannot delete!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                            <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/role_permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">role_permission_get</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which gets all permissions from database and all actual</span>
+<span class="sd">    permissions for current role.</span>
+
+<span class="sd">    :query role_id: set specific id of user role for showing its actual list</span>
+<span class="sd">     of permissions</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        ``{&#39;actual&#39;: [list of actual permissions for role],</span>
+<span class="sd">        &#39;all_permissions&#39;: [list of all permissions]}``</span>
+<span class="sd">    :rtype: JSON</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">role_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;role_id&#39;</span><span class="p">)</span>
+    <span class="n">permissions_of_role</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_role_permission</span><span class="p">(</span><span class="n">role_id</span><span class="p">)</span>
+    <span class="n">all_permissions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_permission_list</span><span class="p">()</span>
+    <span class="n">parsed_json</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">all_permissions</span><span class="p">:</span>
+        <span class="n">parsed_json</span><span class="p">[</span><span class="s">&#39;all_permissions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">parsed_json</span><span class="p">[</span><span class="s">&#39;actual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">all_permissions</span><span class="p">:</span>
+            <span class="n">parsed_json</span><span class="p">[</span><span class="s">&#39;all_permissions&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;resource_id&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                   <span class="s">&#39;action&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                                   <span class="s">&#39;modifier&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                                   <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">4</span><span class="p">]})</span>
+
+            <span class="n">parsed_json</span><span class="p">[</span><span class="s">&#39;actual&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[({</span><span class="s">&#39;permission_id&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;action&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                       <span class="s">&#39;modifier&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                       <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]})</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                                     <span class="n">permissions_of_role</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed_json</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/all_permissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">get_all_permissions</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function sends all created permissions to frontend. Handles with</span>
+<span class="sd">    pagination options defined in query arguments.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :query offset: pgination offset number. default is 0</span>
+<span class="sd">    :query limit: pagination limit number. default is 5</span>
+<span class="sd">    :return:</span>
+<span class="sd">        - If permission tuple from DB is not empty:</span>
+<span class="sd">            ``[[{&quot;action&quot;: &quot;POST&quot;, &quot;permission_id&quot;: 6,</span>
+<span class="sd">            &quot;resource_name&quot;: &quot;/api/register&quot;,</span>
+<span class="sd">            &quot;modifier&quot;: &quot;Any&quot;,</span>
+<span class="sd">            &quot;description&quot;: &quot;register user into app&quot;}],</span>
+<span class="sd">            [{&quot;total_perm_count&quot;: 46}]]``</span>
+<span class="sd">        - If there are no permissions:</span>
+<span class="sd">            ``{}``</span>
+
+<span class="sd">    :statuscode 200: no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;offset&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+    <span class="n">per_page</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;per_page&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">5</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">count_permissions</span><span class="p">()</span>
+    <span class="n">all_permissions</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_permissions</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">per_page</span><span class="p">)</span>
+    <span class="n">permissions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_count</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">all_permissions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">perm</span> <span class="ow">in</span> <span class="n">all_permissions</span><span class="p">:</span>
+            <span class="n">permissions</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s">&#39;permission_id&#39;</span><span class="p">:</span> <span class="n">perm</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s">&#39;resource_name&#39;</span><span class="p">:</span> <span class="n">perm</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s">&#39;action&#39;</span><span class="p">:</span> <span class="n">perm</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                <span class="s">&#39;modifier&#39;</span><span class="p">:</span> <span class="n">perm</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                <span class="s">&#39;description&#39;</span><span class="p">:</span> <span class="n">perm</span><span class="p">[</span><span class="mi">4</span><span class="p">]})</span>
+    <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;total_perm_count&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">permissions</span><span class="p">,</span> <span class="p">[</span><span class="n">total_count</span><span class="p">]]),</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/user_roles&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">,</span> <span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">get_all_users</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function, used to get all users.</span>
+
+<span class="sd">    :return: list of all users with id, first name, last name, email and role</span>
+
+<span class="sd">    ``[{&quot;role&quot;: &quot;admin&quot;, &quot;first_name&quot;: &quot;Admin&quot;, &quot;last_name&quot;: &quot;Administrator&quot;,</span>
+<span class="sd">    &quot;user_id&quot;: 3, &quot;email&quot;: &quot;admin@ecomap.com&quot;}</span>
+<span class="sd">    ...</span>
+<span class="sd">    {&quot;role&quot;: &quot;user&quot;, &quot;first_name&quot;: &quot;Oleg&quot;, &quot;last_name&quot;: &quot;Lyashko&quot;,</span>
+<span class="sd">    &quot;user_id&quot;: 4, &quot;email&quot;: &quot;radical@gmail.com&quot;}``</span>
+
+<span class="sd">    :statuscode 200: no errors</span>
+<span class="sd">    :statuscode 400: invalid request</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+
+        <span class="n">valid</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">user_role_put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">valid</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]:</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">change_user_role</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">],</span>
+                                <span class="n">data</span><span class="p">[</span><span class="s">&#39;user_id&#39;</span><span class="p">])</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s">&#39;success&#39;</span><span class="p">,</span>
+                               <span class="n">added_role</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;role_id&#39;</span><span class="p">])</span>
+            <span class="n">session</span><span class="p">[</span><span class="s">&#39;access_control&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">permission_control</span><span class="o">.</span><span class="n">reload_dct</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">valid</span><span class="p">),</span>
+                                <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">),</span> <span class="mi">400</span>
+        <span class="k">return</span> <span class="n">response</span>
+    <span class="n">users_tuple</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_all_users</span><span class="p">()</span>
+    <span class="n">parsed_json</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">users_tuple</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">users_tuple</span><span class="p">:</span>
+            <span class="n">parsed_json</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;first_name&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                <span class="s">&#39;last_name&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s">&#39;email&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                                <span class="s">&#39;role&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="mi">4</span><span class="p">]})</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed_json</span><span class="p">),</span> <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/editResource/&lt;int:page_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;PUT&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">edit_page</span><span class="p">(</span><span class="n">page_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This method makes changes to given page(ex-resource) via</span>
+<span class="sd">    page_id, passed to it.</span>
+
+<span class="sd">    :param page_id: id of specific page to edit.</span>
+
+<span class="sd">    :request agrs example: `{&#39;id&#39;: 1, &#39;title&#39;: &#39;title&#39;, &#39;alias&#39;: &#39;tag&#39;,</span>
+<span class="sd">       &#39;description&#39;: &#39;small description of page&#39;,</span>
+<span class="sd">       &#39;content&#39;: &#39;main article content&#39;,</span>
+<span class="sd">       &#39;meta_keywords&#39;: &#39;keyword1, keyword2&#39;,</span>
+<span class="sd">       &#39;meta_description&#39;: &#39;meta-description of content&#39;,</span>
+<span class="sd">       &#39;is_enabled&#39;: 1}`</span>
+
+<span class="sd">    :return: confirmation object</span>
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :JSON sample:</span>
+<span class="sd">       ``{&#39;result&#39;: true}``</span>
+<span class="sd">       or</span>
+<span class="sd">       ``{&#39;result&#39;: false}``</span>
+
+<span class="sd">    :statuscode 200: successfully edited</span>
+<span class="sd">    :statuscode 404: no page by given id</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;PUT&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="mi">404</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_page_by_id</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">edit_page</span><span class="p">(</span><span class="n">page_id</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">],</span>
+                         <span class="n">data</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;content&#39;</span><span class="p">],</span>
+                         <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta_keywords&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta_description&#39;</span><span class="p">],</span>
+                         <span class="n">data</span><span class="p">[</span><span class="s">&#39;is_enabled&#39;</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">status_code</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">),</span> <span class="n">status_code</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/addResource&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">add_page</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;This method adds new page to db.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :request agrs: `{&#39;title&#39;: &#39;new page&#39;, &#39;alias&#39;: &#39;tag&#39;,</span>
+<span class="sd">                    &#39;description&#39;: &#39;short description of page&#39;,</span>
+<span class="sd">                    &#39;content&#39;: &#39;main article content&#39;,</span>
+<span class="sd">                    &#39;meta_keywords&#39;: &#39;keyword1, keyword2&#39;,</span>
+<span class="sd">                    &#39;meta_description&#39;: &#39;meta-description of content&#39;,</span>
+<span class="sd">                    &#39;is_enabled&#39;: 1}`</span>
+
+<span class="sd">    :return:</span>
+<span class="sd">        - If there is already page with this name:</span>
+<span class="sd">               ``{&#39;result&#39;: &#39;False&#39;, &#39;msg&#39;: &#39;Page already exists!&#39;}``</span>
+<span class="sd">        - If request data is invalid:</span>
+<span class="sd">              ``{&#39;result&#39;: &#39;False&#39;, &#39;msg&#39;: &#39;Couldn&#39;t add new page!&#39;}``</span>
+<span class="sd">        - If all ok:</span>
+<span class="sd">              ``{&#39;result&#39;: &#39;True&#39;, &#39;msg&#39;: &#39;Succesfully added!&#39;}``</span>
+
+<span class="sd">    :statuscode 200: check status in response json object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;POST&#39;</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">():</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">get_page_by_alias</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">]):</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">add_page</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;title&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">],</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;content&#39;</span><span class="p">],</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta_keywords&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta_description&#39;</span><span class="p">],</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s">&#39;is_enabled&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">get_page_by_alias</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;alias&#39;</span><span class="p">]):</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Succesfully added!&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Couldn&#39;t add new page!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Page already exists!&#39;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/api/deleteResource/&lt;page_id&gt;&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;DELETE&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">delete_page</span><span class="p">(</span><span class="n">page_id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This method deletes page by it&#39;s id.</span>
+
+<span class="sd">    :param page_id: id of specific page to delete.</span>
+
+<span class="sd">    :request agrs example: `{&#39;id&#39;: 1}`</span>
+
+<span class="sd">    :return: confirmation object</span>
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :JSON sample:</span>
+<span class="sd">       ``{&#39;result&#39;: true, &#39;msg&#39;: &#39;Page was deleted successfully!&#39;}``</span>
+<span class="sd">    or</span>
+<span class="sd">       ``{&#39;result&#39;: false, &#39;msg&#39;: &#39;Couldn&#39;t delete the page&#39;}``</span>
+
+<span class="sd">    :statuscode 200: successfully edited</span>
+<span class="sd">    :statuscode 404: no page by given id</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s">&#39;DELETE&#39;</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">delete_page_by_id</span><span class="p">(</span><span class="n">page_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">get_page_by_id</span><span class="p">(</span><span class="n">page_id</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Page was deleted successfully!&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Couldn</span><span class="se">\&#39;</span><span class="s">t delete the page!&#39;</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/api/user_page&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;GET&#39;</span><span class="p">])</span>
+<span class="nd">@auto.doc</span><span class="p">()</span>
+<span class="nd">@login_required</span>
+<span class="k">def</span> <span class="nf">get_all_users_info</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Function which returns users list from db with pagination options.</span>
+
+<span class="sd">    :rtype: JSON</span>
+<span class="sd">    :query offset: pagination offset number. default is 0</span>
+<span class="sd">    :query limit: pagination limit number. default is 5</span>
+<span class="sd">    :return:</span>
+<span class="sd">        ``[[{&quot;role_name&quot;: &quot;admin&quot;,</span>
+<span class="sd">        &quot;first_name&quot;: &quot;username&quot;,</span>
+<span class="sd">        &quot;last_name&quot;: &quot;UserSurname&quot;,</span>
+<span class="sd">        &quot;id&quot;: 1,</span>
+<span class="sd">        &quot;email&quot;: &quot;email@name.ru&quot;},</span>
+<span class="sd">        ....</span>
+<span class="sd">        {&quot;role_name&quot;: &quot;user&quot;,</span>
+<span class="sd">        &quot;first_name&quot;: &quot;Username&quot;,</span>
+<span class="sd">        &quot;last_name&quot;: &quot;UserSurname&quot;,</span>
+<span class="sd">        &quot;id&quot;: 5,</span>
+<span class="sd">        &quot;email&quot;: &quot;email@gmail.com&quot;}],</span>
+<span class="sd">        [{&quot;total_users&quot;: 2}]]``</span>
+
+<span class="sd">    :statuscode 200: no errors</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;offset&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
+    <span class="n">per_page</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;per_page&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">5</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_users_pagination</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">per_page</span><span class="p">)</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">count_users</span><span class="p">()</span>
+    <span class="n">total_count</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">user_data</span> <span class="ow">in</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">users</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;first_name&#39;</span><span class="p">:</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                          <span class="s">&#39;last_name&#39;</span><span class="p">:</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                          <span class="s">&#39;email&#39;</span><span class="p">:</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                          <span class="s">&#39;role_name&#39;</span><span class="p">:</span> <span class="n">user_data</span><span class="p">[</span><span class="mi">4</span><span class="p">]})</span>
+    <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;total_users&#39;</span><span class="p">:</span> <span class="n">count</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+
+    <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="n">users</span><span class="p">,</span> <span class="p">[</span><span class="n">total_count</span><span class="p">]]),</span>
+                    <span class="n">mimetype</span><span class="o">=</span><span class="s">&#39;application/json&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, lv-164.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../static/jquery.js"></script>
+      <script type="text/javascript" src="../static/underscore.js"></script>
+      <script type="text/javascript" src="../static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

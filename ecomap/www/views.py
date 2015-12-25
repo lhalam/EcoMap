@@ -78,14 +78,14 @@ def get_titles():
     :return: list of dicts with title, id, alias and is_enabled
     :rtype: JSON
     :JSON sample:
-        `[{'is_enabled': 1,
+        ``[{'is_enabled': 1,
         'alias': 'alias_Tag',
         'id': 1,
         'title': 'Custom_Title'},
         {'is_enabled': 1,
         'alias': 'Tag',
         'id': 2,
-        'title': 'AnotherTitle'}]`
+        'title': 'AnotherTitle'}]``
 
     """
     if request.method == 'GET':

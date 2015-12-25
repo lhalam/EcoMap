@@ -52,11 +52,11 @@ def register():
     :return:
         - if one of the field is incorrect or empty:
             ``{'error':'Unauthorized'}``
-            Status 401 - Unauthorized
         - if user already exists
             ``{'status': 'user with this email already exists'}``
         - if registration was successful:
             ``{'status': added user <username>}``
+
     :statuscode 401: form is invalid or empty
     :statuscode 400: user already exists
     :statuscode 200: registration successful
@@ -87,6 +87,7 @@ def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
     :return: json with status 200 or 400
+
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
@@ -114,6 +115,7 @@ def login():
             "token": "hashed_auth_token"}``
         - if user with entered email isn't exists or password was invalid:
             ``{'error':'message'}``
+
     :statuscode 401: user doesn't exist or password is invalid
     :statuscode 400: login data has invalid format:
     :statuscode 200: credentials are ok
@@ -154,6 +156,8 @@ def oauth_login(provider):
     """Provides facebook authorization.
     Retrieves user info from facebook, check if there is
     user with retrieved from facebook user id,
+    :param provider: Oauth provider (Facebook by default)
+
        - if yes:
            skips to next step
        - if not:
@@ -215,6 +219,7 @@ def restore_password_request():
             ``{message='Email was sended.'}``
         - if user's email isn't exists:
             ``{'error':'There is not such email.'}``
+
     :statuscode 401: no email
     :statuscode 200: email sended
 
@@ -235,6 +240,8 @@ def restore_password_request():
 def restore_password_page(hashed):
     """Renders page template to restore password.
     :param hashed: unique hash to identify user via sending it to email.
+
+    :return redirect to main page with rendered template.
 
     """
     valid = validator.hash_check(hashed)

@@ -30,7 +30,8 @@ def problems():
             "title": "problem 2", "longitude": 24.7852, "date": 1450738061,
             "latitude": 49.205, "problem_id": 76}]``
         - If problem list is empty:
-            ``[]``
+            ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -51,7 +52,7 @@ def detailed_problem(problem_id):
     """This method returns object with detailed problem data.
     
     :rtype: JSON
-    :request args: `{problem_id: 82}`
+    :param problem_id: `{problem_id: 82}`
     :return:
             - If problem exists:
                 ``[[{"content": "Text with situation", "status": "Unsolved",
@@ -60,13 +61,14 @@ def detailed_problem(problem_id):
                 "problem_type_id": 3, "problem_id": 82, "longitude": 34.2114}],
                 [{"activity_type": "Added", "user_id": 5,
                 "problem_id": 82, "created_date": 1450954447}], 
-                [{"url": "/uploads/problems/82/0d0d3ef56a16bd069efabeb76e20411f.png",
+                [{"url": "/uploads/problems/82/0d0d3ef56a16bd069e.png",
                 "user_id": 5, "description": "description to photo"}], 
                 [{"user_id": 5, "name": "User", "problem_id": 82,
                 "content": "Comment", "created_date": 1450954929000,
                 "id": 5}]]``
             - If problem not exists:
                 ``{"message": " resource not exists"}``
+
     :statuscode 404: problem not exists
     :statuscode 200: problem displayed
 
@@ -117,27 +119,18 @@ def detailed_problem(problem_id):
 
 @app.route('/api/problem_post', methods=['POST'])
 def post_problem():
-    """Function which adds data from problem form to DB.
-    :rtype: multipart/form-data
-    :request args: `-----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="title"
-        Title of problem
-        -----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="type"     
-        3
-        -----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="latitude"
-        49.8256101
-        -----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="longitude"
-        24.060054299999997
-        -----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="content"
-        description of problem
-        -----------------------------12226331501079089041586497122
-        Content-Disposition: form-data; name="proposal"
-        proposal to solve
-        -----------------------------12226331501079089041586497122--`
+    """Function which adds data about created problem into DB.
+
+    :content-type: multipart/form-data
+
+    :fparam title: Title of problem ('problem with rivers')
+    :fparam type: id of problem type (2)
+    :fparam lat: lat coordinates (49.8256101)
+    :fparam longitude: lon coordinates (24.0600542)
+    :fparam content: description of problem ('some text')
+    :fparam proposal: proposition for solving problem ('text')
+
+    :rtype: JSON
     :return:
             - If request data is invalid:
                     ``{'status': False, 'error': [list of errors]}``
@@ -179,11 +172,13 @@ def post_problem():
 
 @app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
 def get_user_problems(user_id):
-    """This method retrieves all user's problem from db.
+    """This method retrieves all user's problem from db and shows it in user
+    profile page on `my problems` tab.
+
         :rtype: JSON
-        :request args: `{user_id: 190}`
+        :param  user_id: id of user (int)
         :return:
-            - If user have problems:
+            - If user has problems:
                 ``[{"id": 190,"title": "name",
                 "latitude": 51.419765,
                 "longitude": 29.520264,
@@ -194,7 +189,7 @@ def get_user_problems(user_id):
                 "is_enabled": 1
                 },{...}]``
             - If user haven't:
-                ``[]``
+                ``{}``
 
         :statuscode 200: no errors
         
@@ -218,19 +213,22 @@ def get_user_problems(user_id):
 @app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
-        :returns list of user's problem represented with next objects:
-        [
-            {"id": 190,
-             "title": "name",
-             "latitude": 51.419765,
-             "longitude": 29.520264,
-             "problem_type_id": 1,
-             "status": 0,
-             "date": "2015-02-24T14:27:22.000Z",
-             "severity": '3',
-             "is_enabled": 1
-            },
-        ]
+
+        :query limit: limit number. default is 5
+        :query offset: offset number. default is 0
+        :rtype: JSON
+        :return: list of user's problem represented with next objects:
+
+            ``[{"id": 190,
+            "title": "name",
+            "latitude": 51.419765,
+            "longitude": 29.520264,
+            "problem_type_id": 1,
+            "status": 0,
+            "date": "2015-02-24T14:27:22.000Z",
+            "severity": '3',
+            "is_enabled": 1},...]``
+
     """
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
@@ -254,14 +252,30 @@ def get_all_users_problems():
     if count:
         total_count = {'total_problem_count': count[0]}
 
-    return Response(json.dumps([problems_list, [total_count]]), mimetype='application/json')
+    return Response(json.dumps([problems_list, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route('/api/photo/<int:problem_id>', methods=['POST'])
 def problem_photo(problem_id):
     """Controller for handling adding problem photos.
-    :param problem_id - id of problem instance for uploading new photos.
+
+    **param** problem_id - id of problem instance for uploading new photos.
+
+    :content-type: multipart/form-data
+
+    :fparam file: image file in base64. Content-Type: image/png
+    :fparam name: image name (`'image.jpg'`)
+    :fparam description: description of image (`'some text'`)
+
     :return: json object with success message or message with error status.
+
+        - if success:
+            ``{"added_file": "/uploads/problems/77/df4c22114eb24442e8b6.png"}``
+
+    :statuscode 400: error with attaching image or request is invalid
+    :statuscode 200: successfully added
+
     """
     response = jsonify(), 400
     extension = '.png'
@@ -300,7 +314,20 @@ def problem_photo(problem_id):
 
 @app.route('/api/problem/add_comment', methods=['POST'])
 def post_comment():
-    """Adds new comment to problem."""
+    """Adds new comment to problem.
+
+    :rtype: JSON
+    :request args: `{content: "comment", problem_id: "77"}`
+    :return:
+        - if success:
+            ``{"message": "Comment successfully added."}``
+        - if some error:
+            ``{error: "type of validation error"}``
+
+    :statuscode 400: error with adding comment or request is invalid
+    :statuscode 200: successfully added
+
+    """
     data = request.get_json()
     valid = validator.check_post_comment(data)
 
@@ -324,7 +351,26 @@ def post_comment():
 
 @app.route('/api/problem_comments/<int:problem_id>', methods=['GET'])
 def get_comments(problem_id):
-    """Return all problem comments."""
+    """Return all problem comments
+
+        :rtype: JSON
+        :param problem_id: id of problem (int)
+        :return:
+            - If problem has comments:
+                ``[{content: "some comment",
+                created_date: 1451001050000,
+                id: 29,
+                name: "user name",
+                problem_id: 77,
+                user_id: 6,
+                },{...}]``
+            - If user hasn't:
+                ``{}``
+
+        :statuscode 200: no errors
+
+    """
+
     comments_data = db.get_comments_by_problem_id(problem_id)
     comments = []
 

@@ -144,6 +144,7 @@ def resource_get():
             [{"total_res_count": 2}]]``
         - If there are no resources:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -182,6 +183,7 @@ def role_post():
         - If all ok:
             ``{'added_role': 'role_name',
             'added_role_id': 'role_id'}``
+
     :statuscode 400: If role with this name exists or request is invalid
     :statuscode 200: If no errors
 
@@ -220,6 +222,7 @@ def role_put():
             ``{'status': False, 'error': [list of errors]}``
         - If all ok:
             ``{'status': 'success', 'edited': 'resource_name'}``
+
     :statuscode 400: if role with this name exists or request is invalid
     :statuscode 200: if no errors
 
@@ -256,6 +259,7 @@ def role_delete():
             ``{'status': False, error: [list of errors]}``
         - If all ok:
             ``{'status': 'success', 'deleted_role': 'role_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -289,7 +293,8 @@ def role_get():
         - If no roles in DB:
             ``{}``
         - If roles exists:
-            ``{'role_name': 'role_id'}``
+            ``{'role_name': 'role_id',..., 'role_name2': 'role_id'}``
+
     :statuscode 200: if no errors
 
     """
@@ -317,6 +322,7 @@ def permission_post():
         - If all ok:
             ``{'added_permission': 'description',
             'permission_id': 'permission_id'}``
+
     :statuscode 400: invalid request
     :statuscode 200: permission has been successfully added
 
@@ -399,6 +405,7 @@ def permission_delete():
         - If all ok:
             ``{'status': 'success',
             'edited_perm_id': 'permission_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -436,6 +443,7 @@ def permission_get():
             'modifier': 'modifier', 'description': 'description'}``
         - If there are no permissions for selected resource_id:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -464,6 +472,7 @@ def role_permission_post():
             ``{'status': False, 'error': [list of errors]}``
         - If all ok:
             ``{'added_role_permission_for_role': 'role_id'}``
+
     :statuscode 400: if role has assigned permissions or request invalid
     :statuscode 200: if no errors
 
@@ -598,6 +607,7 @@ def get_all_permissions():
             [{"total_perm_count": 46}]]``
         - If there are no permissions:
             ``{}``
+
     :statuscode 200: no errors
 
     """
@@ -631,10 +641,11 @@ def get_all_users():
 
     :return: list of all users with id, first name, last name, email and role
 
-    [{"role": "admin", "first_name": "Vova", "last_name": "Putin", "user_id": 3,
-    "email": "putin@huilo.ru"},
-     {"role": "user", "first_name": "Oleg", "last_name": "Lyashko",
-    "user_id": 4, "email": "radical@gmail.com"},
+    ``[{"role": "admin", "first_name": "Admin", "last_name": "Administrator",
+    "user_id": 3, "email": "admin@ecomap.com"}
+    ...
+    {"role": "user", "first_name": "Oleg", "last_name": "Lyashko",
+    "user_id": 4, "email": "radical@gmail.com"}``
 
     :statuscode 200: no errors
     :statuscode 400: invalid request
@@ -714,8 +725,8 @@ def add_page():
     """This method adds new page to db.
 
     :rtype: JSON
-    :request agrs: `{'title': 'title', 'alias': 'tag',
-                    'description': 'small description of page',
+    :request agrs: `{'title': 'new page', 'alias': 'tag',
+                    'description': 'short description of page',
                     'content': 'main article content',
                     'meta_keywords': 'keyword1, keyword2',
                     'meta_description': 'meta-description of content',
@@ -723,14 +734,11 @@ def add_page():
 
     :return:
         - If there is already page with this name:
-               ``{'result': 'False',
-               'msg': 'Page already exists!'}``
+               ``{'result': 'False', 'msg': 'Page already exists!'}``
         - If request data is invalid:
-              ``{'result': 'False',
-               'msg': 'Couldn't add new page!'}``
+              ``{'result': 'False', 'msg': 'Couldn't add new page!'}``
         - If all ok:
-              ``{'result': 'True',
-               'msg': 'Succesfully added!'}``
+              ``{'result': 'True', 'msg': 'Succesfully added!'}``
 
     :statuscode 200: check status in response json object
 
@@ -770,11 +778,9 @@ def delete_page(page_id):
     :return: confirmation object
     :rtype: JSON
     :JSON sample:
-       ``{'result': true,
-       'msg': 'Page was deleted successfully!'}``
-       or
-       ``{'result': false,
-       'msg': 'Couldn't delete the page'}``
+       ``{'result': true, 'msg': 'Page was deleted successfully!'}``
+    or
+       ``{'result': false, 'msg': 'Couldn't delete the page'}``
 
     :statuscode 200: successfully edited
     :statuscode 404: no page by given id

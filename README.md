@@ -78,3 +78,15 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
         <code>views.py</code> - this is main flask application file. All backend code will be written there. You can change          everything right now!
     </li>
 </ol>
+
+<h2> ENVIRONMENT VARIABLES </h2>
+<p>insert to bashrc</p>
+<ul>
+<li>export PRODROOT=${PRODROOT:-/home/padalko/ss_projects/Lv-164.UI/ecomap}</li>
+<li>export PYSRCROOT=${PYSRCROOT:-${PRODROOT}/src/python}</li>
+<li>export CONFROOT=${CONFROOT:-${PRODROOT}/etc}</li>
+<li>export PYTHONPATH=${PRODROOT}/src/python</li>
+<li>export PYTHON=${PYTHON:-/etc/python}</li>
+<li>export PYTHON_EGG_CACHE=${PYTHON_EGG_CACHE:-/tmp/.python-eggs}</li>
+<li>export STATICROOT=${STATICROOT:-${PRODROOT}/www/}</li>
+</ul>

@@ -1,5 +1,5 @@
 import unittest2
-from config import Config
+from ecomap.config import Config
 
 
 

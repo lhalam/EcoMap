@@ -161,7 +161,11 @@ class TestValidator(unittest2.TestCase):
 
     def test_res_put_name_is_string(self):
         """testing if resouce_name is string in resource_put dunction."""
-        self.assertIsInstance(self.data_resource_put['resource_name'], basestring)
+        self.data_resource_put['resource_name'] = 123
+        return_data = validator.resource_put(self.data_resource_put)
+        expected = {'status': False, 'error': [{'resource_name': 'resource_name value is not string.'}]}
+        self.data_resource_put['rresource_name'] = '/res_name1'
+        self.assertEqual(return_data, expected)
 
     def test_res_put_minimum_length(self):
         """testing if resouce_name is not too short in resource_put dunction."""
@@ -243,8 +247,23 @@ class TestValidator(unittest2.TestCase):
         """testing if description is string
         in permission_post function.
         """
-        test_data = self.data_permission_post['description']
-        self.assertIsInstance(test_data, basestring)
+        self.data_permission_post['description'] = 123
+        return_data = validator.permission_put(self.data_permission_post)
+        expected = {'status': False, 'error': [{'description': 'description value is not string.'}]}
+        self.data_permission_post['description'] = 'user'
+        self.assertEqual(return_data, expected)
+
+    #def test_perm_post_is_enum(self):
+    #    """testing if modifier or action is ENUM
+    #    in permission_post function.
+    #    """
+    #   self.data_permission_post['modifier'] = 'user'
+    #    return_data = validator.permission_put(self.data_permission_post)
+    #    expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
+    #    self.data_permission_post['modifier'] = 'Own'
+    #    self.assertEqual(return_data, expected)
+    #
+    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434  we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
 
 
 

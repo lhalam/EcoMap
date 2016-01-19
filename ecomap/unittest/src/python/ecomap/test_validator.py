@@ -4,7 +4,6 @@ import unittest2
 
 from ecomap import validator
 
-from ecomap.db import util as db
 
 # input data
 REGISTRATION_DATA = {'email': 'admin@gmail.com',\
@@ -21,6 +20,7 @@ TEST_DATA_PERMISSION = {'permission_id': '1234567',\
                          'action': 'PUT',\
                          'modifier': 'Own',\
                          'description': 'user'}
+
 TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': '77'}
 
 TEST_DATA_RESOURCE_DELETE = {'resource_id': 1111}
@@ -29,10 +29,15 @@ TEST_DATA_USER_ROLE_PUT = {'role_id': 3, 'user_id': 4}
 
 ROLES_DATA = {'user': (2L, ), 'admin': (1L, )}
 
-# mock functions
-def get_resource_id_mock(resource_name):
+RESOURCE_DATA = {'/api/roles': (18L,), '/api/login': (17L,)}
+
+
+def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function"""
-    return True
+    if resource_name in RESOURCE_DATA:
+        return RESOURCE_DATA[resource_name]
+    else:
+        return None
 
 def role_name_exists_mock(role_name):
     """Mock of role_name_exists function"""
@@ -55,17 +60,15 @@ class TestValidator(unittest2.TestCase):
 
         self.valid_status = VALID_STATUS
 
-        self.original_get_resource_id = db.get_resource_id
-        db.get_resource_id = get_resource_id_mock
-
         self.original_role_name_exists = validator.role_name_exists
         validator.role_name_exists = role_name_exists_mock
+        self.original_resource_name_exists = validator.resource_name_exists
+        validator.resource_name_exists = resource_name_exists_mock
 
     def tearDown(self):
         """Cleaning up after the test"""
-
-        db.get_resource_id = self.original_get_resource_id
         validator.role_name_exists = self.original_role_name_exists
+        validator.resource_name_exists = self.original_resource_name_exists
 
 
     # user_registration tests
@@ -232,7 +235,6 @@ class TestValidator(unittest2.TestCase):
     def test_res_put_has_key(self):
         """testing if data has all keys in resource_put dunction."""
         del self.data_resource_put['resource_id']
-        db.get_resource_id = self.original_get_resource_id
         return_data = validator.resource_put(self.data_resource_put)
         expected = {'status': False, 'error': [{'resource_id': 'not contain resource_id key.'}]}
         self.data_resource_put['resource_id'] = '12345'
@@ -263,6 +265,14 @@ class TestValidator(unittest2.TestCase):
         expected = {'status': False, 'error': [{'resource_name': \
                                                 'resource_name value is too long.'}]}
         self.data_resource_put['resource_name'] = '/res_name1'
+        self.assertEqual(return_data, expected)
+
+    def test_res_put_name_exist(self):
+        """testing if resouce_name is already exist in resource_put dunction."""
+        self.data_resource_put['resource_name'] = '/api/roles'
+        return_data = validator.resource_put(self.data_resource_put)
+        expected = {'status': False, 'error': [{'resource_name': \
+                                                '"/api/roles" name allready exists.'}]}
         self.assertEqual(return_data, expected)
 
 
@@ -401,6 +411,7 @@ class TestValidator(unittest2.TestCase):
         """ Testing with input data when role_name doesn't exists. """
         input_role_name = 'test'
         self.assertEqual(validator.role_name_exists(input_role_name), None)
+
 
 
     #def test_perm_post_is_enum(self):

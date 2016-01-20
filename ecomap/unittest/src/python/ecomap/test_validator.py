@@ -21,6 +21,11 @@ TEST_DATA_PERMISSION_POST = {'resource_id': '1234567',\
                             'modifier': 'Own',\
                             'description': 'user'}
 
+TEST_DATA_PERMISSION_PUT = {'permission_id': '1234567',\
+                            'action': 'PUT',\
+                            'modifier': 'Own',\
+                            'description': 'user'}
+
 TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': '77'}
 
 TEST_DATA_RESOURCE_DELETE = {'resource_id': 1111}
@@ -57,6 +62,7 @@ class TestValidator(unittest2.TestCase):
         self.data_resource_put = TEST_DATA_PUT
         self.data_resource_delete = TEST_DATA_RESOURCE_DELETE
         self.data_permission_post = TEST_DATA_PERMISSION_POST
+        self.data_permission_put = TEST_DATA_PERMISSION_PUT
         self.data_user_role_put = TEST_DATA_USER_ROLE_PUT
 
         self.valid_status = VALID_STATUS
@@ -373,8 +379,6 @@ class TestValidator(unittest2.TestCase):
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
 
-    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
-    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
     def test_permission_post_is_enum(self):
         """testing if modifier or action is ENUM
         in permission_post function.
@@ -383,6 +387,84 @@ class TestValidator(unittest2.TestCase):
         return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
         self.data_permission_post['modifier'] = 'Own'
+        self.assertEqual(return_data, expected)
+
+    #permission_put tests
+    def test_perm_put_is_dictionary(self):
+        """ testing if resource_put return
+        a dictionary in permission_put function.
+        """
+        return_data = validator.permission_put(self.data_permission_put)
+        self.assertIsInstance(return_data, dict)
+
+    def test_perm_put_correct_status(self):
+        """testing status with correct
+        resource_put in permission_put function.
+        """
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = self.valid_status
+        self.assertTrue(return_data, expected)
+
+    def test_perm_put_has_key(self):
+        """testing if data has all keys
+        in permission_put function.
+        """
+        del self.data_permission_put['action']
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False, 'error': [{'action': 'not contain action key.'}]}
+        self.data_permission_put['action'] = 'PUT'
+        self.assertEqual(return_data, expected)
+
+    def test_perm_put_empty_data(self):
+        """testing if data dont have empty value
+        in permission_put function.
+        """
+        self.data_permission_put['action'] = ""
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False, 'error': [{'action': 'action value is empty.'}]}
+        self.data_permission_put['action'] = 'PUT'
+        self.assertEqual(return_data, expected)
+
+    def test_perm_put_minimum_length(self):
+        """testing if description is not too short
+        in permission_put function.
+        """
+        self.data_permission_put['description'] = "a"
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False, 'error': [{'description': 'description value is too short.'}]}
+        self.data_permission_put['description'] = 'user'
+        self.assertEqual(return_data, expected)
+
+    def test_perm_put_maximum_length(self):
+        """testing if description is not too long
+        in permission_put function.
+        """
+        self.data_permission_put['description'] = "a"*256
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False, 'error': [{'description': 'description value is too long.'}]}
+        self.data_permission_put['description'] = 'user'
+        self.assertEqual(return_data, expected)
+
+    def test_perm_put_is_string(self):
+        """testing if description is string
+        in permission_put function.
+        """
+        self.data_permission_put['description'] = 123
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False, 'error': [{'description': 'description value is not string.'}]}
+        self.data_permission_put['description'] = 'user'
+        self.assertEqual(return_data, expected)
+
+    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
+    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
+    def test_permission_put_is_enum(self):
+        """testing if modifier or action is ENUM
+        in permission_post function.
+        """
+        self.data_permission_put['modifier'] = 'user'
+        return_data = validator.permission_put(self.data_permission_post)
+        expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
+        self.data_permission_put['modifier'] = 'Own'
         self.assertEqual(return_data, expected)
 
 

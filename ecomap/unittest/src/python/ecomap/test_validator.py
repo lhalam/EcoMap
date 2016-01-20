@@ -40,11 +40,21 @@ ROLE_PERMISSION_DATA = {'permission_id': "3", 'role_id': "1"}
 
 VALIDATOR_DATA_ROLE_AND_RESOURCE = {'resource_name': '/name', 'role_id':5, 'user_id': 5}
 
+EMAIL_DATA = {"admin.mail@gmail.com":\
+         (1L, u'admin', u'admin', u'admin.mail@gmail.com', u'db51903d292a412e4ef2079add791eae', None)}
+
 def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function"""
     if resource_name in RESOURCE_DATA:
         return RESOURCE_DATA[resource_name]
     else:
+        return None
+
+def check_email_exist_mock(email):
+    """Mock of email_exists function"""
+    if email in EMAIL_DATA:
+        return EMAIL_DATA[email]
+    else: 
         return None
 
 def role_name_exists_mock(role_name):
@@ -74,6 +84,9 @@ class TestValidator(unittest2.TestCase):
         validator.role_name_exists = role_name_exists_mock
         self.original_resource_name_exists = validator.resource_name_exists
         validator.resource_name_exists = resource_name_exists_mock
+        self.original_check_email_exist = validator.check_email_exist
+        validator.check_email_exist = check_email_exist_mock
+        validator.check_email_exist = self.original_check_email_exist
 
     def tearDown(self):
         """Cleaning up after the test"""
@@ -549,7 +562,7 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         self.data_permission_put['modifier'] = 'user'
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_put(self.data_permission_put)
         expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
         self.data_permission_put['modifier'] = 'Own'
         self.assertEqual(return_data, expected)

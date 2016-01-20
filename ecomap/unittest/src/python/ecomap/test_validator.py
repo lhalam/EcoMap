@@ -16,10 +16,10 @@ VALID_STATUS = {'status': True, 'error': []}
 
 TEST_DATA_PUT = {'resource_name': '/res_name1', 'resource_id': '1234567'}
 
-TEST_DATA_PERMISSION = {'permission_id': '1234567',\
-                         'action': 'PUT',\
-                         'modifier': 'Own',\
-                         'description': 'user'}
+TEST_DATA_PERMISSION_POST = {'resource_id': '1234567',\
+                            'action': 'PUT',\
+                            'modifier': 'Own',\
+                            'description': 'user'}
 
 TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': '77'}
 
@@ -31,6 +31,7 @@ ROLES_DATA = {'user': (2L, ), 'admin': (1L, )}
 
 RESOURCE_DATA = {'/api/roles': (18L,), '/api/login': (17L,)}
 
+ROLE_PERMISSION_DATA = {'permission_id': "3", 'role_id': "1"}
 
 def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function"""
@@ -55,7 +56,7 @@ class TestValidator(unittest2.TestCase):
         self.data_check_post_comment = TEST_DATA_POST_COMMENT
         self.data_resource_put = TEST_DATA_PUT
         self.data_resource_delete = TEST_DATA_RESOURCE_DELETE
-        self.data_permission_post = TEST_DATA_PERMISSION
+        self.data_permission_post = TEST_DATA_PERMISSION_POST
         self.data_user_role_put = TEST_DATA_USER_ROLE_PUT
 
         self.valid_status = VALID_STATUS
@@ -72,14 +73,14 @@ class TestValidator(unittest2.TestCase):
 
 
     # user_registration tests
-    def test_registr_return_dictionary(self):
+    def test_registration_return_dictionary(self):
         """ testing if user_registration return
         a dictionary in user_registration function.
         """
         return_data = validator.user_registration(self.data_registration)
         self.assertIsInstance(return_data, dict)
 
-    def test_registr_correct_status(self):
+    def test_registration_correct_status(self):
         """testing status with correct
         user_registration in user_registration function.
         """
@@ -87,7 +88,7 @@ class TestValidator(unittest2.TestCase):
         expected = self.valid_status
         self.assertTrue(return_data, expected)
 
-    def test_registr_has_key(self):
+    def test_registration_has_key(self):
         """testing if data has all keys
         in user_registration function.
         """
@@ -97,7 +98,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['first_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
-    def test_registr_not_empty_data(self):
+    def test_registration_not_empty_data(self):
         """testing if value is not empty in
          user_registration function.
          """
@@ -107,7 +108,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
-    def test_registr_maximum_length(self):
+    def test_registration_maximum_length(self):
         """testing if value of data is not too long
         in user_registration function.
         """
@@ -117,7 +118,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
-    def test_registr_minimum_length(self):
+    def test_registration_minimum_length(self):
         """testing if value of data is not too short
         in user_registration function.
         """
@@ -127,7 +128,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
-    def test_registr_check_string(self):
+    def test_registration_check_string(self):
         """testing invalid type in data
         in user_registration function.
         """
@@ -137,7 +138,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['first_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
-    def test_registr_incorrect_email(self):
+    def test_registration_incorrect_email(self):
         """testing invalid email in data
         in user_registration function.
         """
@@ -147,7 +148,7 @@ class TestValidator(unittest2.TestCase):
         self.data_registration['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, expected)
 
-    def test_registr_check_email_exist(self):
+    def test_registration_check_email_exist(self):
         """testing invalid email in data
         in user_registration function.
         """
@@ -161,7 +162,7 @@ class TestValidator(unittest2.TestCase):
     # check_post_comment tests
     def test_post_comment_return_type(self):
         """ Testing if check_post_comment returns
-        a dictionary in permission_post function.
+        a dictionary in check_post_comment function.
         """
         self.assertIsInstance(validator.check_post_comment(self.data_check_post_comment), dict)
 
@@ -279,7 +280,7 @@ class TestValidator(unittest2.TestCase):
     # resource_delete tests
     def test_res_delete_return_type(self):
         """ Testing if resource_delete returns
-        a dictionary in permission_post function.
+        a dictionary in resource_delete function.
         """
         self.assertIsInstance(validator.resource_delete(self.data_resource_delete), dict)
 
@@ -311,14 +312,14 @@ class TestValidator(unittest2.TestCase):
         """ testing if resource_put return
         a dictionary in permission_post function.
         """
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         self.assertIsInstance(return_data, dict)
 
     def test_perm_post_correct_status(self):
         """testing status with correct
         resource_put in permission_post function.
         """
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = self.valid_status
         self.assertTrue(return_data, expected)
 
@@ -327,7 +328,7 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         del self.data_permission_post['action']
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'action': 'not contain action key.'}]}
         self.data_permission_post['action'] = 'PUT'
         self.assertEqual(return_data, expected)
@@ -337,7 +338,7 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         self.data_permission_post['action'] = ""
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'action': 'action value is empty.'}]}
         self.data_permission_post['action'] = 'PUT'
         self.assertEqual(return_data, expected)
@@ -347,7 +348,7 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         self.data_permission_post['description'] = "a"
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'description': 'description value is too short.'}]}
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
@@ -357,7 +358,7 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         self.data_permission_post['description'] = "a"*256
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'description': 'description value is too long.'}]}
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
@@ -367,9 +368,21 @@ class TestValidator(unittest2.TestCase):
         in permission_post function.
         """
         self.data_permission_post['description'] = 123
-        return_data = validator.permission_put(self.data_permission_post)
+        return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False, 'error': [{'description': 'description value is not string.'}]}
         self.data_permission_post['description'] = 'user'
+        self.assertEqual(return_data, expected)
+
+    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
+    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
+    def test_permission_post_is_enum(self):
+        """testing if modifier or action is ENUM
+        in permission_post function.
+        """
+        self.data_permission_post['modifier'] = 'user'
+        return_data = validator.permission_post(self.data_permission_post)
+        expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
+        self.data_permission_post['modifier'] = 'Own'
         self.assertEqual(return_data, expected)
 
 
@@ -412,20 +425,6 @@ class TestValidator(unittest2.TestCase):
         input_role_name = 'test'
         self.assertEqual(validator.role_name_exists(input_role_name), None)
 
-
-
-    #def test_perm_post_is_enum(self):
-    #    """testing if modifier or action is ENUM
-    #    in permission_post function.
-    #    """
-    #   self.data_permission_post['modifier'] = 'user'
-    #    return_data = validator.permission_put(self.data_permission_post)
-    #    expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
-    #    self.data_permission_post['modifier'] = 'Own'
-    #    self.assertEqual(return_data, expected)
-    #
-    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
-    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
 
 if __name__ == '__main__':
     unittest2.main()

@@ -1,7 +1,6 @@
 """Module which contains Test of Validator functions. """
 
 import unittest2
-from ecomap.db import util as db
 from ecomap import validator
 
 
@@ -53,6 +52,16 @@ PERMISSION_DELETE_DATA = {'permission_id':5}
 
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
 
+class DBUtilMock(object):
+    """Class mock for db.util """
+    def check_hash_in_db(self,data):
+        """mock for db.check_hash_in_db() function"""
+        return True
+
+    def check_hash_in_db_mock(self,data) :
+        """mock for db.check_hash_in_db() function to return False"""
+        return False
+
 def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function"""
     if resource_name in RESOURCE_DATA:
@@ -74,9 +83,7 @@ def role_name_exists_mock(role_name):
     else:
         return None
 
-def check_hash_in_db_mock(data):
-    """mock for db.check_hash_in_db() function"""
-    return True
+
 
 
 class TestValidator(unittest2.TestCase):
@@ -103,15 +110,11 @@ class TestValidator(unittest2.TestCase):
         validator.check_email_exist = check_email_exist_mock
         validator.check_email_exist = self.original_check_email_exist
 
-        self.original_check_hash_in_db = db.check_hash_in_db
-        db.check_hash_in_db = check_hash_in_db_mock
 
     def tearDown(self):
         """Cleaning up after the test"""
         validator.role_name_exists = self.original_role_name_exists
         validator.resource_name_exists = self.original_resource_name_exists
-
-        db.check_hash_in_db = self.original_check_hash_in_db
 
     # user_registration tests
     def test_registration_return_dictionary(self):
@@ -281,17 +284,19 @@ class TestValidator(unittest2.TestCase):
 
     def test_hash_check_wrong_hash_db(self):
         """Test hash_check dictionary when there is no such hash in db"""
-        db.check_hash_in_db = self.original_check_hash_in_db
         bad_hash_dict = validator.hash_check(HASH_DATA)
-        correct_db_dict = {'status': False,\
-                           'error': [{'hash_sum': 'hash does not exist.'}]}
+        correct_db_dict = {'status': False, 'error':\
+                          [{'hash_sum': 'hash does not exist.'}]}
         self.assertDictEqual(bad_hash_dict, correct_db_dict)
 
     def test_hash_check_hash_in_db_ok(self):
         """Test hash_check if there is no error and hash is valid"""
+        original_val_db = validator.db
+        validator.db = DBUtilMock()
         returned_data = validator.hash_check(HASH_DATA)
         correct_db_dict = {'status': True, 'error': []}
         self.assertDictEqual(returned_data, correct_db_dict)
+        validator.db = original_val_db
 
     #user_login
 

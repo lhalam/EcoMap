@@ -69,15 +69,28 @@ PERMISSION_DELETE_DATA = {'permission_id': 5}
 
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
 
+ERROR_MSG = {'has_key': 'not contain %s key.',
+             'check_minimum_length': '%s value is too short.',
+             'check_maximum_length': '%s value is too long.',
+             'check_string': '%s value is not string.',
+             'check_email': '%s value does not look like email.',
+             'check_empty': '%s value is empty.',
+             'check_enum_value': 'invalid %s value.',
+             'check_email_exist': 'email allready exists.',
+             'name_exists': '"%s" name allready exists.',
+             'check_coordinates': '%s is not coordinates.',
+             'check_coordinates_length': '%s is out of range.'}
+
+
 class DBUtilMock(object):
 
     """Class mock for db.util """
 
-    def check_hash_in_db(self):
+    def check_hash_in_db(self, data):
         """Mock for db.check_hash_in_db() function."""
         return True
 
-    def check_hash_in_db_mock(self):
+    def check_hash_in_db_mock(self, data):
         """Mock for db.check_hash_in_db() function to return False."""
         return False
 
@@ -88,13 +101,11 @@ def resource_name_exists_mock(resource_name):
 
 def check_email_exist_mock(email):
     """Mock of email_exists function."""
-    if email in EMAIL_DATA:
-        return EMAIL_DATA[email]
+    return EMAIL_DATA.get(email)
 
 def role_name_exists_mock(role_name):
     """Mock of role_name_exists function."""
-    if role_name in ROLES_DATA:
-        return ROLES_DATA[role_name]
+    return ROLES_DATA.get(role_name)
 
 
 class TestValidator(unittest2.TestCase):
@@ -103,6 +114,7 @@ class TestValidator(unittest2.TestCase):
 
     def setUp(self):
         """Setting up for the test."""
+
         self.data_registration = REGISTRATION_DATA
         self.data_check_post_comment = TEST_DATA_POST_COMMENT
         self.data_resource_put = TEST_DATA_PUT

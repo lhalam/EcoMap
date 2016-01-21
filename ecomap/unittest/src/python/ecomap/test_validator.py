@@ -14,25 +14,22 @@ REGISTRATION_DATA = {'email': 'admin@gmail.com',
 LOGIN_DATA = {'email': 'admin@gmail.com',
               'password': 'db51903d292a412e4ef2079add791eae'}
 
-VALID_STATUS = {'status': True, 'error': []}
+TEST_DATA = {'resource_name': '/res_name1',
+             'resource_id': 1234567,
+             'role_id': 5,
+             'user_id': 5}
 
-TEST_DATA_PUT = {'resource_name': '/res_name1', 'resource_id': '1234567'}
+TEST_DATA_PUT = {'resource_name': '/res_name1', 'resource_id': 1234567}
 
-TEST_DATA_PERMISSION_POST = {'resource_id': '1234567',
-                             'action': 'PUT',
-                             'modifier': 'Own',
-                             'description': 'user'}
-
-TEST_DATA_PERMISSION_PUT = {'permission_id': '1234567',
-                            'action': 'PUT',
-                            'modifier': 'Own',
-                            'description': 'user'}
+TEST_DATA_PERMISSION = {'resource_id': 121,
+                        'permission_id': 1234567,
+                        'action': 'PUT',
+                        'modifier': 'Own',
+                        'description': 'user'}
 
 TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': 77}
 
-TEST_DATA_RESOURCE_DELETE = {'resource_id': 1111}
-
-TEST_DATA_USER_ROLE_PUT = {'role_id': 3, 'user_id': 4}
+ROLE_PERMISSION = {'role_id': 3, 'user_id': 4, 'permission_id': 3}
 
 ROLES_DATA = {'user': (2L,), 'admin': (1L,), 'role_name':'user'}
 
@@ -40,19 +37,11 @@ RESOURCE_DATA = {'/api/roles': (18L,), '/api/login': (17L,)}
 
 ROLE_PUT = {'role_name': "new_name", 'role_id': 5}
 
-ROLE_PERMISSION_DATA = {'permission_id': 3, 'role_id': 1}
-
-ROLE_PERMISSION_POST = {'permission_id': 5, 'role_id': 4}
-
 PROBLEM_POST = {'title': 'problem with rivers',
                 'content': 'some text',
                 'latitude': '49.8256101',
                 'longitude': '24.0600542',
                 'type' : 2}
-
-VALIDATOR_DATA_ROLE_AND_RESOURCE = {'resource_name': '/name',
-                                    'role_id': 5,
-                                    'user_id': 5}
 
 EMAIL_DATA = {"admin.mail@gmail.com": (1L,
                                        u'admin',
@@ -65,9 +54,9 @@ HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
 HASH_DATA_DIC = {HASH_DATA:1L}
 
-PERMISSION_DELETE_DATA = {'permission_id': 5}
-
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
+
+VALID_STATUS = {'status': True, 'error': []}
 
 ERROR_DATA = {'status': False, 'error': []}
 
@@ -372,12 +361,12 @@ class TestValidator(unittest2.TestCase):
     #resource_post
     def test_resource_post_return_dictionary(self):
         """Test if function returns dictionary."""
-        return_data = validator.resource_post(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.resource_post(TEST_DATA)
         self.assertIsInstance(return_data, dict)
 
     def test_resource_post_return_true(self):
         """Test if function returns true."""
-        return_data = validator.resource_post(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.resource_post(TEST_DATA_PUT)
         self.assertTrue(return_data['status'])
 
     def test_resource_post_has_key(self):
@@ -423,12 +412,12 @@ class TestValidator(unittest2.TestCase):
     # resource_put tests
     def test_res_put_return_dictionary(self):
         """Testing if resource_put return a dictionary in function."""
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        return_data = validator.resource_put(TEST_DATA)
         self.assertIsInstance(return_data, dict)
 
     def test_res_put_correct_status(self):
         """Testing status with correct resource_putin resource_put dunction."""
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        return_data = validator.resource_put(TEST_DATA)
         self.assertTrue(return_data, VALID_STATUS)
 
     def test_res_put_not_empty_data(self):
@@ -441,58 +430,58 @@ class TestValidator(unittest2.TestCase):
 
     def test_res_put_has_key(self):
         """Testing if data has all keys in resource_put dunction."""
-        del TEST_DATA_PUT['resource_id']
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        del TEST_DATA['resource_id']
+        return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_id': ERROR_MSG['has_key']
                                                % 'resource_id'}]
-        TEST_DATA_PUT['resource_id'] = '12345'
+        TEST_DATA['resource_id'] = '12345'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_name_is_string(self):
         """Testing if resouce_name is string in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = 123
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        TEST_DATA['resource_name'] = 123
+        return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_name': ERROR_MSG['check_string']
                                                  % 'resource_name'}]
-        TEST_DATA_PUT['rresource_name'] = '/res_name1'
+        TEST_DATA['rresource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_minimum_length(self):
         """Testing if resouce_name is not too short in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = 'a'
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        TEST_DATA['resource_name'] = 'a'
+        return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_name': ERROR_MSG['check_minimum_length']
                                                  % 'resource_name'}]
-        TEST_DATA_PUT['resource_name'] = '/res_name1'
+        TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_maximum_length(self):
         """Testing if resouce_name is not too long in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = 'a' * 256
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        TEST_DATA['resource_name'] = 'a' * 256
+        return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_name': ERROR_MSG['check_maximum_length']
                                                  % 'resource_name'}]
-        TEST_DATA_PUT['resource_name'] = '/res_name1'
+        TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_name_exist(self):
         """Testing if resouce_name is already exist in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = '/api/roles'
-        return_data = validator.resource_put(TEST_DATA_PUT)
+        TEST_DATA['resource_name'] = '/api/roles'
+        return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_name': ERROR_MSG['name_exists']
-                                                 % TEST_DATA_PUT['resource_name']}]
+                                                 % TEST_DATA['resource_name']}]
         self.assertEqual(return_data, ERROR_DATA)
 
     # resource_delete tests
     def test_res_delete_return_type(self):
         """Testing if resource_delete returns
         a dictionary in resource_delete function."""
-        return_data = validator.resource_delete(TEST_DATA_RESOURCE_DELETE)
+        return_data = validator.resource_delete(TEST_DATA_PERMISSION)
         self.assertIsInstance(return_data, dict)
 
     def test_res_delete_correct_status(self):
         """Testing if status is correct."""
-        expected = validator.resource_delete(TEST_DATA_RESOURCE_DELETE)
+        expected = validator.resource_delete(TEST_DATA_PERMISSION)
         self.assertDictEqual(expected, VALID_STATUS)
 
     def test_res_delete_not_empty_data(self):
@@ -632,12 +621,12 @@ class TestValidator(unittest2.TestCase):
     #role_delete
     def test_role_del_retutn_dictionary(self):
         """Test if function returns deictionary."""
-        return_data = validator.role_delete(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.role_delete(TEST_DATA)
         self.assertIsInstance(return_data, dict)
 
     def test_role_del_return_true(self):
         """Test if function returns true."""
-        return_data = validator.role_delete(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.role_delete(TEST_DATA)
         self.assertTrue(return_data['status'])
 
     def test_role_del_has_key(self):
@@ -661,78 +650,78 @@ class TestValidator(unittest2.TestCase):
         """Testing if resource_put return
         a dictionary in permission_post function.
         """
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         self.assertIsInstance(return_data, dict)
 
     def test_perm_post_correct_status(self):
         """Testing status with correct
         resource_put in permission_post function.
         """
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         self.assertTrue(return_data, VALID_STATUS)
 
     def test_perm_post_has_key(self):
         """Testing if data has all keys
         in permission_post function.
         """
-        del TEST_DATA_PERMISSION_POST['action']
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        del TEST_DATA_PERMISSION['action']
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'action': ERROR_MSG['has_key'] % 'action'}]
-        TEST_DATA_PERMISSION_POST['action'] = 'PUT'
+        TEST_DATA_PERMISSION['action'] = 'PUT'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_post_empty_data(self):
         """testing if data dont have empty value
         in permission_post function.
         """
-        TEST_DATA_PERMISSION_POST['action'] = ''
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['action'] = ''
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'action': ERROR_MSG['check_empty'] % 'action'}]
-        TEST_DATA_PERMISSION_POST['action'] = 'PUT'
+        TEST_DATA_PERMISSION['action'] = 'PUT'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_post_minimum_length(self):
         """testing if description is not too short
         in permission_post function.
         """
-        TEST_DATA_PERMISSION_POST['description'] = 'a'
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['description'] = 'a'
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_minimum_length']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_POST['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_post_maximum_length(self):
         """testing if description is not too long
         in permission_post function.
         """
-        TEST_DATA_PERMISSION_POST['description'] = 'a' * 256
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['description'] = 'a' * 256
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_maximum_length']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_POST['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_post_is_string(self):
         """testing if description is string
         in permission_post function.
         """
-        TEST_DATA_PERMISSION_POST['description'] = 123
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['description'] = 123
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_string']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_POST['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_permission_post_is_enum(self):
         """testing if modifier or action is ENUM
         in permission_post function.
         """
-        TEST_DATA_PERMISSION_POST['modifier'] = 'user'
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['modifier'] = 'user'
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'modifier': ERROR_MSG['check_enum_value']
                                             % 'modifier'}]
-        TEST_DATA_PERMISSION_POST['modifier'] = 'Own'
+        TEST_DATA_PERMISSION['modifier'] = 'Own'
         self.assertEqual(return_data, ERROR_DATA)
 
 
@@ -740,82 +729,81 @@ class TestValidator(unittest2.TestCase):
     def test_perm_put_is_dictionary(self):
         """ testing if resource_put return
         a dictionary in permission_put function."""
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         self.assertIsInstance(return_data, dict)
 
     def test_perm_put_correct_status(self):
         """testing status with correct
         resource_put in permission_put function."""
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         self.assertTrue(return_data, VALID_STATUS)
 
     def test_perm_put_has_key(self):
         """testing if data has all keys
         in permission_put function."""
-        del TEST_DATA_PERMISSION_PUT['action']
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        del TEST_DATA_PERMISSION['action']
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'action': ERROR_MSG['has_key'] % 'action'}]
-        TEST_DATA_PERMISSION_PUT['action'] = 'PUT'
+        TEST_DATA_PERMISSION['action'] = 'PUT'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_put_empty_data(self):
         """testing if data dont have empty value
         in permission_put function.
         """
-        TEST_DATA_PERMISSION_PUT['action'] = ''
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        TEST_DATA_PERMISSION['action'] = ''
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'action': ERROR_MSG['check_empty'] % 'action'}]
-        TEST_DATA_PERMISSION_PUT['action'] = 'PUT'
+        TEST_DATA_PERMISSION['action'] = 'PUT'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_put_minimum_length(self):
         """testing if description is not too short
         in permission_put function.
         """
-        TEST_DATA_PERMISSION_PUT['description'] = 'a'
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        TEST_DATA_PERMISSION['description'] = 'a'
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_minimum_length']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_PUT['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_put_maximum_length(self):
         """testing if description is not too long
         in permission_put function.
         """
-        TEST_DATA_PERMISSION_PUT['description'] = 'a' * 256
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        TEST_DATA_PERMISSION['description'] = 'a' * 256
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_maximum_length']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_PUT['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_perm_put_is_string(self):
         """testing if description is string
         in permission_put function.
         """
-        TEST_DATA_PERMISSION_PUT['description'] = 123
-        return_data = validator.permission_put(TEST_DATA_PERMISSION_PUT)
+        TEST_DATA_PERMISSION['description'] = 123
+        return_data = validator.permission_put(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'description': ERROR_MSG['check_string']
                                                % 'description'}]
-        TEST_DATA_PERMISSION_PUT['description'] = 'user'
+        TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
     def test_permission_put_is_enum(self):
         """testing if modifier or action is ENUM
         in permission_post function."""
-        TEST_DATA_PERMISSION_POST['modifier'] = 'user'
-        return_data = validator.permission_post(TEST_DATA_PERMISSION_POST)
+        TEST_DATA_PERMISSION['modifier'] = 'user'
+        return_data = validator.permission_post(TEST_DATA_PERMISSION)
         ERROR_DATA['error'] = [{'modifier': ERROR_MSG['check_enum_value']
                                             % 'modifier'}]
-        TEST_DATA_PERMISSION_POST['modifier'] = 'Own'
+        TEST_DATA_PERMISSION['modifier'] = 'Own'
         self.assertEqual(return_data, ERROR_DATA)
 
     # permission_delete tests
     def test_permission_delete_returned_type(self):
         """Test if function return dictionary."""
-        returned_data = validator.permission_delete\
-                        (VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        returned_data = validator.permission_delete(TEST_DATA)
         self.assertIsInstance(returned_data, dict)
 
     def test_permission_delete_has_key(self):
@@ -839,26 +827,26 @@ class TestValidator(unittest2.TestCase):
     def test_role_permission_post_return_dictionary(self):
         """Testing role_permission_post function
         whether it returns dictionary."""
-        return_data = validator.role_permission_post(ROLE_PERMISSION_POST)
+        return_data = validator.role_permission_post(ROLE_PERMISSION)
         self.assertIsInstance(return_data, dict)
 
     def test_role_permission_post_correct_status(self):
         """testing role_permission_post function whether status is correct."""
-        return_data = validator.role_permission_post(ROLE_PERMISSION_POST)
+        return_data = validator.role_permission_post(ROLE_PERMISSION)
         self.assertTrue(return_data, VALID_STATUS)
 
     def test_role_permission_post_has_key(self):
         """testing role_permission_post function if data has all keys."""
-        del ROLE_PERMISSION_POST['role_id']
-        return_data = validator.role_permission_post(ROLE_PERMISSION_POST)
+        del ROLE_PERMISSION['role_id']
+        return_data = validator.role_permission_post(ROLE_PERMISSION)
         ERROR_DATA['error'] = [{'role_id': ERROR_MSG['has_key'] % 'role_id'}]
-        ROLE_PERMISSION_POST['role_id'] = 4
+        ROLE_PERMISSION['role_id'] = 4
         self.assertEqual(return_data, ERROR_DATA)
 
     def  test_role_permission_post_empty_dict(self):
         """ testing role_permission_post if data is not empty."""
-        ROLE_PERMISSION_POST['role_id'] = None
-        return_data = validator.role_permission_post(ROLE_PERMISSION_POST)
+        ROLE_PERMISSION['role_id'] = None
+        return_data = validator.role_permission_post(ROLE_PERMISSION)
         ERROR_DATA['error'] = [{'role_id': ERROR_MSG['check_empty'] % 'role_id'}]
         self.assertDictEqual(return_data, ERROR_DATA)
 
@@ -866,12 +854,12 @@ class TestValidator(unittest2.TestCase):
     #role_permission_delete
     def test_permission_del_return_dictionary(self):
         """Test does function return dictionary."""
-        return_data = validator.role_permission_delete(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.role_permission_delete(TEST_DATA)
         self.assertIsInstance(return_data, dict)
 
     def test_permission_del_return_true(self):
         """Testinf something."""
-        return_data = validator.role_permission_delete(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.role_permission_delete(TEST_DATA)
         self.assertTrue(return_data['status'])
 
     def test_permission_del_has_key(self):
@@ -894,12 +882,12 @@ class TestValidator(unittest2.TestCase):
         """Testing if user_role_put returns
         a dictionary in permission_post function.
         """
-        return_data = validator.user_role_put(TEST_DATA_USER_ROLE_PUT)
+        return_data = validator.user_role_put(ROLE_PERMISSION)
         self.assertIsInstance(return_data, dict)
 
     def test_user_role_put_correct_status(self):
         """Testing if status is correct."""
-        expected = validator.user_role_put(TEST_DATA_USER_ROLE_PUT)
+        expected = validator.user_role_put(ROLE_PERMISSION)
         self.assertDictEqual(expected, VALID_STATUS)
 
     def  test_return_error_empty_dict(self):
@@ -1034,12 +1022,12 @@ class TestValidator(unittest2.TestCase):
     #user_photo_deletion
     def test_user_photo_del_dictionary(self):
         """Test does function return dictionary."""
-        return_data = validator.user_photo_deletion(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.user_photo_deletion(TEST_DATA)
         self.assertIsInstance(return_data, dict)
 
     def test_user_photo_del_true(self):
         """Test does function return true."""
-        return_data = validator.user_photo_deletion(VALIDATOR_DATA_ROLE_AND_RESOURCE)
+        return_data = validator.user_photo_deletion(TEST_DATA)
         self.assertTrue(return_data['status'])
 
     def test_user_photo_del_has_key(self):

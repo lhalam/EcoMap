@@ -69,6 +69,19 @@ PERMISSION_DELETE_DATA = {'permission_id': 5}
 
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
 
+ERROR_MSG = {'has_key': 'not contain %s key.',
+             'check_minimum_length': '%s value is too short.',
+             'check_maximum_length': '%s value is too long.',
+             'check_string': '%s value is not string.',
+             'check_email': '%s value does not look like email.',
+             'check_empty': '%s value is empty.',
+             'check_enum_value': 'invalid %s value.',
+             'check_email_exist': 'email allready exists.',
+             'name_exists': '"%s" name allready exists.',
+             'check_coordinates': '%s is not coordinates.',
+             'check_coordinates_length': '%s is out of range.'}
+
+
 class DBUtilMock(object):
 
     """Class mock for db.util """
@@ -100,6 +113,25 @@ class TestValidator(unittest2.TestCase):
 
     def setUp(self):
         """Setting up for the test."""
+<<<<<<< HEAD
+=======
+
+        self.data_registration = REGISTRATION_DATA
+        self.data_check_post_comment = TEST_DATA_POST_COMMENT
+        self.data_resource_put = TEST_DATA_PUT
+        self.data_resource_delete = TEST_DATA_RESOURCE_DELETE
+        self.data_permission_post = TEST_DATA_PERMISSION_POST
+        self.data_permission_put = TEST_DATA_PERMISSION_PUT
+        self.data_user_role_put = TEST_DATA_USER_ROLE_PUT
+        self.data = VALIDATOR_DATA_ROLE_AND_RESOURCE
+        self.data_login = LOGIN_DATA
+        self.role_permission_post = ROLE_PERMISSION_POST
+        self.problem_post = PROBLEM_POST
+        self.role_put = ROLE_PUT
+
+        self.valid_status = VALID_STATUS
+
+>>>>>>> 61536d1a2aecfc40725878f0897359a94af170ce
         self.original_role_name_exists = validator.role_name_exists
         validator.role_name_exists = role_name_exists_mock
         self.original_resource_name_exists = validator.resource_name_exists

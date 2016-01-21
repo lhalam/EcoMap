@@ -34,7 +34,7 @@ TEST_DATA_RESOURCE_DELETE = {'resource_id': 1111}
 
 TEST_DATA_USER_ROLE_PUT = {'role_id': 3, 'user_id': 4}
 
-ROLES_DATA = {'user': (2L, ), 'admin': (1L, )}
+ROLES_DATA = {'user': (2L, ), 'admin': (1L, ),'role_name':'user'}
 
 RESOURCE_DATA = {'/api/roles': (18L,), '/api/login': (17L,)}
 
@@ -63,8 +63,12 @@ EMAIL_DATA = {"admin.mail@gmail.com": (1L,
 
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
+<<<<<<< HEAD
 HASH_DATA_DIC = {HASH_DATA: 1L}
 ROLE_POST_DATA = {'role_name': 'user'}
+=======
+HASH_DATA_DIC = {HASH_DATA:1L}
+>>>>>>> 0a3329f150143564a6571768676dc880b6d8fcf6
 
 PERMISSION_DELETE_DATA = {'permission_id': 5}
 
@@ -86,8 +90,8 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
 
 
 def check_hash_in_db_mock(data) :
-     """Mock for db.check_hash_in_db() function to return False."""
-     return bool(HASH_DATA_DIC.get(data))
+    """Mock for db.check_hash_in_db() function to return False."""
+    return bool(HASH_DATA_DIC.get(data))
 
 def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function."""
@@ -117,7 +121,6 @@ class TestValidator(unittest2.TestCase):
         self.orifinal_validator_db = validator.db.check_hash_in_db
         validator.db.check_hash_in_db = check_hash_in_db_mock
 
-
     def tearDown(self):
         """Cleaning up after the test."""
         validator.role_name_exists = self.original_role_name_exists
@@ -125,7 +128,6 @@ class TestValidator(unittest2.TestCase):
         validator.check_email_exist = self.original_check_email_exist
         validator.db.check_hash_in_db = self.orifinal_validator_db
         ERROR_DATA['error'] = []
-
 
     # user_registration tests
     def test_registration_return_dictionary(self):
@@ -284,19 +286,19 @@ class TestValidator(unittest2.TestCase):
         returned_data = validator.hash_check(HASH_DATA)
         self.assertIsInstance(returned_data, dict)
 
-    def test_hash_check_dict_bad_hash(self):
+    def test_hash_check_dict_hash_length(self):
         """Test hash_check dictionary when length of hash is bad."""
         bad_hash = HASH_DATA[:50]
-        bad_hash_dict = validator.hash_check(bad_hash)
+        returned_data = validator.hash_check(bad_hash)
         correct_hash_dict = {'status': False,
                              'error': [{'hash_sum': 'hash sum has wrong length.'}]}
-        self.assertDictEqual(bad_hash_dict, correct_hash_dict)
+        self.assertDictEqual(returned_data, correct_hash_dict)
 
     def test_hash_check_wrong_hash_db(self):
         """Test hash_check dictionary when there is no such hash in db."""
-        returned_data = validator.hash_check('1' * 64)
+        returned_data = validator.hash_check("1" * 64)
         correct_db_dict = {'status': False,
-                            'error': [{'hash_sum': 'hash does not exist.'}]}
+                           'error': [{'hash_sum': 'hash does not exist.'}]}
         self.assertDictEqual(returned_data, correct_db_dict)
 
     def test_hash_check_hash_in_db_ok(self):
@@ -521,65 +523,64 @@ class TestValidator(unittest2.TestCase):
 
     #role_post
     def test_role_post_returned_type(self):
-        """Test if function return dictionary."""
-        returned_data = validator.role_post(ROLE_POST_DATA)
+        """Test if function return dictionary"""
+        returned_data = validator.role_post(ROLES_DATA)
         self.assertIsInstance(returned_data, dict)
 
     def test_role_post_has_key(self):
-        """Test if data has all keys."""
+        """Test if data has all keys"""
         post_data = {}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'not contain role_name key.'}]}
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': 'not contain role_name key.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_empty_data(self):
-        """Test if data isnt empty."""
+        """Test if data isnt empty"""
         post_data = {'role_name':''}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'role_name value is empty.'}]}
+        correct_post_dict = {'status': False, 
+                             'error': [{'role_name': 'role_name value is empty.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_key_has_value(self):
-        """Test if value of key isnt empty."""
+        """Test if value of key isnt empty"""
         post_data = {'role_name':''}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'role_name value is empty.'}]}
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': 'role_name value is empty.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_check_string(self):
-        """Test if value is instance of string."""
+        """Test if value is instance of string"""
         post_data = {'role_name':123123}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'role_name value is not string.'}]}
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': 'role_name value is not string.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_minimum_length(self):
-        """Test if value has minimum length."""
+        """Test if value has minimum length"""
         post_data = {'role_name':'a'}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'role_name value is too short.'}]}
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': 'role_name value is too short.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_maximum_length(self):
-        """Test if value has maximim length."""
+        """Test if value has maximim length"""
         post_data = {'role_name':'a'*256}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': 'role_name value is too long.'}]}
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': 'role_name value is too long.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_role_name_exists(self):
-        """Test if in database is role with such name."""
-        returned_data = validator.role_post(ROLE_POST_DATA)
-        correct_post_dict = {'status': False, 'error':
-                             [{'role_name': '"user" name allready exists.'}]}
+        """Test if in database is role with such name"""
+        returned_data = validator.role_post(ROLES_DATA)
+        correct_post_dict = {'status': False,
+                             'error': [{'role_name': '"user" name allready exists.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
-
 
     #role_put
     def test_role_put_return_dictionary(self):
@@ -1060,6 +1061,7 @@ class TestValidator(unittest2.TestCase):
         input_role_name = 'admin'
         return_data = validator.role_name_exists(input_role_name)
         self.assertTrue(return_data)
+
 
     def test_role_name_exist_incorrect_data(self):
         """Testing with input data when role_name doesn't exists."""

@@ -63,12 +63,7 @@ EMAIL_DATA = {"admin.mail@gmail.com": (1L,
 
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
-<<<<<<< HEAD
-HASH_DATA_DIC = {HASH_DATA: 1L}
-ROLE_POST_DATA = {'role_name': 'user'}
-=======
 HASH_DATA_DIC = {HASH_DATA:1L}
->>>>>>> 0a3329f150143564a6571768676dc880b6d8fcf6
 
 PERMISSION_DELETE_DATA = {'permission_id': 5}
 

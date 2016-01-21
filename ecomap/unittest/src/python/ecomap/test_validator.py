@@ -1,32 +1,34 @@
 """Module which contains Test of Validator functions. """
 
 import unittest2
-from ecomap.db import util as db
 from ecomap import validator
 
 
 # input data
-REGISTRATION_DATA = {'email': 'admin@gmail.com',\
-                     'first_name': 'admin',\
-                     'last_name': 'admin',\
-                     'password': 'db51903d292a412e4ef2079add791eae',\
+REGISTRATION_DATA = {'email': 'admin@gmail.com',
+                     'first_name': 'admin',
+                     'last_name': 'admin',
+                     'password': 'db51903d292a412e4ef2079add791eae',
                      'pass_confirm': 'db51903d292a412e4ef2079add791eae'}
+
+LOGIN_DATA = {'email': 'admin@gmail.com',
+              'password': 'db51903d292a412e4ef2079add791eae'}
 
 VALID_STATUS = {'status': True, 'error': []}
 
 TEST_DATA_PUT = {'resource_name': '/res_name1', 'resource_id': '1234567'}
 
-TEST_DATA_PERMISSION_POST = {'resource_id': '1234567',\
-                            'action': 'PUT',\
-                            'modifier': 'Own',\
+TEST_DATA_PERMISSION_POST = {'resource_id': '1234567',
+                             'action': 'PUT',
+                             'modifier': 'Own',
+                             'description': 'user'}
+
+TEST_DATA_PERMISSION_PUT = {'permission_id': '1234567',
+                            'action': 'PUT',
+                            'modifier': 'Own',
                             'description': 'user'}
 
-TEST_DATA_PERMISSION_PUT = {'permission_id': '1234567',\
-                            'action': 'PUT',\
-                            'modifier': 'Own',\
-                            'description': 'user'}
-
-TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': '77'}
+TEST_DATA_POST_COMMENT = {'content': 'comment', 'problem_id': 77}
 
 TEST_DATA_RESOURCE_DELETE = {'resource_id': 1111}
 
@@ -36,54 +38,71 @@ ROLES_DATA = {'user': (2L, ), 'admin': (1L, )}
 
 RESOURCE_DATA = {'/api/roles': (18L,), '/api/login': (17L,)}
 
-ROLE_PERMISSION_DATA = {'permission_id': "3", 'role_id': "1"}
+ROLE_PUT = {'role_name': "new_name", 'role_id': 5}
 
-VALIDATOR_DATA_ROLE_AND_RESOURCE = {'resource_name': '/name',\
-                                    'role_id':5, 'user_id': 5}
+ROLE_PERMISSION_DATA = {'permission_id': 3, 'role_id': 1}
 
-EMAIL_DATA = {"admin.mail@gmail.com":\
-         (1L, u'admin', u'admin', u'admin.mail@gmail.com',\
-          u'db51903d292a412e4ef2079add791eae', None)}
+ROLE_PERMISSION_POST = {'permission_id': 5, 'role_id': 4}
+
+PROBLEM_POST = {'title': 'problem with rivers',
+                'content': 'some text',
+                'latitude': '49.8256101',
+                'longitude': '24.0600542',
+                'type' : 2}
+
+VALIDATOR_DATA_ROLE_AND_RESOURCE = {'resource_name': '/name',
+                                    'role_id': 5,
+                                    'user_id': 5}
+
+EMAIL_DATA = {"admin.mail@gmail.com": (1L,
+                                       u'admin',
+                                       u'admin',
+                                       u'admin.mail@gmail.com',
+                                       u'db51903d292a412e4ef2079add791eae',
+                                       None)}
 
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
 ROLE_POST_DATA = {'role_name':'user'}
 
-PERMISSION_DELETE_DATA = {'permission_id':5}
+PERMISSION_DELETE_DATA = {'permission_id': 5}
 
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
 
+class DBUtilMock(object):
+
+    """Class mock for db.util """
+
+    def check_hash_in_db(self):
+        """Mock for db.check_hash_in_db() function."""
+        return True
+
+    def check_hash_in_db_mock(self):
+        """Mock for db.check_hash_in_db() function to return False."""
+        return False
+
 def resource_name_exists_mock(resource_name):
-    """Mock of resource_name_exists function"""
+    """Mock of resource_name_exists function."""
     if resource_name in RESOURCE_DATA:
         return RESOURCE_DATA[resource_name]
-    else:
-        return None
 
 def check_email_exist_mock(email):
-    """Mock of email_exists function"""
+    """Mock of email_exists function."""
     if email in EMAIL_DATA:
         return EMAIL_DATA[email]
-    else:
-        return None
 
 def role_name_exists_mock(role_name):
-    """Mock of role_name_exists function"""
+    """Mock of role_name_exists function."""
     if role_name in ROLES_DATA:
         return ROLES_DATA[role_name]
-    else:
-        return None
-
-def check_hash_in_db_mock(data):
-    """mock for db.check_hash_in_db() function"""
-    return True
 
 
 class TestValidator(unittest2.TestCase):
-    """ Class for test validator.py"""
+
+    """Class for test validator.py."""
 
     def setUp(self):
-        """ Setting up for the test """
+        """Setting up for the test."""
         self.data_registration = REGISTRATION_DATA
         self.data_check_post_comment = TEST_DATA_POST_COMMENT
         self.data_resource_put = TEST_DATA_PUT
@@ -92,6 +111,10 @@ class TestValidator(unittest2.TestCase):
         self.data_permission_put = TEST_DATA_PERMISSION_PUT
         self.data_user_role_put = TEST_DATA_USER_ROLE_PUT
         self.data = VALIDATOR_DATA_ROLE_AND_RESOURCE
+        self.data_login = LOGIN_DATA
+        self.role_permission_post = ROLE_PERMISSION_POST
+        self.problem_post = PROBLEM_POST
+        self.role_put = ROLE_PUT
 
         self.valid_status = VALID_STATUS
 
@@ -101,28 +124,25 @@ class TestValidator(unittest2.TestCase):
         validator.resource_name_exists = resource_name_exists_mock
         self.original_check_email_exist = validator.check_email_exist
         validator.check_email_exist = check_email_exist_mock
-        validator.check_email_exist = self.original_check_email_exist
 
-        self.original_check_hash_in_db = db.check_hash_in_db
-        db.check_hash_in_db = check_hash_in_db_mock
 
     def tearDown(self):
-        """Cleaning up after the test"""
+        """Cleaning up after the test."""
         validator.role_name_exists = self.original_role_name_exists
         validator.resource_name_exists = self.original_resource_name_exists
+        validator.check_email_exist = self.original_check_email_exist
 
-        db.check_hash_in_db = self.original_check_hash_in_db
 
     # user_registration tests
     def test_registration_return_dictionary(self):
-        """ testing if user_registration return
+        """Testing if user_registration return
         a dictionary in user_registration function.
         """
         return_data = validator.user_registration(self.data_registration)
         self.assertIsInstance(return_data, dict)
 
     def test_registration_correct_status(self):
-        """testing status with correct
+        """Testing status with correct
         user_registration in user_registration function.
         """
         return_data = validator.user_registration(self.data_registration)
@@ -130,78 +150,78 @@ class TestValidator(unittest2.TestCase):
         self.assertTrue(return_data, expected)
 
     def test_registration_has_key(self):
-        """testing if data has all keys
+        """Testing if data has all keys
         in user_registration function.
         """
         del self.data_registration['first_name']
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error':[{'first_name': 'not contain first_name key.'}]}
         self.data_registration['first_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
     def test_registration_not_empty_data(self):
-        """testing if value is not empty in
+        """Testing if value is not empty in
          user_registration function.
          """
-        self.data_registration['last_name'] = ""
+        self.data_registration['last_name'] = ''
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error':[{'last_name': 'last_name value is empty.'}]}
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
     def test_registration_maximum_length(self):
-        """testing if value of data is not too long
+        """Testing if value of data is not too long
         in user_registration function.
         """
-        self.data_registration['last_name'] = 'a'*260
+        self.data_registration['last_name'] = 'a' * 260
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'last_name': 'last_name value is too long.'}]}
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
     def test_registration_minimum_length(self):
-        """testing if value of data is not too short
+        """Testing if value of data is not too short
         in user_registration function.
         """
         self.data_registration['last_name'] = 'a'
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'last_name': 'last_name value is too short.'}]}
         self.data_registration['last_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
     def test_registration_check_string(self):
-        """testing invalid type in data
+        """Testing invalid type in data
         in user_registration function.
         """
         self.data_registration['first_name'] = 125698
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
-                   'error': [{'first_name': 'first_name value is not string.'}]}
+        expected = {'status': False,
+                    'error': [{'first_name': 'first_name value is not string.'}]}
         self.data_registration['first_name'] = 'admin'
         self.assertEqual(return_data, expected)
 
     def test_registration_incorrect_email(self):
-        """testing invalid email in data
+        """Testing invalid email in data
         in user_registration function.
         """
         self.data_registration['email'] = "admin@gmail"
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'email': 'email value does not look like email.'}]}
         self.data_registration['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, expected)
 
     def test_registration_check_email_exist(self):
-        """testing if email exist in db
+        """Testing if email exist in db
         in user_registration function.
         """
-        self.data_registration['email'] = "admin.mail@gmail.com"
+        self.data_registration['email'] = 'admin.mail@gmail.com'
         return_data = validator.user_registration(self.data_registration)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'email': 'email allready exists.'}]}
         self.data_registration['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, expected)
@@ -209,91 +229,159 @@ class TestValidator(unittest2.TestCase):
 
     # check_post_comment tests
     def test_post_comment_return_type(self):
-        """ Testing if check_post_comment returns
-        a dictionary in check_post_comment function.
-        """
-        self.assertIsInstance(validator.check_post_comment(self.data_check_post_comment), dict)
+        """Testing if check_post_comment returns
+        a dictionary in check_post_comment function."""
+        return_data = validator.check_post_comment(self.data_check_post_comment)
+        self.assertIsInstance(return_data, dict)
 
     def test_post_comment_correct_status(self):
-        """ Check if status is correct. """
+        """Check if status is correct."""
         expected = validator.check_post_comment(self.data_check_post_comment)
         actual = self.valid_status
         self.assertDictEqual(expected, actual)
 
     def test_post_comment_has_key(self):
-        """ Testing if data has all keys
+        """Testing if data has all keys
         in check_post_comment function.
         """
         invalid_data = {'content': 'comment'}
-        actual = {'status': False,\
+        actual = {'status': False,
                   'error': [{'problem_id': 'not contain problem_id key.'}]}
         self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
 
     def test_post_comment_not_empty_data(self):
-        """ Testing if return value is not empty in
+        """Testing if return value is not empty in
          check_post_comment function.
          """
         invalid_data = {'content': 'comment', 'problem_id': None}
-        actual = {'status': False,\
+        actual = {'status': False,
                   'error': [{'problem_id': 'problem_id value is empty.'}]}
         self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
 
     def test_post_comment_check_string(self):
-        """ Testing invalid type in data
+        """Testing invalid type in data
         in check_post_comment function.
         """
-        invalid_data = {'content': [1, 2, 3], 'problem_id': '77'}
-        actual = {'status': False,\
+        invalid_data = {'content': [1, 2, 3], 'problem_id': 77}
+        actual = {'status': False,
                   'error': [{'content': 'content value is not string.'}]}
         self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
 
     def test_post_comment_minimum_length(self):
-        """ Testing if content is not too short
+        """Testing if content is not too short
         in check_post_comment function.
         """
-        invalid_data = {'content': 'q', 'problem_id': '77'}
-        actual = {'status': False,\
+        invalid_data = {'content': 'q', 'problem_id': 77}
+        actual = {'status': False,
                   'error': [{'content': 'content value is too short.'}]}
         self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
 
     def test_post_comment_check_maximum_length(self):
-        """ Testing if content is not too long
+        """Testing if content is not too long
         in check_post_comment function.
         """
-        invalid_data = {'content': 'q' * 256, 'problem_id': '77'}
-        actual = {'status': False,\
+        invalid_data = {'content': 'q' * 256, 'problem_id': 77}
+        actual = {'status': False,
                   'error': [{'content': 'content value is too long.'}]}
         self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
 
+
     #hash_chek
     def test_hash_check_returned_type(self):
-        """Test hash_check returned type of hash_check"""
+        """Test hash_check returned type of hash_check."""
         returned_data = validator.hash_check(HASH_DATA)
         self.assertIsInstance(returned_data, dict)
 
     def test_hash_check_dict_bad_hash(self):
-        """Test hash_check dictionary when length of hash is bad"""
+        """Test hash_check dictionary when length of hash is bad."""
         bad_hash = HASH_DATA[:50]
         bad_hash_dict = validator.hash_check(bad_hash)
-        correct_hash_dict = {'status': False,\
-                    'error': [{'hash_sum': 'hash sum has wrong length.'}]}
+        correct_hash_dict = {'status': False,
+                             'error': [{'hash_sum': 'hash sum has wrong length.'}]}
         self.assertDictEqual(bad_hash_dict, correct_hash_dict)
 
     def test_hash_check_wrong_hash_db(self):
-        """Test hash_check dictionary when there is no such hash in db"""
-        db.check_hash_in_db = self.original_check_hash_in_db
+        """Test hash_check dictionary when there is no such hash in db."""
         bad_hash_dict = validator.hash_check(HASH_DATA)
-        correct_db_dict = {'status': False,\
-                           'error': [{'hash_sum': 'hash does not exist.'}]}
+        correct_db_dict = {'status': False, 'error': [{'hash_sum': 'hash does not exist.'}]}
         self.assertDictEqual(bad_hash_dict, correct_db_dict)
 
     def test_hash_check_hash_in_db_ok(self):
-        """Test hash_check if there is no error and hash is valid"""
+        """Test hash_check if there is no error and hash is valid."""
+        original_val_db = validator.db
+        validator.db = DBUtilMock()
         returned_data = validator.hash_check(HASH_DATA)
         correct_db_dict = {'status': True, 'error': []}
         self.assertDictEqual(returned_data, correct_db_dict)
+        validator.db = original_val_db
+
 
     #user_login
+    def test_login_return_dictionary(self):
+        """Testing user_login function whether it returns dictionary."""
+        return_data = validator.user_login(self.data_login)
+        self.assertIsInstance(return_data, dict)
+
+    def test_login_correct_status(self):
+        """Testing user_login function whether status is correct."""
+        return_data = validator.user_login(self.data_login)
+        expected = self.valid_status
+        self.assertTrue(return_data, expected)
+
+    def test_login_has_key(self):
+        """Testing user_login function if data has all keys."""
+        del self.data_login['email']
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'email': 'not contain email key.'}]}
+        self.data_login['email'] = 'admin@gmail.com'
+        self.assertEqual(return_data, expected)
+
+    def test_login_not_empty_data(self):
+        """Testing user_login function if value is not empty."""
+        self.data_login['password'] = ""
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'password': 'password value is empty.'}]}
+        self.data_login['password'] = 'db51903d292a412e4ef2079add791eae'
+        self.assertEqual(return_data, expected)
+
+    def test_login_maximum_length(self):
+        """Testing user_login function if value of data is not too long."""
+        self.data_login['password'] = 'a' * 101
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'password': 'password value is too long.'}]}
+        self.data_login['password'] = 'db51903d292a412e4ef2079add791eae'
+        self.assertEqual(return_data, expected)
+
+    def test_login_minimum_length(self):
+        """Testing user_login function if value of data is not too short."""
+        self.data_login['password'] = 'a'
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'password': 'password value is too short.'}]}
+        self.data_login['password'] = 'db51903d292a412e4ef2079add791eae'
+        self.assertEqual(return_data, expected)
+
+    def test_login_check_string(self):
+        """Testing user_login function if it is invalid type in data."""
+        self.data_login['email'] = 125698
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'email': 'email value is not string.'}]}
+        self.data_login['email'] = 'admin@gmail.com'
+        self.assertEqual(return_data, expected)
+
+    def test_login_incorrect_email(self):
+        """Testing user_login function if email is correct in data."""
+        self.data_login['email'] = "admin"
+        return_data = validator.user_login(self.data_login)
+        expected = {'status': False,
+                    'error': [{'email': 'email value does not look like email.'}]}
+        self.data_login['email'] = 'admin@gmail.com'
+        self.assertEqual(return_data, expected)
+
 
     #resource_post
     def test_resource_post_return_dictionary(self):
@@ -310,168 +398,269 @@ class TestValidator(unittest2.TestCase):
         """Test if function has errror has_key."""
         invalid_data = {'':'/res_name1'}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False, \
-                'error':[{'resource_name': 'not contain resource_name key.'}]}
+        expected_data = {'status': False,
+                         'error':[{'resource_name': 'not contain resource_name key.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_resource_post_empty(self):
         """Test if function has errror error_empty."""
         invalid_data = {'resource_name': ''}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False, \
-                'error':[{'resource_name': 'resource_name value is empty.'}]}
+        expected_data = {'status': False,
+                         'error':[{'resource_name': 'resource_name value is empty.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_resource_post_str(self):
-        """Test if function has errror is_str"""
+        """Test if function has errror is_str."""
         invalid_data = {'resource_name': 1}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False, \
-              'error':[{'resource_name': 'resource_name value is not string.'}]}
+        expected_data = {'status': False,
+                         'error':[{'resource_name': 'resource_name value is not string.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_resource_post_min_len(self):
         """Test if function has errror min_len."""
         invalid_data = {'resource_name': 'a'}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False, \
-               'error':[{'resource_name': 'resource_name value is too short.'}]}
+        expected_data = {'status': False,
+                         'error':[{'resource_name': 'resource_name value is too short.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_resource_post_max_len(self):
         """Test if function has errror max_len."""
-        invalid_data = {'resource_name': 'a'*101}
+        invalid_data = {'resource_name': 'a' * 101}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False, \
-                'error':[{'resource_name': 'resource_name value is too long.'}]}
+        expected_data = {'status': False,
+                         'error':[{'resource_name': 'resource_name value is too long.'}]}
         self.assertEqual(return_data, expected_data)
+
 
     # resource_put tests
     def test_res_put_return_dictionary(self):
-        """ testing if resource_put return a dictionary in function"""
+        """Testing if resource_put return a dictionary in function."""
         return_data = validator.resource_put(self.data_resource_put)
         self.assertIsInstance(return_data, dict)
 
     def test_res_put_correct_status(self):
-        """testing status with correct resource_putin resource_put dunction."""
+        """Testing status with correct resource_putin resource_put dunction."""
         return_data = validator.resource_put(self.data_resource_put)
         expected = self.valid_status
         self.assertTrue(return_data, expected)
 
     def test_res_put_not_empty_data(self):
-        """testing invalid email in data in resource_put dunction."""
+        """Testing invalid email in data in resource_put dunction."""
         test_data = {'resource_name': '', 'resource_id': ''}
         return_data = validator.resource_put(test_data)
-        expected = {'status': False,\
-                'error': [{'resource_name': 'resource_name value is empty.'},\
-                {'resource_id': 'resource_id value is empty.'}]}
+        expected = {'status': False,
+                    'error': [{'resource_name': 'resource_name value is empty.'},
+                              {'resource_id': 'resource_id value is empty.'}]}
         self.assertEqual(return_data, expected)
 
     def test_res_put_has_key(self):
-        """testing if data has all keys in resource_put dunction."""
+        """Testing if data has all keys in resource_put dunction."""
         del self.data_resource_put['resource_id']
         return_data = validator.resource_put(self.data_resource_put)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'resource_id': 'not contain resource_id key.'}]}
         self.data_resource_put['resource_id'] = '12345'
         self.assertEqual(return_data, expected)
 
     def test_res_put_name_is_string(self):
-        """testing if resouce_name is string in resource_put dunction."""
+        """Testing if resouce_name is string in resource_put dunction."""
         self.data_resource_put['resource_name'] = 123
         return_data = validator.resource_put(self.data_resource_put)
-        expected = {'status': False,\
-            'error': [{'resource_name': 'resource_name value is not string.'}]}
+        expected = {'status': False,
+                    'error': [{'resource_name': 'resource_name value is not string.'}]}
         self.data_resource_put['rresource_name'] = '/res_name1'
         self.assertEqual(return_data, expected)
 
     def test_res_put_minimum_length(self):
-        """testing if resouce_name is not too short in resource_put dunction."""
+        """Testing if resouce_name is not too short in resource_put dunction."""
         self.data_resource_put['resource_name'] = "a"
         return_data = validator.resource_put(self.data_resource_put)
-        expected = {'status': False,\
-             'error': [{'resource_name': 'resource_name value is too short.'}]}
+        expected = {'status': False,
+                    'error': [{'resource_name': 'resource_name value is too short.'}]}
         self.data_resource_put['resource_name'] = '/res_name1'
         self.assertEqual(return_data, expected)
 
     def test_res_put_maximum_length(self):
-        """testing if resouce_name is not too long in resource_put dunction."""
+        """Testing if resouce_name is not too long in resource_put dunction."""
         self.data_resource_put['resource_name'] = "a"*256
         return_data = validator.resource_put(self.data_resource_put)
-        expected = {'status': False,\
-            'error': [{'resource_name': 'resource_name value is too long.'}]}
+        expected = {'status': False,
+                    'error': [{'resource_name': 'resource_name value is too long.'}]}
         self.data_resource_put['resource_name'] = '/res_name1'
         self.assertEqual(return_data, expected)
 
     def test_res_put_name_exist(self):
-        """testing if resouce_name is already exist in resource_put dunction."""
+        """Testing if resouce_name is already exist in resource_put dunction."""
         self.data_resource_put['resource_name'] = '/api/roles'
         return_data = validator.resource_put(self.data_resource_put)
-        expected = {'status': False,\
-            'error': [{'resource_name': '"/api/roles" name allready exists.'}]}
+        expected = {'status': False,
+                    'error': [{'resource_name': '"/api/roles" name allready exists.'}]}
         self.assertEqual(return_data, expected)
+
+
+    # resource_delete tests
+    def test_res_delete_return_type(self):
+        """Testing if resource_delete returns
+        a dictionary in resource_delete function."""
+        return_data = validator.resource_delete(self.data_resource_delete)
+        self.assertIsInstance(return_data, dict)
+
+    def test_res_delete_correct_status(self):
+        """Testing if status is correct."""
+        expected = validator.resource_delete(self.data_resource_delete)
+        actual = self.valid_status
+        self.assertDictEqual(expected, actual)
+
+    def test_res_delete_not_empty_data(self):
+        """Testing if return data is not empty
+        in resource_delete function.
+        """
+        invalid_data = {'resource_id': None}
+        actual = {'status': False,
+                  'error': [{'resource_id': 'resource_id value is empty.'}]}
+        self.assertDictEqual(validator.resource_delete(invalid_data), actual)
+
+    def test_res_delete_has_key(self):
+        """Testing if data has all keys
+        in resource_delete function.
+        """
+        invalid_data = {'test': 1}
+        actual = {'status': False,
+                  'error': [{'resource_id': 'not contain resource_id key.'}]}
+        self.assertDictEqual(validator.resource_delete(invalid_data), actual)
+
 
     #role_post
     def test_role_post_returned_type(self):
-        """Test if function return dictionary"""
+        """Test if function return dictionary."""
         returned_data = validator.role_post(ROLE_POST_DATA)
         self.assertIsInstance(returned_data, dict)
 
     def test_role_post_has_key(self):
-        """Test if data has all keys"""
+        """Test if data has all keys."""
         post_data = {}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'not contain role_name key.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'not contain role_name key.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_empty_data(self):
-        """Test if data isnt empty"""
+        """Test if data isnt empty."""
         post_data = {'role_name':''}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'role_name value is empty.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'role_name value is empty.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_key_has_value(self):
-        """Test if value of key isnt empty"""
+        """Test if value of key isnt empty."""
         post_data = {'role_name':''}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'role_name value is empty.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'role_name value is empty.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_check_string(self):
-        """Test if value is instance of string"""
+        """Test if value is instance of string."""
         post_data = {'role_name':123123}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'role_name value is not string.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'role_name value is not string.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_minimum_length(self):
-        """Test if value has minimum length"""
+        """Test if value has minimum length."""
         post_data = {'role_name':'a'}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'role_name value is too short.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'role_name value is too short.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_maximum_length(self):
-        """Test if value has maximim length"""
+        """Test if value has maximim length."""
         post_data = {'role_name':'a'*256}
         returned_data = validator.role_post(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': 'role_name value is too long.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': 'role_name value is too long.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_role_post_role_name_exists(self):
-        """Test if in database is role with such name"""
+        """Test if in database is role with such name."""
         returned_data = validator.role_post(ROLE_POST_DATA)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'role_name': '"user" name allready exists.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'role_name': '"user" name allready exists.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
+
+
     #role_put
+    def test_role_put_return_dictionary(self):
+        """Testing role_put function whether it returns dictionary."""
+        return_data = validator.role_put(self.role_put)
+        self.assertIsInstance(return_data, dict)
+
+    def test_role_put_correct_status(self):
+        """Testing user_login function whether status is correct."""
+        return_data = validator.user_login(self.data_login)
+        expected = self.valid_status
+        self.assertTrue(return_data, expected)
+
+    def test_role_put_has_key(self):
+        """Testing role_put function if data has all keys."""
+        del self.role_put['role_name']
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_name': 'not contain role_name key.'}]}
+        self.role_put['role_name'] = 'new_name'
+        self.assertEqual(return_data, expected)
+
+    def test_role_put_not_empty_data(self):
+        """Testing role_put function if value is not empty."""
+        self.role_put['role_id'] = ""
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_id': 'role_id value is empty.'}]}
+        self.role_put['role_id'] = 4
+        self.assertEqual(return_data, expected)
+
+    def test_role_put_maximum_length(self):
+        """Testing role_put function if value of data is not too long."""
+        self.role_put['role_name'] = 'a' * 260
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_name': 'role_name value is too long.'}]}
+        self.role_put['role_name'] = 'new_name'
+        self.assertEqual(return_data, expected)
+
+    def test_role_put_minimum_length(self):
+        """Testing role_put function if value of data is not too short."""
+        self.role_put['role_name'] = 'a'
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_name': 'role_name value is too short.'}]}
+        self.role_put['role_name'] = 'new_name'
+        self.assertEqual(return_data, expected)
+
+    def test_role_put_check_string(self):
+        """Testing role_put function if it is invalid type in data."""
+        self.role_put['role_name'] = 125698
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_name': 'role_name value is not string.'}]}
+        self.role_put['role_name'] = 'new_name'
+        self.assertEqual(return_data, expected)
+
+    def test_role_put_name_exists(self):
+        """Testing role_put function if it is role with such name in db"""
+        self.role_put['role_name'] = 'user'
+        return_data = validator.role_put(self.role_put)
+        expected = {'status': False,
+                    'error': [{'role_name': '"user" name allready exists.'}]}
+        self.role_put['role_name'] = 'new_name'
+        self.assertEqual(return_data, expected)
+
 
     #role_delete
     def test_role_del_retutn_dictionary(self):
@@ -486,86 +675,31 @@ class TestValidator(unittest2.TestCase):
 
     def test_role_del_has_key(self):
         """Test if function has errror has_key."""
-        invalid_data = {'':3}
+        invalid_data = {'': 3}
         return_data = validator.role_delete(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'role_id': 'not contain role_id key.'}]}
+        expected_data = {'status': False,
+                         'error': [{'role_id': 'not contain role_id key.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_role_del_empty(self):
         """Test if function has errror error_empty."""
         invalid_data = {'role_id': ''}
         return_data = validator.role_delete(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'role_id': 'role_id value is empty.'}]}
+        expected_data = {'status': False,
+                         'error': [{'role_id': 'role_id value is empty.'}]}
         self.assertEqual(return_data, expected_data)
 
-    # resource_delete tests
-    def test_res_delete_return_type(self):
-        """ Testing if resource_delete returns
-        a dictionary in resource_delete function.
-        """
-        self.assertIsInstance(validator.resource_delete(self.data_resource_delete), dict)
-
-    def test_res_delete_correct_status(self):
-        """ Testing if status is correct. """
-        expected = validator.resource_delete(self.data_resource_delete)
-        actual = self.valid_status
-        self.assertDictEqual(expected, actual)
-
-    def test_res_delete_not_empty_data(self):
-        """ Testing if return data is not empty
-        in resource_delete function.
-        """
-        invalid_data = {'resource_id': None}
-        actual = {'status': False,\
-                  'error': [{'resource_id': 'resource_id value is empty.'}]}
-        self.assertDictEqual(validator.resource_delete(invalid_data), actual)
-
-    def test_res_delete_has_key(self):
-        """ Testing if data has all keys
-        in resource_delete function.
-        """
-        invalid_data = {'test': 1}
-        actual = {'status': False,\
-                 'error': [{'resource_id': 'not contain resource_id key.'}]}
-        self.assertDictEqual(validator.resource_delete(invalid_data), actual)
-
-    # permission_delete tests
-    def test_permission_delete_returned_type(self):
-        """Test if function return dictionary"""
-        returned_data = validator.permission_delete\
-                        (PERMISSION_DELETE_DATA)
-        self.assertIsInstance(returned_data, dict)
-
-    def test_permission_delete_has_key(self):
-        """Test if data has all keys"""
-        permission_data = {}
-        returned_data = validator.permission_delete(permission_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'permission_id':\
-                            'not contain permission_id key.'}]}
-        self.assertDictEqual(returned_data, correct_post_dict)
-
-    def test_permission_delete_key_has_value(self):
-        """Test if value of key isnt empty"""
-        permission_data = {'permission_id':''}
-        returned_data = validator.permission_delete(permission_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'permission_id':\
-                            'permission_id value is empty.'}]}
-        self.assertDictEqual(returned_data, correct_post_dict)
 
     # permission_post tests
     def test_perm_post_is_dictionary(self):
-        """ testing if resource_put return
+        """Testing if resource_put return
         a dictionary in permission_post function.
         """
         return_data = validator.permission_post(self.data_permission_post)
         self.assertIsInstance(return_data, dict)
 
     def test_perm_post_correct_status(self):
-        """testing status with correct
+        """Testing status with correct
         resource_put in permission_post function.
         """
         return_data = validator.permission_post(self.data_permission_post)
@@ -573,12 +707,12 @@ class TestValidator(unittest2.TestCase):
         self.assertTrue(return_data, expected)
 
     def test_perm_post_has_key(self):
-        """testing if data has all keys
+        """Testing if data has all keys
         in permission_post function.
         """
         del self.data_permission_post['action']
         return_data = validator.permission_post(self.data_permission_post)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'action': 'not contain action key.'}]}
         self.data_permission_post['action'] = 'PUT'
         self.assertEqual(return_data, expected)
@@ -587,9 +721,9 @@ class TestValidator(unittest2.TestCase):
         """testing if data dont have empty value
         in permission_post function.
         """
-        self.data_permission_post['action'] = ""
+        self.data_permission_post['action'] = ''
         return_data = validator.permission_post(self.data_permission_post)
-        expected = {'status': False,\
+        expected = {'status': False,
                     'error': [{'action': 'action value is empty.'}]}
         self.data_permission_post['action'] = 'PUT'
         self.assertEqual(return_data, expected)
@@ -598,10 +732,10 @@ class TestValidator(unittest2.TestCase):
         """testing if description is not too short
         in permission_post function.
         """
-        self.data_permission_post['description'] = "a"
+        self.data_permission_post['description'] = 'a'
         return_data = validator.permission_post(self.data_permission_post)
-        expected = {'status': False,\
-                'error': [{'description': 'description value is too short.'}]}
+        expected = {'status': False,
+                    'error': [{'description': 'description value is too short.'}]}
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
 
@@ -609,10 +743,10 @@ class TestValidator(unittest2.TestCase):
         """testing if description is not too long
         in permission_post function.
         """
-        self.data_permission_post['description'] = "a"*256
+        self.data_permission_post['description'] = 'a' * 256
         return_data = validator.permission_post(self.data_permission_post)
-        expected = {'status': False,\
-                'error': [{'description': 'description value is too long.'}]}
+        expected = {'status': False,
+                    'error': [{'description': 'description value is too long.'}]}
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
 
@@ -623,7 +757,7 @@ class TestValidator(unittest2.TestCase):
         self.data_permission_post['description'] = 123
         return_data = validator.permission_post(self.data_permission_post)
         expected = {'status': False,\
-                'error': [{'description': 'description value is not string.'}]}
+                    'error': [{'description': 'description value is not string.'}]}
         self.data_permission_post['description'] = 'user'
         self.assertEqual(return_data, expected)
 
@@ -633,33 +767,45 @@ class TestValidator(unittest2.TestCase):
         """
         self.data_permission_post['modifier'] = 'user'
         return_data = validator.permission_post(self.data_permission_post)
-        expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
+        expected = {'status': False,\
+                    'error': [{'modifier': 'invalid modifier value.'}]}
         self.data_permission_post['modifier'] = 'Own'
         self.assertEqual(return_data, expected)
+
+    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
+    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
+    def test_permission_put_is_enum(self):
+        """testing if modifier or action is ENUM
+        in permission_post function."""
+        self.data_permission_put['modifier'] = 'user'
+        return_data = validator.permission_put(self.data_permission_put)
+        expected = {'status': False,
+                    'error': [{'modifier': 'invalid modifier value.'}]}
+        self.data_permission_put['modifier'] = 'Own'
+        self.assertEqual(return_data, expected)
+
 
     #permission_put tests
     def test_perm_put_is_dictionary(self):
         """ testing if resource_put return
-        a dictionary in permission_put function.
-        """
+        a dictionary in permission_put function."""
         return_data = validator.permission_put(self.data_permission_put)
         self.assertIsInstance(return_data, dict)
 
     def test_perm_put_correct_status(self):
         """testing status with correct
-        resource_put in permission_put function.
-        """
+        resource_put in permission_put function."""
         return_data = validator.permission_put(self.data_permission_put)
         expected = self.valid_status
         self.assertTrue(return_data, expected)
 
     def test_perm_put_has_key(self):
         """testing if data has all keys
-        in permission_put function.
-        """
+        in permission_put function."""
         del self.data_permission_put['action']
         return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'action': 'not contain action key.'}]}
+        expected = {'status': False,
+                    'error': [{'action': 'not contain action key.'}]}
         self.data_permission_put['action'] = 'PUT'
         self.assertEqual(return_data, expected)
 
@@ -667,9 +813,10 @@ class TestValidator(unittest2.TestCase):
         """testing if data dont have empty value
         in permission_put function.
         """
-        self.data_permission_put['action'] = ""
+        self.data_permission_put['action'] = ''
         return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'action': 'action value is empty.'}]}
+        expected = {'status': False,
+                    'error': [{'action': 'action value is empty.'}]}
         self.data_permission_put['action'] = 'PUT'
         self.assertEqual(return_data, expected)
 
@@ -677,9 +824,10 @@ class TestValidator(unittest2.TestCase):
         """testing if description is not too short
         in permission_put function.
         """
-        self.data_permission_put['description'] = "a"
+        self.data_permission_put['description'] = 'a'
         return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'description': 'description value is too short.'}]}
+        expected = {'status': False,
+                    'error': [{'description': 'description value is too short.'}]}
         self.data_permission_put['description'] = 'user'
         self.assertEqual(return_data, expected)
 
@@ -687,9 +835,10 @@ class TestValidator(unittest2.TestCase):
         """testing if description is not too long
         in permission_put function.
         """
-        self.data_permission_put['description'] = "a"*256
+        self.data_permission_put['description'] = 'a' * 256
         return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'description': 'description value is too long.'}]}
+        expected = {'status': False,
+                    'error': [{'description': 'description value is too long.'}]}
         self.data_permission_put['description'] = 'user'
         self.assertEqual(return_data, expected)
 
@@ -699,21 +848,67 @@ class TestValidator(unittest2.TestCase):
         """
         self.data_permission_put['description'] = 123
         return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'description': 'description value is not string.'}]}
+        expected = {'status': False,
+                    'error': [{'description': 'description value is not string.'}]}
         self.data_permission_put['description'] = 'user'
         self.assertEqual(return_data, expected)
 
-    # !!!!! 'check_enum_value': 'invalid %s value.' In str.434
-    # we have ERROR_MSG['is_in_enum']. Not such value in ERROR_MSG
-    def test_permission_put_is_enum(self):
-        """testing if modifier or action is ENUM
-        in permission_post function.
-        """
-        self.data_permission_put['modifier'] = 'user'
-        return_data = validator.permission_put(self.data_permission_put)
-        expected = {'status': False, 'error': [{'modifier': 'invalid modifier value.'}]}
-        self.data_permission_put['modifier'] = 'Own'
+
+    # permission_delete tests
+    def test_permission_delete_returned_type(self):
+        """Test if function return dictionary."""
+        returned_data = validator.permission_delete\
+                        (PERMISSION_DELETE_DATA)
+        self.assertIsInstance(returned_data, dict)
+
+    def test_permission_delete_has_key(self):
+        """Test if data has all keys."""
+        permission_data = {}
+        returned_data = validator.permission_delete(permission_data)
+        correct_post_dict = {'status': False,
+                             'error':[{'permission_id': 'not contain permission_id key.'}]}
+        self.assertDictEqual(returned_data, correct_post_dict)
+
+    def test_permission_delete_key_has_value(self):
+        """Test if value of key isnt empty."""
+        permission_data = {'permission_id':''}
+        returned_data = validator.permission_delete(permission_data)
+        correct_post_dict = {'status': False, 'error':
+                             [{'permission_id':
+                               'permission_id value is empty.'}]}
+        self.assertDictEqual(returned_data, correct_post_dict)
+
+
+    # role_permission_post tests
+    def test_role_permission_post_return_dictionary(self):
+        """Testing role_permission_post function
+        whether it returns dictionary."""
+        return_data = validator.role_permission_post(self.role_permission_post)
+        self.assertIsInstance(return_data, dict)
+
+    def test_role_permission_post_correct_status(self):
+        """testing role_permission_post function whether status is correct."""
+        return_data = validator.role_permission_post(self.role_permission_post)
+        expected = self.valid_status
+        self.assertTrue(return_data, expected)
+
+    def test_role_permission_post_has_key(self):
+        """testing role_permission_post function if data has all keys."""
+        del self.role_permission_post['role_id']
+        return_data = validator.role_permission_post(self.role_permission_post)
+        expected = {'status': False,
+                    'error': [{'role_id': 'not contain role_id key.'}]}
+        self.data_login['role_id'] = 4
         self.assertEqual(return_data, expected)
+
+    def  test_role_permission_post_empty_dict(self):
+        """ testing role_permission_post if data is not empty."""
+        self.role_permission_post['role_id'] = None
+        return_data = validator.role_permission_post(self.role_permission_post)
+        expected = {'status': False,
+                    'error': [{'role_id': 'role_id value is empty.'}]}
+        self.assertDictEqual(return_data, expected)
+
 
     #role_permission_delete
     def test_permission_del_return_dictionary(self):
@@ -722,7 +917,7 @@ class TestValidator(unittest2.TestCase):
         self.assertIsInstance(return_data, dict)
 
     def test_permission_del_return_true(self):
-        """testinf something """
+        """Testinf something."""
         return_data = validator.role_permission_delete(self.data)
         self.assertTrue(return_data['status'])
 
@@ -730,103 +925,167 @@ class TestValidator(unittest2.TestCase):
         """Test does function have errror has_key."""
         invalid_data = {'':3}
         return_data = validator.role_permission_delete(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'role_id': 'not contain role_id key.'}]}
+        expected_data = {'status': False,
+                         'error':[{'role_id': 'not contain role_id key.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_permission_del_empty(self):
         """Test does function have errror error_empty."""
         invalid_data = {'role_id': ''}
         return_data = validator.role_permission_delete(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'role_id': 'role_id value is empty.'}]}
+        expected_data = {'status': False,
+                         'error':[{'role_id': 'role_id value is empty.'}]}
         self.assertEqual(return_data, expected_data)
 
 
     # user_role_put tests
     def test_user_role_put_return_type(self):
-        """ Testing if user_role_put returns
+        """Testing if user_role_put returns
         a dictionary in permission_post function.
         """
-        self.assertIsInstance(validator.user_role_put(self.data_user_role_put), dict)
+        return_data = validator.user_role_put(self.data_user_role_put)
+        self.assertIsInstance(return_data, dict)
 
     def test_user_role_put_correct_status(self):
-        """ Testing if status is correct. """
+        """Testing if status is correct."""
         expected = validator.user_role_put(self.data_user_role_put)
         actual = self.valid_status
         self.assertDictEqual(expected, actual)
 
     def  test_return_error_empty_dict(self):
-        """ Testing if return data is not empty
+        """Testing if return data is not empty
         in user_role_put function.
         """
         invalid_data = {'role_id': None, 'user_id': 2}
-        actual = {'status': False, 'error': [{'role_id': 'role_id value is empty.'}]}
+        actual = {'status': False,
+                  'error': [{'role_id': 'role_id value is empty.'}]}
         self.assertDictEqual(validator.user_role_put(invalid_data), actual)
 
     def test_return_error_has_key(self):
-        """ Testing if return dictionary is correct. """
+        """Testing if return dictionary is correct."""
         invalid_data = {'test': 1, 'user_id': 3}
-        actual = {'status': False, 'error': [{'role_id': 'not contain role_id key.'}]}
+        actual = {'status': False,
+                  'error': [{'role_id': 'not contain role_id key.'}]}
         self.assertDictEqual(validator.user_role_put(invalid_data), actual)
+
 
     # change_password tests
     def test_change_pass_returned_type(self):
-        """Test if function return dictionary"""
+        """Test if function return dictionary."""
         returned_data = validator.change_password\
                         (CHANGE_PASS_DATA)
         self.assertIsInstance(returned_data, dict)
 
     def test_change_pass_has_key(self):
-        """Test if data has all keys"""
+        """Test if data has all keys."""
         permission_data = {}
         returned_data = validator.change_password(permission_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'password': 'not contain password key.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'password': 'not contain password key.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_change_pass_key_has_value(self):
-        """Test if value of key isnt empty"""
+        """Test if value of key isnt empty."""
         permission_data = {'password':''}
         returned_data = validator.change_password(permission_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'password': 'password value is empty.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'password': 'password value is empty.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_change_pass_check_string(self):
-        """Test if value is instance of string"""
+        """Test if value is instance of string."""
         post_data = {'password':1321521}
         returned_data = validator.change_password(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'password': 'password value is not string.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'password': 'password value is not string.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_change_pass_minimum_length(self):
-        """Test if value has minimum length"""
+        """Test if value has minimum length."""
         post_data = {'password':'1'}
         returned_data = validator.change_password(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'password': 'password value is too short.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'password': 'password value is too short.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
 
     def test_change_pass_maximum_length(self):
-        """Test if value has maximim length"""
+        """Test if value has maximim length."""
         post_data = {'password':'1'*256}
         returned_data = validator.change_password(post_data)
-        correct_post_dict = {'status': False, 'error':\
-                            [{'password': 'password value is too long.'}]}
+        correct_post_dict = {'status': False, 'error':
+                             [{'password': 'password value is too long.'}]}
         self.assertDictEqual(returned_data, correct_post_dict)
+
+
+    # problem_post tests
+    def test_problem_post_return_dictionary(self):
+        """Testing problem_post function whether it returns dictionary."""
+        return_data = validator.problem_post(self.problem_post)
+        self.assertIsInstance(return_data, dict)
+
+    def test_problem_post_correct_status(self):
+        """Testing problem_post function whether status is correct."""
+        return_data = validator.problem_post(self.problem_post)
+        expected = self.valid_status
+        self.assertTrue(return_data, expected)
+
+    def test_problem_post_has_key(self):
+        """Testing problem_post function if data has all keys."""
+        del self.problem_post['title']
+        return_data = validator.problem_post(self.problem_post)
+        expected = {'status': False,
+                    'error': [{'title': 'not contain title key.'}]}
+        self.data_login['title'] = 'title'
+        self.assertEqual(return_data, expected)
+
+    def  test_problem_post_empty_dict(self):
+        """Testing problem_post if data is not empty."""
+        self.problem_post['title'] = None
+        return_data = validator.problem_post(self.problem_post)
+        expected = {'status': False,
+                    'error': [{'title': 'title value is empty.'}]}
+        self.assertDictEqual(return_data, expected)
+
+    def test_problem_post_check_string(self):
+        """Testing problem_post function if it is invalid type in data."""
+        self.problem_post['content'] = 125698
+        return_data = validator.problem_post(self.problem_post)
+        expected = {'status': False,
+                    'error': [{'content': 'content value is not string.'}]}
+        self.problem_post['content'] = '49.8256101'
+        self.assertEqual(return_data, expected)
+
+    def test_problem_post_maximum_length(self):
+        """Testing problem_post function if value of data is not too long."""
+        self.problem_post['title'] = 'a' * 260
+        return_data = validator.problem_post(self.problem_post)
+        expected = {'status': False,
+                    'error': [{'title': 'title value is too long.'}]}
+        self.problem_post['title'] = 'problem with rivers'
+        self.assertEqual(return_data, expected)
+
+    def test_problem_post_minimum_length(self):
+        """Testing problem_post function if value of data is not too short."""
+        self.problem_post['title'] = 'a'
+        return_data = validator.problem_post(self.problem_post)
+        expected = {'status': False,
+                    'error': [{'title': 'title value is too short.'}]}
+        self.problem_post['title'] = 'problem with rivers'
+        self.assertEqual(return_data, expected)
+
 
     # role_name_exists tests
     def test_role_name_exist_correct_data(self):
-        """ Testing with input data when role_name exists. """
+        """Testing with input data when role_name exists."""
         input_role_name = 'admin'
-        self.assertTupleEqual(validator.role_name_exists(input_role_name), (1L,))
+        return_data = validator.role_name_exists(input_role_name)
+        self.assertTupleEqual(return_data, (1L,))
 
     def test_role_name_exist_incorrect_data(self):
-        """ Testing with input data when role_name doesn't exists. """
+        """Testing with input data when role_name doesn't exists."""
         input_role_name = 'test'
         self.assertEqual(validator.role_name_exists(input_role_name), None)
+
 
     #user_photo_deletion
     def test_user_photo_del_dictionary(self):
@@ -843,16 +1102,16 @@ class TestValidator(unittest2.TestCase):
         """Test does function have errror has_key."""
         invalid_data = {'':'3'}
         return_data = validator.user_photo_deletion(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'user_id': 'not contain user_id key.'}]}
+        expected_data = {'status': False,
+                         'error':[{'user_id': 'not contain user_id key.'}]}
         self.assertEqual(return_data, expected_data)
 
     def test_user_photo_del_empty(self):
         """Test does function have errror error_empty."""
         invalid_data = {'user_id': ''}
         return_data = validator.user_photo_deletion(invalid_data)
-        expected_data = {'status': False, \
-                                'error':[{'user_id': 'user_id value is empty.'}]}
+        expected_data = {'status': False,
+                         'error':[{'user_id': 'user_id value is empty.'}]}
         self.assertEqual(return_data, expected_data)
 
 

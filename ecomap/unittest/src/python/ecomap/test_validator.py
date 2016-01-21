@@ -63,11 +63,14 @@ EMAIL_DATA = {"admin.mail@gmail.com": (1L,
 
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
-ROLE_POST_DATA = {'role_name':'user'}
+HASH_DATA_DIC = {HASH_DATA: 1L}
+ROLE_POST_DATA = {'role_name': 'user'}
 
 PERMISSION_DELETE_DATA = {'permission_id': 5}
 
 CHANGE_PASS_DATA = {'id':'6', 'old_pass':'oldpasswd', 'password':'newpasswd'}
+
+ERROR_DATA = {'status': False, 'error': []}
 
 ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_minimum_length': '%s value is too short.',
@@ -82,29 +85,21 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_coordinates_length': '%s is out of range.'}
 
 
-class DBUtilMock(object):
-
-    """Class mock for db.util """
-
-    def check_hash_in_db(self, data):
-        """Mock for db.check_hash_in_db() function."""
-        return True
-
-    def check_hash_in_db_mock(self, data):
-        """Mock for db.check_hash_in_db() function to return False."""
-        return False
+def check_hash_in_db_mock(data) :
+     """Mock for db.check_hash_in_db() function to return False."""
+     return bool(HASH_DATA_DIC.get(data))
 
 def resource_name_exists_mock(resource_name):
     """Mock of resource_name_exists function."""
-    return RESOURCE_DATA.get(resource_name)
+    return bool(RESOURCE_DATA.get(resource_name))
 
 def check_email_exist_mock(email):
     """Mock of email_exists function."""
-    return EMAIL_DATA.get(email)
+    return bool(EMAIL_DATA.get(email))
 
 def role_name_exists_mock(role_name):
     """Mock of role_name_exists function."""
-    return ROLES_DATA.get(role_name)
+    return bool(ROLES_DATA.get(role_name))
 
 
 class TestValidator(unittest2.TestCase):
@@ -119,6 +114,8 @@ class TestValidator(unittest2.TestCase):
         validator.resource_name_exists = resource_name_exists_mock
         self.original_check_email_exist = validator.check_email_exist
         validator.check_email_exist = check_email_exist_mock
+        self.orifinal_validator_db = validator.db.check_hash_in_db
+        validator.db.check_hash_in_db = check_hash_in_db_mock
 
 
     def tearDown(self):
@@ -126,6 +123,8 @@ class TestValidator(unittest2.TestCase):
         validator.role_name_exists = self.original_role_name_exists
         validator.resource_name_exists = self.original_resource_name_exists
         validator.check_email_exist = self.original_check_email_exist
+        validator.db.check_hash_in_db = self.orifinal_validator_db
+        ERROR_DATA['error'] = []
 
 
     # user_registration tests
@@ -149,10 +148,10 @@ class TestValidator(unittest2.TestCase):
         """
         del REGISTRATION_DATA['first_name']
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error':[{'first_name': 'not contain first_name key.'}]}
+        ERROR_DATA['error'].append({'first_name':
+                                        ERROR_MSG['has_key'] % 'first_name'})
         REGISTRATION_DATA['first_name'] = 'admin'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_not_empty_data(self):
         """Testing if value is not empty in
@@ -160,10 +159,10 @@ class TestValidator(unittest2.TestCase):
          """
         REGISTRATION_DATA['last_name'] = ''
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error':[{'last_name': 'last_name value is empty.'}]}
+        ERROR_DATA['error'].append({'last_name': 
+                                        ERROR_MSG['check_empty'] % 'last_name'})
         REGISTRATION_DATA['last_name'] = 'admin'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_maximum_length(self):
         """Testing if value of data is not too long
@@ -171,10 +170,10 @@ class TestValidator(unittest2.TestCase):
         """
         REGISTRATION_DATA['last_name'] = 'a' * 260
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error': [{'last_name': 'last_name value is too long.'}]}
+        ERROR_DATA['error'].append({'last_name': 
+                                        ERROR_MSG['check_maximum_length'] % 'last_name'})
         REGISTRATION_DATA['last_name'] = 'admin'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_minimum_length(self):
         """Testing if value of data is not too short
@@ -182,10 +181,10 @@ class TestValidator(unittest2.TestCase):
         """
         REGISTRATION_DATA['last_name'] = 'a'
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error': [{'last_name': 'last_name value is too short.'}]}
+        ERROR_DATA['error'].append({'last_name': 
+                                        ERROR_MSG['check_minimum_length'] % 'last_name'})
         REGISTRATION_DATA['last_name'] = 'admin'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_check_string(self):
         """Testing invalid type in data
@@ -193,10 +192,10 @@ class TestValidator(unittest2.TestCase):
         """
         REGISTRATION_DATA['first_name'] = 125698
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error': [{'first_name': 'first_name value is not string.'}]}
+        ERROR_DATA['error'].append({'first_name': 
+                                        ERROR_MSG['check_string'] % 'first_name'})
         REGISTRATION_DATA['first_name'] = 'admin'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_incorrect_email(self):
         """Testing invalid email in data
@@ -204,10 +203,10 @@ class TestValidator(unittest2.TestCase):
         """
         REGISTRATION_DATA['email'] = "admin@gmail"
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error': [{'email': 'email value does not look like email.'}]}
+        ERROR_DATA['error'].append({'email': 
+                                ERROR_MSG['check_email'] % 'email'})
         REGISTRATION_DATA['email'] = 'admin@gmail.com'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_registration_check_email_exist(self):
         """Testing if email exist in db
@@ -215,10 +214,10 @@ class TestValidator(unittest2.TestCase):
         """
         REGISTRATION_DATA['email'] = 'admin.mail@gmail.com'
         return_data = validator.user_registration(REGISTRATION_DATA)
-        expected = {'status': False,
-                    'error': [{'email': 'email allready exists.'}]}
+        ERROR_DATA['error'].append({'email': 
+                        ERROR_MSG['check_email_exist']})                         
         REGISTRATION_DATA['email'] = 'admin@gmail.com'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
 
     # check_post_comment tests
@@ -238,45 +237,45 @@ class TestValidator(unittest2.TestCase):
         in check_post_comment function.
         """
         invalid_data = {'content': 'comment'}
-        actual = {'status': False,
-                  'error': [{'problem_id': 'not contain problem_id key.'}]}
-        self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
+        ERROR_DATA['error'].append({'problem_id': 
+                                ERROR_MSG['has_key'] % 'problem_id'})
+        self.assertDictEqual(validator.check_post_comment(invalid_data), ERROR_DATA)
 
     def test_post_comment_not_empty_data(self):
         """Testing if return value is not empty in
          check_post_comment function.
          """
         invalid_data = {'content': 'comment', 'problem_id': None}
-        actual = {'status': False,
-                  'error': [{'problem_id': 'problem_id value is empty.'}]}
-        self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
+        ERROR_DATA['error'].append({'problem_id': 
+                                ERROR_MSG['check_empty'] % 'problem_id'})
+        self.assertDictEqual(validator.check_post_comment(invalid_data), ERROR_DATA)
 
     def test_post_comment_check_string(self):
         """Testing invalid type in data
         in check_post_comment function.
         """
         invalid_data = {'content': [1, 2, 3], 'problem_id': 77}
-        actual = {'status': False,
-                  'error': [{'content': 'content value is not string.'}]}
-        self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
+        ERROR_DATA['error'].append({'content': 
+                                ERROR_MSG['check_string'] % 'content'})
+        self.assertDictEqual(validator.check_post_comment(invalid_data), ERROR_DATA)
 
     def test_post_comment_minimum_length(self):
         """Testing if content is not too short
         in check_post_comment function.
         """
         invalid_data = {'content': 'q', 'problem_id': 77}
-        actual = {'status': False,
-                  'error': [{'content': 'content value is too short.'}]}
-        self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
+        ERROR_DATA['error'].append({'content': 
+                                ERROR_MSG['check_minimum_length'] % 'content'})
+        self.assertDictEqual(validator.check_post_comment(invalid_data), ERROR_DATA)
 
     def test_post_comment_check_maximum_length(self):
         """Testing if content is not too long
         in check_post_comment function.
         """
         invalid_data = {'content': 'q' * 256, 'problem_id': 77}
-        actual = {'status': False,
-                  'error': [{'content': 'content value is too long.'}]}
-        self.assertDictEqual(validator.check_post_comment(invalid_data), actual)
+        ERROR_DATA['error'].append({'content': 
+                        ERROR_MSG['check_maximum_length'] % 'content'})
+        self.assertDictEqual(validator.check_post_comment(invalid_data), ERROR_DATA)
 
 
     #hash_chek
@@ -295,18 +294,16 @@ class TestValidator(unittest2.TestCase):
 
     def test_hash_check_wrong_hash_db(self):
         """Test hash_check dictionary when there is no such hash in db."""
-        bad_hash_dict = validator.hash_check(HASH_DATA)
-        correct_db_dict = {'status': False, 'error': [{'hash_sum': 'hash does not exist.'}]}
-        self.assertDictEqual(bad_hash_dict, correct_db_dict)
+        returned_data = validator.hash_check('1' * 64)
+        correct_db_dict = {'status': False,
+                            'error': [{'hash_sum': 'hash does not exist.'}]}
+        self.assertDictEqual(returned_data, correct_db_dict)
 
     def test_hash_check_hash_in_db_ok(self):
         """Test hash_check if there is no error and hash is valid."""
-        original_val_db = validator.db
-        validator.db = DBUtilMock()
         returned_data = validator.hash_check(HASH_DATA)
         correct_db_dict = {'status': True, 'error': []}
         self.assertDictEqual(returned_data, correct_db_dict)
-        validator.db = original_val_db
 
 
     #user_login
@@ -324,55 +321,55 @@ class TestValidator(unittest2.TestCase):
         """Testing user_login function if data has all keys."""
         del LOGIN_DATA['email']
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'email': 'not contain email key.'}]}
+        ERROR_DATA['error'].append({'email': 
+                                ERROR_MSG['has_key'] % 'email'})
         LOGIN_DATA['email'] = 'admin@gmail.com'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_login_not_empty_data(self):
         """Testing user_login function if value is not empty."""
         LOGIN_DATA['password'] = ""
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'password': 'password value is empty.'}]}
+        ERROR_DATA['error'].append({'password': 
+                                ERROR_MSG['check_empty'] % 'password'})
         LOGIN_DATA['password'] = 'db51903d292a412e4ef2079add791eae'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_login_maximum_length(self):
         """Testing user_login function if value of data is not too long."""
         LOGIN_DATA['password'] = 'a' * 101
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'password': 'password value is too long.'}]}
+        ERROR_DATA['error'].append({'password': 
+                                ERROR_MSG['check_maximum_length'] % 'password'})
         LOGIN_DATA['password'] = 'db51903d292a412e4ef2079add791eae'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_login_minimum_length(self):
         """Testing user_login function if value of data is not too short."""
         LOGIN_DATA['password'] = 'a'
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'password': 'password value is too short.'}]}
+        ERROR_DATA['error'].append({'password': 
+                                ERROR_MSG['check_minimum_length'] % 'password'})
         LOGIN_DATA['password'] = 'db51903d292a412e4ef2079add791eae'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_login_check_string(self):
         """Testing user_login function if it is invalid type in data."""
         LOGIN_DATA['email'] = 125698
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'email': 'email value is not string.'}]}
+        ERROR_DATA['error'].append({'email': 
+                                ERROR_MSG['check_string'] % 'email'})
         LOGIN_DATA['email'] = 'admin@gmail.com'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_login_incorrect_email(self):
         """Testing user_login function if email is correct in data."""
         LOGIN_DATA['email'] = "admin"
         return_data = validator.user_login(LOGIN_DATA)
-        expected = {'status': False,
-                    'error': [{'email': 'email value does not look like email.'}]}
+        ERROR_DATA['error'].append({'email': 
+                                ERROR_MSG['check_email'] % 'email'})
         LOGIN_DATA['email'] = 'admin@gmail.com'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
 
     #resource_post
@@ -390,41 +387,41 @@ class TestValidator(unittest2.TestCase):
         """Test if function has errror has_key."""
         invalid_data = {'':'/res_name1'}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False,
-                         'error':[{'resource_name': 'not contain resource_name key.'}]}
-        self.assertEqual(return_data, expected_data)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['has_key'] % 'resource_name'})
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_resource_post_empty(self):
         """Test if function has errror error_empty."""
-        invalid_data = {'resource_name': ''}
+        invalid_data = {'resource_name': None}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False,
-                         'error':[{'resource_name': 'resource_name value is empty.'}]}
-        self.assertEqual(return_data, expected_data)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_empty'] % 'resource_name'})
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_resource_post_str(self):
-        """Test if function has errror is_str."""
+        """Test if function has error is_str."""
         invalid_data = {'resource_name': 1}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False,
-                         'error':[{'resource_name': 'resource_name value is not string.'}]}
-        self.assertEqual(return_data, expected_data)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_string'] % 'resource_name'})
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_resource_post_min_len(self):
-        """Test if function has errror min_len."""
+        """Test if function has error min_len."""
         invalid_data = {'resource_name': 'a'}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False,
-                         'error':[{'resource_name': 'resource_name value is too short.'}]}
-        self.assertEqual(return_data, expected_data)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_minimum_length'] % 'resource_name'})
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_resource_post_max_len(self):
-        """Test if function has errror max_len."""
+        """Test if function has error max_len."""
         invalid_data = {'resource_name': 'a' * 101}
         return_data = validator.resource_post(invalid_data)
-        expected_data = {'status': False,
-                         'error':[{'resource_name': 'resource_name value is too long.'}]}
-        self.assertEqual(return_data, expected_data)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_maximum_length'] % 'resource_name'})
+        self.assertEqual(return_data, ERROR_DATA)
 
 
     # resource_put tests
@@ -440,56 +437,55 @@ class TestValidator(unittest2.TestCase):
 
     def test_res_put_not_empty_data(self):
         """Testing invalid email in data in resource_put dunction."""
-        test_data = {'resource_name': '', 'resource_id': ''}
+        test_data = {'resource_name': 'resource', 'resource_id': None}
         return_data = validator.resource_put(test_data)
-        expected = {'status': False,
-                    'error': [{'resource_name': 'resource_name value is empty.'},
-                              {'resource_id': 'resource_id value is empty.'}]}
-        self.assertEqual(return_data, expected)
+        ERROR_DATA['error'].append({'resource_id': 
+                                ERROR_MSG['check_empty'] % 'resource_id'})
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_has_key(self):
         """Testing if data has all keys in resource_put dunction."""
         del TEST_DATA_PUT['resource_id']
         return_data = validator.resource_put(TEST_DATA_PUT)
-        expected = {'status': False,
-                    'error': [{'resource_id': 'not contain resource_id key.'}]}
+        ERROR_DATA['error'].append({'resource_id': 
+                                ERROR_MSG['has_key'] % 'resource_id'})
         TEST_DATA_PUT['resource_id'] = '12345'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_name_is_string(self):
         """Testing if resouce_name is string in resource_put dunction."""
         TEST_DATA_PUT['resource_name'] = 123
         return_data = validator.resource_put(TEST_DATA_PUT)
-        expected = {'status': False,
-                    'error': [{'resource_name': 'resource_name value is not string.'}]}
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_string'] % 'resource_name'})
         TEST_DATA_PUT['rresource_name'] = '/res_name1'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_minimum_length(self):
         """Testing if resouce_name is not too short in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = "a"
+        TEST_DATA_PUT['resource_name'] = 'a'
         return_data = validator.resource_put(TEST_DATA_PUT)
-        expected = {'status': False,
-                    'error': [{'resource_name': 'resource_name value is too short.'}]}
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_minimum_length'] % 'resource_name'})
         TEST_DATA_PUT['resource_name'] = '/res_name1'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_maximum_length(self):
         """Testing if resouce_name is not too long in resource_put dunction."""
-        TEST_DATA_PUT['resource_name'] = "a"*256
+        TEST_DATA_PUT['resource_name'] = 'a' * 256
         return_data = validator.resource_put(TEST_DATA_PUT)
-        expected = {'status': False,
-                    'error': [{'resource_name': 'resource_name value is too long.'}]}
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['check_maximum_length'] % 'resource_name'})
         TEST_DATA_PUT['resource_name'] = '/res_name1'
-        self.assertEqual(return_data, expected)
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_res_put_name_exist(self):
         """Testing if resouce_name is already exist in resource_put dunction."""
         TEST_DATA_PUT['resource_name'] = '/api/roles'
         return_data = validator.resource_put(TEST_DATA_PUT)
-        expected = {'status': False,
-                    'error': [{'resource_name': '"/api/roles" name allready exists.'}]}
-        self.assertEqual(return_data, expected)
+        ERROR_DATA['error'].append({'resource_name': 
+                                ERROR_MSG['name_exists'] % TEST_DATA_PUT['resource_name']})
+        self.assertEqual(return_data, ERROR_DATA)
 
 
     # resource_delete tests
@@ -1063,12 +1059,12 @@ class TestValidator(unittest2.TestCase):
         """Testing with input data when role_name exists."""
         input_role_name = 'admin'
         return_data = validator.role_name_exists(input_role_name)
-        self.assertTupleEqual(return_data, (1L,))
+        self.assertTrue(return_data)
 
     def test_role_name_exist_incorrect_data(self):
         """Testing with input data when role_name doesn't exists."""
         input_role_name = 'test'
-        self.assertEqual(validator.role_name_exists(input_role_name), None)
+        self.assertFalse(validator.role_name_exists(input_role_name))
 
 
     #user_photo_deletion

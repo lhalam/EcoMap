@@ -26,24 +26,24 @@ TEST_DATA_PERMISSION = {'resource_id': 121,
                         'permission_id': 1234567,
                         'action': 'PUT',
                         'modifier': 'Own',
-                        'description': 'user'}             
+                        'description': 'user'}
 
 TEST_DATA_POST_COMNT = {'content': 'comment',
-						  'problem_id': 77}
+                        'problem_id': 77}
 
 ROLE_PERMISSION = {'role_id': 3,
-				   'user_id': 4,
-				   'permission_id': 3}
+                   'user_id': 4,
+                   'permission_id': 3}
 
 ROLES_DATA = {'user': (2L,),
-			  'admin': (1L,),
-			  'role_name': 'user'}
+              'admin': (1L,),
+              'role_name': 'user'}
 
 RESOURCE_DATA = {'/api/roles': (18L,),
-				 '/api/login': (17L,)}
+                 '/api/login': (17L,)}
 
 ROLE_PUT = {'role_name': 'new_name',
-			'role_id': 5}
+            'role_id': 5}
 
 PROBLEM_POST = {'title': 'problem with rivers',
                 'content': 'some text',
@@ -63,14 +63,14 @@ HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 HASH_DATA_DIC = {HASH_DATA:1L}
 
 CHANGE_PASS_DATA = {'id': 6,
-					'old_pass': 'oldpasswd',
-					'password': 'newpasswd'}
+                    'old_pass': 'oldpasswd',
+                    'password': 'newpasswd'}
 
 VALID_STATUS = {'status': True,
-				'error': []}
+                'error': []}
 
 ERROR_DATA = {'status': False,
-			  'error': []}
+              'error': []}
 
 ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_minimum_length': '%s value is too short.',
@@ -219,7 +219,7 @@ class TestValidator(unittest2.TestCase):
         """Testing check_post_comment function if value is not empty."""
         invalid_data = {'content': 'comment', 'problem_id': None}
         ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['check_empty']
-        									  % 'problem_id'}]
+                                              % 'problem_id'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
                              ERROR_DATA)
 
@@ -260,13 +260,13 @@ class TestValidator(unittest2.TestCase):
         """Testing hash_check function if length is incorrect."""
         bad_hash = HASH_DATA[:50]
         ERROR_DATA['error'] = [{'hash_sum': ERROR_MSG['check_hash_sum']
-                                           % 'hash sum'}]
+                                            % 'hash sum'}]
         self.assertDictEqual(validator.hash_check(bad_hash), ERROR_DATA)
 
     def test_hash_check_not_exist(self):
         """Testing hash_check function if hash does not exist."""
         ERROR_DATA['error'] = [{'hash_sum': ERROR_MSG['check_hash_db']
-                                           % 'hash'}]
+                                            % 'hash'}]
         self.assertDictEqual(validator.hash_check("1" * 64), ERROR_DATA)
 
     #user_login
@@ -366,8 +366,8 @@ class TestValidator(unittest2.TestCase):
         """Testing resource_post function if value is not too short."""
         invalid_data = {'resource_name': 'a'}
         ERROR_DATA['error'] = [{'resource_name':
-        					       ERROR_MSG['check_minimum_length']
-                                    % 'resource_name'}]
+        					     ERROR_MSG['check_minimum_length']
+                                 % 'resource_name'}]
         self.assertEqual(validator.resource_post(invalid_data), ERROR_DATA)
 
     def test_res_post_max_length(self):
@@ -438,7 +438,7 @@ class TestValidator(unittest2.TestCase):
         return_data = validator.resource_put(TEST_DATA)
         ERROR_DATA['error'] = [{'resource_name': ERROR_MSG['name_exists']
                                                  % TEST_DATA['resource_name']}]
-        TEST_DATA['resource_name'] = '/res_name1'                                         
+        TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
     # resource_delete tests
@@ -750,7 +750,7 @@ class TestValidator(unittest2.TestCase):
         self.assertIsInstance(validator.role_permission_post(ROLE_PERMISSION),
                               dict)
 
-    def test_role_perm_post_correct_stat(self):
+    def test_role_perm_post_correct(self):
         """Testing role_permission_post function if status is correct."""
         self.assertDictEqual(validator.role_permission_post(ROLE_PERMISSION),
                              VALID_STATUS)
@@ -768,7 +768,7 @@ class TestValidator(unittest2.TestCase):
         ROLE_PERMISSION['role_id'] = None
         return_data = validator.role_permission_post(ROLE_PERMISSION)
         ERROR_DATA['error'] = [{'role_id': ERROR_MSG['check_empty']
-        								   % 'role_id'}]
+                                           % 'role_id'}]
         ROLE_PERMISSION['role_id'] = 3
         self.assertDictEqual(return_data, ERROR_DATA)
 
@@ -939,7 +939,7 @@ class TestValidator(unittest2.TestCase):
         self.assertEqual(return_data, ERROR_DATA)
 
     # role_name_exists tests
-    def test_role_name_exists_incorrect_value(self):
+    def test_role_name_exists_incorrect(self):
         """Testing role_name function if role_name is invalid."""
         input_role_name = 'test'
         self.assertFalse(validator.role_name_exists(input_role_name))
@@ -954,7 +954,7 @@ class TestValidator(unittest2.TestCase):
         """Testing user_photo_deletion function if it returns dictionary."""
         self.assertIsInstance(validator.user_photo_deletion(TEST_DATA), dict)
 
-    def test_user_photo_del_correct_stat(self):
+    def test_user_photo_del_correct(self):
         """Test user_photo_deletion function if status is correct."""
         self.assertDictEqual(validator.user_photo_deletion(TEST_DATA),
                              VALID_STATUS)

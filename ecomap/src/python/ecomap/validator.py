@@ -431,7 +431,7 @@ def permission_put(data):
                                     % keyname})
         elif keyname in ['action', 'modifier']:
             if not check_enum_value(data[keyname], ENUM[keyname]):
-                status['error'].append({keyname: ERROR_MSG['is_in_enum']
+                status['error'].append({keyname: ERROR_MSG['check_enum_value']
                                         % keyname})
         elif keyname is 'description':
             if not check_string(data[keyname]):

@@ -96,6 +96,7 @@ class ConfigParserTestCase(unittest2.TestCase):
 
     def test_get_configs(self):
         """Tests whether we receive resulting correct parsed configurations."""
+
         configs = ecomap.config.Config()
         test_configs = configs.get_config()
         self.assertEqual(test_configs, CONFIG)
@@ -123,6 +124,7 @@ class ConfigParserTestCase(unittest2.TestCase):
 
     def test_value(self):
         """Test if correct values are received."""
+
         configs = ecomap.config.Config()
         test_configs = configs.get_config()
         self.assertEqual(test_configs.values(), VALUES)

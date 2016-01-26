@@ -4,7 +4,6 @@ import unittest2
 from ecomap import validator
 
 
-# input data
 REGISTRATION_DATA = {'email': 'admin@gmail.com',
                      'first_name': 'admin',
                      'last_name': 'admin',
@@ -51,7 +50,7 @@ PROBLEM_POST = {'title': 'problem with rivers',
                 'longitude': '24.0600542',
                 'type': 2}
 
-EMAIL_DATA = {"admin.mail@gmail.com": (1L,
+EMAIL_DATA = {'admin.mail@gmail.com': (1L,
                                        u'admin',
                                        u'admin',
                                        u'admin.mail@gmail.com',
@@ -123,7 +122,6 @@ class TestValidator(unittest2.TestCase):
         validator.check_email_exist = self.original_check_email_exist
         validator.db.check_hash_in_db = self.orifinal_validator_db
 
-    # user_registration tests
     def test_registr_return_dict(self):
         """Testing user_registration function if it returns dictionary."""
         self.assertIsInstance(validator.user_registration(REGISTRATION_DATA),
@@ -196,7 +194,6 @@ class TestValidator(unittest2.TestCase):
         REGISTRATION_DATA['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, ERROR_DATA)
 
-    # check_post_comment tests
     def test_post_com_return_dict(self):
         """Testing check_post_comment function if it returns dictionary."""
         self.assertIsInstance(validator.check_post_comment(TEST_DATA_POST_COMNT),
@@ -247,7 +244,6 @@ class TestValidator(unittest2.TestCase):
         self.assertDictEqual(validator.check_post_comment(invalid_data),
                              ERROR_DATA)
 
-    #hash_chek
     def test_hash_check_return_dict(self):
         """Testing hash_check function if it returns dictionary."""
         self.assertIsInstance(validator.hash_check(HASH_DATA), dict)
@@ -267,9 +263,8 @@ class TestValidator(unittest2.TestCase):
         """Testing hash_check function if hash does not exist."""
         ERROR_DATA['error'] = [{'hash_sum': ERROR_MSG['check_hash_db']
                                             % 'hash'}]
-        self.assertDictEqual(validator.hash_check("1" * 64), ERROR_DATA)
+        self.assertDictEqual(validator.hash_check('1' * 64), ERROR_DATA)
 
-    #user_login
     def test_login_return_dict(self):
         """Testing user_login function if it returns dictionary."""
         self.assertIsInstance(validator.user_login(LOGIN_DATA), dict)
@@ -331,7 +326,6 @@ class TestValidator(unittest2.TestCase):
         LOGIN_DATA['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, ERROR_DATA)
 
-    #resource_post
     def test_res_post_return_dict(self):
         """Testing resource_post function if it returns dictionary."""
         self.assertIsInstance(validator.resource_post(TEST_DATA), dict)
@@ -365,20 +359,17 @@ class TestValidator(unittest2.TestCase):
     def test_res_post_min_length(self):
         """Testing resource_post function if value is not too short."""
         invalid_data = {'resource_name': 'a'}
-        ERROR_DATA['error'] = [{'resource_name':
-        					     ERROR_MSG['check_minimum_length']
-                                 % 'resource_name'}]
+        error_msg = ERROR_MSG['check_minimum_length'] % 'resource_name'
+        ERROR_DATA['error'] = [{'resource_name': error_msg}]
         self.assertEqual(validator.resource_post(invalid_data), ERROR_DATA)
 
     def test_res_post_max_length(self):
         """Testing resource_post function if value is not too long."""
         test_data = {'resource_name': 'a' * 101}
-        ERROR_DATA['error'] = [{'resource_name':
-        							ERROR_MSG['check_maximum_length']
-                                	% 'resource_name'}]
+        error_msg = ERROR_MSG['check_maximum_length'] % 'resource_name'
+        ERROR_DATA['error'] = [{'resource_name': error_msg}]
         self.assertEqual(validator.resource_post(test_data), ERROR_DATA)
 
-    # resource_put tests
     def test_res_put_return_dict(self):
         """Testing resource_put function if it returns dictionary."""
         self.assertIsInstance(validator.resource_put(TEST_DATA), dict)
@@ -416,9 +407,8 @@ class TestValidator(unittest2.TestCase):
         """Testing resource_put function if it is not too short in ."""
         TEST_DATA['resource_name'] = 'a'
         return_data = validator.resource_put(TEST_DATA)
-        ERROR_DATA['error'] = [{'resource_name':
-        							ERROR_MSG['check_minimum_length']
-                                    % 'resource_name'}]
+        error_msg = ERROR_MSG['check_minimum_length'] % 'resource_name'
+        ERROR_DATA['error'] = [{'resource_name': error_msg}]
         TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
@@ -426,9 +416,8 @@ class TestValidator(unittest2.TestCase):
         """Testing resource_put function if value is not too long."""
         TEST_DATA['resource_name'] = 'a' * 256
         return_data = validator.resource_put(TEST_DATA)
-        ERROR_DATA['error'] = [{'resource_name':
-        							ERROR_MSG['check_maximum_length']
-                                    % 'resource_name'}]
+        error_msg = ERROR_MSG['check_maximum_length'] % 'resource_name'
+        ERROR_DATA['error'] = [{'resource_name':error_msg}]
         TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
@@ -441,7 +430,6 @@ class TestValidator(unittest2.TestCase):
         TEST_DATA['resource_name'] = '/res_name1'
         self.assertEqual(return_data, ERROR_DATA)
 
-    # resource_delete tests
     def test_res_delete_return_dict(self):
         """Testing resource_delete function if it returns dictionary."""
         self.assertIsInstance(validator.resource_delete(TEST_DATA_PERMISSION),
@@ -468,7 +456,6 @@ class TestValidator(unittest2.TestCase):
         self.assertDictEqual(validator.resource_delete(invalid_data),
                              ERROR_DATA)
 
-    #role_post
     def test_role_post_return_dict(self):
         """Testing role_post function if it returns dictionary."""
         self.assertIsInstance(validator.role_post(ROLES_DATA), dict)
@@ -513,7 +500,6 @@ class TestValidator(unittest2.TestCase):
         ERROR_DATA['error'] = [{'role_name': ERROR_MSG['name_exists'] % 'user'}]
         self.assertDictEqual(validator.role_post(ROLES_DATA), ERROR_DATA)
 
-    #role_put
     def test_role_put_return_dict(self):
         """Testing role_put function if it returns dictionary."""
         self.assertIsInstance(validator.role_put(ROLE_PUT), dict)
@@ -575,7 +561,6 @@ class TestValidator(unittest2.TestCase):
         ROLE_PUT['role_name'] = 'new_name'
         self.assertEqual(return_data, ERROR_DATA)
 
-    #role_delete
     def test_role_del_return_dict(self):
         """Testing role_del function if it returns dictionary."""
         self.assertIsInstance(validator.role_delete(TEST_DATA), dict)
@@ -597,7 +582,6 @@ class TestValidator(unittest2.TestCase):
                                            % 'role_id'}]
         self.assertEqual(validator.role_delete(invalid_data), ERROR_DATA)
 
-    # permission_post tests
     def test_perm_post_return_dict(self):
         """Testing permission_post function if it returns dictionary."""
         self.assertIsInstance(validator.permission_post(TEST_DATA_PERMISSION),
@@ -660,7 +644,6 @@ class TestValidator(unittest2.TestCase):
         TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
-    #permission_put tests
     def test_perm_put_return_dict(self):
         """Testing permission_put function if it returns dictionary."""
         self.assertIsInstance(validator.permission_put(TEST_DATA_PERMISSION),
@@ -723,7 +706,6 @@ class TestValidator(unittest2.TestCase):
         TEST_DATA_PERMISSION['description'] = 'user'
         self.assertEqual(return_data, ERROR_DATA)
 
-    # permission_delete tests
     def test_perm_delete_return_dict(self):
         """Testing permission_delete function if it returns dictionary."""
         self.assertIsInstance(validator.permission_delete(TEST_DATA), dict)
@@ -744,7 +726,6 @@ class TestValidator(unittest2.TestCase):
         self.assertDictEqual(validator.permission_delete(invalid_data),
                              ERROR_DATA)
 
-    # role_permission_post tests
     def test_role_perm_post_return_dict(self):
         """Testing role_permission_post function if it returns dictionary."""
         self.assertIsInstance(validator.role_permission_post(ROLE_PERMISSION),
@@ -772,7 +753,6 @@ class TestValidator(unittest2.TestCase):
         ROLE_PERMISSION['role_id'] = 3
         self.assertDictEqual(return_data, ERROR_DATA)
 
-    #role_permission_delete
     def test_perm_del_return_dict(self):
         """Testing permission_delete if it returns dictionary."""
         self.assertIsInstance(validator.role_permission_delete(TEST_DATA), dict)
@@ -796,7 +776,6 @@ class TestValidator(unittest2.TestCase):
         self.assertEqual(validator.role_permission_delete(invalid_data),
                          ERROR_DATA)
 
-    # user_role_put tests
     def test_user_role_put_return_dict(self):
         """Testing user_role_put function if it returns dictionary."""
         self.assertIsInstance(validator.user_role_put(ROLE_PERMISSION), dict)
@@ -818,7 +797,6 @@ class TestValidator(unittest2.TestCase):
         ERROR_DATA['error'] = [{'role_id': ERROR_MSG['check_empty'] % 'role_id'}]
         self.assertDictEqual(validator.user_role_put(invalid_data), ERROR_DATA)
 
-    # change_password tests
     def test_change_pass_return_dict(self):
         """Testing change_password function if it returns dictionary."""
         self.assertIsInstance(validator.change_password(CHANGE_PASS_DATA), dict)
@@ -860,7 +838,6 @@ class TestValidator(unittest2.TestCase):
                                             % 'password'}]
         self.assertDictEqual(validator.change_password(post_data), ERROR_DATA)
 
-    # problem_post tests
     def test_probl_post_return_dict(self):
         """Testing problem_post function if it returns dictionary."""
         self.assertIsInstance(validator.problem_post(PROBLEM_POST), dict)
@@ -938,7 +915,6 @@ class TestValidator(unittest2.TestCase):
         PROBLEM_POST['longitude'] = '24.0600542'
         self.assertEqual(return_data, ERROR_DATA)
 
-    # role_name_exists tests
     def test_role_name_exists_incorrect(self):
         """Testing role_name function if role_name is invalid."""
         input_role_name = 'test'
@@ -949,7 +925,6 @@ class TestValidator(unittest2.TestCase):
         input_role_name = 'admin'
         self.assertTrue(validator.role_name_exists(input_role_name))
 
-    #user_photo_deletion
     def test_user_photo_del_return_dict(self):
         """Testing user_photo_deletion function if it returns dictionary."""
         self.assertIsInstance(validator.user_photo_deletion(TEST_DATA), dict)

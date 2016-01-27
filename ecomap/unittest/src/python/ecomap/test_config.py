@@ -87,7 +87,7 @@ class ConfigParserTestCase(unittest2.TestCase):
 
     def setUp(self):
         """Mock initialization."""
-        if hasattr(config.Config,'_instance'):
+        if hasattr(config.Config, '_instance'):
             del config.Config._instance
         self.open_original = __builtin__.open
         __builtin__.open = open_mock
@@ -111,7 +111,7 @@ class ConfigParserTestCase(unittest2.TestCase):
     def test_get_config(self):
         """Tests whether we receive resulting correct parsed configurations."""
         configs = config.Config()
-        self.assertDictEqual(configs.get_config(), CONFIG)
+        self.assertEqual(configs.get_config(), CONFIG)
 
     def test_parse_password(self):
         """Tests if a password is received as a string."""

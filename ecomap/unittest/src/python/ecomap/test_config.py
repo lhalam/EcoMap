@@ -106,9 +106,11 @@ class ConfigParserTestCase(unittest2.TestCase):
         test_configs_2 = config.Config()
         self.assertIs(test_configs_1, test_configs_2)
 
-    def test_get_configs(self):
+    def test_get_config(self):
         """Tests whether we receive resulting correct parsed configurations."""
         configs = config.Config()
+        print CONFIG
+        print configs.get_config()
         self.assertEqual(configs.get_config(), CONFIG)
 
     def test_parse_password(self):

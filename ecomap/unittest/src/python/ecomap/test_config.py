@@ -1,14 +1,15 @@
-"""Module contains a class for testing ecomap.config.Config class"""
+"""Module contains a class for testing config.Config class"""
 
 import time
-import StringIO
 import unittest2
 import __builtin__
 
-import ecomap.config
+from StringIO import StringIO
+
+from ecomap import config
 
 
-ECOMAP_CONF = """
+CONFIG_STRING = """
 # ecomap.config.Configs for email server.
 [email]
 user_name = noreply.ecomap
@@ -16,7 +17,7 @@ app_password = cmlgeypsicepfbkj
 from_email = admin@ecomap.com
 admin_email = 'example@example.com'
 
-#ecomap.config.Configs for database pool.
+# ecomap.config.Configs for database pool.
 [db]
 host = localhost
 port = 3306
@@ -31,7 +32,7 @@ facebook_id = 1525737571082521
 facebook_secret = 571c4cf3817358f46097d38ba46bd188
 """
 
-ECOMAP_CONF_TO_ADD = """
+CONFIG_TO_ADD = """
 [ecomap]
 user = adrian
 password = adrian_yavorski
@@ -43,7 +44,8 @@ CONFIG = {'email.user_name': 'noreply.ecomap',
           'db.password': 'max123',
           'db.user': 'root',
           'email.admin_email': 'example@example.com',
-          'db.port': 3306, 'db.host': 'localhost',
+          'db.port': 3306,
+          'db.host': 'localhost',
           'email.app_password': 'cmlgeypsicepfbkj',
           'oauth.facebook_id': 1525737571082521,
           'oauth.facebook_secret': '571c4cf3817358f46097d38ba46bd188'}
@@ -59,11 +61,24 @@ VALUES = ['noreply.ecomap', 'ecomap_db',
           '571c4cf3817358f46097d38ba46bd188', 3306,
           'localhost', 'cmlgeypsicepfbkj']
 
+CONFIG_DICT = {'config': CONFIG_STRING}
 
-def open_mock(fpath):
+
+class ContextualStringIO(StringIO):
+
+    """Creating a context manager for StringIO"""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+        return False
+
+
+def open_mock(fpath, second=None):
     """This function mocks path to the file."""
-
-    return StringIO.StringIO(ECOMAP_CONF)
+    return ContextualStringIO(CONFIG_DICT['config'])
 
 
 class ConfigParserTestCase(unittest2.TestCase):
@@ -71,40 +86,34 @@ class ConfigParserTestCase(unittest2.TestCase):
     """This class contains methods for testing configuration parser."""
 
     def setUp(self):
-        """In this method we replace builtin open() wth open_mock."""
+        """Mock initialization."""
         self.open_original = __builtin__.open
         __builtin__.open = open_mock
 
     def tearDown(self):
-        """"This method is for returning builtin open()."""
+        """"Mock termination and cleaning up."""
         __builtin__.open = self.open_original
-        del ecomap.config.Config._instance
+        del config.Config._instance
 
     def test_is_dict(self):
         """Tests if a configuration parsers returns a dictionary."""
-
-        configs = ecomap.config.Config()
-        test_configs = configs.get_config()
-        self.assertIsInstance(test_configs, dict)
+        configs = config.Config()
+        self.assertIsInstance(configs.get_config(), dict)
 
     def test_is_singletone(self):
-        """Tests if isinstance of ecomap.config.Config class is a Singleton."""
-
-        test_configs_1 = ecomap.config.Config()
-        test_configs_2 = ecomap.config.Config()
+        """Tests if isinstance of config.Config class is a Singleton."""
+        test_configs_1 = config.Config()
+        test_configs_2 = config.Config()
         self.assertIs(test_configs_1, test_configs_2)
 
     def test_get_configs(self):
         """Tests whether we receive resulting correct parsed configurations."""
-
-        configs = ecomap.config.Config()
-        test_configs = configs.get_config()
-        self.assertEqual(test_configs, CONFIG)
+        configs = config.Config()
+        self.assertEqual(configs.get_config(), CONFIG)
 
     def test_parse_password(self):
         """Tests if a password is received as a string."""
-
-        configs = ecomap.config.Config()
+        configs = config.Config()
         test_configs = configs.get_config()
         self.assertIsInstance(test_configs['db.password'], str)
         self.assertIsInstance(test_configs['oauth.facebook_secret'], str)
@@ -117,30 +126,26 @@ class ConfigParserTestCase(unittest2.TestCase):
 
     def test_key(self):
         """Test if correct keys are received."""
-
-        configs = ecomap.config.Config()
+        configs = config.Config()
         test_configs = configs.get_config()
         self.assertEqual(test_configs.keys(), KEYS)
 
     def test_value(self):
         """Test if correct values are received."""
-
-        configs = ecomap.config.Config()
+        configs = config.Config()
         test_configs = configs.get_config()
         self.assertEqual(test_configs.values(), VALUES)
 
     def test_refresh_time(self):
         """Tests if get_configs is called every 15 minutes."""
-
-        global ECOMAP_CONF
-        ecomap_original = ECOMAP_CONF
-        ecomap.config.REFRESH_TIME = 1
-        configs = ecomap.config.Config()
+        ecomap_original = CONFIG_STRING
+        config.REFRESH_TIME = 1
+        configs = config.Config()
         before_refresh = configs.get_config()
-        ECOMAP_CONF += ECOMAP_CONF_TO_ADD
+        CONFIG_DICT['config'] += CONFIG_TO_ADD
         time.sleep(2)
         after_refresh = configs.get_config()
-        ECOMAP_CONF = ecomap_original
+        CONFIG_DICT['config'] = ecomap_original
         self.assertNotEqual(before_refresh, after_refresh)
 
 

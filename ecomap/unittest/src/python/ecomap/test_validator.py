@@ -59,7 +59,7 @@ EMAIL_DATA = {'admin.mail@gmail.com': (1L,
 
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
-HASH_DATA_DIC = {HASH_DATA:1L}
+HASH_DATA_DIC = {HASH_DATA: 1L}
 
 CHANGE_PASS_DATA = {'id': 6,
                     'old_pass': 'oldpasswd',

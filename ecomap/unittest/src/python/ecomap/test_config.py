@@ -73,7 +73,6 @@ class ContextualStringIO(StringIO):
 
     def __exit__(self, *args):
         self.close()
-        return False
 
 
 def open_mock(fpath, second=None):

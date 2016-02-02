@@ -31,11 +31,6 @@ def validate_reg_expression(reg_exp, value):
     """
     return bool(re.match(reg_exp, value))
 
-def validate_type(value, value_type):
-    # if value_type is 'int':
-    #     value=int(value)
-    pass
-
 def input_variables(confvar_dict):
     """
     Function accepts dictionary with list of variables's values.
@@ -51,10 +46,7 @@ def input_variables(confvar_dict):
                 if not validate_reg_expression(value[3], user_dict[key]):
                     print 'Must be  %s' % value[3]
                     user_dict[key] = None
-                elif value[2] == 'int':
-                    user_dict[key]=int(user_dict[key])
-                    break
-                else: 
+                else:
                     break
     return user_dict
 

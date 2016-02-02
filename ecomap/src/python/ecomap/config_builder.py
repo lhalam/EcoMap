@@ -17,5 +17,9 @@ def config_variables_parser():
     for section in sections:
         template_config[section] = []
         for (key, value) in config.items(section):
+            if not value:
+                value = None
             template_config[section].append(value)
-    return template_config
+    print template_config
+
+config_variables_parser()

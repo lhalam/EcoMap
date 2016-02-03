@@ -4,9 +4,9 @@ It exists to parse *.conf files and return dictionary,
 which contains configuration from those files. Every 15 minutes
 it returns new dictionary which contains updated configs.
 """
-import logging
 import os
 import time
+import logging
 
 from ConfigParser import SafeConfigParser
 
@@ -14,8 +14,8 @@ from ecomap.utils import Singleton
 
 REFRESH_TIME = 900
 PASSWORD = ['password', 'facebook_secret', 'from_email']
-CONFIG_PATH = os.path.join(os.environ['CONFROOT'], 'ecomap.conf')
-
+CONFIG_FILES = ['ecomap.conf']
+CONFIG_PATH = os.environ['CONFROOT']
 
 class Config(object):
     """
@@ -48,7 +48,9 @@ class Config(object):
         """
         self.log.info('Parse ecomap.conf.')
         config = SafeConfigParser()
-        config.readfp(open(self.path))
+        for config_file_name in CONFIG_FILES:
+            with open(os.path.join(self.path, config_file_name)) as config_file:
+                config.readfp(config_file)
         sections = config.sections()
         temp_config = {}
         for section in sections:

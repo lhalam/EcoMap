@@ -94,8 +94,8 @@
               </thead>
               <tbody ng-if="listToSend.length !== 0">
                 <tr ng-repeat="perm in actualPermInRole | filter : searchWordActua" >
-                  <td>{{perm.action}}</td>
-                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.action | dictFilter}}</td>
+                  <td>{{perm.modifier | dictFilter}}</td>
                   <td>{{perm.description}}</td>
                   <td><button class="btn btn-danger btn-border"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                 </tr>
@@ -117,15 +117,15 @@
                 <tr>
                   <td></td>
                   <td>Назва методу</td>
-                  <td>Modifier</td>
+                  <td>Модифікатор доступу</td>
                   <td>Опис</td>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.resource_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
-                  <td>{{perm.action}}</td>
-                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.action | dictFilter}}</td>
+                  <td>{{perm.modifier | dictFilter}}</td>
                   <td>{{perm.description}}</td>
                 </tr>
 

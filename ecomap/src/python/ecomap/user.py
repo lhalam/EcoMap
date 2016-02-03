@@ -169,7 +169,7 @@ def register(first_name, last_name, email, password):
     message = generate_email('registration', _CONFIG['email.from_email'],
                              email, (first_name, last_name, email, password))
     send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                email,
                message)
@@ -201,7 +201,7 @@ def facebook_register(first_name, last_name, email, provider, uid):
                                  email,
                                  (first_name, last_name, email, password))
         send_email(_CONFIG['email.user_name'],
-                   _CONFIG['email.app_password'],
+                   _CONFIG['email.server_password'],
                    _CONFIG['email.from_email'],
                    email,
                    message)
@@ -252,7 +252,7 @@ def restore_password(user):
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
     send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                user.email,
                message)
@@ -269,7 +269,7 @@ def delete_user(user):
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
     send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                user.email,
                message)

@@ -12,6 +12,7 @@ from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+
 CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 
 
@@ -99,15 +100,16 @@ def generate_email(email_type, from_email, to_email, args,
     return msg
 
 
-def send_email(login, app_key, from_email, to_email, email):
+def send_email(smtp_name, login, app_key, from_email, to_email, email):
     """Sends email.
-       :params: login - email server login
+       :params: smtp_name - smtp server name 
+                login - email server login
                 app_key - email server key
                 sender - email of sender
                 receiver - email of receiver
                 email - body of email
     """
-    server = smtplib.SMTP_SSL('smtp.gmail.com')
+    server = smtplib.SMTP_SSL(smtp_name)
     server.login(login, app_key)
     server.sendmail(from_email, to_email, email.as_string())
     server.quit()

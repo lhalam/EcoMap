@@ -694,28 +694,28 @@ def check_email_exist(email):
     """Validator function which checks if email is allready in database.
        :params: dictionary - dictionary
                 keyname - key (email)
-       :return: True - if email is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_user_by_email(email)
+    return bool(db.get_user_by_email(email))
 
 
 def role_name_exists(role_name):
     """Validator function which checks if role name is allready in database.
        :params: role_name - string to check
-       :return: True - if name is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_role_by_name(role_name)
+    return bool(db.get_role_by_name(role_name))
 
 
 def resource_name_exists(resource_name):
     """Validator function which checks if resource name is allready in database.
        :params: resource_name - string to check
-       :return: True - if resource is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_resource_id(resource_name)
+    return bool(db.get_resource_id(resource_name))
 
 
 def validate_image_file(img_file):

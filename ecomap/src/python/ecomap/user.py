@@ -168,11 +168,11 @@ def register(first_name, last_name, email, password):
         util.add_users_role(register_user_id, role_id[0])
     message = generate_email('registration', _CONFIG['email.from_email'],
                              email, (first_name, last_name, email, password))
-   # send_email(_CONFIG['email.user_name'],
-   #            _CONFIG['email.app_password'],
-   #            _CONFIG['email.from_email'],
-   #            email,
-   #            message)
+    send_email(_CONFIG['email.user_name'],
+               _CONFIG['email.app_password'],
+               _CONFIG['email.from_email'],
+               email,
+               message)
     return get_user_by_id(register_user_id)
 
 

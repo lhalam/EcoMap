@@ -7,7 +7,7 @@ import re
 
 from ConfigParser import SafeConfigParser
 
-CONFIG_PATH = os.path.join(os.environ['CONFROOT'], '_configvars.conf')
+CONFIG_VARS = os.path.join(os.environ['CONFROOT'], '_configvars.conf')
 CONFIG_FILES = os.path.join(os.environ['CONFROOT'], '_configfiles.conf')
 
 
@@ -18,7 +18,7 @@ def configvars_parser():
         dictionary,which contains list of variable's value.
     """
     config = SafeConfigParser()
-    config.readfp(open(CONFIG_PATH))
+    config.readfp(open(CONFIG_VARS))
     sections = config.sections()
     template_config = {}
     for section in sections:

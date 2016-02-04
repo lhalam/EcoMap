@@ -1,4 +1,4 @@
-app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
+app.controller('RoleCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
     function($scope, $http, toaster, msg, msgError) {
 
   $scope.msg = msg;
@@ -14,10 +14,10 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       return;
     }
     $http({
-      method: "POST",
-      url: "/api/roles",
+      method: 'POST',
+      url: '/api/roles',
       data: {
-        "role_name": $scope.role['name']
+        'role_name': $scope.role['name']
       }
     }).then(function successCallback(data) {
       $scope.msg.createSuccess('ролі');
@@ -30,13 +30,13 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
 
   $scope.deleteRole = function(id) {
     $http({
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        'Content-Type': 'application/json;charset=utf-8'
       },
-      url: "/api/roles",
+      url: '/api/roles',
       data: {
-        "role_id": id
+        'role_id': id
       }
     }).then(function successCallback(data) {
       for (r in $scope.Roles) {
@@ -59,11 +59,11 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     //   return;
     // }
     $http({
-      method: "PUT",
-      url: "/api/roles",
+      method: 'PUT',
+      url: '/api/roles',
       data: {
-        "role_name": $scope.editRoleObj['name'],
-        "role_id": $scope.editRoleObj['id']
+        'role_name': $scope.editRoleObj['name'],
+        'role_id': $scope.editRoleObj['id']
       }
     }).then(function successCallback(data) {
       $scope.loadRole();
@@ -80,7 +80,7 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
   $scope.showEditRoleModal = function(name, id) {
     $scope.editRoleObj = {
       'name': name,
-      "id": id
+      'id': id
     }
     $scope.editRoleModal = true;
   }
@@ -114,14 +114,14 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     $scope.rolePermTable = false
     $scope.rolePermBlock = true
     $scope.rolePermObj = {
-      "name": name,
-      "id": id
+      'name': name,
+      'id': id
     }
     $scope.selectPermObj = {}
     $scope.listToSend = []
     $http({
-      method: "GET",
-      url: "/api/role_permissions",
+      method: 'GET',
+      url: '/api/role_permissions',
       params: {
         role_id: $scope.rolePermObj.id
       }
@@ -160,15 +160,15 @@ app.controller("RoleCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     })
   }
 
-  $scope.searchWord = "";
-  $scope.searchWordActual = "";
+  $scope.searchWord = '';
+  $scope.searchWordActual = '';
   $scope.bindResPerm = function() {
     $http({
-      method: "PUT",
-      url: "/api/role_permissions",
+      method: 'PUT',
+      url: '/api/role_permissions',
       data: {
-        "role_id": $scope.rolePermObj.id,
-        "permission_id": $scope.listToSend
+        'role_id': $scope.rolePermObj.id,
+        'permission_id': $scope.listToSend
       }
     }).then(function successCallback(data) {
       $scope.msg.editSuccess('прав');

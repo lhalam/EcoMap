@@ -1,9 +1,9 @@
 app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout',
   function($scope, $state, $http, toaster, $timeout) {
     $scope.page = {
-      "description": "",
-      "meta_keywords": "",
-      "meta_description": ""
+      'description': '',
+      'meta_keywords': '',
+      'meta_description': ''
     };
     $scope.addPage = function(newPage, form) {
       $scope.submitted = true;

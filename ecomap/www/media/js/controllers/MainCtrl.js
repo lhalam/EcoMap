@@ -5,13 +5,13 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$cookies', '$state',
     };
     $scope.getUsername = function() {
       if ($cookies.get('name') && $cookies.get('surname')) {
-        return $cookies.get('name') + " " + $cookies.get('surname');
+        return $cookies.get('name') + ' ' + $cookies.get('surname');
       } else {
         return null;
       }
     };
     $scope.isAdmin = function() {
-      var role = $cookies.get("role");
+      var role = $cookies.get('role');
       if (role == 'admin') {
         return true;
       } else {

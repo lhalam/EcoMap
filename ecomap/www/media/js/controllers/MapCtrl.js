@@ -1,4 +1,4 @@
-app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactory',
+app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactory',
   function($scope, $http, $rootScope, $state, MapFactory) {
     MapFactory.initMap();
     MapFactory.turnResizeOn();
@@ -17,8 +17,8 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
       '7': 'Інші проблеми'
     }
     $scope.Status = {
-      "Unsolved": "Нова",
-      "Resolved": "Вирішена"
+      'Unsolved': 'Нова',
+      'Resolved': 'Вирішена'
     }
     $scope.selectedType = [];
     $scope.selectedStatus = [];
@@ -29,7 +29,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
       $scope.selectedStatus.push(s)
     }
     $scope.toggleType = function(type_id) {
-      if ($scope.selectedType.indexOf(type_id + "") !== -1) {
+      if ($scope.selectedType.indexOf(type_id + '') !== -1) {
         $scope.selectedType.splice($scope.selectedType.indexOf(type_id), 1)
       } else {
         $scope.selectedType.push(type_id)
@@ -54,7 +54,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', "$state", 'MapFactor
     }
     $scope.filterMarker = function() {
       angular.forEach($scope.markers, function(marker, key) {
-        if ($scope.selectedType.indexOf(marker.problem_type_Id + "") === -1 || $scope.selectedStatus.indexOf(marker['problemStatus']) === -1 || $scope.selectTime(marker)) {
+        if ($scope.selectedType.indexOf(marker.problem_type_Id + '') === -1 || $scope.selectedStatus.indexOf(marker['problemStatus']) === -1 || $scope.selectTime(marker)) {
           marker.setVisible(false);
         } else {
           marker.setVisible(true);

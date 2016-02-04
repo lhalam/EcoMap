@@ -5,8 +5,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     $scope.comments = [];
     $scope.msg = msg;
     $http({
-      "method": "GET",
-      "url": "/api/problem_detailed_info/" + $state.params['id']
+      'method': 'GET',
+      'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];

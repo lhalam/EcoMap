@@ -1,6 +1,5 @@
 app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', 
  function($stateProvider, $urlRouterProvider, $authProvider) {
-
   $stateProvider
   .state('error404', {
     url: '/error404',
@@ -47,10 +46,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     templateUrl: '/templates/map.html',
     controller: 'MapCtrl'
   })
-  .state("admin", {
+  .state('admin', {
     abtract: true,
-    url:"/admin",
-    templateUrl:"/templates/admin.html",
+    url: '/admin',
+    templateUrl: '/templates/admin.html',
     controller: 'AdminCtrl',
     resolve: {
       admin: function(grant) {
@@ -58,24 +57,24 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state("admin.resources", {
-    url: "/resources",
-    templateUrl: "/templates/resourcesAdmin.html",
+  .state('admin.resources', {
+    url: '/resources',
+    templateUrl: '/templates/resourcesAdmin.html',
     controller: 'ResourceCtrl'
   })
-  .state("admin.permissions", {
-    url: "/permissions",
-    templateUrl: "/templates/permissionAdmin.html",
+  .state('admin.permissions', {
+    url: '/permissions',
+    templateUrl: '/templates/permissionAdmin.html',
     controller: 'PermisionCtrl'
   })
-  .state("admin.roles", {
-    url: "/roles",
-    templateUrl: "/templates/rolesAdmin.html",
+  .state('admin.roles', {
+    url: '/roles',
+    templateUrl: '/templates/rolesAdmin.html',
     controller: 'RoleCtrl'
   })
-  .state("admin.users", {
-    url: "/users",
-    templateUrl: "/templates/userAdmin.html",
+  .state('admin.users', {
+    url: '/users',
+    templateUrl: '/templates/userAdmin.html',
     controller: 'UserCtrl'
   })
   .state('faq', {
@@ -106,11 +105,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
   .state('addProblem', {
     url: '/addProblem',
     views:{
-      "sidebar":{
-        "templateUrl":"/templates/addProblem.html",
-        "controller":"AddProblemCtrl"
+      'sidebar': {
+        'templateUrl': '/templates/addProblem.html',
+        'controller': 'AddProblemCtrl'
       },
-      "":{
+      '': {
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
@@ -121,14 +120,14 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state("detailedProblem",{
-    url:"/detailedProblem/:id",
-    views:{
-      "sidebar":{
-        "templateUrl":"/templates/detailedProblem.html",
-        "controller":"DetailedProblemCtrl"
+  .state('detailedProblem', {
+    url: '/detailedProblem/:id',
+    views: {
+      'sidebar': {
+        'templateUrl': '/templates/detailedProblem.html',
+        'controller': 'DetailedProblemCtrl'
       },
-      "":{
+      '': {
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
@@ -164,9 +163,8 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       templateUrl: '/templates/register.html',
       controller: 'RegisterCtrl'
     });    
+
     $urlRouterProvider.otherwise('map');
-
-
     $authProvider.loginUrl = '/api/login';
     $authProvider.signupUrl = '/api/register';
     $authProvider.facebook({
@@ -182,5 +180,4 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       type: '2.0',
       popupOptions: { width: 580, height: 400 }
     }); 
-
 }]);

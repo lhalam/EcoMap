@@ -61,28 +61,36 @@ def input_user_data(confvar_dict):
     return user_dict
 
 
+def read_file(fpath, to_return='string', mode='r'):
+    """ Function for reading a file"""
+    with open(fpath, mode) as temp:
+        if to_return == 'as_list':
+            return temp.readlines()
+        else:
+            return temp.read()
+
+
+def write_file(fpath, content, mode='w+'):
+    """Function for writing to a file"""
+    with open(fpath, mode) as to_write:
+        to_write.writelines(content)
+
+
 def create_config_files(user_input):
     """
     Function creates 4 configurations files.
     Input: data - dictionary
     """
-    with open(CONFIG_FILES, 'r+') as file_conf:
-        for line in file_conf:
-            template_name = line.split(', ')[0]
-            file_name = line.split(', ')[-1]
-            with open(template_name, 'r+') as temp:
-                content = temp.readlines()
-                for row in content:
-                    for key in user_input:
-                        to_replace = ('$%s' % key)
-                        if to_replace in row:
-                            place = content.index(row)
-                            content[place] = \
-                                row.replace(to_replace, user_input[key])
-                            row = content[place]
-            new_file_name = os.path.join(os.environ['CONFROOT'], file_name)
-            with open(new_file_name, 'w+') as to_write:
-                to_write.writelines(content)
+    file_conf = read_file(CONFIG_FILES, 'as_list')
+    for line in file_conf:
+        template_name = os.path.join(os.environ['CONFROOT'],
+                                     'templates/'+line.split(', ')[0])
+        content = read_file(template_name)
+        for key, value in user_input.items():
+            content = content.replace('$%s' % key, value)
+        new_file_name = os.path.join(os.environ['CONFROOT'],
+                                     line.split(', ')[1])
+        write_file(new_file_name, content)
 
 
 def main():

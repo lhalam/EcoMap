@@ -168,8 +168,9 @@ def register(first_name, last_name, email, password):
         util.add_users_role(register_user_id, role_id[0])
     message = generate_email('registration', _CONFIG['email.from_email'],
                              email, (first_name, last_name, email, password))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                email,
                message)
@@ -200,8 +201,9 @@ def facebook_register(first_name, last_name, email, provider, uid):
         message = generate_email('registration', _CONFIG['email.from_email'],
                                  email,
                                  (first_name, last_name, email, password))
-        send_email(_CONFIG['email.user_name'],
-                   _CONFIG['email.app_password'],
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
                    _CONFIG['email.from_email'],
                    email,
                    message)
@@ -251,8 +253,9 @@ def restore_password(user):
                              _CONFIG['email.from_email'],
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                user.email,
                message)
@@ -268,8 +271,9 @@ def delete_user(user):
                              _CONFIG['email.from_email'],
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
                _CONFIG['email.from_email'],
                user.email,
                message)

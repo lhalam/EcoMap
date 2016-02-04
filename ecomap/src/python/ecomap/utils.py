@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """Module contains usefull functions."""
-import logging
-import logging.config
 import os
 import random
 import string
@@ -9,10 +7,8 @@ import smtplib
 
 from urlparse import urlparse
 from email.header import Header
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
+from email.mime.multipart import MIMEMultipart
 
 
 def random_password(length):
@@ -20,19 +16,6 @@ def random_password(length):
        :params: length - length of string
        :return: string"""
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
-
-
-def get_logger():
-    """function for configuring default logger object
-    from standard logging library
-        Returns:
-            configured logger object.
-        Usage:
-            import this method to your
-            module and call it.
-            then define a new logger object as usual
-    """
-    return logging.config.fileConfig(CONF_PATH)
 
 
 class Singleton(type):
@@ -99,15 +82,19 @@ def generate_email(email_type, from_email, to_email, args,
     return msg
 
 
-def send_email(login, app_key, from_email, to_email, email):
+def send_email(smtp_name, login, app_key, from_email, to_email, email):
     """Sends email.
-       :params: login - email server login
+       :params: smtp_name - smtp server name
+                login - email server login
                 app_key - email server key
                 sender - email of sender
                 receiver - email of receiver
                 email - body of email
     """
-    server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(login, app_key)
-    server.sendmail(from_email, to_email, email.as_string())
-    server.quit()
+    try:
+        server = smtplib.SMTP_SSL(smtp_name)
+        server.login(login, app_key)
+        server.sendmail(from_email, to_email, email.as_string())
+        server.quit()
+    except Exception as exc:
+        pass

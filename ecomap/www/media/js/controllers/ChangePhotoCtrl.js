@@ -72,7 +72,7 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
   $scope.upload = function(dataUrl, picFile) {
     Upload.upload({
       url: '/api/user_avatar',
-      method: "POST",
+      method: 'POST',
       cache: false,
       headers: {
         'Cache-Control': 'no-cache'
@@ -109,13 +109,13 @@ function($scope, $cookies, $http, toaster, Upload, $timeout) {
 
   $scope.deletePhoto = function(id) {
     $http({
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json;charset=utf-8"
+        'Content-Type': 'application/json;charset=utf-8'
       },
-      url: "/api/user_avatar",
+      url: '/api/user_avatar',
       data: {
-        "user_id": id
+        'user_id': id
       }
     }).then(function successCallback(data) {
       if (data) {

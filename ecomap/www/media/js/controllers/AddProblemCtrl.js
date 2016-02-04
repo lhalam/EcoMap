@@ -17,12 +17,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.$apply();
       })
     $scope.newProblem = {
-      "title": "",
-      "type": "",
-      "latitude": "",
-      "longitude": "",
-      "content": "",
-      "proposal": ""
+      'title': '',
+      'type': '',
+      'latitude': '',
+      'longitude': '',
+      'content': '',
+      'proposal': ''
     };
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -64,12 +64,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         options: {
           draggable: true,
           labelContent: 'ваше місцезнаходження',
-          labelAnchor: "65 0",
-          labelClass: "marker-labels",
+          labelAnchor: '65 0',
+          labelClass: 'marker-labels',
           icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
         },
       })
-      $scope.marker.addListener("drag", function(event) {
+      $scope.marker.addListener('drag', function(event) {
           $scope.newProblem.latitude = this.getPosition().lat();
           $scope.newProblem.longitude = this.getPosition().lng();
           $scope.$apply();
@@ -141,7 +141,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       }
       Upload.upload({
         url: '/api/problem_post',
-        method: "POST",
+        method: 'POST',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'
@@ -159,7 +159,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           zoom: 14
         };
       }, function errorCallback() {
-        toaster.pop('error', 'Помилка при додаванні', 'При спробі' + ' додавання проблеми виникла помилка!');
+        toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };
     /*End of problem posting section*/
@@ -190,7 +190,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({
         url: '/api/photo/' + $scope.createdProblemId,
-        method: "POST",
+        method: 'POST',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'

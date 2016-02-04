@@ -8,9 +8,9 @@ app.run(['grant', '$auth', '$cookies', '$log',
       return result;
     });
 
-    grant.addTest('authenticated', function(){
+    grant.addTest('authenticated', function() {
       var result = null;
-      if($auth.isAuthenticated()){
+      if ($auth.isAuthenticated()) {
         result = true;
       }
       return result;

@@ -1,16 +1,16 @@
 app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
   function($scope, $http, $cookies) {
-      $scope.sortType     = 'id'; // set the default sort type
-      $scope.sortReverse  = false;  // set the default sort order
-      $scope.searchFish   = '';
+      $scope.sortType = 'id'; // set the default sort type
+      $scope.sortReverse = false;  // set the default sort order
+      $scope.searchFish = '';
       $scope.selectCountObj = {
-        "1": '5',
-        "2": "10",
-        "3": "15",
-        "4": "20"
+        '1': '5',
+        '2': '10',
+        '3': '15',
+        '4': '20'
       }
       $scope.selectCount = {
-        'selected': "5"
+        'selected': '5'
       }  
       $scope.getProblemType = function(type_id) {
         var types = {
@@ -32,14 +32,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         return statuses[status];
       };
       $scope.loadProblems = function(user_id) {
-        $scope.msg = msg
+        $scope.msg = msg;
         $scope.fromPage = 1;
         $scope.bigCurrentPage = 1;
         $scope.problemsLength = $scope.selectCount['selected'];
         $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
         $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
           var stepCount = $scope.selectCount['selected']
-          if ($cookies.get("role")=="admin"){
+          if ($cookies.get('role')=='admin'){
             $http({
               method: 'GET',
               url: 'api/all_usersProblem',
@@ -49,7 +49,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
               }
             }).then(function successCallback(response) {
               $scope.problems = response.data[0];
-              $scope.problemsLength = response.data[1][0]['total_problem_count']
+              $scope.problemsLength = response.data[1][0]['total_problem_count'];
               $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
             })
           } else {
@@ -62,13 +62,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
               }
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
-             $scope.problemsLength = response.data[1][0]['total_problem_count']
+             $scope.problemsLength = response.data[1][0]['total_problem_count'];
              $scope.UsersLength = data.data[1][0]['total_users'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
           }
         })
-
 };
 $scope.loadProblems($cookies.get('id'));
 $scope.detailedInfoModal = false;

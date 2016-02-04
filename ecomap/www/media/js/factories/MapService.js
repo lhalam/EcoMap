@@ -72,11 +72,11 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           problemStatus: marker.status,
           doCluster: true,
           date: marker.date,
-          icon: "/image/markers/" + marker.problem_type_Id + ".png",
+          icon: '/image/markers/' + marker.problem_type_Id + '.png',
         });
         new_marker.addListener('click', function() {
           var problem_id = this['id'];
-          $state.go("detailedProblem", {
+          $state.go('detailedProblem', {
             'id': problem_id
           });
         });  

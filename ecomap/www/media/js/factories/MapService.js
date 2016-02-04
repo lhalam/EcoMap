@@ -7,7 +7,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   instance.markers = [];
   instance.cluster = null;
 
-  instance.initMap = function(centerMap, zoom) {
+  instance.initMap = function (centerMap, zoom) {
     if (centerMap === undefined) {
       centerMap = instance.centerMap;
     }
@@ -45,7 +45,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         panControl: true,
         zoomControl: true,
         scaleControl: true,
-        mapTypeControl: false,
+        mapTypeControl: false
       }
     });
   }
@@ -62,7 +62,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-      angular.forEach(response.data, function(marker, key) {
+      angular.forEach(response.data, function (marker, key) {
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,
@@ -87,7 +87,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     instance.markers = markers;
     return markers;
   }
-  instance.refreshCluster = function(){
+  instance.refreshCluster = function() {
     instance.cluster.clearMarkers();
     angular.forEach(instance.markers, function(marker, key) {
         if (marker.getVisible()) {

@@ -16,7 +16,7 @@ app = Flask(__name__, template_folder=TEMPLATE_FOLDER)
 Triangle(app)
 auto = Autodoc(app)
 
-logging.config.fileConfig(os.path.join(os.environ['CONFROOT'], 'log.conf'))
+logging.config.fileConfig(os.path.join(os.environ['CONFROOT'], '_log.conf'))
 logger = logging.getLogger('flask_app')
 app.config['SECRET_KEY'] = 'a7c268ab01141868811c070274413ea3c588733241659fcb'
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)     # user time lib

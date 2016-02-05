@@ -13,9 +13,8 @@ from ConfigParser import SafeConfigParser
 from ecomap.utils import Singleton
 
 REFRESH_TIME = 900
-PASSWORD = ['password', 'facebook_secret', 'from_email']
-CONFIG_FILES = ['ecomap.conf']
 CONFIG_PATH = os.environ['CONFROOT']
+
 
 class Config(object):
     """
@@ -48,17 +47,25 @@ class Config(object):
         """
         self.log.info('Parse ecomap.conf.')
         config = SafeConfigParser()
-        for config_file_name in CONFIG_FILES:
-            with open(os.path.join(self.path, config_file_name)) as config_file:
-                config.readfp(config_file)
+        for fname in os.listdir(self.path):
+            if not (fname.startswith('_')) and fname.endswith(".conf"):
+                with open(os.path.join(self.path, fname)) as config_file:
+                    config.readfp(config_file)
         sections = config.sections()
         temp_config = {}
         for section in sections:
             for (key, value) in config.items(section):
-                if value and key not in PASSWORD:
-                    try:
-                        value = eval(value)
-                    except NameError:
-                        pass
-                temp_config[section + '.' + key] = value
+                temp_config[section + '.' + key] = self._value_eval(value)
         self.config = temp_config
+
+    def _value_eval(self, value):
+        """
+        Evaluate value from config file and
+        returns value in valid type.
+        """
+        if value.startswith('eval(') and value.endswith(')'):
+            return eval(value[5:-1])
+        elif ((value.startswith('[') and value.endswith(']')) or
+             (value.startswith('{') and value.endswith('}'))):
+            return eval(value)
+        return value

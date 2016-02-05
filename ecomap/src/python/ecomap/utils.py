@@ -11,6 +11,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
+HTML_TEMPLATE_ROOT = os.path.join(os.environ['CONFROOT'], 'html_templates')
+
 def random_password(length):
     """Generates randow string. Contains lower- and uppercase letters.
        :params: length - length of string
@@ -47,13 +49,13 @@ def generate_email(email_type, from_email, to_email, args,
                    custom_template=None, template_str=None, header=None):
     """Sends email."""
     msg = MIMEMultipart('alternative')
-    complete_email = os.path.join(os.environ['CONFROOT'],
+    complete_email = os.path.join(HTML_TEMPLATE_ROOT,
                                   'email_template.html')
     if custom_template:
         email_body = custom_template
         args = ''
     else:
-        email_body = os.path.join(os.environ['CONFROOT'],
+        email_body = os.path.join(HTML_TEMPLATE_ROOT,
                                   '%s.html' % email_type)
     html = None
     html_body = None

@@ -42,7 +42,7 @@ def configvars_parser():
     for section in sections:
         template_config[section] = []
         for (key, value) in config.items(section):
-            template_config[section].append(value or 'mail@mail.com')
+            template_config[section].append(value or None)
     logging.debug('Dictionary with list of variables was created')
     return template_config
 

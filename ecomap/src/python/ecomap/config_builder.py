@@ -134,7 +134,7 @@ def main():
         log_level = logging.INFO
     elif options.verbosity >= 2:
         log_level = logging.DEBUG
-    logging.basicConfig(level=log_level)
+    logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s', level=log_level)
     create_config_files(input_user_data(configvars_parser()))
 
 if __name__ == '__main__':

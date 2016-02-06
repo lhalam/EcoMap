@@ -15,12 +15,12 @@ CONFIG_STRING = """
 user_name = noreply.ecomap
 app_password = cmlgeypsicepfbkj
 from_email = admin@ecomap.com
-admin_email = 'example@example.com'
+admin_email = example@example.com
 
 # ecomap.config.Configs for database pool.
 [db]
 host = localhost
-port = 3306
+port = eval(3306)
 db_name = ecomap_db
 user = root
 password = max123
@@ -47,7 +47,7 @@ CONFIG = {'email.user_name': 'noreply.ecomap',
           'db.port': 3306,
           'db.host': 'localhost',
           'email.app_password': 'cmlgeypsicepfbkj',
-          'oauth.facebook_id': 1525737571082521,
+          'oauth.facebook_id': '1525737571082521',
           'oauth.facebook_secret': '571c4cf3817358f46097d38ba46bd188'}
 
 KEYS = ['email.user_name', 'db.db_name', 'email.from_email',
@@ -57,7 +57,7 @@ KEYS = ['email.user_name', 'db.db_name', 'email.from_email',
 
 VALUES = ['noreply.ecomap', 'ecomap_db',
           'admin@ecomap.com', 'max123', 'root',
-          'example@example.com', 1525737571082521,
+          'example@example.com', '1525737571082521',
           '571c4cf3817358f46097d38ba46bd188', 3306,
           'localhost', 'cmlgeypsicepfbkj']
 

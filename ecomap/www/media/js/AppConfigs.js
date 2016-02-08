@@ -168,7 +168,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     $authProvider.loginUrl = '/api/login';
     $authProvider.signupUrl = '/api/register';
     $authProvider.facebook({
-      clientId: '1525737571082521',
+      clientId: '1000437473361749',
       url: '/api/authorize/facebook',
       name: 'facebook',
       authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',

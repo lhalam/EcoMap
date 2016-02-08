@@ -128,7 +128,8 @@ def main():
     """
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
-                      type=int, default=1, help='Verbosity level [1-3]')
+                      type=int, default=1, help='Verbosity level [1-2]. \
+                      1(default) - level INFO, 2  - level DEBUG')
     (options, args) = parser.parse_args()
     if options.verbosity == 1:
         log_level = logging.INFO

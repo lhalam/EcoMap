@@ -89,24 +89,41 @@ def input_user_data(confvar_dict):
 
 
 def read_file(fpath, to_return='string', mode='r'):
-    """ Function for reading a file"""
-    with open(fpath, mode) as temp:
-        if to_return == 'as_list':
-            return temp.readlines()
-        else:
-            return temp.read()
+    """Function for reading a file. If file exists, it's content is returned.
+    Else, an error is thrown and execution is stopped.
+    :param fpath: path to a file
+    :param to_return: return value string or a list, [optional]
+    :param mode: argument for open(), [optional]
+    :return: string or list with content of read file
+    """
+    try:
+        temp = open(fpath, mode)
+    except IOError as error:
+        sys.exit(error)
+    if to_return == 'as_list':
+        content = temp.readlines()
+    else:
+        content = temp.read()
+    return content
 
 
 def write_file(fpath, content, mode='w+'):
-    """Function for writing to a file"""
-    with open(fpath, mode) as to_write:
-        to_write.writelines(content)
+    """Function for writing to a file.If file can't be written, error is thrown.
+    Else, file is created with user data.
+    :param fpath: path to a file
+    :param content: data to put in the file
+    :param mode: argument for open(), [optional]
+    """
+    try:
+        to_write = open(fpath, mode)
+    except IOError as error:
+        sys.exit(error)
+    to_write.writelines(content)
 
 
 def create_config_files(user_input):
-    """
-    Function creates 4 configurations files.
-    Input: data - dictionary
+    """Function creates 4 configurations files.
+    param user_input: dictionary with user data
     """
     file_conf = read_file(CONFIG_FILES, 'as_list')
     logging.info('Creating config files')
@@ -116,7 +133,6 @@ def create_config_files(user_input):
         content = read_file(template_name)
         for key, value in user_input.items():
             content = content.replace('$%s' % key, value)
-
         new_file_name = os.path.join(os.environ['CONFROOT'],
                                      line.split(', ')[1].strip())
         write_file(new_file_name, content)
@@ -124,9 +140,7 @@ def create_config_files(user_input):
 
 
 def main():
-    """
-    Function runs config builder.
-    """
+    """ Function runs config builder."""
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
                       type=int, default=1, help='Verbosity level [1-2]. \
@@ -136,7 +150,8 @@ def main():
         log_level = logging.INFO
     elif options.verbosity >= 2:
         log_level = logging.DEBUG
-    logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s', level=log_level)
+    logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
+                        level=log_level)
     create_config_files(input_user_data(configvars_parser()))
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@ from ConfigParser import SafeConfigParser
 
 CONFIG_VARS = os.path.join(os.environ['CONFROOT'], '_configvars.conf')
 CONFIG_FILES = os.path.join(os.environ['CONFROOT'], '_configfiles.conf')
+DEFAULT_LIST_LENGTH = 3
 
 CONFIG_TYPES = {'str': {'regex': '.*',
                         'eval': '%s'},
@@ -75,7 +76,7 @@ def input_user_data(confvar_dict):
                 if not check_regex(type_value['regex'], user_dict[key]):
                     print 'Invalid data! Should be type %s.' % value[2]
                 # checking if email is valid.
-                elif len(value) > 3:
+                elif len(value) > DEFAULT_LIST_LENGTH:
                     if not check_regex(value[3], user_dict[key]):
                         print 'Invalid data! Example: mail@mail.com.'
                     else:

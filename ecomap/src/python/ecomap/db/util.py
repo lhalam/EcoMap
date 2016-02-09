@@ -1,5 +1,5 @@
 """This module contains functions for interacting with Database."""
-from ecomap.db.db_pool import db_pool, retry_query
+from ecomap.db.db_pool import db_pool_rw, db_pool_ro, retry_query
 
 
 @retry_query(tries=3, delay=1)

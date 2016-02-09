@@ -39,7 +39,7 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
     <li>Now you have working Database!</li>
 </ol>
 <h2>Database scheme</h2>
-<img src="https://raw.githubusercontent.com/lhalam/EcoMap/pagination/ecomap_db.png">
+<img src="https://raw.githubusercontent.com/lhalam/EcoMap/STAGE/ecomap_db.png">
 <h2>Ecomap application runs on Apache Web Server v2.4</h2>
 <p>
     This is a short manual, which tells how to configure WSGI-Flask application and Apache server on your server or local        machine.

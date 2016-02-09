@@ -61,6 +61,11 @@ VALUES = ['noreply.ecomap', 'ecomap_db',
           '571c4cf3817358f46097d38ba46bd188', 3306,
           'localhost', 'cmlgeypsicepfbkj']
 
+EVAL_VALUE = {'int_str':'eval(3306)',
+               'str':'ecomap_db',
+               'list_str':'[1,2,3]',
+               'dict_str':'{1:"one", 2:"two"}'}
+
 CONFIG_DICT = {'config': CONFIG_STRING}
 
 
@@ -149,6 +154,15 @@ class ConfigParserTestCase(unittest2.TestCase):
         CONFIG_DICT['config'] = ecomap_original
         self.assertNotEqual(before_refresh, after_refresh)
 
+    def test_value_eval(self):
+        """Tests if _value_eval returns values in right type"""
+        configs = config.Config()
+        self.assertTrue(configs._value_eval(EVAL_VALUE['int_str']) == 3306)
+        self.assertTrue(configs._value_eval(EVAL_VALUE['str']) == 'ecomap_db')
+        self.assertTrue(configs._value_eval(EVAL_VALUE['list_str']) ==
+                                                      [1, 2, 3])
+        self.assertTrue(configs._value_eval(EVAL_VALUE['dict_str']) ==
+                                                      {1:"one", 2:"two"})
 
 if __name__ == '__main__':
     unittest2.main()

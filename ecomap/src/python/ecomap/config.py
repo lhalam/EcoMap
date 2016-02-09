@@ -16,7 +16,9 @@ CONFIG_PATH = os.environ['CONFROOT']
 
 
 class Config(object):
+
     """Singleton class to get configs."""
+    
     __metaclass__ = Singleton
 
     def __init__(self):
@@ -49,7 +51,7 @@ class Config(object):
         temp_config = {}
         for section in sections:
             for (key, value) in config.items(section):
-                temp_config[section + '.' + key] = self._value_eval(value)
+                temp_config['%s.%s' %(section, key)] = self._value_eval(value)
         self.config = temp_config
 
     def _value_eval(self, value):
@@ -57,8 +59,8 @@ class Config(object):
         returns value in valid type.
         """
         if value.startswith('eval(') and value.endswith(')'):
-            return eval(value[5:-1])
+            value = eval(value[5:-1])
         elif ((value.startswith('[') and value.endswith(']')) or
              (value.startswith('{') and value.endswith('}'))):
-            return eval(value)
+            value = eval(value)
         return value

@@ -76,21 +76,19 @@ def input_user_data(confvar_dict):
     for key, value in confvar_dict.iteritems():
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
-                                       % (key, value[0], value[1])) or value[1]
+                                       % (key, value['help'], value['default'])) or value['default']
             if user_dict[key]:
-                type_value = CONFIG_TYPES[value[2]]
-                if not check_regex(type_value['regex'], user_dict[key]):
-                    print 'Invalid data! Should be type %s.' % value[2]
-                # checking if email is valid.
-                elif len(value) > DEFAULT_LIST_LENGTH:
-                    if not check_regex(value[3], user_dict[key]):
-                        print 'Invalid data! Example: mail@mail.com.'
-                    else:
-                        break
-                else:
-                    user_dict[key] = type_value['eval'] % user_dict[key]
-                    break
-    logging.debug('Dictionary with user\'s input data was created')
+                type_value = CONFIG_TYPES[value['type']]
+                if confvar_dict[key].has_key('validate_re'):
+                    if not check_regex(value['validate_re'], user_dict[key]):
+                        logging.warning('Invalid data! Example: mail@mail.com.')
+                        continue
+                elif not check_regex(type_value['regex'], user_dict[key]):
+                    logging.warning('Invalid data! Should be type %s.' % value['type'])
+                    continue
+            user_dict[key] = type_value['eval'] % user_dict[key]
+            break
+    logging.debug('Dictionary with user\'s input data was created.')
     return user_dict
 
 

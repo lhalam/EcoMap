@@ -10,6 +10,7 @@ from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
 from ecomap.db.util import insert_user
+from ecomap.user import hash_pass
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -157,11 +158,11 @@ def main():
     create_config_files(user_input)
     insert_user('admin', 'admin',
                 user_input['ecomap_admin_user_email'],
-                user_input['ecomap_admin_user_password'])
+                hash_pass(user_input['ecomap_admin_user_password']))
     insert_user(user_input['ecomap_unknown_first_name'],
                 user_input['ecomap_unknown_last_name'],
                 user_input['ecomap_unknown_email'],
-                user_input['ecomap_admin_user_password'])
+                hash_pass(user_input['ecomap_admin_user_password']))
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -45,11 +45,15 @@ def configvars_parser():
     logging.info("Parse _configvars.conf")
     template_config = {}
     for section in sections:
-        template_config[section] = []
-        for (key, value) in config.items(section):
-            template_config[section].append(value or None)
+        template_config[section] = dict(tuple(config.items(section)))
     logging.debug('Dictionary with list of variables was created')
     return template_config
+    # for section in sections:
+    #     template_config[section] = {}
+    #     for (key, value) in config.items(section):
+    #         template_config[section][key] = value or None
+    # logging.debug('Dictionary with list of variables was created')
+    # return template_config
 
 
 def check_regex(reg_exp, value):
@@ -139,16 +143,17 @@ def main():
     """ Function runs config builder."""
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
-                      type=int, default=1, help='Verbosity level [1-2]. \
-                      1(default) - level INFO, 2  - level DEBUG')
+                      type=int, default=1, help='Verbosity level [1-3]. \
+                      1(default) - level INFO, 3  - level DEBUG')
     (options, args) = parser.parse_args()
+    list_level = range(1, 4)
     if options.verbosity == 1:
         log_level = logging.INFO
-    elif options.verbosity >= 2:
+    elif options.verbosity >= 2 and options.verbosity in list_level:
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
-    create_config_files(input_user_data(configvars_parser()))
+    configvars_parser()
 
 if __name__ == '__main__':
     sys.exit(main())

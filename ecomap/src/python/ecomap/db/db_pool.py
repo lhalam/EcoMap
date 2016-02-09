@@ -159,18 +159,18 @@ class DBPool(object):
         self._connection_pool.append(conn)
 
 
-db_pool_rw = lambda: DBPool(user=_CONFIG['db.user'],
-                         passwd_rw=_CONFIG['db.password'],
-                         db_name=_CONFIG['db.db_name'],
-                         host_rw=_CONFIG['db.host'],
-                         port_rw=_CONFIG['db.port'],
+db_pool_rw = lambda: DBPool(user=_CONFIG['db.rw.user'],
+                         passwd_rw=_CONFIG['db.rw.password'],
+                         db_name=_CONFIG['db.db'],
+                         host_rw=_CONFIG['db.rw.host'],
+                         port_rw=_CONFIG['db.rw.port'],
                          ttl=_CONFIG['db.connection_lifetime'],
-                         pool_size_rw=_CONFIG['db.pool_size'])
+                         pool_size_rw=_CONFIG['db.rw.pool_size'])
 
-db_pool_ro = lambda: DBPool(user=_CONFIG['db.user'],
-                         passwd_ro=_CONFIG['db.password'],
-                         db_name=_CONFIG['db.db_name'],
-                         host_ro=_CONFIG['db.host'],
-                         port_ro=_CONFIG['db.port'],
+db_pool_ro = lambda: DBPool(user=_CONFIG['db.ro.user'],
+                         passwd_ro=_CONFIG['db.ro.password'],
+                         db_name=_CONFIG['db.db'],
+                         host_ro=_CONFIG['db.ro.host'],
+                         port_ro=_CONFIG['db.ro.port'],
                          ttl=_CONFIG['db.connection_lifetime'],
-                         pool_size_ro=_CONFIG['db.pool_size'])
+                         pool_size_ro=_CONFIG['db.ro.pool_size'])

@@ -9,8 +9,9 @@ import logging
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
+
+
 ROOT_PATH = os.environ['CONFROOT']
-DEFAULT_LIST_LENGTH = 3
 
 CONFIG_TYPES = {'str': {'regex': '.*',
                         'eval': '%s'},
@@ -44,16 +45,16 @@ def configvars_parser():
     sections = config.sections()
     logging.info("Parse _configvars.conf")
     template_config = {}
-    for section in sections:
-        template_config[section] = dict(tuple(config.items(section)))
-    logging.debug('Dictionary with list of variables was created.')
-    return template_config
     # for section in sections:
-    #     template_config[section] = {}
-    #     for (key, value) in config.items(section):
-    #         template_config[section][key] = value or None
-    # logging.debug('Dictionary with list of variables was created')
+    #     template_config[section] = dict(tuple(config.items(section)))
+    # logging.debug('Dictionary with list of variables was created.')
     # return template_config
+    for section in sections:
+        template_config[section] = {}
+        for (key, value) in config.items(section):
+            template_config[section][key] = value or None
+    logging.debug('Dictionary with list of variables was created')
+    return template_config
 
 
 def check_regex(reg_exp, value):
@@ -86,8 +87,8 @@ def input_user_data(confvar_dict):
                 elif not check_regex(type_value['regex'], user_dict[key]):
                     logging.warning('Invalid data! Should be type %s.' % value['type'])
                     continue
-            user_dict[key] = type_value['eval'] % user_dict[key]
-            break
+                user_dict[key] = type_value['eval'] % user_dict[key]
+                break
     logging.debug('Dictionary with user\'s input data was created.')
     return user_dict
 

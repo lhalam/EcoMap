@@ -1,4 +1,4 @@
-"""Module contains a class for testing config.Config class"""
+"""Module contains a class for testing config.Config class."""
 
 import time
 import unittest2
@@ -66,7 +66,7 @@ CONFIG_DICT = {'config': CONFIG_STRING}
 
 class ContextualStringIO(StringIO):
 
-    """Creating a context manager for StringIO"""
+    """Creating a context manager for StringIO."""
 
     def __enter__(self):
         return self

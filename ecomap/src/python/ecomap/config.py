@@ -1,8 +1,7 @@
-"""
-Module which contains Config class. This class is singleton.
-It exists to parse *.conf files and return dictionary,
-which contains configuration from those files. Every 15 minutes
-it returns new dictionary which contains updated configs.
+"""Module which contains Config class. This class is singleton.
+It exists to parse *.conf files which do not start with "_" symbol
+and return dictionary, which contains configuration from those files.
+Every 15 minutes it returns new dictionary which contains updated configs.
 """
 import os
 import time
@@ -17,9 +16,7 @@ CONFIG_PATH = os.environ['CONFROOT']
 
 
 class Config(object):
-    """
-    Singleton class to get configs
-    """
+    """Singleton class to get configs."""
     __metaclass__ = Singleton
 
     def __init__(self):
@@ -30,10 +27,9 @@ class Config(object):
         self.log.info('Create instance of Config parser.')
 
     def get_config(self):
-        """
-        Call parse method if it needed.
+        """Call parse method if it needed.
         Returns:
-            dictionary, containing configs
+            dictionary, containing configs.
         """
         if self.update_time + REFRESH_TIME < time.time():
             self.log.info('Refresh configs')
@@ -42,9 +38,7 @@ class Config(object):
         return self.config
 
     def _parse_confs(self):
-        """
-        Parses config file.
-        """
+        """Parses config file."""
         self.log.info('Parse ecomap.conf.')
         config = SafeConfigParser()
         for fname in os.listdir(self.path):
@@ -59,8 +53,7 @@ class Config(object):
         self.config = temp_config
 
     def _value_eval(self, value):
-        """
-        Evaluate value from config file and
+        """Get value from config file and
         returns value in valid type.
         """
         if value.startswith('eval(') and value.endswith(')'):

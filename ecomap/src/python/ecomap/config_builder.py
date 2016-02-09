@@ -9,7 +9,7 @@ import logging
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
-
+from ecomap.db.util import insert_user
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -77,15 +77,16 @@ def input_user_data(confvar_dict):
     for key, value in confvar_dict.iteritems():
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
-                                       % (key, value['help'], value['default'])) or value['default']
+                                        % (key, value['help'],
+                                        value['default'])) or value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
-                if confvar_dict[key].has_key('validate_re'):
+                if 'validate_re' in confvar_dict[key]:
                     if not check_regex(value['validate_re'], user_dict[key]):
-                        logging.warning('Invalid data! Example: mail@mail.com.')
+                        logging.warning('Invalid data! example@mail.com.')
                         continue
                 elif not check_regex(type_value['regex'], user_dict[key]):
-                    logging.warning('Invalid data! Should be type %s.' % value['type'])
+                    logging.warning('Invalid data!')
                     continue
                 user_dict[key] = type_value['eval'] % user_dict[key]
                 break
@@ -152,7 +153,15 @@ def main():
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
-    create_config_files(input_user_data(configvars_parser()))
+    user_input = input_user_data(configvars_parser())
+    create_config_files(user_input)
+    insert_user('admin', 'admin',
+                user_input['ecomap_admin_user_email'],
+                user_input['ecomap_admin_user_password'])
+    insert_user(user_input['ecomap_unknown_first_name'],
+                user_input['ecomap_unknown_last_name'],
+                user_input['ecomap_unknown_email'],
+                user_input['ecomap_admin_user_password'])
 
 if __name__ == '__main__':
     sys.exit(main())

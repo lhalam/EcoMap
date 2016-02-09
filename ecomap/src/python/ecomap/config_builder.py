@@ -9,9 +9,6 @@ import logging
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
-from ecomap.db.util import insert_user
-from ecomap.user import hash_pass
-
 ROOT_PATH = os.environ['CONFROOT']
 
 CONFIG_TYPES = {'str': {'regex': '.*',
@@ -156,6 +153,8 @@ def main():
                         level=log_level)
     user_input = input_user_data(configvars_parser())
     create_config_files(user_input)
+    from ecomap.db.util import insert_user
+    from ecomap.user import hash_pass
     insert_user('admin', 'admin',
                 user_input['ecomap_admin_user_email'],
                 hash_pass(user_input['ecomap_admin_user_password']))

@@ -1,5 +1,4 @@
-"""
-Configuration builder module.
+"""Configuration builder module.
 Module creates config files from user input data.
 """
 import os
@@ -10,8 +9,7 @@ import logging
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
-CONFIG_VARS = os.path.join(os.environ['CONFROOT'], '_configvars.conf')
-CONFIG_FILES = os.path.join(os.environ['CONFROOT'], '_configfiles.conf')
+ROOT_PATH = os.environ['CONFROOT']
 DEFAULT_LIST_LENGTH = 3
 
 CONFIG_TYPES = {'str': {'regex': '.*',
@@ -29,28 +27,37 @@ CONFIG_TYPES = {'str': {'regex': '.*',
                 }
 
 
+class BaseConfigBuilderException(Exception):
+
+    """Class for config builder exceptions."""
+
+    pass
+
+
 def configvars_parser():
-    """
-    Parse config variables file.
+    """Parse config variables file.
     Returns:
         dictionary,which contains list of variable's value.
     """
     config = SafeConfigParser()
-    config.readfp(open(CONFIG_VARS))
+    config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
     sections = config.sections()
     logging.info("Parse _configvars.conf")
     template_config = {}
     for section in sections:
-        template_config[section] = []
-        for (key, value) in config.items(section):
-            template_config[section].append(value or None)
+        template_config[section] = dict(tuple(config.items(section)))
     logging.debug('Dictionary with list of variables was created')
     return template_config
+    # for section in sections:
+    #     template_config[section] = {}
+    #     for (key, value) in config.items(section):
+    #         template_config[section][key] = value or None
+    # logging.debug('Dictionary with list of variables was created')
+    # return template_config
 
 
 def check_regex(reg_exp, value):
-    """
-    Regular expression validation.
+    """Regular expression validation.
     Input: value to check, regular expression.
     Rerurns:
         True or False.
@@ -59,8 +66,7 @@ def check_regex(reg_exp, value):
 
 
 def input_user_data(confvar_dict):
-    """
-    Function collects data from user input.
+    """Function collects data from user input.
     Input: data - dictionary,which contains list of variable's value.
     Returns:
             dictionary where keys are variables for templates configs.
@@ -88,7 +94,7 @@ def input_user_data(confvar_dict):
     return user_dict
 
 
-def read_file(fpath, to_return='string', mode='r'):
+def read_file(fpath, return_type='string', mode='r'):
     """Function for reading a file. If file exists, it's content is returned.
     Else, an error is thrown and execution is stopped.
     :param fpath: path to a file
@@ -96,63 +102,58 @@ def read_file(fpath, to_return='string', mode='r'):
     :param mode: argument for open(), [optional]
     :return: string or list with content of read file
     """
-    try:
-        temp = open(fpath, mode)
-    except IOError as error:
-        sys.exit(error)
-    if to_return == 'as_list':
-        content = temp.readlines()
-    else:
-        content = temp.read()
+    with open(fpath, mode) as temp:
+        if return_type == 'list':
+            content = [x.strip() for x in temp.readlines()]
+        else:
+            content = temp.read()
     return content
 
 
-def write_file(fpath, content, mode='w+'):
+def write_file(fpath, content, mode='w'):
     """Function for writing to a file.If file can't be written, error is thrown.
     Else, file is created with user data.
     :param fpath: path to a file
     :param content: data to put in the file
     :param mode: argument for open(), [optional]
     """
-    try:
-        to_write = open(fpath, mode)
-    except IOError as error:
-        sys.exit(error)
-    to_write.writelines(content)
+    with open(fpath, mode) as to_write:
+        to_write.writelines(content)
 
 
 def create_config_files(user_input):
     """Function creates 4 configurations files.
     param user_input: dictionary with user data
     """
-    file_conf = read_file(CONFIG_FILES, 'as_list')
-    logging.info('Creating config files')
+    file_conf = read_file(os.path.join(ROOT_PATH, '_configfiles.conf'), 'list')
+    logging.info('Creating config files.')
     for line in file_conf:
-        template_name = os.path.join(os.environ['CONFROOT'],
-                                     'templates/' + line.split(', ')[0])
+        template_name = os.path.join(ROOT_PATH,
+                                     'templates/' + line.split(',')[0])
         content = read_file(template_name)
         for key, value in user_input.items():
             content = content.replace('$%s' % key, value)
-        new_file_name = os.path.join(os.environ['CONFROOT'],
-                                     line.split(', ')[1].strip())
+        new_file_name = os.path.join(ROOT_PATH,
+                                     line.split(',')[1])
         write_file(new_file_name, content)
-    logging.debug('Config files created')
+    logging.debug('Config files are created successfully.')
 
 
 def main():
     """ Function runs config builder."""
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
-                      type=int, default=1, help='Verbosity level [1-2]. \
-                      1(default) - level INFO, 2  - level DEBUG')
+                      type=int, default=1, help='Verbosity level [1-3]. \
+                      1(default) - level INFO, 3  - level DEBUG')
     (options, args) = parser.parse_args()
+    list_level = range(1, 4)
     if options.verbosity == 1:
         log_level = logging.INFO
-    elif options.verbosity >= 2:
+    elif options.verbosity >= 2 and options.verbosity in list_level:
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
-    create_config_files(input_user_data(configvars_parser()))
+    configvars_parser()
 
 if __name__ == '__main__':
     sys.exit(main())

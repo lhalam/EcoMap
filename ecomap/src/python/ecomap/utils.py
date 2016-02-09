@@ -45,7 +45,7 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
     return '?'.join((url.path, url.query)) if url.query else url.path
 
 
-def generate_email(email_type, from_email, to_email, args,
+def generate_email(email_type, from_address, to_email, args,
                    custom_template=None, template_str=None, header=None):
     """Sends email."""
     msg = MIMEMultipart('alternative')
@@ -76,7 +76,7 @@ def generate_email(email_type, from_email, to_email, args,
         msg['Subject'] = Header('%s' % header, 'utf-8')
     else:
         msg['Subject'] = Header('%s' % email_type, 'utf-8')
-    msg['From'] = from_email
+    msg['From'] = from_address
     msg['To'] = to_email
     htmltext = MIMEText(html_formatted, 'html', 'utf-8')
     msg.attach(htmltext)
@@ -84,7 +84,7 @@ def generate_email(email_type, from_email, to_email, args,
     return msg
 
 
-def send_email(smtp_name, login, app_key, from_email, to_email, email):
+def send_email(smtp_name, login, app_key, from_address, to_email, email):
     """Sends email.
        :params: smtp_name - smtp server name
                 login - email server login
@@ -96,7 +96,7 @@ def send_email(smtp_name, login, app_key, from_email, to_email, email):
     try:
         server = smtplib.SMTP_SSL(smtp_name)
         server.login(login, app_key)
-        server.sendmail(from_email, to_email, email.as_string())
+        server.sendmail(from_address, to_email, email.as_string())
         server.quit()
     except Exception as exc:
         pass

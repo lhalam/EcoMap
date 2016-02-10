@@ -56,7 +56,6 @@ def check_regex(reg_exp, value):
     return bool(re.match(reg_exp, value))
 
 
-
 def input_user_data(confvar_dict):
     """Function collects data from user input.
     :param confvar_dict: dictionary,which contains list of variable's value.
@@ -92,11 +91,14 @@ def read_file(fpath, return_type='string', mode='r'):
     :param mode: argument for open(), [optional]
     :return: string or list with content of read file.
     """
-    with open(fpath, mode) as temp:
-        if return_type == 'list':
-            content = [x.strip() for x in temp.readlines()]
-        else:
-            content = temp.read()
+    try:
+        with open(fpath, mode) as temp:
+            if return_type == 'list':
+                content = [x.strip() for x in temp.readlines()]
+            else:
+                content = temp.read()
+    except IOError:
+        raise BaseConfigBuilderException
     return content
 
 
@@ -146,7 +148,11 @@ def main():
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
     user_input = input_user_data(configvars_parser())
-    create_config_files(user_input)
+    try:
+        create_config_files(user_input)
+    except BaseConfigBuilderException:
+        print 'Error reading a file. The file might not exist or' \
+                                            " you don't have a permission."
     from ecomap.db.util import insert_user
     from ecomap.user import hash_pass
     insert_user('admin', 'admin',

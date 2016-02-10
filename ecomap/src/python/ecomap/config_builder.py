@@ -35,8 +35,7 @@ class BaseConfigBuilderException(Exception):
 
 def configvars_parser():
     """Parse config variables file.
-    Returns:
-        dictionary,which contains list of variable's value.
+    :return: dictionary,which contains list of variable's value.
     """
     config = SafeConfigParser()
     config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
@@ -50,26 +49,25 @@ def configvars_parser():
 
 def check_regex(reg_exp, value):
     """Regular expression validation.
-    Input: value to check, regular expression.
-    Rerurns:
-        True or False.
+    :param reg_exp: regular expression.
+    :param value: value to check.
+    :return: True or False.
     """
     return bool(re.match(reg_exp, value))
 
 
 def input_user_data(confvar_dict):
     """Function collects data from user input.
-    Input: data - dictionary,which contains list of variable's value.
-    Returns:
-            dictionary where keys are variables for templates configs.
+    :param confvar_dict: dictionary,which contains list of variable's value.
+    :return: dictionary where keys are variables for templates configs.
     """
     user_dict = {}
     logging.info('Function collects data from user input.')
     for key, value in confvar_dict.iteritems():
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
-                                        % (key, value['help'],
-                                        value['default'])) or value['default']
+                                       % (key, value['help'],
+                                          value['default']))or value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
                 if 'validate_re' in confvar_dict[key]:
@@ -114,7 +112,7 @@ def write_file(fpath, content, mode='w'):
 
 def create_config_files(user_input):
     """Function creates 4 configurations files.
-    param user_input: dictionary with user data.
+    :param user_input: dictionary with user data.
     """
     file_conf = read_file(os.path.join(ROOT_PATH, '_configfiles.conf'), 'list')
     logging.info('Creating config files.')
@@ -131,7 +129,9 @@ def create_config_files(user_input):
 
 
 def main():
-    """ Function runs config builder."""
+    """ Function runs config builder.
+    And insert to database admin and unknown user.
+    """
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
                       type=int, default=1, help='Verbosity level [1-3]. \

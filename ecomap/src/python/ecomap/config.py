@@ -30,8 +30,7 @@ class Config(object):
 
     def get_config(self):
         """Call parse method if it needed.
-        Returns:
-            dictionary, containing configs.
+        :return: dictionary, containing configs.
         """
         if self.update_time + REFRESH_TIME < time.time():
             self.log.info('Refresh configs')
@@ -56,7 +55,7 @@ class Config(object):
 
     def _value_eval(self, value):
         """Get value from config file and
-        returns value in valid type.
+        :return: value in valid type.
         """
         if value.startswith('eval(') and value.endswith(')'):
             value = eval(value[5:-1])

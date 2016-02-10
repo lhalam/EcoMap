@@ -15,8 +15,9 @@ HTML_TEMPLATE_ROOT = os.path.join(os.environ['CONFROOT'], 'html_templates')
 
 def random_password(length):
     """Generates randow string. Contains lower- and uppercase letters.
-       :params: length - length of string
-       :return: string"""
+       :param length: length of string
+       :return: string
+    """
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
 
@@ -86,12 +87,12 @@ def generate_email(email_type, from_address, to_email, args,
 
 def send_email(smtp_name, login, app_key, from_address, to_email, email):
     """Sends email.
-       :params: smtp_name - smtp server name
-                login - email server login
-                app_key - email server key
-                sender - email of sender
-                receiver - email of receiver
-                email - body of email
+       :param smtp_name: smtp server name
+       :param login: email server login
+       :param app_key: email server key
+       :param sender: email of sender
+       :param receiver: email of receiver
+       :param email: body of email
     """
     try:
         server = smtplib.SMTP_SSL(smtp_name)

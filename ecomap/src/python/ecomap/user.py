@@ -210,24 +210,6 @@ def facebook_register(first_name, last_name, email, provider, uid):
     return user
 
 
-def register_by_admin(first_name, last_name, email, password, role_name):
-    """This function register user from admin menu.
-    It will insert user's data via insert_user function
-    from util.
-
-        :returns True if transaction finished successfully.
-    """
-    salted_pass = hash_pass(password)
-    role_id = util.get_role_id(role_name)
-    register_user_id = util.insert_user(first_name, last_name,
-                                        email, salted_pass)
-    if register_user_id:
-        util.add_users_role(register_user_id, role_id[0])
-    send_email(_CONFIG['email.user_name'], _CONFIG['email.app_password'],
-               first_name, last_name, email, password)
-    return get_user_by_id(register_user_id)
-
-
 @LOGIN_MANAGER.user_loader
 def load_user(uid):
     """This method is callback, which is used in

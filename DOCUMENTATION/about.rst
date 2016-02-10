@@ -21,3 +21,4 @@ SoftServe LV-164 team:
     - Petro Lozhkin
     - Vadym Padalko
 
+    - WEB-UI TEAM 2

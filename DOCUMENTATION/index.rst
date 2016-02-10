@@ -6,7 +6,7 @@
 Welcome to Ecomap.org documentation!
 ====================================
 
-.. image:: static/ecomap_logo.jpg
+.. image:: ecomap_logo.png
 
 Read the docs
 -------------

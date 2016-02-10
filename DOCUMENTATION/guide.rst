@@ -41,8 +41,7 @@ Setupping database locally
 Database scheme
 ---------------
 
-.. image:: https://raw.githubusercontent.com/lhalam/EcoMap/pagination/ecomap_db.png
-
+.. image:: ecomap_db.png
 
 APACHE
 ------

@@ -40,17 +40,8 @@ def configvars_parser():
     """
     config = SafeConfigParser()
     config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
-    sections = config.sections()
     logging.info("Parse _configvars.conf")
-    template_config = {}
-    # for section in sections:
-    #     template_config[section] = dict(tuple(config.items(section)))
-    # logging.debug('Dictionary with list of variables was created.')
-    # return template_config
-    for section in sections:
-        template_config[section] = {}
-        for (key, value) in config.items(section):
-            template_config[section][key] = value or None
+    template_config = {section: {key: value or None for (key, value) in config.items(section)} for section in config.sections()}
     logging.debug('Dictionary with list of variables was created')
     return template_config
 

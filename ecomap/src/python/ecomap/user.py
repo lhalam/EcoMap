@@ -166,12 +166,12 @@ def register(first_name, last_name, email, password):
                                         email, salted_pass)
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
-    message = generate_email('registration', _CONFIG['email.from_email'],
+    message = generate_email('registration', _CONFIG['email.from_address'],
                              email, (first_name, last_name, email, password))
     send_email(_CONFIG['email.server_name'],
                _CONFIG['email.user_name'],
                _CONFIG['email.server_password'],
-               _CONFIG['email.from_email'],
+               _CONFIG['email.from_address'],
                email,
                message)
     return get_user_by_id(register_user_id)
@@ -198,13 +198,13 @@ def facebook_register(first_name, last_name, email, provider, uid):
             util.add_users_role(register_user_id, role_id[0])
             user = get_user_by_oauth_id(uid)
 
-        message = generate_email('registration', _CONFIG['email.from_email'],
+        message = generate_email('registration', _CONFIG['email.from_address'],
                                  email,
                                  (first_name, last_name, email, password))
         send_email(_CONFIG['email.server_name'],
                    _CONFIG['email.user_name'],
                    _CONFIG['email.server_password'],
-                   _CONFIG['email.from_email'],
+                   _CONFIG['email.from_address'],
                    email,
                    message)
     else:
@@ -250,13 +250,13 @@ def restore_password(user):
 
     util.insert_into_restore_password(hex_hash, user.uid, create_time)
     message = generate_email('restore_password',
-                             _CONFIG['email.from_email'],
+                             _CONFIG['email.from_address'],
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
     send_email(_CONFIG['email.server_name'],
                _CONFIG['email.user_name'],
                _CONFIG['email.server_password'],
-               _CONFIG['email.from_email'],
+               _CONFIG['email.from_address'],
                user.email,
                message)
 
@@ -268,12 +268,12 @@ def delete_user(user):
     hex_hash = hashed.hexdigest()
     util.insert_into_hash_delete(hex_hash, user.uid, create_time)
     message = generate_email('delete_user',
-                             _CONFIG['email.from_email'],
+                             _CONFIG['email.from_address'],
                              user.email,
                              (user.first_name, user.last_name, hex_hash))
     send_email(_CONFIG['email.server_name'],
                _CONFIG['email.user_name'],
                _CONFIG['email.server_password'],
-               _CONFIG['email.from_email'],
+               _CONFIG['email.from_address'],
                user.email,
                message)

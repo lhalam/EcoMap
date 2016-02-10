@@ -15,8 +15,9 @@ HTML_TEMPLATE_ROOT = os.path.join(os.environ['CONFROOT'], 'html_templates')
 
 def random_password(length):
     """Generates randow string. Contains lower- and uppercase letters.
-       :params: length - length of string
-       :return: string"""
+       :param length: length of string
+       :return: string
+    """
     return ''.join(random.choice(string.ascii_letters) for i in range(length))
 
 
@@ -45,7 +46,7 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
     return '?'.join((url.path, url.query)) if url.query else url.path
 
 
-def generate_email(email_type, from_email, to_email, args,
+def generate_email(email_type, from_address, to_email, args,
                    custom_template=None, template_str=None, header=None):
     """Sends email."""
     msg = MIMEMultipart('alternative')
@@ -76,7 +77,7 @@ def generate_email(email_type, from_email, to_email, args,
         msg['Subject'] = Header('%s' % header, 'utf-8')
     else:
         msg['Subject'] = Header('%s' % email_type, 'utf-8')
-    msg['From'] = from_email
+    msg['From'] = from_address
     msg['To'] = to_email
     htmltext = MIMEText(html_formatted, 'html', 'utf-8')
     msg.attach(htmltext)
@@ -84,19 +85,19 @@ def generate_email(email_type, from_email, to_email, args,
     return msg
 
 
-def send_email(smtp_name, login, app_key, from_email, to_email, email):
+def send_email(smtp_name, login, app_key, from_address, to_email, email):
     """Sends email.
-       :params: smtp_name - smtp server name
-                login - email server login
-                app_key - email server key
-                sender - email of sender
-                receiver - email of receiver
-                email - body of email
+       :param smtp_name: smtp server name
+       :param login: email server login
+       :param app_key: email server key
+       :param sender: email of sender
+       :param receiver: email of receiver
+       :param email: body of email
     """
     try:
         server = smtplib.SMTP_SSL(smtp_name)
         server.login(login, app_key)
-        server.sendmail(from_email, to_email, email.as_string())
+        server.sendmail(from_address, to_email, email.as_string())
         server.quit()
     except Exception as exc:
         pass

@@ -9,10 +9,8 @@ from flask.ext.autodoc import Autodoc
 from flask.ext.triangle import Triangle
 from werkzeug.contrib.cache import MemcachedCache
 from flask.ext.session import Session, MemcachedSessionInterface
+
 from ecomap.config import Config
-
-
-
 
 _CONFIG = Config().get_config()
 

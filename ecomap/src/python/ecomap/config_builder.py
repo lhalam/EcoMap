@@ -56,6 +56,7 @@ def check_regex(reg_exp, value):
     return bool(re.match(reg_exp, value))
 
 
+
 def input_user_data(confvar_dict):
     """Function collects data from user input.
     :param confvar_dict: dictionary,which contains list of variable's value.
@@ -66,13 +67,8 @@ def input_user_data(confvar_dict):
     for key, value in confvar_dict.iteritems():
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
-<<<<<<< HEAD
                                        % (key, value['help'],
                                           value['default']))or value['default']
-=======
-                                        % (key, value['help'],
-                                        value['default'])) or value['default']
->>>>>>> parent of 3ea512d... Exception added.
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
                 if 'validate_re' in confvar_dict[key]:

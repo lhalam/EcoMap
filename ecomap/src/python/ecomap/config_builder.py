@@ -10,7 +10,7 @@ import logging
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
-from ecomap.db.util import insert_user
+import MySQLdb
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -145,6 +145,21 @@ def hash_pass(password, secret_key):
     return hashlib.md5(salted_password).hexdigest()
 
 
+def insert_user(first_name, last_name, email, password, host, db_user, 
+                db_pasword, db_name):
+    mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
+    cursor = mysql.cursor()
+    query = """INSERT INTO `user` (`first_name`,
+                                   `last_name`,
+                                   `email`,
+                                   `password`)
+               VALUES (%s, %s, %s, %s);
+            """
+    cursor.execute(query, (first_name, last_name, email, password))
+    mysql.commit()
+    mysql.close()
+
+
 def main():
     """ Function runs config builder.
     And insert to database admin and unknown user.
@@ -170,12 +185,16 @@ def main():
     insert_user('admin', 'admin',
                 user_input['ecomap_admin_user_email'],
                 hash_pass(user_input['ecomap_admin_user_password'],
-                          user_input['ecomap_secret_key']))
+                          user_input['ecomap_secret_key']),
+                user_input['rw_db_host'], user_input['rw_db_user'],
+                user_input['rw_db_password'], user_input['db_name'])
     insert_user(user_input['ecomap_unknown_first_name'],
                 user_input['ecomap_unknown_last_name'],
                 user_input['ecomap_unknown_email'],
                 hash_pass(user_input['ecomap_admin_user_password'],
-                          user_input['ecomap_secret_key']))
+                          user_input['ecomap_secret_key']),
+                user_input['rw_db_host'], user_input['rw_db_user'],
+                user_input['rw_db_password'], user_input['db_name'])
 
 if __name__ == '__main__':
     sys.exit(main())

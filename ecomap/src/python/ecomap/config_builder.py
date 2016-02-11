@@ -136,8 +136,10 @@ def main():
     And insert to database admin and unknown user.
     """
     parser = OptionParser('usage: %prog [options]')
-    parser.add_option('-v', '--verbosity', action='store', dest='verbosity', default='1', choices=['1', '2', '3'], help='Verbosity level [1-3]. \
-        1(default) - level INFO, 3 - level DEBUG.')
+    parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
+                      default='1', choices=['1', '2', '3'],
+                      help='Verbosity level [1-3]. \
+                      1(default) - level INFO, 3 - level DEBUG.')
     (options, args) = parser.parse_args()
     if int(options.verbosity) == 1:
         log_level = logging.INFO

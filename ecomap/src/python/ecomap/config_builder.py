@@ -141,9 +141,9 @@ def main():
                       help='Verbosity level [1-3]. \
                       1(default) - level INFO, 3 - level DEBUG.')
     (options, args) = parser.parse_args()
-    if int(options.verbosity) == 1:
+    if options.verbosity == "1":
         log_level = logging.INFO
-    elif int(options.verbosity) >= 2:
+    elif options.verbosity >= "2":
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)

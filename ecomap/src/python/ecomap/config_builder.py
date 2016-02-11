@@ -43,7 +43,7 @@ def configvars_parser():
     template_config = {section: {key: value or None
                                  for (key, value) in config.items(section)}
                        for section in config.sections()}
-    logging.debug('Dictionary with list of variables was created')
+    logging.debug('Dictionary with list of variables was created.')
     return template_config
 
 
@@ -136,14 +136,12 @@ def main():
     And insert to database admin and unknown user.
     """
     parser = OptionParser('usage: %prog [options]')
-    parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
-                      type=int, default=1, help='Verbosity level [1-3]. \
-                      1(default) - level INFO, 3  - level DEBUG.')
+    parser.add_option('-v', '--verbosity', action='store', dest='verbosity', default='1', choices=['1', '2', '3'], help='Verbosity level [1-3]. \
+        1(default) - level INFO, 3 - level DEBUG.')
     (options, args) = parser.parse_args()
-    list_level = range(1, 4)
-    if options.verbosity == 1:
+    if int(options.verbosity) == 1:
         log_level = logging.INFO
-    elif options.verbosity >= 2 and options.verbosity in list_level:
+    elif int(options.verbosity) >= 2:
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)

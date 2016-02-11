@@ -4,10 +4,13 @@ Module creates config files from user input data.
 import os
 import re
 import sys
+import hashlib
 import logging
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
+
+from ecomap.db.util import insert_user
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -131,6 +134,17 @@ def create_config_files(user_input):
     logging.debug('Config files are created successfully.')
 
 
+def hash_pass(password, secret_key):
+    """This function adds some salt(secret_key)
+    to the password.
+    :param password: user password.
+    :param secret_key: hesh sum of secret key.
+    :return: hash sum from password + salt.
+    """
+    salted_password = password + secret_key
+    return hashlib.md5(salted_password).hexdigest()
+
+
 def main():
     """ Function runs config builder.
     And insert to database admin and unknown user.
@@ -141,9 +155,9 @@ def main():
                       help='Verbosity level [1-3]. \
                       1(default) - level INFO, 3 - level DEBUG.')
     (options, args) = parser.parse_args()
-    if options.verbosity == "1":
+    if options.verbosity == '1':
         log_level = logging.INFO
-    elif options.verbosity >= "2":
+    elif options.verbosity >= '2':
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
@@ -153,15 +167,15 @@ def main():
     except BaseConfigBuilderException:
         print 'Error reading a file. The file might not exist or' \
                                             " you don't have a permission."
-    from ecomap.db.util import insert_user
-    from ecomap.user import hash_pass
     insert_user('admin', 'admin',
                 user_input['ecomap_admin_user_email'],
-                hash_pass(user_input['ecomap_admin_user_password']))
+                hash_pass(user_input['ecomap_admin_user_password'],
+                          user_input['ecomap_secret_key']))
     insert_user(user_input['ecomap_unknown_first_name'],
                 user_input['ecomap_unknown_last_name'],
                 user_input['ecomap_unknown_email'],
-                hash_pass(user_input['ecomap_admin_user_password']))
+                hash_pass(user_input['ecomap_admin_user_password'],
+                          user_input['ecomap_secret_key']))
 
 if __name__ == '__main__':
     sys.exit(main())

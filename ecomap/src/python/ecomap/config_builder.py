@@ -4,10 +4,14 @@ Module creates config files from user input data.
 import os
 import re
 import sys
+import hashlib
 import logging
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
+
+from ecomap.db.util import insert_user
+
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -26,10 +30,8 @@ CONFIG_TYPES = {'str': {'regex': '.*',
                 }
 
 
-class BaseConfigBuilderException(Exception):
-
+class BaseConfigBuilderError(Exception):
     """Class for config builder exceptions."""
-
     pass
 
 
@@ -84,21 +86,20 @@ def input_user_data(confvar_dict):
 
 
 def read_file(fpath, return_type='string', mode='r'):
-    """Function for reading a file. If file exists, it's content is returned.
-    Else, an error is thrown and execution is stopped.
+    """Read data from a file.
     :param fpath: path to a file
     :param to_return: return value string or a list, [optional]
     :param mode: argument for open(), [optional]
     :return: string or list with content of read file.
+    exception: file doesn't exist, permission denied.
     """
     try:
         with open(fpath, mode) as temp:
-            if return_type == 'list':
-                content = [x.strip() for x in temp.readlines()]
-            else:
-                content = temp.read()
-    except IOError:
-        raise BaseConfigBuilderException
+            content = [x.strip() for x in temp.readlines()] \
+             if return_type in ('list',) else temp.read()
+    except (IOError, OSError) as error:
+        logging.error(error)
+        raise BaseConfigBuilderError(error)
     return content
 
 
@@ -148,20 +149,8 @@ def main():
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
     user_input = input_user_data(configvars_parser())
-    try:
-        create_config_files(user_input)
-    except BaseConfigBuilderException:
-        print 'Error reading a file. The file might not exist or' \
-                                            " you don't have a permission."
-    from ecomap.db.util import insert_user
-    from ecomap.user import hash_pass
-    insert_user('admin', 'admin',
-                user_input['ecomap_admin_user_email'],
-                hash_pass(user_input['ecomap_admin_user_password']))
-    insert_user(user_input['ecomap_unknown_first_name'],
-                user_input['ecomap_unknown_last_name'],
-                user_input['ecomap_unknown_email'],
-                hash_pass(user_input['ecomap_admin_user_password']))
+    create_config_files(user_input)
+
 
 if __name__ == '__main__':
     sys.exit(main())

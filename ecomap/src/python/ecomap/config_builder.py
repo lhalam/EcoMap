@@ -6,11 +6,11 @@ import re
 import sys
 import hashlib
 import logging
-import MySQLdb
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
+import MySQLdb
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -95,7 +95,7 @@ def read_file(fpath, return_type='string', mode='r'):
     :param to_return: return value string or a list, [optional]
     :param mode: argument for open(), [optional]
     :return: string or list with content of read file.
-    exception: file doesn't exist, permission denied.
+    :exception: file doesn't exist, permission denied.
     """
     try:
         with open(fpath, mode) as temp:
@@ -137,8 +137,7 @@ def create_config_files(user_input):
 
 
 def hash_pass(password, secret_key):
-    """This function adds some salt(secret_key)
-    to the password.
+    """This function adds some salt(secret_key) to the password.
     :param password: user password.
     :param secret_key: hesh sum of secret key.
     :return: hash sum from password + salt.
@@ -150,14 +149,14 @@ def hash_pass(password, secret_key):
 def insert_user(first_name, last_name, email, password, host, db_user,
                 db_pasword, db_name):
     """Function creates connection to db and adds new user into it.
-    :param first_name - first name of user
-    :param last_name - last name of user
-    :param email - email of user
-    :param password - hashed password of user
-    :param host - database host name
-    :param db_user - database user
-    :param db_pasword - database password
-    :param db_name - database name
+    :param first_name: first name of user
+    :param last_name: last name of user
+    :param email: email of user
+    :param password: hashed password of user
+    :param host: database host name
+    :param db_user: database user
+    :param db_pasword: database password
+    :param db_name: database name
     """
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
@@ -170,6 +169,8 @@ def insert_user(first_name, last_name, email, password, host, db_user,
                 """
         cursor.execute(query, (first_name, last_name, email, password))
         mysql.commit()
+        logging.info('User %s %s was successfully added to database %s',
+                     first_name, last_name, db_name)
         mysql.close()
     except MySQLdb.Error as mysql_error:
         logging.error(mysql_error)
@@ -177,7 +178,7 @@ def insert_user(first_name, last_name, email, password, host, db_user,
 
 
 def main():
-    """ Function runs config builder.
+    """Function runs config builder.
     And insert to database admin and unknown user.
     """
     parser = OptionParser('usage: %prog [options]')

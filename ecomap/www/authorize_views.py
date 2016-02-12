@@ -139,16 +139,16 @@ def login():
                                    email=user.email)
 
                 response.set_cookie('id',
-                                    user.uid,
+                                    bytes(user.uid),
                                     max_age=COOKIE_MAX_AGE)
                 response.set_cookie('name',
-                                    user.first_name,
+                                    bytes(user.first_name),
                                     max_age=COOKIE_MAX_AGE)
                 response.set_cookie('surname',
-                                    user.last_name,
+                                    bytes(user.last_name),
                                     max_age=COOKIE_MAX_AGE)
                 response.set_cookie('role',
-                                    user.role,
+                                    bytes(user.role),
                                     max_age=COOKIE_MAX_AGE)
             if not user:
                 logger.warning('if not user')
@@ -216,16 +216,16 @@ def oauth_login(provider):
                        email=user.email)
     
     response.set_cookie('id',
-                        user.uid,
+                        bytes(user.uid),
                         max_age=COOKIE_MAX_AGE)
     response.set_cookie('name',
-                        user.first_name,
+                        bytes(user.first_name),
                         max_age=COOKIE_MAX_AGE)
     response.set_cookie('surname',
-                        user.last_name,
+                        bytes(user.last_name),
                         max_age=COOKIE_MAX_AGE)
     response.set_cookie('role',
-                        user.role,
+                        bytes(user.role),
                         max_age=COOKIE_MAX_AGE)
 
     return response

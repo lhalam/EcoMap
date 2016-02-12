@@ -12,10 +12,10 @@ app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$auth', '$state'
           credentials.email = $scope.newUser.email;
           credentials.password = $scope.newUser.password;
           $auth.login(credentials).then(function(responce) {
-            $cookies.put('name', responce.data.name);
-            $cookies.put('surname', responce.data.surname);
-            $cookies.put('id', responce.data.id);
-            $cookies.put('role', responce.data.role);
+            // $cookies.put('name', responce.data.name);
+            // $cookies.put('surname', responce.data.surname);
+            // $cookies.put('id', responce.data.id);
+            // $cookies.put('role', responce.data.role);
             $state.go('map');
           });
           $scope.newUser = {};

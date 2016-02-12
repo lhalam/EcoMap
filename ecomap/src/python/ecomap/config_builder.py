@@ -6,11 +6,10 @@ import re
 import sys
 import hashlib
 import logging
+import MySQLdb
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
-
-from ecomap.db.util import insert_user
 
 
 ROOT_PATH = os.environ['CONFROOT']
@@ -31,7 +30,12 @@ CONFIG_TYPES = {'str': {'regex': '.*',
 
 
 class BaseConfigBuilderError(Exception):
-    """Class for config builder exceptions."""
+    """Class for config builder errors."""
+    pass
+
+
+class ConfigBuilderMysqlError(BaseConfigBuilderError):
+    """Class for Mysql errors in config builder."""
     pass
 
 
@@ -45,7 +49,7 @@ def configvars_parser():
     template_config = {section: {key: value or None
                                  for (key, value) in config.items(section)}
                        for section in config.sections()}
-    logging.debug('Dictionary with list of variables was created')
+    logging.debug('Dictionary with list of variables was created.')
     return template_config
 
 
@@ -132,24 +136,77 @@ def create_config_files(user_input):
     logging.debug('Config files are created successfully.')
 
 
+def hash_pass(password, secret_key):
+    """This function adds some salt(secret_key)
+    to the password.
+    :param password: user password.
+    :param secret_key: hesh sum of secret key.
+    :return: hash sum from password + salt.
+    """
+    salted_password = password + secret_key
+    return hashlib.md5(salted_password).hexdigest()
+
+
+def insert_user(first_name, last_name, email, password, host, db_user,
+                db_pasword, db_name):
+    """Function creates connection to db and adds new user into it.
+    :param first_name - first name of user
+    :param last_name - last name of user
+    :param email - email of user
+    :param password - hashed password of user
+    :param host - database host name
+    :param db_user - database user
+    :param db_pasword - database password
+    :param db_name - database name
+    """
+    try:
+        mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
+        cursor = mysql.cursor()
+        query = """INSERT INTO `user` (`first_name`,
+                                       `last_name`,
+                                       `email`,
+                                       `password`)
+                   VALUES (%s, %s, %s, %s);
+                """
+        cursor.execute(query, (first_name, last_name, email, password))
+        mysql.commit()
+        mysql.close()
+    except MySQLdb.Error as mysql_error:
+        logging.error(mysql_error)
+        raise ConfigBuilderMysqlError(mysql_error)
+
+
 def main():
     """ Function runs config builder.
     And insert to database admin and unknown user.
     """
     parser = OptionParser('usage: %prog [options]')
     parser.add_option('-v', '--verbosity', action='store', dest='verbosity',
-                      type=int, default=1, help='Verbosity level [1-3]. \
-                      1(default) - level INFO, 3  - level DEBUG.')
+                      default='1', choices=['1', '2', '3'],
+                      help='Verbosity level [1-3]. \
+                      1(default) - level INFO, 3 - level DEBUG.')
     (options, args) = parser.parse_args()
-    list_level = range(1, 4)
-    if options.verbosity == 1:
+    if options.verbosity == '1':
         log_level = logging.INFO
-    elif options.verbosity >= 2 and options.verbosity in list_level:
+    elif options.verbosity >= '2':
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
     user_input = input_user_data(configvars_parser())
     create_config_files(user_input)
+    insert_user('admin', 'admin',
+                user_input['ecomap_admin_user_email'],
+                hash_pass(user_input['ecomap_admin_user_password'],
+                          user_input['ecomap_secret_key']),
+                user_input['rw_db_host'], user_input['rw_db_user'],
+                user_input['rw_db_password'], user_input['db_name'])
+    insert_user(user_input['ecomap_unknown_first_name'],
+                user_input['ecomap_unknown_last_name'],
+                user_input['ecomap_unknown_email'],
+                hash_pass(user_input['ecomap_admin_user_password'],
+                          user_input['ecomap_secret_key']),
+                user_input['rw_db_host'], user_input['rw_db_user'],
+                user_input['rw_db_password'], user_input['db_name'])
 
 
 if __name__ == '__main__':

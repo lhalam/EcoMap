@@ -1,4 +1,4 @@
-"""Module contains class for test config_builder functions. """
+"""Module contains class for test config_builder functions."""
 
 import unittest2
 import __builtin__
@@ -14,12 +14,9 @@ default=ecomap
 type=str
 """
 
-PARSED_DICT = {
-'db_name':{
-    'help':'Ecomap database name',
-    'default':'ecomap',
-    'type':'str'}
-}
+PARSED_DICT = {'db_name':{'help':'Ecomap database name',
+                          'default':'ecomap',
+                          'type':'str'}}
 
 USER_DATA = 'ecomap'
 
@@ -27,7 +24,7 @@ RESULT = {'db_name':'ecomap'}
 
 CONF_VARS_FILE = {'open_file':CONF_VARS}
 
-INPUT_DATA = {'type_config': USER_DATA}
+INPUT_DATA = {'type_config':USER_DATA}
 
 VALUE_CORRECT = 'test_value'
 
@@ -38,7 +35,7 @@ REGEXP_TO_TEST = r'\w+'
 
 class ContextStringIO(StringIO):
 
-    """Creating a context manager for StringIO"""
+    """Creating a context manager for StringIO."""
 
     def __enter__(self):
         return self
@@ -55,11 +52,6 @@ def open_mock(fpath):
 def raw_input_mock(raw_input_user):
     """This function mocks raw_input_user."""
     return INPUT_DATA['type_config']
-
-
-def check_regex_mock(first_arg, second_arg):
-    """This function mocks check_regex."""
-    return True
 
 
 class ConfigBuilderTestCase(unittest2.TestCase):
@@ -84,15 +76,12 @@ class ConfigBuilderTestCase(unittest2.TestCase):
         """Tests if a configuration parsers returns a dictionary."""
         self.assertIsInstance(config_builder.configvars_parser(), dict)
 
-    def test_check_regex_returns_true(self):
-        """Tests check_regex returns true value."""
+    def test_check_regex_true_or_false(self):
+        """Tests check_regex true value."""
         self.assertTrue(config_builder.check_regex(REGEXP_TO_TEST,
-            VALUE_CORRECT))
-
-    def test_check_regex_returns_false(self):
-        """Tests check_regex returns false value."""
+                                                    VALUE_CORRECT))
         self.assertTrue(config_builder.check_regex(REGEXP_TO_TEST,
-            VALUE_INCORRECT))
+                                                    VALUE_INCORRECT))
 
     def test_parse_configvars(self):
         """Tests check configvars_parser returns correct value."""
@@ -100,10 +89,7 @@ class ConfigBuilderTestCase(unittest2.TestCase):
 
     def test_input_user_data(self):
         """Tests check input_user_data returns correct value."""
-        self.check_original = config_builder.check_regex
-        config_builder.check_regex = check_regex_mock
         self.assertEqual(config_builder.input_user_data(PARSED_DICT), RESULT)
-        config_builder.check_regex = self.check_original
 
 
 if __name__ == "__main__":

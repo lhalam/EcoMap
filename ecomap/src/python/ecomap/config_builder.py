@@ -77,9 +77,8 @@ def input_user_data(confvar_dict):
                                           value['default']))or value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
-                if value.get('validate_re') \
-                and not check_regex(value.get('validate_re'),
-                                    user_dict[key]):
+                if value.get('validate_re') and \
+                   not check_regex(value.get('validate_re'), user_dict[key]):
                     logging.warning('Invalid data! Use template: \
                                               example@mail.com.')
                     continue
@@ -94,9 +93,9 @@ def input_user_data(confvar_dict):
 
 def read_file(fpath, return_type='string', mode='r'):
     """Read data from a file.
-    :param fpath: path to a file
-    :param to_return: return value string or a list, [optional]
-    :param mode: argument for open(), [optional]
+    :param fpath: path to a file.
+    :param to_return: return value string or a list, [optional].
+    :param mode: argument for open(), [optional].
     :return: string or list with content of read file.
     :exception: file doesn't exist, permission denied.
     """
@@ -113,8 +112,8 @@ def read_file(fpath, return_type='string', mode='r'):
 def write_file(fpath, content, mode='w'):
     """Function for writing to a file.If file can't be written, error is thrown.
     Else, file is created with user data.
-    :param fpath: path to a file
-    :param content: data to put in the file
+    :param fpath: path to a file.
+    :param content: data to put in the file.
     :param mode: argument for open(), [optional].
     """
     with open(fpath, mode) as to_write:
@@ -152,14 +151,14 @@ def hash_pass(password, secret_key):
 def insert_user(first_name, last_name, email, password, host, db_user,
                 db_pasword, db_name):
     """Function creates connection to db and adds new user into it.
-    :param first_name: first name of user
-    :param last_name: last name of user
-    :param email: email of user
-    :param password: hashed password of user
-    :param host: database host name
-    :param db_user: database user
-    :param db_pasword: database password
-    :param db_name: database name
+    :param first_name: first name of user.
+    :param last_name: last name of user.
+    :param email: email of user.
+    :param password: hashed password of user.
+    :param host: database host name.
+    :param db_user: database user.
+    :param db_pasword: database password.
+    :param db_name: database name.
     """
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)

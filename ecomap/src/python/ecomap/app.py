@@ -5,11 +5,12 @@ import logging.config
 from datetime import timedelta
 
 from flask import Flask
-from flask.ext.triangle import Triangle
+from flask.ext.session import Session
 from flask.ext.autodoc import Autodoc
-from ecomap.config import Config
+from flask.ext.triangle import Triangle
 from werkzeug.contrib.cache import MemcachedCache
-from flask.ext.session import MemcachedSessionInterface, Session
+
+from ecomap.config import Config
 
 _CONFIG = Config().get_config()
 

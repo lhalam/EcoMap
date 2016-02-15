@@ -41,7 +41,7 @@ class ConfigBuilderMysqlError(BaseConfigBuilderError):
 
 def configvars_parser():
     """Parse config variables file.
-    :return: dictionary,which contains list of variable's value.
+    :return: dictionary,which contains dictionary of variable's value.
     """
     config = SafeConfigParser()
     config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
@@ -64,7 +64,8 @@ def check_regex(reg_exp, value):
 
 def input_user_data(confvar_dict):
     """Function collects data from user input.
-    :param confvar_dict: dictionary,which contains list of variable's value.
+    :param confvar_dict: dictionary,which contains dictionary
+    of variable's value.
     :return: dictionary where keys are variables for templates configs.
     """
     user_dict = {}
@@ -76,12 +77,14 @@ def input_user_data(confvar_dict):
                                           value['default']))or value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
-                if 'validate_re' in confvar_dict[key]:
-                    if not check_regex(value['validate_re'], user_dict[key]):
-                        logging.warning('Invalid data! example@mail.com.')
-                        continue
-                elif not check_regex(type_value['regex'], user_dict[key]):
-                    logging.warning('Invalid data!')
+                if value.get('validate_re') \
+                and not check_regex(value.get('validate_re'),
+                                    user_dict[key]):
+                    logging.warning('Invalid data! Use template: \
+                                              example@mail.com.')
+                    continue
+                if not check_regex(type_value['regex'], user_dict[key]):
+                    logging.warning('Invalid data! Wrong type!')
                     continue
                 user_dict[key] = type_value['eval'] % user_dict[key]
                 break

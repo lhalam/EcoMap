@@ -104,7 +104,7 @@ def read_file(fpath, return_type='string', mode='r'):
             content = [x.strip() for x in temp.readlines()] \
              if return_type in ('list',) else temp.read()
     except (IOError, OSError) as error:
-        logging.error(error)
+        logging.error('Error reading a file!', exc_info=True)
         raise BaseConfigBuilderError(error)
     return content
 
@@ -175,7 +175,7 @@ def insert_user(first_name, last_name, email, password, host, db_user,
                      first_name, last_name, db_name)
         mysql.close()
     except MySQLdb.Error as mysql_error:
-        logging.error(mysql_error)
+        logging.error('Error adding a user into database!', exc_info=True)
         raise ConfigBuilderMysqlError(mysql_error)
 
 
@@ -195,21 +195,25 @@ def main():
         log_level = logging.DEBUG
     logging.basicConfig(format=u'[%(asctime)s] %(levelname)-8s %(message)s',
                         level=log_level)
-    user_input = input_user_data(configvars_parser())
-    create_config_files(user_input)
-    insert_user('admin', 'admin',
-                user_input['ecomap_admin_user_email'],
-                hash_pass(user_input['ecomap_admin_user_password'],
-                          user_input['ecomap_secret_key']),
-                user_input['rw_db_host'], user_input['rw_db_user'],
-                user_input['rw_db_password'], user_input['db_name'])
-    insert_user(user_input['ecomap_unknown_first_name'],
-                user_input['ecomap_unknown_last_name'],
-                user_input['ecomap_unknown_email'],
-                hash_pass(user_input['ecomap_admin_user_password'],
-                          user_input['ecomap_secret_key']),
-                user_input['rw_db_host'], user_input['rw_db_user'],
-                user_input['rw_db_password'], user_input['db_name'])
+    try:
+        user_input = input_user_data(configvars_parser())
+        create_config_files(user_input)
+        insert_user('admin', 'admin',
+                    user_input['ecomap_admin_user_email'],
+                    hash_pass(user_input['ecomap_admin_user_password'],
+                              user_input['ecomap_secret_key']),
+                    user_input['rw_db_host'], user_input['rw_db_user'],
+                    user_input['rw_db_password'], user_input['db_name'])
+        insert_user(user_input['ecomap_unknown_first_name'],
+                    user_input['ecomap_unknown_last_name'],
+                    user_input['ecomap_unknown_email'],
+                    hash_pass(user_input['ecomap_admin_user_password'],
+                              user_input['ecomap_secret_key']),
+                    user_input['rw_db_host'], user_input['rw_db_user'],
+                    user_input['rw_db_password'], user_input['db_name'])
+    except (BaseConfigBuilderError, ConfigBuilderMysqlError):
+        logging.error('Error creating configurations for project! '
+                      'Read a traceback to find a problem.', exc_info=True)
 
 
 if __name__ == '__main__':

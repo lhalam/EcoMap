@@ -214,7 +214,7 @@ def oauth_login(provider):
     response = jsonify(iat="???",
                        token=user.get_auth_token(),
                        email=user.email)
-    
+
     response.set_cookie('id',
                         bytes(user.uid),
                         max_age=COOKIE_MAX_AGE)

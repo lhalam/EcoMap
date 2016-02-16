@@ -22,6 +22,8 @@ auto = Autodoc(app)
 
 logging.config.fileConfig(os.path.join(os.environ['CONFROOT'], '_log.conf'))
 logger = logging.getLogger('flask_app')
+app.config['SECRET_KEY'] = 'a7c268ab01141868811c070274413ea3c588733241659fcb'
+app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)     # user time lib
 app.config['SECRET_KEY'] = _CONFIG['ecomap.secret_key']
 app.config['SESSION_TYPE']='memcached'
 app.config['CACHE_TYPE'] = 'memcached'
@@ -33,5 +35,6 @@ app.config['OAUTH_CREDENTIALS'] = {
         'secret': _CONFIG['oauth.facebook_secret']
     }
 }
-app.cache = Cache(app)
+
 Session(app)
+app.cache = Cache(app)

@@ -1,3 +1,4 @@
+SOURCE schema/user.sql;
 SOURCE schema/comment.sql;
 SOURCE schema/permission.sql;
 SOURCE schema/photo.sql;

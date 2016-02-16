@@ -1239,18 +1239,16 @@ def delete_user(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def get_problem_type(problem_id):
+def get_problem_type():
     """Get problem type.
        :params: id
        :return: tuple with problem type and radious.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `picture`, `name`, `radius` FROM `problem_type`
-                   WHERE `id`=%s;
-                """
-        cursor.execute(query, (problem_id,))
-        return cursor.fetchone()
+        query = """SELECT * FROM `problem_type`;"""
+        cursor.execute(query)
+        return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)

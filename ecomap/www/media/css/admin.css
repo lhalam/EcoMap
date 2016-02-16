@@ -34,3 +34,7 @@ button{
   background-color: #eee;
 }
 /*buttons*/
+
+.img-responsive{
+    width: 15%;
+}

@@ -80,7 +80,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
   .state('admin.problems', {
     url: '/users',
     templateUrl: '/templates/problemsAdmin.html',
-    controller: 'UserCtrl'
+    controller: 'ProblemCtrl'
   })
   .state('faq', {
     url: '/faq/:faqAlias',

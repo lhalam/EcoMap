@@ -60,6 +60,7 @@ def check_access():
 
 @app.route('/', methods=['GET'])
 @auto.doc()
+@app.cache.cached(timeout=60*60*24, key_prefix="index.htm")
 def index():
     """Controller starts main application page.
     Shows initial data of application, renders template with built-in Angular

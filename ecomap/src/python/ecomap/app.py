@@ -23,7 +23,7 @@ logging.config.fileConfig(os.path.join(os.environ['CONFROOT'], '_log.conf'))
 logger = logging.getLogger('flask_app')
 app.config['SECRET_KEY'] = _CONFIG['ecomap.secret_key']
 app.config['SESSION_TYPE']='memcached'
-app.config['SESSION_MEMCACHED'] = MemcachedCache(['127.0.0.1:11211'])
+app.config['SESSION_MEMCACHED'] = MemcachedCache(_CONFIG['ecomap.memcached_servers'])
 app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=14)
 app.config['OAUTH_CREDENTIALS'] = {
     'facebook': {

@@ -78,7 +78,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     controller: 'UserCtrl'
   })
   .state('admin.problems', {
-    url: '/users',
+    url: '/problems',
     templateUrl: '/templates/problemsAdmin.html',
     controller: 'ProblemCtrl'
   })

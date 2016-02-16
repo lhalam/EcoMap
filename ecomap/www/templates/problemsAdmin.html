@@ -1,0 +1,31 @@
+<div class="row" ng-controller="ProblemCtrl">
+  <div class="col-md-12">
+    <table class="table table-stripped">
+      <thead>
+        <tr>
+          <td></td>
+          <td>Тип проблеми</td>
+          <td>Радіус</td>
+          <td>
+            <button class="btn btn-primary btn-border" ng-click="showAddPpoblemTypeModal()">
+              <i class="fa fa-plus "></i>&nbsp;&nbsp;додати
+            </button>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in selectedProblems">
+          <td><img ng-src="/image/markers/{{user.img}}" class = "img-responsive" alt="Marker for problem"/></td>
+          <td>{{user.problem_type}}</td>
+          <td>{{user.radius}}</td>
+          <td>
+            <button class="btn btn-danger edit_btn btn-border" ng-click="deleteProblem(user.id)">
+            видалити</button>
+
+            <button class="btn btn-primary edit_btn btn-border" ng-click="changeProblem(user.radius)">змінити</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

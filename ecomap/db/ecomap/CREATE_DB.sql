@@ -8,7 +8,7 @@ SOURCE schema/resource.sql;
 SOURCE schema/role_permission.sql;
 SOURCE schema/role.sql;
 SOURCE schema/user_role.sql;
-SOURCE schema/user.sql;
 SOURCE schema/vote.sql;
 SOURCE schema/page.sql;
 SOURCE schema/user_operation.sql;
+

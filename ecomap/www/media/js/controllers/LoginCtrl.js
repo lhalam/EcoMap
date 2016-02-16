@@ -16,10 +16,10 @@ app.controller('LoginCtrl', ['$scope', '$http', '$cookies', '$auth', '$state',
         return null;
       }
       $auth.login(credentials).then(function successCallback(responce) {
-        $cookies.put('name', responce.data.name);
+/*        $cookies.put('name', responce.data.name);
         $cookies.put('surname', responce.data.surname);
         $cookies.put('id', responce.data.id);
-        $cookies.put('role', responce.data.role);
+        $cookies.put('role', responce.data.role);*/
         $state.go('map');
       }, function errorCallback(responce) {
         if (responce.status == 401) {
@@ -29,10 +29,10 @@ app.controller('LoginCtrl', ['$scope', '$http', '$cookies', '$auth', '$state',
     };
     $scope.authenticate = function(provider) {
       $auth.authenticate(provider).then(function successCallback(responce) {
-        $cookies.put('name', responce.data.name);
-        $cookies.put('surname', responce.data.surname);
-        $cookies.put('id', responce.data.id);
-        $cookies.put('role', responce.data.role);
+        // $cookies.put('name', responce.data.name);
+        // $cookies.put('surname', responce.data.surname);
+        // $cookies.put('id', responce.data.id);
+        // $cookies.put('role', responce.data.role);
         $state.go('map');
       })
     };

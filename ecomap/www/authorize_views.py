@@ -19,6 +19,7 @@ from ecomap.config import Config
 
 _CONFIG = Config().get_config()
 
+COOKIE_MAX_AGE = app.config['REMEMBER_COOKIE_DURATION']
 
 @app.route('/api/logout', methods=['POST', 'GET'])
 @auto.doc()
@@ -136,6 +137,19 @@ def login():
                                    role=user.role, iat="???",
                                    token=user.get_auth_token(),
                                    email=user.email)
+
+                response.set_cookie('id',
+                                    bytes(user.uid),
+                                    max_age=COOKIE_MAX_AGE)
+                response.set_cookie('name',
+                                    bytes(user.first_name),
+                                    max_age=COOKIE_MAX_AGE)
+                response.set_cookie('surname',
+                                    bytes(user.last_name),
+                                    max_age=COOKIE_MAX_AGE)
+                response.set_cookie('role',
+                                    bytes(user.role),
+                                    max_age=COOKIE_MAX_AGE)
             if not user:
                 logger.warning('if not user')
                 response = jsonify(error='There is no user with given email.',
@@ -197,12 +211,22 @@ def oauth_login(provider):
 
     login_user(user, remember=True)
 
-    response = jsonify(id=user.uid,
-                       name=user.first_name,
-                       surname=user.last_name,
-                       role=user.role, iat="???",
+    response = jsonify(iat="???",
                        token=user.get_auth_token(),
                        email=user.email)
+
+    response.set_cookie('id',
+                        bytes(user.uid),
+                        max_age=COOKIE_MAX_AGE)
+    response.set_cookie('name',
+                        bytes(user.first_name),
+                        max_age=COOKIE_MAX_AGE)
+    response.set_cookie('surname',
+                        bytes(user.last_name),
+                        max_age=COOKIE_MAX_AGE)
+    response.set_cookie('role',
+                        bytes(user.role),
+                        max_age=COOKIE_MAX_AGE)
 
     return response
 
@@ -308,7 +332,6 @@ def delete_user_page(hashed):
         if creation_time:
             elapsed = time.time() - creation_time[0]
             if elapsed <= _CONFIG['hash_options.lifetime']:
-
                 page = render_template('index.html')
     return page
 

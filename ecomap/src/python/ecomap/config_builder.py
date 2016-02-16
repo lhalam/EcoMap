@@ -6,11 +6,11 @@ import re
 import sys
 import hashlib
 import logging
-import MySQLdb
 
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
 
+import MySQLdb
 
 ROOT_PATH = os.environ['CONFROOT']
 
@@ -41,7 +41,7 @@ class ConfigBuilderMysqlError(BaseConfigBuilderError):
 
 def configvars_parser():
     """Parse config variables file.
-    :return: dictionary,which contains list of variable's value.
+    :return: dictionary,which contains dictionary of variable's value.
     """
     config = SafeConfigParser()
     config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
@@ -64,7 +64,8 @@ def check_regex(reg_exp, value):
 
 def input_user_data(confvar_dict):
     """Function collects data from user input.
-    :param confvar_dict: dictionary,which contains list of variable's value.
+    :param confvar_dict: dictionary,which contains dictionary
+    of variable's value.
     :return: dictionary where keys are variables for templates configs.
     """
     user_dict = {}
@@ -76,12 +77,13 @@ def input_user_data(confvar_dict):
                                           value['default']))or value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
-                if 'validate_re' in confvar_dict[key]:
-                    if not check_regex(value['validate_re'], user_dict[key]):
-                        logging.warning('Invalid data! example@mail.com.')
-                        continue
-                elif not check_regex(type_value['regex'], user_dict[key]):
-                    logging.warning('Invalid data!')
+                if value.get('validate_re') and \
+                   not check_regex(value.get('validate_re'), user_dict[key]):
+                    logging.warning('Invalid data! Use template: \
+                                              example@mail.com.')
+                    continue
+                if not check_regex(type_value['regex'], user_dict[key]):
+                    logging.warning('Invalid data! Wrong type!')
                     continue
                 user_dict[key] = type_value['eval'] % user_dict[key]
                 break
@@ -91,11 +93,11 @@ def input_user_data(confvar_dict):
 
 def read_file(fpath, return_type='string', mode='r'):
     """Read data from a file.
-    :param fpath: path to a file
-    :param to_return: return value string or a list, [optional]
-    :param mode: argument for open(), [optional]
+    :param fpath: path to a file.
+    :param to_return: return value string or a list, [optional].
+    :param mode: argument for open(), [optional].
     :return: string or list with content of read file.
-    exception: file doesn't exist, permission denied.
+    :exception: file doesn't exist, permission denied.
     """
     try:
         with open(fpath, mode) as temp:
@@ -110,8 +112,8 @@ def read_file(fpath, return_type='string', mode='r'):
 def write_file(fpath, content, mode='w'):
     """Function for writing to a file.If file can't be written, error is thrown.
     Else, file is created with user data.
-    :param fpath: path to a file
-    :param content: data to put in the file
+    :param fpath: path to a file.
+    :param content: data to put in the file.
     :param mode: argument for open(), [optional].
     """
     with open(fpath, mode) as to_write:
@@ -137,8 +139,7 @@ def create_config_files(user_input):
 
 
 def hash_pass(password, secret_key):
-    """This function adds some salt(secret_key)
-    to the password.
+    """This function adds some salt(secret_key) to the password.
     :param password: user password.
     :param secret_key: hesh sum of secret key.
     :return: hash sum from password + salt.
@@ -150,14 +151,14 @@ def hash_pass(password, secret_key):
 def insert_user(first_name, last_name, email, password, host, db_user,
                 db_pasword, db_name):
     """Function creates connection to db and adds new user into it.
-    :param first_name - first name of user
-    :param last_name - last name of user
-    :param email - email of user
-    :param password - hashed password of user
-    :param host - database host name
-    :param db_user - database user
-    :param db_pasword - database password
-    :param db_name - database name
+    :param first_name: first name of user.
+    :param last_name: last name of user.
+    :param email: email of user.
+    :param password: hashed password of user.
+    :param host: database host name.
+    :param db_user: database user.
+    :param db_pasword: database password.
+    :param db_name: database name.
     """
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
@@ -170,6 +171,8 @@ def insert_user(first_name, last_name, email, password, host, db_user,
                 """
         cursor.execute(query, (first_name, last_name, email, password))
         mysql.commit()
+        logging.info('User %s %s was successfully added to database %s',
+                     first_name, last_name, db_name)
         mysql.close()
     except MySQLdb.Error as mysql_error:
         logging.error('Error adding a user into database!', exc_info=True)
@@ -177,7 +180,7 @@ def insert_user(first_name, last_name, email, password, host, db_user,
 
 
 def main():
-    """ Function runs config builder.
+    """Function runs config builder.
     And insert to database admin and unknown user.
     """
     parser = OptionParser('usage: %prog [options]')

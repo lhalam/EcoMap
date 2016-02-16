@@ -25,7 +25,8 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
     { heading: 'Ресурси', route:'admin.resources', active:false },
     { heading: 'Права', route:'admin.permissions', active:false },
     { heading: 'Ролі', route:'admin.roles', active:false },
-    { heading: 'Користувачі', route:'admin.users', active:false }
+    { heading: 'Користувачі', route:'admin.users', active:false },
+    { heading: 'Тип проблеми', route:'admin.problems', active:false }
     ];
 
     $scope.$on('$stateChangeSuccess', function() {

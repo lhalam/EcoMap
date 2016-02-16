@@ -1236,3 +1236,65 @@ def delete_user(user_id):
         query = """DELETE FROM `user` WHERE id=%s;"""
         cursor.execute(query, (user_id,))
         conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_type(problem_id):
+    """Get problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `picture`, `name`, `radius` FROM `problem_type`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def delete_problem_type(problem_id):
+    """Delete problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `problem_type`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (problem_id,))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def update_problem_type(problem_id, picture, name, radius):
+    """Update problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `problem_type` SET `picture`=%s,
+                                         `name`=%s, `radius`=%s
+                          WHERE `id`=%s;
+                      """
+        cursor.execute(query, (picture, name, radius, problem_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
+def add_problem_type(picture, name, radius):
+    """Insert problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_rw().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT  INTO `problem_type` (`picture`,
+                                         `name`, `radius`)
+                          VALUES (%s, %s, %s);
+                      """
+        cursor.execute(query, (picture, name, radius))

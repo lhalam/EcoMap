@@ -29,7 +29,7 @@
     </table>
   </div>
   <modal title="Додати новий тип проблем" visible="addProblemTypeModal">
-      <form  ng-submit="addProblemSubmit(problem)" name="addProblemForm" novalidate>
+      <form  ng-submit="addProblemSubmit(newProblemType)" name="addProblemForm" novalidate>
         <div class="form-group" ng-class="{'has-error': (addProblemForm.problem_type.$touched ||
                                           addProblemSub)&& addProblemForm.problem_type.$invalid }">
           <div class="row">
@@ -38,7 +38,7 @@
                 <input type="text"
                        class="form-control"
                        name="problem_type"
-                       ng-model="problem.problem_type"
+                       ng-model="newProblemType.name"
                        ng-maxlength="255"
                        required>
               <div class="help-block" ng-messages="addProblemForm.problem_type.$error"
@@ -57,10 +57,28 @@
               <input type="text"
                      class="form-control"
                      name="radius"
-                     ng-model="problem.radius"
+                     ng-model="newProblemType.radius"
                      ng-maxlength="255"
                      required>
               <div class="help-block" ng-messages="addProblemForm.radius.$error" ng-show="addProblemForm.radius.$touched || addProblemSub">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group"
+              ng-class="{'has-error':(addProblemForm.picture.$touched || addProblemSub)&&
+                        addProblemForm.picture.$invalid }">
+          <div class="row">
+            <div class="col-md-12">
+            <label for="" class="control-label">Лого: </label >
+              <input type="text"
+                     class="form-control"
+                     name="picture"
+                     ng-model="newProblemType.picture"
+                     ng-maxlength="255"
+                     required>
+              <div class="help-block" ng-messages="addProblemForm.picture.$error" ng-show="addProblemForm.picture.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>

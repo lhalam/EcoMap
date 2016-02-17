@@ -6,7 +6,33 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
     $scope.addProblemTypeModal = false;
     $scope.showAddPpoblemTypeModal = function() {
       $scope.addProblemTypeModal = true;
-      $scope.problemType = {};
+      $scope.newProblemType = {};
+    };
+
+    $scope.newProblemType = {};
+    $scope.addProblemSubmit = function(newProblemType) {
+      if (!newProblemType.name) {
+        return;
+      }
+      console.log($scope.newProblemType);
+      $http({
+        method: 'POST',
+        url: '/api/problem_type',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        data: {
+          'problem_type_picture': $scope.newProblemType.picture,
+          'problem_type_name': $scope.newProblemType.name,
+          'problem_type_radius': $scope.newProblemType.radius
+        }
+      }).then(function successCallback(data) {
+        $scope.addProblemTypeModal = false;
+        $scope.msg.createSuccess('типу проблеми');
+      }, function errorCallback(response) {
+        $scope.addProblemTypeModal = false;
+        $scope.msg.createError('типу проблеми', $scope.msgError['alreadyExist']);
+      });
     };
 
     

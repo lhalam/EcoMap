@@ -1,4 +1,4 @@
-app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope', 
+app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
   '$state', function($scope, $http, toaster, $rootScope, $state) {
     $scope.meth_obj = {
       '1': 'GET',
@@ -86,7 +86,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
         $scope.Roles = data.data
       }, function errorCallback(response) {})
     }
-    
+
     $scope.loadData = function() {
       $scope.loadRole()
       $scope.loadRes()

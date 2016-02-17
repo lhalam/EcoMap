@@ -14,10 +14,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in selectedProblems">
-          <td><img ng-src="/image/markers/{{user.img}}" class = "img-responsive" alt="Marker for problem"/></td>
-          <td>{{user.problem_type}}</td>
-          <td>{{user.radius}}</td>
+        <tr ng-repeat="problem in Problems">
+          <td><img ng-src="/image/markers/{{problem.picture}}" class = "img-responsive" alt="Marker for problem"/></td>
+          <td>{{problem.name}}</td>
+          <td>{{problem.radius}}</td>
           <td>
             <button class="btn btn-danger edit_btn btn-border" ng-click="deleteProblem(user.id)">
             видалити</button>
@@ -69,7 +69,9 @@
         <div class="form-group" >
           <div class="row">
             <div class="col-md-12">
-              <button type="sumbit" class="btn btn-primary btn-border pull-left" ng-click="addProblemSub=true">додати</button>
+              <button type="sumbit" 
+                      class="btn btn-primary btn-border pull-left" 
+                      ng-click="addProblemSub=true">додати</button>
             </div>
           </div>
         </div>

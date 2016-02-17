@@ -61,7 +61,7 @@ def check_access():
 
 @app.route('/', methods=['GET'])
 @auto.doc()
-@app.cache.cached(timeout=_CONFIG['ecomap.cache_static_timeout'])
+@app.cache.cached(timeout=_CONFIG['ecomap.static_cache_timeout'])
 def index():
     """Controller starts main application page.
     Shows initial data of application, renders template with built-in Angular

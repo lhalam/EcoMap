@@ -11,13 +11,13 @@ from flask_login import current_user
 from PIL import Image
 
 from ecomap import validator
-from ecomap.app import app, logger, auto
 from ecomap.db import util as db
+from ecomap.app import app, logger, auto, _CONFIG
 
 
 
 @app.route('/api/problems')
-@app.cache.cached(timeout=60)
+@app.cache.cached(timeout=_CONFIG['ecomap.problems_cache_timeout'])
 def problems():
     """Handler for sending short data about all problem stored in db.
     Used by Google Map instance.

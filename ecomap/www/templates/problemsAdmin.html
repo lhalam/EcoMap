@@ -8,8 +8,7 @@
           <td>Радіус</td>
           <td>
             <button class="btn btn-primary btn-border" ng-click="showAddPpoblemTypeModal()">
-              <i class="fa fa-plus "></i>&nbsp;&nbsp;додати
-            </button>
+              <i class="fa fa-plus "></i>&nbsp;&nbsp;додати</button>
           </td>
         </tr>
       </thead>
@@ -19,10 +18,11 @@
           <td>{{problem.name}}</td>
           <td>{{problem.radius}}</td>
           <td>
-            <button class="btn btn-danger edit_btn btn-border" ng-click="deleteProblem(user.id)">
-            видалити</button>
+            <button class="btn btn-danger edit_btn btn-border" 
+                    ng-click="deleteProblemType(problem.id)">видалити</button>
 
-            <button class="btn btn-primary edit_btn btn-border" ng-click="showEditPpoblemTypeModal()">змінити</button>
+            <button class="btn btn-primary edit_btn btn-border" 
+                    ng-click="showEditProblemTypeModal(problem.id, problem.picture, problem.name, problem.radius )">змінити</button>
           </td>
         </tr>
       </tbody>
@@ -78,20 +78,39 @@
       </form>
   </modal>
   <modal title="Редагувати тип проблем" visible="editProblemTypeModal">
-      <form  ng-submit="editProblemSubmit()" name="editProblemForm" novalidate>
-        <div class="form-group" ng-class="{'has-error': (editProblemForm.problem_type.$touched ||
-                                          editProblemSub)&& editProblemForm.problem_type.$invalid }">
+      <form  ng-submit="editProblemSubmit(editProblemTypeObj)" name="editProblemForm" novalidate>
+        <div class="form-group" 
+             ng-class="{'has-error': (editProblemForm.problem_type.$touched ||
+                      editProblemSub)&& editProblemForm.problem_type.$invalid }">
           <div class="row">
             <div class="col-md-12">
               <label for="" class="control-label" >Тип проблеми: </label >
                 <input type="text"
                        class="form-control"
                        name="problem_type"
-                       ng-model="problem.problem_type"
+                       ng-model="editProblemTypeObj.name"
                        ng-maxlength="255"
                        required>
               <div class="help-block" ng-messages="editProblemForm.problem_type.$error"
                    ng-show="editProblemForm.problem_type.$touched || editProblemSub">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group"
+              ng-class="{'has-error':(editProblemForm.picture.$touched || editProblemSub)&&
+                        editProblemForm.picture.$invalid }">
+          <div class="row">
+            <div class="col-md-12">
+            <label for="" class="control-label">Лого: </label >
+              <input type="text"
+                     class="form-control"
+                     name="picture"
+                     ng-model="editProblemTypeObj.picture"
+                     ng-maxlength="255"
+                     required>
+              <div class="help-block" ng-messages="editProblemForm.picture.$error" ng-show="editProblemForm.picture.$touched || editProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
@@ -106,7 +125,7 @@
               <input type="text"
                      class="form-control"
                      name="radius"
-                     ng-model="problem.radius"
+                     ng-model="editProblemTypeObj.radius"
                      ng-maxlength="255"
                      required>
               <div class="help-block" ng-messages="editProblemForm.radius.$error" ng-show="editProblemForm.radius.$touched || editProblemSub">

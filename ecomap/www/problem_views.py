@@ -173,7 +173,7 @@ def post_problem():
 
 
 @app.route('/api/usersProblem', methods=['GET'])
-def get_user_problems(user_id):
+def get_user_problems():
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
 
@@ -196,13 +196,14 @@ def get_user_problems(user_id):
         :statuscode 200: no errors
 
     """
-    offset = request.args.get('offset') or 0
-    per_page = request.args.get('per_page') or 5
-    user_id = request.args.get('user_id')
-    count = db.count_user_problems(user_id)
+    data = request.get_json()
+
+    count = db.count_user_problems(data['user_id'])
     problems_list = []
     total_count = {}
-    problem_tuple = db.get_user_problems(user_id, offset, per_page)
+    problem_tuple = db.get_user_problems(data['user_id'],
+                                         data['offset'],
+                                         data['per_page'])
     logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],

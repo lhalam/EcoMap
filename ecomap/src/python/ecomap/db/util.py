@@ -1126,9 +1126,10 @@ def get_all_users_problems(offset, per_page):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `latitude`, `longitude`,
+        query = """SELECT problem.id, `title`, `latitude`, `longitude`,
                    `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity` FROM `problem`
+                   `severity`, `last_name` FROM `problem`
+                   INNER JOIN user ON problem.user_id = user.id
                    GROUP BY `id` LIMIT %s,%s;
                 """
         cursor.execute(query % (offset, per_page))

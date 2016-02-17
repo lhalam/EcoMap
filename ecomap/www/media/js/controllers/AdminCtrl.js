@@ -26,7 +26,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
     { heading: 'Права', route:'admin.permissions', active:false },
     { heading: 'Ролі', route:'admin.roles', active:false },
     { heading: 'Користувачі', route:'admin.users', active:false },
-    { heading: 'Тип проблеми', route:'admin.problems', active:false }
+    { heading: 'Тип проблеми', route:'admin.problems', active:false },
     ];
 
     $scope.$on('$stateChangeSuccess', function() {
@@ -87,10 +87,20 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
       }, function errorCallback(response) {})
     }
 
+    $scope.loadProblemType = function() {
+      $http({
+        method: 'GET',
+        url: '/api/problem_type',
+      }).then(function successCallback(data) {
+        $scope.Problems = data.data;
+      }, function errorCallback(response) {})
+    }
+
     $scope.loadData = function() {
       $scope.loadRole()
       $scope.loadRes()
       $scope.loadPerm()
+      $scope.loadProblemType()
     }
     $scope.loadData()
   }]);

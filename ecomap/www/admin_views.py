@@ -877,7 +877,7 @@ def delete_problem_type():
        :rtype: JSON.
        :return: Message if .
     '''
-    data = request.json()
+    data = request.get_json()
     db.delete_problem_type(data['problem_type_id'])
     if not db.get_problem_type_by_id(data['problem_type_id']):
         response = jsonify(msg='Success')

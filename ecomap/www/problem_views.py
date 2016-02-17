@@ -248,7 +248,8 @@ def get_all_users_problems():
                                   'status': problem[5],
                                   'date': problem[6] * 1000,
                                   'severity': problem[8],
-                                  'is_enabled': problem[7]})
+                                  'is_enabled': problem[7],
+                                  'last_name': problem[9]})
     if count:
         total_count = {'total_problem_count': count[0]}
 

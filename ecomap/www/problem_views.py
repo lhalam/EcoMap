@@ -386,25 +386,3 @@ def get_comments(problem_id):
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
-
-
-@app.route('/api/problem_type', methods=['GET'])
-def get_problem_type():
-    ''' '''
-    problem_type_tuple = db.get_problem_type()
-    problem_type_list = []
-    if problem_type_tuple:
-        for problem in problem_type_tuple:
-            problem_type_list.append({'id': problem[0],
-                'picture': problem[1],
-                'name': problem[2],
-                'radius': problem[3]
-                })
-    response = Response(json.dumps(problem_type_list), mimetype='application/json')
-    return response
-
-
-
-# @app.route('/api/problem_type', methods=['DELETE'])
-# def delete_problem_type(problem_type_id):
-#     db.delete_problem_type(problem_type_id)

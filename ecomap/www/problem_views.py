@@ -11,12 +11,13 @@ from flask_login import current_user
 from PIL import Image
 
 from ecomap import validator
-from ecomap.app import app, logger, auto
 from ecomap.db import util as db
+from ecomap.app import app, logger, auto, _CONFIG
 
 
 
 @app.route('/api/problems')
+@app.cache.cached(timeout=_CONFIG['ecomap.problems_cache_timeout'])
 def problems():
     """Handler for sending short data about all problem stored in db.
     Used by Google Map instance.
@@ -171,7 +172,7 @@ def post_problem():
         return response
 
 
-@app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
+@app.route('/api/usersProblem', methods=['GET'])
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
@@ -195,8 +196,13 @@ def get_user_problems(user_id):
         :statuscode 200: no errors
 
     """
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+    user_id = request.args.get('user_id')
+    count = db.count_user_problems(user_id)
     problems_list = []
-    problem_tuple = db.get_user_problems(user_id)
+    total_count = {}
+    problem_tuple = db.get_user_problems(user_id, offset, per_page)
     logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],
@@ -208,6 +214,9 @@ def get_user_problems(user_id):
                               'date': problem[6] * 1000,
                               'severity': problem[8],
                               'is_enabled': problem[7]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    print total_count
     return Response(json.dumps(problems_list), mimetype='application/json')
 
 

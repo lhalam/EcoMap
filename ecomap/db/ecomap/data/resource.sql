@@ -19,4 +19,5 @@ INSERT INTO `resource` VALUES (1,'/'),(8,'/api/addResource'),
 (9,'/api/user_avatar'),
 (37,'/api/user_delete'),
 (20,'/api/user_detailed_info/:idUser'),
-(12,'/api/user_page'),(10,'/api/user_roles');
+(12,'/api/user_page'),(10,'/api/user_roles'),
+(38,'/api/problem_type');

@@ -1,4 +1,4 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', 
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
  function($stateProvider, $urlRouterProvider, $authProvider) {
   $stateProvider
   .state('error404', {
@@ -78,7 +78,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     controller: 'UserCtrl'
   })
   .state('admin.problems', {
-    url: '/users',
+    url: '/problems',
     templateUrl: '/templates/problemsAdmin.html',
     controller: 'ProblemCtrl'
   })
@@ -136,7 +136,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
-    }  
+    }
     })
     .state('login', {
       url: '/login',
@@ -157,17 +157,17 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       url: '/addUserByAdmin',
       templateUrl: '/templates/RegisterUserByAdmin.html',
       controller: 'AddUserByAdmin'
-    }) 
+    })
     .state('userDeleteConfirmation', {
       url: '/userConfirm?hash_sum',
       controller: 'userDeleteConfirmation'
-    })     
+    })
 
     .state('register', {
       url: '/register',
       templateUrl: '/templates/register.html',
       controller: 'RegisterCtrl'
-    });    
+    });
 
     $urlRouterProvider.otherwise('map');
     $authProvider.loginUrl = '/api/login';
@@ -184,5 +184,5 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       display: 'popup',
       type: '2.0',
       popupOptions: { width: 580, height: 400 }
-    }); 
+    });
 }]);

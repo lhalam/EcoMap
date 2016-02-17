@@ -15,6 +15,7 @@ from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 
 
+
 @app.route('/api/problems')
 def problems():
     """Handler for sending short data about all problem stored in db.
@@ -50,7 +51,7 @@ def problems():
 @app.route('/api/problem_detailed_info/<int:problem_id>', methods=['GET'])
 def detailed_problem(problem_id):
     """This method returns object with detailed problem data.
-    
+
     :rtype: JSON
     :param problem_id: `{problem_id: 82}`
     :return:
@@ -60,9 +61,9 @@ def detailed_problem(problem_id):
                 "latitude": 52.7762, "proposal": "proposal how to solve",
                 "problem_type_id": 3, "problem_id": 82, "longitude": 34.2114}],
                 [{"activity_type": "Added", "user_id": 5,
-                "problem_id": 82, "created_date": 1450954447}], 
+                "problem_id": 82, "created_date": 1450954447}],
                 [{"url": "/uploads/problems/82/0d0d3ef56a16bd069e.png",
-                "user_id": 5, "description": "description to photo"}], 
+                "user_id": 5, "description": "description to photo"}],
                 [{"user_id": 5, "name": "User", "problem_id": 82,
                 "content": "Comment", "created_date": 1450954929000,
                 "id": 5}]]``
@@ -136,7 +137,7 @@ def post_problem():
                     ``{'status': False, 'error': [list of errors]}``
             - If all ok:
                     ``{"added_problem": "problem title", "problem_id": 83}``
-    
+
     :statuscode 400: request is invalid
     :statuscode 200: problem was successfully posted
 
@@ -192,7 +193,7 @@ def get_user_problems(user_id):
                 ``{}``
 
         :statuscode 200: no errors
-        
+
     """
     problems_list = []
     problem_tuple = db.get_user_problems(user_id)
@@ -248,7 +249,8 @@ def get_all_users_problems():
                                   'status': problem[5],
                                   'date': problem[6] * 1000,
                                   'severity': problem[8],
-                                  'is_enabled': problem[7]})
+                                  'is_enabled': problem[7],
+                                  'last_name': problem[9]})
     if count:
         total_count = {'total_problem_count': count[0]}
 
@@ -363,7 +365,7 @@ def get_comments(problem_id):
                 name: "user name",
                 problem_id: 77,
                 user_id: 6,
-                },{...}]``
+                } ,{...}]``
             - If user hasn't:
                 ``{}``
 
@@ -385,3 +387,25 @@ def get_comments(problem_id):
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
+
+
+@app.route('/api/problem_type', methods=['GET'])
+def get_problem_type():
+    ''' '''
+    problem_type_tuple = db.get_problem_type()
+    problem_type_list = []
+    if problem_type_tuple:
+        for problem in problem_type_tuple:
+            problem_type_list.append({'id': problem[0],
+                'picture': problem[1],
+                'name': problem[2],
+                'radius': problem[3]
+                })
+    response = Response(json.dumps(problem_type_list), mimetype='application/json')
+    return response
+
+
+
+# @app.route('/api/problem_type', methods=['DELETE'])
+# def delete_problem_type(problem_type_id):
+#     db.delete_problem_type(problem_type_id)

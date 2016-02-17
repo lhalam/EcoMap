@@ -877,10 +877,60 @@ def delete_problem_type():
        :rtype: JSON.
        :return: Message if .
     '''
-    data = request.json()
+    data = request.get_json()
     db.delete_problem_type(data['problem_type_id'])
     if not db.get_problem_type_by_id(data['problem_type_id']):
         response = jsonify(msg='Success')
     else:
         response = jsonify(error='Cannot delete!')
+    return response
+
+
+@app.route('/api/problem_type', methods=['POST'])
+@auto.doc()
+@login_required
+def add_problem_type():
+    data = request.get_json()
+    #TO DO validation
+    if db.get_problem_type_by_name(data['problem_type_name']):
+        return jsonify(error='Problem type  already exists'), 400
+    db.add_problem_type(data['problem_type_picture'],
+                        data['problem_type_name'],
+                        data['problem_type_radius'])
+    response = jsonify(added_problem_type=data['problem_type_name'])
+    return response
+
+
+@app.route('/api/problem_type', methods=['PUT'])
+@auto.doc()
+@login_required
+def edit_problem_type():
+    """Function which edits problem type's name, name and radius by it id.
+
+    :rtype: JSON
+    :request args: `{problem_type: "new_name", problem_type_id: 5,
+    problem_type_radius:10, problem_type_id:'new_image.png'}`
+    :returnn
+        - If request data is invalid:
+            ``{'status': False, 'error': [list of errors]}``
+        - If all ok:
+            ``{'status': 'success', 'edited': 'problem_type_name'}``
+
+    :statuscode 400: if request is invalid
+    :statuscode 200: if no errors
+
+    """
+    data = request.get_json()
+
+    if db.get_problem_type_by_name(data['problem_type_name']):
+        return jsonify(error='this name already exists'), 400
+
+    db.update_problem_type(data['problem_type_id'],
+                           data['problem_type_picture'],
+                           data['problem_type_name'],
+                           data['problem_type_radius'])
+
+    response = jsonify(status='success',
+                       edited=data['problem_type_name'])
+    # session['access_control'] = permission_control.reload_dct()
     return response

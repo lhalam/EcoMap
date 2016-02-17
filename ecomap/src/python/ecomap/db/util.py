@@ -1276,6 +1276,19 @@ def get_problem_type_by_id(problem_type_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_problem_type_by_name(problem_type_name):
+    """Get problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT * FROM `problem_type` WHERE `name`=%s;"""
+        cursor.execute(query, (problem_type_name))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def delete_problem_type(problem_type_id):
     """Delete problem type.
        :params: id

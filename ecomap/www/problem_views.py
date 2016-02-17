@@ -17,6 +17,7 @@ from ecomap.db import util as db
 
 
 @app.route('/api/problems')
+@app.cache.cached(timeout=60)
 def problems():
     """Handler for sending short data about all problem stored in db.
     Used by Google Map instance.

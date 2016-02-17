@@ -6,7 +6,7 @@ ecomap project.
 from flask import abort, render_template, session, url_for, request, Response, g
 from flask_login import current_user
 
-from ecomap.app import app, logger, auto
+from ecomap.app import app, logger, auto, _CONFIG
 from authorize_views import *
 from admin_views import *
 from user_views import *
@@ -14,6 +14,7 @@ from problem_views import *
 from ecomap.db import util as db
 from ecomap.permission import permission_control, check_permissions
 from ecomap.utils import parse_url
+
 
 
 @app.before_request
@@ -60,7 +61,7 @@ def check_access():
 
 @app.route('/', methods=['GET'])
 @auto.doc()
-@app.cache.cached(timeout=60*60*24)
+@app.cache.cached(timeout=_CONFIG['ecomap.cache_static_timeout'])
 def index():
     """Controller starts main application page.
     Shows initial data of application, renders template with built-in Angular

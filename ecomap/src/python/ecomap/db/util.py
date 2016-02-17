@@ -1242,7 +1242,6 @@ def delete_user(user_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type():
     """Get problem type.
-       :params: id
        :return: tuple with problem type and radious.
     """
     with db_pool_ro().manager() as conn:
@@ -1253,7 +1252,20 @@ def get_problem_type():
 
 
 @retry_query(tries=3, delay=1)
-def delete_problem_type(problem_id):
+def get_problem_type_by_id(problem_type_id):
+    """Get problem type.
+       :params: id
+       :return: tuple with problem type and radious.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT * FROM `problem_type` WHERE `id`=%s;"""
+        cursor.execute(query, (problem_type_id))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def delete_problem_type(problem_type_id):
     """Delete problem type.
        :params: id
        :return: tuple with problem type and radious.
@@ -1263,12 +1275,12 @@ def delete_problem_type(problem_id):
         query = """DELETE FROM `problem_type`
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (problem_id,))
+        cursor.execute(query, (problem_type_id,))
         conn.commit()
 
 
 @retry_query(tries=3, delay=1)
-def update_problem_type(problem_id, picture, name, radius):
+def update_problem_type(problem_type_id, picture, name, radius):
     """Update problem type.
        :params: id
        :return: tuple with problem type and radious.
@@ -1279,7 +1291,7 @@ def update_problem_type(problem_id, picture, name, radius):
                                          `name`=%s, `radius`=%s
                           WHERE `id`=%s;
                       """
-        cursor.execute(query, (picture, name, radius, problem_id))
+        cursor.execute(query, (picture, name, radius, problem_type_id))
         conn.commit()
 
 

@@ -869,15 +869,18 @@ def get_problem_type():
     return response
 
 
-@app.route('/api/problem_type/<problem_type>', methods=['DELETE'])
+@app.route('/api/problem_type', methods=['DELETE'])
 @auto.doc()
 @login_required
-def delete_problem_type(problem_type_id):
-    ''' '''
-    if request.method == 'DELETE':
-        db.delete_problem_type(problem_type_id)
-        if not db.get_problem_type_by_id(problem_type_id):
-            response = jsonify(msg='Success')
-        else:
-            response = jsonify(error='Cannot delete!')
+def delete_problem_type():
+    '''The method retrieves all probleme types.
+       :rtype: JSON.
+       :return: Message if .
+    '''
+    data = request.json()
+    db.delete_problem_type(data['problem_type_id'])
+    if not db.get_problem_type_by_id(data['problem_type_id']):
+        response = jsonify(msg='Success')
+    else:
+        response = jsonify(error='Cannot delete!')
     return response

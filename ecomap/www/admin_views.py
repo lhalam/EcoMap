@@ -876,8 +876,8 @@ def delete_problem_type(problem_type_id):
     ''' '''
     if request.method == 'DELETE':
         db.delete_problem_type(problem_type_id)
-    if not db.get_problem_type_by_id(problem_type_id):
-        response = jsonify(msg='Success')
-    else:
-        response = jsonify(error='Cannot delete!')
+        if not db.get_problem_type_by_id(problem_type_id):
+            response = jsonify(msg='Success')
+        else:
+            response = jsonify(error='Cannot delete!')
     return response

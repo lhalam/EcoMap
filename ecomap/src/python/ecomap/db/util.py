@@ -791,7 +791,7 @@ def get_all_problems():
 
 
 @retry_query(tries=3, delay=1)
-def get_user_problems(user_id):
+def get_user_problems(user_id, offset, per_page):
     """Gets all problems posted by given user."""
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -799,11 +799,10 @@ def get_user_problems(user_id):
                    `problem_type_id`, `status`, `created_date`, `is_enabled`,
                    `severity`
                    FROM `problem`
-                   WHERE `user_id`=%s
+                   WHERE `user_id`=%s LIMIT %s,%s;
                 """
-        cursor.execute(query, (user_id,))
+        cursor.execute(query, (user_id, offset, per_page,))
         return cursor.fetchall()
-
 
 @retry_query(tries=3, delay=1)
 def get_problem_by_id(problem_id):
@@ -1149,6 +1148,18 @@ def count_problems():
         cursor.execute(query)
         return cursor.fetchone()
 
+@retry_query(tries=3, delay=1)
+def count_user_problems(user_id):
+    """
+
+    :return:
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `problem` where `user_id` =%s;
+                """
+        cursor.execute(query, (user_id))
+        return cursor.fetchone()
 
 @retry_query(tries=3, delay=1)
 def add_comment(user_id, problem_id, content, created_date):

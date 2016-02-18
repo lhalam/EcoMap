@@ -6,21 +6,23 @@
   <h3 class="detailedTitle">{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-    <div class="col-md-5 ">
+      <div class="col-lg-4">
         <div class="rate">
           <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
       </div>
-      <div class="col-md-5 col-md-offset-2">
+      <div class="col-lg-4">
         <div class="solution unsolved" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
         </div>
       </div>
+      <div class="col-lg-4">
+        <div class='eye_subscription'>
+          <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
+        </div>
+      </div>
     </div>
-
-
     <div class="clear"></div>
-
   </div>
   <uib-tabset justified="true" class="tabs">
   <uib-tab heading="Детально">

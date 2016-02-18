@@ -12,6 +12,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
       $scope.selectCount = {
         'selected': '5'
       }  
+      console.log($scope.selectCount);
       $scope.getProblemType = function(type_id) {
         var types = {
           1: 'Проблеми лісів',
@@ -31,6 +32,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         };
         return statuses[status];
       };
+      $scope.showTable = false;
       $scope.loadProblems = function(user_id) {
         $scope.msg = msg;
         $scope.fromPage = 1;
@@ -40,6 +42,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
         $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
           var stepCount = $scope.selectCount['selected']
           if ($cookies.get('role')=='admin'){
+            $scope.showTable = true;
             $http({
               method: 'GET',
               url: 'api/all_usersProblem',

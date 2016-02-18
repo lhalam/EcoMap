@@ -801,7 +801,7 @@ def get_user_problems(user_id, offset, per_page):
                    FROM `problem`
                    WHERE `user_id`=%s LIMIT %s,%s;
                 """
-        cursor.execute(query, (user_id, offset, per_page,))
+        cursor.execute(query, (user_id, offset, per_page))
         return cursor.fetchall()
 
 @retry_query(tries=3, delay=1)
@@ -1093,8 +1093,8 @@ def clear_user_deletion_hash(startime, endtime):
 
 @retry_query(tries=3, delay=1)
 def count_resources():
-    """
-    :return:
+    """Users per page
+    :return: count of user's problem per page
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()

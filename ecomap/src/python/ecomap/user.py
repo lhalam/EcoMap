@@ -153,7 +153,7 @@ def get_user_by_oauth_id(uid):
     return None
 
 
-def register(first_name, last_name, email, password):
+def register(first_name, last_name, nickname, email, password):
     """This function registrates user.
     It will insert user's data via insert_user function
     from util.
@@ -163,7 +163,7 @@ def register(first_name, last_name, email, password):
     salted_pass = hash_pass(password)
     role_id = util.get_role_id('user')
     register_user_id = util.insert_user(first_name, last_name,
-                                        email, salted_pass)
+                                        nickname, email, salted_pass)
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
     message = generate_email('registration', _CONFIG['email.from_address'],
@@ -177,7 +177,7 @@ def register(first_name, last_name, email, password):
     return get_user_by_id(register_user_id)
 
 
-def facebook_register(first_name, last_name, email, provider, uid):
+def facebook_register(first_name, last_name, nickname, email, provider, uid):
     """This function registres user through facebook.
     It will insert user's data via insert_user function
     from util.
@@ -191,7 +191,8 @@ def facebook_register(first_name, last_name, email, provider, uid):
         salted_pass = hash_pass(password)
         role_id = util.get_role_id('user')
         register_user_id = util.facebook_insert(first_name,
-                                                last_name, email,
+                                                last_name,
+                                                nickname, email,
                                                 salted_pass,
                                                 provider, uid)
         if register_user_id:

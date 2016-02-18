@@ -67,7 +67,7 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
 
 
 @retry_query(tries=3, delay=1)
-def facebook_insert(first_name, last_name, email, password,
+def facebook_insert(first_name, last_name, nickname, email, password,
                     provider, uid):
     """Adds new user into db through facebook.
     :params: first_name - first name of user
@@ -80,20 +80,21 @@ def facebook_insert(first_name, last_name, email, password,
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
+                                       `nickname`,
                                        `email`,
                                        `password`,
                                        `oauth_provider`,
                                        `oauth_uid`)
-                   VALUES (%s, %s, %s, %s, %s, %s);
+                   VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password,
+        cursor.execute(query, (first_name, last_name, nickname, email, password,
                                provider, uid))
         registered_user_id = cursor.lastrowid
         return registered_user_id
 
 
 @retry_query(tries=3, delay=1)
-def insert_user(first_name, last_name, email, password):
+def insert_user(first_name, last_name, nickname, email, password):
     """Adds new user into db.
     :params: first_name - first name of user
              last_name - last name of user
@@ -105,11 +106,12 @@ def insert_user(first_name, last_name, email, password):
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
+                                       `nickname`,
                                        `email`,
                                        `password`)
-                   VALUES (%s, %s, %s, %s);
+                   VALUES (%s, %s, %s, %s ,%s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password))
+        cursor.execute(query, (first_name, last_name, nickname, email, password))
         registered_user_id = cursor.lastrowid
         return registered_user_id
 

@@ -71,6 +71,7 @@ def register():
         if valid['status']:
             ecomap_user.register(data['first_name'],
                                  data['last_name'],
+                                 data['nickname'],
                                  data['email'],
                                  data['password'])
             msg = 'added %s %s' % (data['first_name'],
@@ -186,7 +187,7 @@ def oauth_login(provider):
 
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url = 'https://graph.facebook.com/v2.5/me?fields=email,'\
-                    'first_name,last_name,id,picture.type(large)'
+                    'first_name,last_name,name,id,picture.type(large)'
 
     params = {
         'client_id': request.json['clientId'],
@@ -200,9 +201,9 @@ def oauth_login(provider):
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
     logger.info(profile['picture']['data']['url'])
-
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
+                                         profile['name'],
                                          profile['email'],
                                          provider,
                                          profile['id'])

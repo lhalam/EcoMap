@@ -196,8 +196,8 @@ def get_user_problems(user_id):
         :statuscode 200: no errors
 
     """
-    offset = request.args.get('offset') or 0
-    per_page = request.args.get('per_page') or 5
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
     problem_tuple = db.get_user_problems(user_id, offset, per_page)
     count = db.count_user_problems(user_id)
     problems_list = []

@@ -3,7 +3,7 @@ app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$auth', '$state'
     $scope.newUser = {};
     $scope.Register = function(user) {
       $scope.submitted = true;
-      if (!user.email || !user.first_name || !user.last_name || !user.password || !user.pass_confirm) {
+      if (!user.email || !user.first_name || !user.last_name || !user.nickname || !user.password || !user.pass_confirm) {
         return null;
       }
       if (user.password == user.pass_confirm) {

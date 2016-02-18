@@ -14,7 +14,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
       if (!newProblemType.name) {
         return;
       }
-      console.log($scope.newProblemType);
       $http({
         method: 'POST',
         url: '/api/problem_type',
@@ -27,6 +26,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
           'problem_type_radius': $scope.newProblemType.radius
         }
       }).then(function successCallback(data) {
+        $scope.loadProblemType();
         $scope.addProblemTypeModal = false;
         $scope.msg.createSuccess('типу проблеми');
       }, function errorCallback(response) {
@@ -43,7 +43,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         'name': name,
         'radius': radius
       };
-      console.log($scope.editProblemTypeObj);
       $scope.editProblemTypeModal = true;
     }
     $scope.editProblemSubmit = function(editProblemTypeObj){
@@ -51,7 +50,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         $scope.msg.editError('типу проблеми', $scope.msgError['incorectData']);
         return;
       }
-      console.log($scope.editProblemTypeObj);
       $http({
         method: 'PUT',
         url: '/api/problem_type',
@@ -65,6 +63,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
           'problem_type_radius': $scope.editProblemTypeObj['radius']
         }
       }).then(function successCallback(data) {
+        $scope.loadProblemType();
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
@@ -83,6 +82,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
           'problem_type_id': id
         }
       }).then(function successCallback(data) {
+        $scope.loadProblemType();
         $scope.msg.deleteSuccess('типу проблеми');
       }, function errorCallback(response) {
         $scope.msg.deleteError('типу проблеми', $scope.msgError['alreadyBinded']);

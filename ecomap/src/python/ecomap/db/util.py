@@ -73,7 +73,7 @@ def facebook_insert(first_name, last_name, nickname, email, password,
     """Adds new user into db through facebook.
     :params: first_name - first name of user
              last_name - last name of user
-             nickname - 
+             nickname - nickname of user
              email - email of user
              password - hashed password of user
     """

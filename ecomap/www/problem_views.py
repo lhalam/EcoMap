@@ -176,25 +176,24 @@ def post_problem():
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
-
-        :rtype: JSON
-        :param  user_id: id of user (int)
-        :return:
-            - If user has problems:
-                ``[{"id": 190,"title": "name",
-                "latitude": 51.419765,
-                "longitude": 29.520264,
-                "problem_type_id": 1,
-                "status": 0,
-                "date": "2015-02-24T14:27:22.000Z",
-                "severity": '3',
-                "is_enabled": 1
-                },{...}]``
-            - If user haven't:
-                ``{}``
-
+    :rtype: JSON
+    :param  user_id: id of user (int)
+    :query limit: limit number. default is 5
+    :query offset: offset number. default is 0
+    :return:
+        - If user has problems:
+            ``[{"id": 190,"title": "name",
+            "latitude": 51.419765,
+            "longitude": 29.520264,
+            "problem_type_id": 1,
+            "status": 0,
+            "date": "2015-02-24T14:27:22.000Z",
+            "severity": '3',
+            "is_enabled": 1
+            },{...}]``
+        - If user haven't:
+            ``{}``
         :statuscode 200: no errors
-
     """
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5

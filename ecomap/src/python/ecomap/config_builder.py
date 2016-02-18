@@ -148,8 +148,8 @@ def hash_pass(password, secret_key):
     return hashlib.md5(salted_password).hexdigest()
 
 
-def insert_user(first_name, last_name, email, password, host, db_user,
-                db_pasword, db_name):
+def insert_user(first_name, last_name, nickname, email, password, host,
+                db_user, db_pasword, db_name):
     """Function creates connection to db and adds new user into it.
     :param first_name: first name of user.
     :param last_name: last name of user.
@@ -165,11 +165,13 @@ def insert_user(first_name, last_name, email, password, host, db_user,
         cursor = mysql.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
+                                       `nickname`,
                                        `email`,
                                        `password`)
-                   VALUES (%s, %s, %s, %s);
+                   VALUES (%s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password))
+        cursor.execute(query, (first_name, last_name, nickname, email,
+                       password))
         mysql.commit()
         logging.info('User %s %s was successfully added to database %s',
                      first_name, last_name, db_name)
@@ -198,7 +200,7 @@ def main():
     try:
         user_input = input_user_data(configvars_parser())
         create_config_files(user_input)
-        insert_user('admin', 'admin',
+        insert_user('admin', 'admin', 'admin',
                     user_input['ecomap_admin_user_email'],
                     hash_pass(user_input['ecomap_admin_user_password'],
                               user_input['ecomap_secret_key']),
@@ -206,6 +208,7 @@ def main():
                     user_input['rw_db_password'], user_input['db_name'])
         insert_user(user_input['ecomap_unknown_first_name'],
                     user_input['ecomap_unknown_last_name'],
+                    user_input['ecomap_unknown_nickname'],
                     user_input['ecomap_unknown_email'],
                     hash_pass(user_input['ecomap_admin_user_password'],
                               user_input['ecomap_secret_key']),

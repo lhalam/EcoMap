@@ -26,7 +26,6 @@ COOKIE_MAX_AGE = app.config['REMEMBER_COOKIE_DURATION']
 @login_required
 def logout():
     """Method for user's log out.
-
     :rtype: JSON
     :return:
         - if logging out was successful:
@@ -44,10 +43,10 @@ def register():
     """Method for registration new user in db.
     Method checks if user is not exists and handle
     registration processes.
-
     :rtype: JSON
     :request args: `{'first_name': 'Ivan',
                      'last_name': 'Sirko',
+                     'nickname': 'Bulka',
                      'email': 'email@test.com',
                      'password': 'passw'}`
     :return:
@@ -89,7 +88,6 @@ def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
     :return: json with status 200 or 400
-
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()

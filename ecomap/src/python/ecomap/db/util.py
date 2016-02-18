@@ -5,13 +5,13 @@ from ecomap.db.db_pool import db_pool_rw, db_pool_ro, retry_query
 @retry_query(tries=3, delay=1)
 def get_user_by_email(email):
     """Return user, found by email.
-    :params: email - user email
+    :params email: user email
     :retrun: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`,
-                   `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
                    FROM `user` WHERE `email`=%s;
                 """
         cursor.execute(query, (email,))
@@ -21,13 +21,13 @@ def get_user_by_email(email):
 @retry_query(tries=3, delay=1)
 def get_user_by_id(user_id):
     """Return user, found by id.
-    :params: user_id - id of user
+    :params user_id: id of user
     :return: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`,
-                   `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -37,12 +37,13 @@ def get_user_by_id(user_id):
 @retry_query(tries=3, delay=1)
 def get_user_by_oauth_id(user_id):
     """Return user, found by id.
-    :params: user_id - id of user
+    :params user_id: id of user
     :return: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`,
+                   `nickname`, `email`, `password`
                    FROM `user` WHERE `oauth_uid`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -53,9 +54,9 @@ def get_user_by_oauth_id(user_id):
 def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
     """Adds oauth id and provider name to user.
        This grants authentication within oauth to user.
-       :params: user_id - id of user
-                oauth_provider - provider name
-                oauth_uid - user id from provider
+       :params user_id: id of user
+       :params oauth_provider: provider name
+       :params oauth_uid: user id from provider
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -72,6 +73,7 @@ def facebook_insert(first_name, last_name, nickname, email, password,
     """Adds new user into db through facebook.
     :params: first_name - first name of user
              last_name - last name of user
+             nickname - 
              email - email of user
              password - hashed password of user
     """

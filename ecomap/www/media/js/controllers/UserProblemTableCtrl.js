@@ -63,7 +63,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$cookies',
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
-             $scope.UsersLength = data.data[1][0]['total_users'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
           }

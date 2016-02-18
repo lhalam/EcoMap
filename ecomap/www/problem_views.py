@@ -172,8 +172,8 @@ def post_problem():
         return response
 
 
-@app.route('/api/usersProblem', methods=['GET'])
-def get_user_problems():
+@app.route('/api/usersProblem/<int:user_id>', methods=['GET'])
+def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
 
@@ -196,14 +196,14 @@ def get_user_problems():
         :statuscode 200: no errors
 
     """
-    data = request.get_json()
-
-    count = db.count_user_problems(data['user_id'])
+    offset = int(request.args.get('offset')) or 0
+    logger.warning('!!!!!!!!!!!!!!!!!!!! %s', type(offset))
+    per_page = int(request.args.get('per_page')) or 5
+    logger.warning('!!!!!!!!!!!!!!!!!!!! %s', per_page)
+    problem_tuple = db.get_user_problems(user_id, offset, per_page)
+    count = db.count_user_problems(user_id)
     problems_list = []
     total_count = {}
-    problem_tuple = db.get_user_problems(data['user_id'],
-                                         data['offset'],
-                                         data['per_page'])
     logger.info(problem_tuple)
     for problem in problem_tuple:
         problems_list.append({'id': problem[0],
@@ -217,8 +217,8 @@ def get_user_problems():
                               'is_enabled': problem[7]})
     if count:
         total_count = {'total_problem_count': count[0]}
-    print total_count
-    return Response(json.dumps(problems_list), mimetype='application/json')
+    return Response(json.dumps([problems_list, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route('/api/all_usersProblem', methods=['GET'])

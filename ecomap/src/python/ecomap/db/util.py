@@ -1278,7 +1278,7 @@ def get_problem_type_by_id(problem_type_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_name(problem_type_name):
     """Get problem type.
-       :params: id
+       :params: name
        :return: tuple with problem type and radious.
     """
     with db_pool_ro().manager() as conn:

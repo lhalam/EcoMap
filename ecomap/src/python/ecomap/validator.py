@@ -30,6 +30,7 @@ LENGTHS = {'email': [5, 100],
            'problem_type_id': [1, 255],
            'problem_type_name': [1, 50],
            'problem_type_radius': [1, 10],
+           'problem_type_picture': [1, 50],
            'user_id': [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],
@@ -628,6 +629,51 @@ def problem_post(data):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_coordinates_length']
                                         % data[keyname]})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
+def problem_type_post(data):
+    """Validates permission put form. Checks: problem type id, name, radius.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_type_picture', 'problem_type_name', 'problem_type_radius']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif keyname is 'problem_type_name':
+            if not check_string(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_string']
+                                        % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+        elif keyname is 'problem_type_radius':
+            if not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
 
     if status['error']:
         status['status'] = False

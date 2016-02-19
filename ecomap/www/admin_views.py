@@ -1,8 +1,11 @@
 """Module contains routes, used for admin page."""
+import os
 import json
 
 from flask import request, jsonify, Response, session
 from flask_login import login_required
+
+from werkzeug import secure_filename
 
 from ecomap import validator
 from ecomap.app import app, logger, auto
@@ -906,18 +909,33 @@ def add_problem_type():
     :statuscode 200: if no errors
 
     """
-    data = request.get_json()
-    valid = validator.problem_type_post(data)
-    if valid['status']:
-        if db.get_problem_type_by_name(data['problem_type_name']):
-            response = jsonify(msg='Name already taken'), 400
-        else:
-            db.add_problem_type(data['problem_type_picture'],
-                                data['problem_type_name'],
-                                data['problem_type_radius'])
-            response = jsonify(msg='Success'), 200
+    extension = '.png'
+    problem_type_name = request.form['problem_type_name']
+    problem_type_radius = request.form['problem_type_radius']
+    static_url = '/media/image/markers'
+    f_path = os.environ['STATICROOT'] + static_url
+    img_file = request.files['file']
+    file_name = secure_filename(img_file.filename)
+    if img_file and extension in file_name and \
+            not os.path.exists(os.path.join(f_path, file_name)):
+        img_file.save(os.path.join(f_path, file_name))
+        db.add_problem_type(file_name, problem_type_name, problem_type_radius)
+        response = jsonify(msg='Success'), 200
     else:
-        response = jsonify(msg='Incorrect data'), 400
+        response = jsonify(msg='Incorrect photo'), 400
+    # valid = validator.problem_type_post(data)
+    # if valid['status']:
+    #     if db.get_problem_type_by_name(data['problem_type_name']):
+    #         response = jsonify(msg='Name already taken'), 400
+    #     else:
+    #         db.add_problem_type(data['problem_type_picture'],
+    #                             data['problem_type_name'],
+    #                             data['problem_type_radius'])
+    #         response = jsonify(msg='Success'), 200
+    # else:
+    #     response = jsonify(msg='Incorrect data'), 400
+    # problem_type_name = request.form['problem_type_name']
+
     return response
 
 

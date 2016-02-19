@@ -1152,18 +1152,19 @@ def count_problems():
         cursor.execute(query)
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
-    """
-
-    :return:
+    """Count of user's problem
+    :return: count
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(id) FROM `problem` where `user_id` =%s;
-                """
-        cursor.execute(query, (user_id))
+        query = """SELECT COUNT(id) FROM `problem`
+                where `user_id` =%s;"""
+        cursor.execute(query, (user_id,))
         return cursor.fetchone()
+
 
 @retry_query(tries=3, delay=1)
 def add_comment(user_id, problem_id, content, created_date):

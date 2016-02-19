@@ -23,7 +23,9 @@ body {
 .body-scroll-shown {
   overflow-y: scroll;
 }
-
+.select{
+    margin-top: 35px;
+}
 .navbar.navbar-default {
   font-family: "LatoBold", sans serif;
   height: 3.7em;

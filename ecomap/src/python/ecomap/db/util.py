@@ -1124,14 +1124,14 @@ def count_permissions():
 @retry_query(tries=3, delay=1)
 def get_all_users_problems(offset, per_page):
     """Function selects from db all problems created by user.
-
-    :return: tuple with problem data
+    :return: tuple with problem data.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT problem.id, `title`, `latitude`, `longitude`,
                    `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity`, `last_name` FROM `problem`
+                   `severity`, `last_name`, `first_name`, `nickname`
+                   FROM `problem`
                    INNER JOIN user ON problem.user_id = user.id
                    GROUP BY `id` LIMIT %s,%s;
                 """

@@ -34,13 +34,15 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         console.log(data);
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
-        console.log(arguments[0]['data']['msg']);
+        // console.log(arguments[0]['data']['msg']);
         console.log(arguments);
-        console.log(arguments[0]['data']['msg']);
+        // console.log(arguments[0]['data']['msg']);
         if (arguments[0]['data']['msg']=='Name already taken')
           $scope.msg.createError('типу проблеми', $scope.msgError['alreadyExist']);
         if (arguments[0]['data']['msg']=='Incorrect data')
           $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
+         if (arguments[0]['data']['msg']=='Incorrect photo')
+          $scope.msg.createError('типу проблеми', $scope.msgError['incorrectPhoto']);
       });
     };
 

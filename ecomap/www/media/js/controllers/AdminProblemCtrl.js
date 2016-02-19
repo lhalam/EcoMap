@@ -1,30 +1,32 @@
-app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
-  function($scope, $http, toaster,  msg, msgError) {
+app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 'Upload',
+  function($scope, $http, toaster,  msg, msgError, Upload) {
 
     $scope.msg = msg;
     $scope.msgError = msgError;
+
+
+
+    $scope.newProblemType = {};
+
     $scope.addProblemTypeModal = false;
     $scope.showAddPpoblemTypeModal = function() {
       $scope.addProblemTypeModal = true;
-      $scope.newProblemType = {};
     };
 
-    $scope.newProblemType = {};
+
     $scope.addProblemSubmit = function(newProblemType) {
-      if (!newProblemType.name) {
-        return;
+      Upload.upload({
+      url: '/api/problem_type',
+      method: 'POST',
+      cache: false,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      data: {
+        file: newProblemType.picFile,
+        problem_type_name: newProblemType.name,
+        problem_type_radius: newProblemType.radius
       }
-      $http({
-        method: 'POST',
-        url: '/api/problem_type',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        data: {
-          'problem_type_picture': $scope.newProblemType.picture,
-          'problem_type_name': $scope.newProblemType.name,
-          'problem_type_radius': $scope.newProblemType.radius
-        }
       }).then(function successCallback(data) {
         $scope.loadProblemType();
         $scope.addProblemTypeModal = false;
@@ -57,18 +59,20 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         $scope.msg.editError('типу проблеми', $scope.msgError['incorectData']);
         return;
       }
-      $http({
-        method: 'PUT',
-        url: '/api/problem_type',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        data: {
-          'problem_type_id': $scope.editProblemTypeObj['id'],
-          'problem_type_picture': $scope.editProblemTypeObj['picture'],
-          'problem_type_name': $scope.editProblemTypeObj['name'],
-          'problem_type_radius': $scope.editProblemTypeObj['radius']
-        }
+      Upload.upload({
+      url: '/api/problem_type',
+      method: 'PUT',
+      cache: false,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      data: {
+        file: editProblemTypeObj.picFile,
+        problem_type_name: editProblemTypeObj.name,
+        problem_type_radius: editProblemTypeObj.radius,
+        problem_type_id: editProblemTypeObj.id,
+
+      }
       }).then(function successCallback(data) {
         $scope.loadProblemType();
         $scope.editProblemTypeModal = false;

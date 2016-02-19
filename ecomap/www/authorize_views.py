@@ -26,7 +26,6 @@ COOKIE_MAX_AGE = app.config['REMEMBER_COOKIE_DURATION']
 @login_required
 def logout():
     """Method for user's log out.
-
     :rtype: JSON
     :return:
         - if logging out was successful:
@@ -44,10 +43,10 @@ def register():
     """Method for registration new user in db.
     Method checks if user is not exists and handle
     registration processes.
-
     :rtype: JSON
     :request args: `{'first_name': 'Ivan',
                      'last_name': 'Sirko',
+                     'nickname': 'Bulka',
                      'email': 'email@test.com',
                      'password': 'passw'}`
     :return:
@@ -71,6 +70,7 @@ def register():
         if valid['status']:
             ecomap_user.register(data['first_name'],
                                  data['last_name'],
+                                 data['nickname'],
                                  data['email'],
                                  data['password'])
             msg = 'added %s %s' % (data['first_name'],
@@ -88,7 +88,6 @@ def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
     :return: json with status 200 or 400
-
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
@@ -186,7 +185,7 @@ def oauth_login(provider):
 
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url = 'https://graph.facebook.com/v2.5/me?fields=email,'\
-                    'first_name,last_name,id,picture.type(large)'
+                    'first_name,last_name,name,id,picture.type(large)'
 
     params = {
         'client_id': request.json['clientId'],
@@ -200,9 +199,9 @@ def oauth_login(provider):
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
     logger.info(profile['picture']['data']['url'])
-
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
+                                         profile['name'],
                                          profile['email'],
                                          provider,
                                          profile['id'])

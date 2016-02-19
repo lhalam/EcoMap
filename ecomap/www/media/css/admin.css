@@ -38,3 +38,8 @@ button{
 .img-responsive{
     width: 15%;
 }
+
+.add_button{
+    margin-top: 10px;
+    margin-right: 5px;
+}

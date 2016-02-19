@@ -23,7 +23,9 @@ body {
 .body-scroll-shown {
   overflow-y: scroll;
 }
-
+.select{
+    margin-top: 35px;
+}
 .navbar.navbar-default {
   font-family: "LatoBold", sans serif;
   height: 3.7em;
@@ -556,6 +558,13 @@ input[type="checkbox"] {
 
 .unsolved {
   color: #880000;
+}
+
+.eye_subscription{
+  font-size: 22px;
+  position: relative;
+  bottom: 6px;
+  padding-left: 75%;
 }
 
 .det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {

@@ -68,5 +68,12 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         return;
       }
     }
+    $scope.cls_eye_subs = "fa fa-eye-slash";    
+    $scope.chgEyeSubsc = function(){
+        if ($scope.cls_eye_subs === "fa fa-eye-slash")
+            $scope.cls_eye_subs= "fa fa-eye";
+         else
+            $scope.cls_eye_subs = "fa fa-eye-slash";
+    };
   }
 ]);

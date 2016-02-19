@@ -221,31 +221,30 @@ def get_user_problems(user_id):
 @app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
-
-        :query limit: limit number. default is 5
-        :query offset: offset number. default is 0
-        :rtype: JSON
-        :return: list of user's problem represented with next objects:
-
-            ``[{"id": 190,
-            "title": "name",
-            "latitude": 51.419765,
-            "longitude": 29.520264,
-            "problem_type_id": 1,
-            "status": 0,
-            "date": "2015-02-24T14:27:22.000Z",
-            "severity": '3',
-            "is_enabled": 1},...]``
+    :query limit: limit number. default is 5
+    :query offset: offset number. default is 0
+    :rtype: JSON
+    :return: list of user's problem represented with next objects:
+        ``[{"id": 190,
+        "title": "name",
+        "latitude": 51.419765,
+        "longitude": 29.520264,
+        "problem_type_id": 1,
+        "status": 0,
+        "date": "2015-02-24T14:27:22.000Z",
+        "severity": '3',
+        "is_enabled": 1,
+        'last_name': 'name',
+        'first_name': 'surname',
+        'nickname': 'nick'}]``
 
     """
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
-
     count = db.count_problems()
     total_count = {}
     problems_list = []
     problem_tuple = db.get_all_users_problems(offset, per_page)
-
     if problem_tuple:
         for problem in problem_tuple:
             problems_list.append({'id': problem[0],
@@ -257,10 +256,11 @@ def get_all_users_problems():
                                   'date': problem[6] * 1000,
                                   'severity': problem[8],
                                   'is_enabled': problem[7],
-                                  'last_name': problem[9]})
+                                  'last_name': problem[9],
+                                  'first_name': problem[10],
+                                  'nickname': problem[11]})
     if count:
         total_count = {'total_problem_count': count[0]}
-
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
 

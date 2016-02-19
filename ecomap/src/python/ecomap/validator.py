@@ -637,8 +637,7 @@ def problem_post(data):
 
 
 def problem_type_post(data):
-    """Validates problem type post form. Checks: problem type's name,
-        radius, picture.
+    """Validates permission put form. Checks: problem type id, name, radius.
        :params: data - json object
        :return: dictionary with status keyname and error keys. By
                 default status is True, and error is empty.
@@ -646,7 +645,7 @@ def problem_type_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_type_name', 'problem_type_radius', 'problem_type_picture']
+    keys = ['problem_type_picture', 'problem_type_name', 'problem_type_radius']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -680,6 +679,73 @@ def problem_type_post(data):
         status['status'] = False
 
     return status
+
+
+def problem_type_delete(data):
+    """Validates problem type delete form. Checks: id of problem type.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'problem_type_id'
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty']
+                                % keyname})
+    if status['error']:
+        status['status'] = False
+    return status
+
+
+def problem_type_put(data):
+    """Validates permission put form. Checks: problem type id, name, radius.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_type_id', 'problem_type_picture',
+            'problem_type_name', 'problem_type_radius']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif keyname is 'problem_type_name':
+            if not check_string(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_string']
+                                        % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+        elif keyname is 'problem_type_radius':
+            if not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
 
 def has_key(dictionary, keyname):
     """Validator function, which checks if there is all needed keys json
@@ -817,5 +883,3 @@ def check_coordinates_length(value, length):
     if float(value) >= length[0] and float(value) <= length[1]:
         result = True
     return result
-
-

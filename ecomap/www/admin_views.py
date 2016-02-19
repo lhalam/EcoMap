@@ -935,7 +935,6 @@ def add_problem_type():
     # else:
     #     response = jsonify(msg='Incorrect data'), 400
     # problem_type_name = request.form['problem_type_name']
-
     return response
 
 

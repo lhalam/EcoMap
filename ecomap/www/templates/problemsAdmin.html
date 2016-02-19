@@ -29,9 +29,9 @@
     </table>
   </div>
   <modal title="Додати новий тип проблем" visible="addProblemTypeModal">
-      <form  ng-submit="addProblemSubmit(newProblemType)" name="addProblemForm" novalidate>
-        <div class="form-group" ng-class="{'has-error': (addProblemForm.problem_type.$touched ||
-                                          addProblemSub)&& addProblemForm.problem_type.$invalid }">
+      <form  ng-submit="addProblemSubmit(newProblemType)" class="form1" name="newProblemTypeForm" novalidate>
+        <div class="form-group" 
+             ng-class="{'has-error':(newProblemTypeForm.problem_type.$touched || addProblemSub)&& newProblemTypeForm.problem_type.$invalid }">
           <div class="row">
             <div class="col-md-12">
               <label for="" class="control-label" >Тип проблеми: </label >
@@ -41,54 +41,55 @@
                        ng-model="newProblemType.name"
                        ng-maxlength="255"
                        required>
-              <div class="help-block" ng-messages="addProblemForm.problem_type.$error"
-                   ng-show="addProblemForm.problem_type.$touched || addProblemSub">
+              <div class="help-block" ng-messages="newProblemTypeForm.problem_type.$error"
+                   ng-show="newProblemTypeForm.problem_type.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="form-group"
-              ng-class="{'has-error':(addProblemForm.radius.$touched || addProblemSub)&&
-                        addProblemForm.radius.$invalid }">
+              ng-class="{'has-error':(newProblemTypeForm.radius.$touched ||addProblemSub)&& newProblemTypeForm.radius.$invalid }">
           <div class="row">
             <div class="col-md-12">
             <label for="" class="control-label">Радіус: </label >
-              <input type="text"
+              <input type="number"
                      class="form-control"
                      name="radius"
                      ng-model="newProblemType.radius"
-                     ng-maxlength="255"
+                     ng-minlength="1"
                      required>
-              <div class="help-block" ng-messages="addProblemForm.radius.$error" ng-show="addProblemForm.radius.$touched || addProblemSub">
+              <div class="help-block" ng-messages="newProblemTypeForm.radius.$error" ng-show="newProblemTypeForm.radius.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="form-group"
-              ng-class="{'has-error':(addProblemForm.picture.$touched || addProblemSub)&&
-                        addProblemForm.picture.$invalid }">
-          <div class="row">
+        <div class="row">
             <div class="col-md-12">
-            <label for="" class="control-label">Лого: </label >
-              <input type="text"
-                     class="form-control"
-                     name="picture"
-                     ng-model="newProblemType.picture"
-                     ng-maxlength="255"
-                     required>
-              <div class="help-block" ng-messages="addProblemForm.picture.$error" ng-show="addProblemForm.picture.$touched || addProblemSub">
-                <div ng-messages-include="/templates/error_msgs.html"></div>
+              <div ngf-drop ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png',  
+                                ratio: '1:1', centerCrop: true}">
+                  <img ngf-src="newProblemType.picFile" class="thumb center-block"/>
               </div>
             </div>
-          </div>
         </div>
         <div class="form-group" >
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
+              <button type = "file" 
+                      class="btn btn-info photo-btn add pull-left" 
+                      ngf-select=""
+                      ng-model="newProblemType.picFile"
+                      ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
+                      name="picture" 
+                      accept="image/*" 
+                      ngf-pattern="'image/*'"
+                      ngf-max-size="5MB" 
+                      required="">Оберіть лого</button>
+            </div>
+            <div class="col-md-3">
               <button type="sumbit" 
-                      class="btn btn-primary btn-border pull-left" 
+                      class="btn add_button btn-primary btn-border pull-right" 
                       ng-click="addProblemSub=true">додати</button>
             </div>
           </div>
@@ -117,34 +118,16 @@
           </div>
         </div>
         <div class="form-group"
-              ng-class="{'has-error':(editProblemForm.picture.$touched || editProblemSub)&&
-                        editProblemForm.picture.$invalid }">
-          <div class="row">
-            <div class="col-md-12">
-            <label for="" class="control-label">Лого: </label >
-              <input type="text"
-                     class="form-control"
-                     name="picture"
-                     ng-model="editProblemTypeObj.picture"
-                     ng-maxlength="255"
-                     required>
-              <div class="help-block" ng-messages="editProblemForm.picture.$error" ng-show="editProblemForm.picture.$touched || editProblemSub">
-                <div ng-messages-include="/templates/error_msgs.html"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group"
               ng-class="{'has-error':(editProblemForm.radius.$touched || editProblemSub)&&
                         editProblemForm.radius.$invalid }">
           <div class="row">
             <div class="col-md-12">
             <label for="" class="control-label">Радіус: </label >
-              <input type="text"
+              <input type="number"
                      class="form-control"
                      name="radius"
                      ng-model="editProblemTypeObj.radius"
-                     ng-maxlength="255"
+                     min="1"
                      required>
               <div class="help-block" ng-messages="editProblemForm.radius.$error" ng-show="editProblemForm.radius.$touched || editProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -152,10 +135,32 @@
             </div>
           </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+              <div ngf-drop ngf-resize="{width: 100, height: 100, quality: .8, type: 'image/png',  
+                                ratio: '1:1', centerCrop: true}">
+                  <img ngf-src="editProblemTypeObj.picFile" class="thumb center-block"/>
+              </div>
+            </div>
+        </div>
         <div class="form-group" >
           <div class="row">
-            <div class="col-md-12">
-              <button type="sumbit" class="btn btn-primary btn-border pull-left" ng-click="editProblemSub=true">додати</button>
+            <div class="col-md-8">
+              <button type = "file" 
+                      class="btn btn-info photo-btn add pull-left" 
+                      ngf-select=""
+                      ng-model="editProblemTypeObj.picFile"
+                      ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
+                      name="picture" 
+                      accept="image/*" 
+                      ngf-pattern="'image/*'"
+                      ngf-max-size="5MB" 
+                      required="">Оберіть лого</button>
+            </div>
+            <div class="col-md-3">
+              <button type="sumbit" 
+                      class="btn add_button btn-primary btn-border pull-left" 
+                      ng-click="editProblemSub=true">додати</button>
             </div>
           </div>
         </div>

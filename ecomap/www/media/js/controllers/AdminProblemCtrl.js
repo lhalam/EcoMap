@@ -1,6 +1,6 @@
 app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
   function($scope, $http, toaster,  msg, msgError) {
-    
+
     $scope.msg = msg;
     $scope.msgError = msgError;
     $scope.addProblemTypeModal = false;
@@ -29,13 +29,20 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         $scope.loadProblemType();
         $scope.addProblemTypeModal = false;
         $scope.msg.createSuccess('типу проблеми');
+        console.log(data);
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
-        $scope.msg.createError('типу проблеми', $scope.msgError['alreadyExist']);
+        console.log(arguments[0]['data']['msg']);
+        console.log(arguments);
+        console.log(arguments[0]['data']['msg']);
+        if (arguments[0]['data']['msg']=='Name already taken')
+          $scope.msg.createError('типу проблеми', $scope.msgError['alreadyExist']);
+        if (arguments[0]['data']['msg']=='Incorrect data')
+          $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
       });
     };
 
-    
+
     $scope.showEditProblemTypeModal= function(id, picture, name, radius) {
       $scope.editProblemTypeObj = {
         'id': id,
@@ -67,7 +74,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
-        $scope.msg.editError('типу проблеми', $scope.msgError['alreadyExist']);
+        $scope.msg.editError('типу проблеми', $scope.msgError['incorectData']);
       })
     };
 

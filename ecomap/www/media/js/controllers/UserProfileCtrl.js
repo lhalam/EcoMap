@@ -7,6 +7,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
       {heading: "Профіль користувача", route: "user_profile.info", active: false, showToUser: true},
       {heading: "Мої проблеми", route: "user_profile.problems", active: false, showToUser: true},
       {heading: "Мої коментарі", route: "user_profile.comments", active: false, showToUser: true},
+      {heading: "Мої підписки", route: "user_profile.subscriptions", active: false, showToUser: true},
       {heading: "Редагування F.A.Q.", route: "user_profile.faq", active: false, showToUser: false}
     ];
     $scope.$on("$stateChangeSuccess", function() {

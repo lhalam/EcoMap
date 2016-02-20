@@ -394,3 +394,119 @@ def get_comments(problem_id):
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
+
+@app.route('/api/usersSubscriptions/<int:user_id>', methods=['GET'])
+def get_user_subscriptions(user_id):
+    """This method retrieves all user's subscriptions from db and shows it in user
+    profile page on `my subscriptions` tab.
+    :rtype: JSON
+    :param  user_id: id of user (int)
+    :query limit: limit number. default is 5
+    :query offset: offset number. default is 0
+    :return:
+        - If user has subscriptions:
+            ``[{"id": 190,"title": "name",
+            "latitude": 51.419765,
+            "longitude": 29.520264,
+            "problem_type_id": 1,
+            "status": 0,
+            "date": "2015-02-24T14:27:22.000Z",
+            "severity": '3',
+            "is_enabled": 1
+            },{...}]``
+        - If user haven't:
+            ``{}``
+        :statuscode 200: no errors
+    """
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    subscription_tuple = db.get_user_subscriptions(user_id, offset, per_page)
+    count = db.count_user_subscriptions(user_id)
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'id': subscription[0],
+                                   'problem_id': subscription[1],
+                                   'user_id': subscription[2],
+                                   'date_subscription': subscription[3]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')
+
+
+@app.route('/api/subscription_post', methods=['POST'])
+def subscription_post():
+    """Function which adds data about created problem into DB.
+
+    :content-type: multipart/form-data
+
+    :fparam title: Title of problem ('problem with rivers')
+    :fparam type: id of problem type (2)
+    :fparam lat: lat coordinates (49.8256101)
+    :fparam longitude: lon coordinates (24.0600542)
+    :fparam content: description of problem ('some text')
+    :fparam proposal: proposition for solving problem ('text')
+
+    :rtype: JSON
+    :return:
+            - If request data is invalid:
+                    ``{'status': False, 'error': [list of errors]}``
+            - If all ok:
+                    ``{"added_problem": "problem title", "problem_id": 83}``
+
+    :statuscode 400: request is invalid
+    :statuscode 200: problem was successfully posted
+
+    """
+    if request.method == 'POST':
+        data = request.get_json()
+        logger.warning(request.get_json())
+        logger.info(data)
+        user_id = current_user.uid
+        subscr_date = int(time.time())
+        last_id = db.subscription_post(data['problem_id'],
+                                       user_id,
+                                       subscr_date)
+        logger.debug('New subscription post was created with id %s', last_id)
+        response = jsonify(subscription_id=last_id)        
+        return response
+
+
+@app.route('/api/subscription_delete', methods=['DELETE'])
+def subscription_delete():
+    """Function which adds data about created problem into DB.
+
+    :content-type: multipart/form-data
+
+    :fparam title: Title of problem ('problem with rivers')
+    :fparam type: id of problem type (2)
+    :fparam lat: lat coordinates (49.8256101)
+    :fparam longitude: lon coordinates (24.0600542)
+    :fparam content: description of problem ('some text')
+    :fparam proposal: proposition for solving problem ('text')
+
+    :rtype: JSON
+    :return:
+            - If request data is invalid:
+                    ``{'status': False, 'error': [list of errors]}``
+            - If all ok:
+                    ``{"added_problem": "problem title", "problem_id": 83}``
+
+    :statuscode 400: request is invalid
+    :statuscode 200: problem was successfully posted
+
+    """
+    if request.method == 'DELETE':
+        logger.info(request.args.get('problem_id'))
+        problem_id = int(request.args.get('problem_id'))
+        user_id = current_user.uid        
+        logger.info(problem_id)
+        last_id = db.subscription_delete(user_id, problem_id)
+        logger.debug('Subscription post was deleted with id %s', last_id)
+        response = jsonify(subscription_id=last_id)
+        return response
+
+
+

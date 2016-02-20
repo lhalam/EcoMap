@@ -57,7 +57,7 @@ def get_user_info(user_id):
         - If user exists and data provided:
             ``{"avatar": "/uploads/user_profile/userid_6/profile_id6.png",
             "email": "email@email.com", "name": "Firstname", "role": "admin",
-            "surname": "Lastname"}``
+            "surname": "Lastname", "nickname": "nick"}``
         - If there is no user with given email:
             ``{status:'There is no user with given email'}``
 
@@ -71,6 +71,7 @@ def get_user_info(user_id):
         if user:
             return jsonify(name=user.first_name,
                            surname=user.last_name,
+                           nickname=user.nickname,
                            email=user.email,
                            role=user.role,
                            avatar=user.avatar)

@@ -5,13 +5,13 @@ from ecomap.db.db_pool import db_pool_rw, db_pool_ro, retry_query
 @retry_query(tries=3, delay=1)
 def get_user_by_email(email):
     """Return user, found by email.
-    :params: email - user email
+    :params email: user email
     :retrun: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`,
-                   `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
                    FROM `user` WHERE `email`=%s;
                 """
         cursor.execute(query, (email,))
@@ -21,13 +21,13 @@ def get_user_by_email(email):
 @retry_query(tries=3, delay=1)
 def get_user_by_id(user_id):
     """Return user, found by id.
-    :params: user_id - id of user
+    :params user_id: id of user
     :return: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`,
-                   `password`, `avatar`
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -37,12 +37,13 @@ def get_user_by_id(user_id):
 @retry_query(tries=3, delay=1)
 def get_user_by_oauth_id(user_id):
     """Return user, found by id.
-    :params: user_id - id of user
+    :params user_id: id of user
     :return: tuple with user info
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `first_name`, `last_name`, `email`, `password`
+        query = """SELECT `id`, `first_name`, `last_name`,
+                   `nickname`, `email`, `password`
                    FROM `user` WHERE `oauth_uid`=%s;
                 """
         cursor.execute(query, (user_id,))
@@ -53,9 +54,9 @@ def get_user_by_oauth_id(user_id):
 def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
     """Adds oauth id and provider name to user.
        This grants authentication within oauth to user.
-       :params: user_id - id of user
-                oauth_provider - provider name
-                oauth_uid - user id from provider
+       :params user_id: id of user
+       :params oauth_provider: provider name
+       :params oauth_uid: user id from provider
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -67,11 +68,12 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
 
 
 @retry_query(tries=3, delay=1)
-def facebook_insert(first_name, last_name, email, password,
+def facebook_insert(first_name, last_name, nickname, email, password,
                     provider, uid):
     """Adds new user into db through facebook.
     :params: first_name - first name of user
              last_name - last name of user
+             nickname - nickname of user
              email - email of user
              password - hashed password of user
     """
@@ -80,20 +82,21 @@ def facebook_insert(first_name, last_name, email, password,
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
+                                       `nickname`,
                                        `email`,
                                        `password`,
                                        `oauth_provider`,
                                        `oauth_uid`)
-                   VALUES (%s, %s, %s, %s, %s, %s);
+                   VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password,
+        cursor.execute(query, (first_name, last_name, nickname, email, password,
                                provider, uid))
         registered_user_id = cursor.lastrowid
         return registered_user_id
 
 
 @retry_query(tries=3, delay=1)
-def insert_user(first_name, last_name, email, password):
+def insert_user(first_name, last_name, nickname, email, password):
     """Adds new user into db.
     :params: first_name - first name of user
              last_name - last name of user
@@ -105,11 +108,12 @@ def insert_user(first_name, last_name, email, password):
         cursor = conn.cursor()
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
+                                       `nickname`,
                                        `email`,
                                        `password`)
-                   VALUES (%s, %s, %s, %s);
+                   VALUES (%s, %s, %s, %s ,%s);
                 """
-        cursor.execute(query, (first_name, last_name, email, password))
+        cursor.execute(query, (first_name, last_name, nickname, email, password))
         registered_user_id = cursor.lastrowid
         return registered_user_id
 
@@ -1120,14 +1124,14 @@ def count_permissions():
 @retry_query(tries=3, delay=1)
 def get_all_users_problems(offset, per_page):
     """Function selects from db all problems created by user.
-
-    :return: tuple with problem data
+    :return: tuple with problem data.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT problem.id, `title`, `latitude`, `longitude`,
                    `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity`, `last_name` FROM `problem`
+                   `severity`, `last_name`, `first_name`, `nickname`
+                   FROM `problem`
                    INNER JOIN user ON problem.user_id = user.id
                    GROUP BY `id` LIMIT %s,%s;
                 """
@@ -1148,18 +1152,19 @@ def count_problems():
         cursor.execute(query)
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
-    """
-
-    :return:
+    """Count of user's problem
+    :return: count
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(id) FROM `problem` where `user_id` =%s;
-                """
-        cursor.execute(query, (user_id))
+        query = """SELECT COUNT(id) FROM `problem`
+                where `user_id` =%s;"""
+        cursor.execute(query, (user_id,))
         return cursor.fetchone()
+
 
 @retry_query(tries=3, delay=1)
 def add_comment(user_id, problem_id, content, created_date):
@@ -1278,7 +1283,7 @@ def get_problem_type_by_id(problem_type_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_name(problem_type_name):
     """Get problem type.
-       :params: id
+       :params: name
        :return: tuple with problem type and radious.
     """
     with db_pool_ro().manager() as conn:

@@ -1,8 +1,11 @@
 """Module contains routes, used for admin page."""
+import os
 import json
 
 from flask import request, jsonify, Response, session
 from flask_login import login_required
+
+from werkzeug import secure_filename
 
 from ecomap import validator
 from ecomap.app import app, logger, auto
@@ -890,14 +893,48 @@ def delete_problem_type():
 @auto.doc()
 @login_required
 def add_problem_type():
-    data = request.get_json()
-    #TO DO validation
-    if db.get_problem_type_by_name(data['problem_type_name']):
-        return jsonify(error='Problem type  already exists'), 400
-    db.add_problem_type(data['problem_type_picture'],
-                        data['problem_type_name'],
-                        data['problem_type_radius'])
-    response = jsonify(added_problem_type=data['problem_type_name'])
+    #TO DO docstring
+    """Function which add problem type's name, name and radius by it id.
+
+    :rtype: JSON
+    :request args: `{problem_type: "new_name", problem_type_id: 5,
+    problem_type_radius:10, problem_type_id:'new_image.png'}`
+    :returnn
+        - If request data is invalid:
+            ``{'status': False, 'error': [list of errors]}``
+        - If all ok:
+            ``{'status': 'success', 'edited': 'problem_type_name'}``
+
+    :statuscode 400: if request is invalid
+    :statuscode 200: if no errors
+
+    """
+    extension = '.png'
+    problem_type_name = request.form['problem_type_name']
+    problem_type_radius = request.form['problem_type_radius']
+    static_url = '/media/image/markers'
+    f_path = os.environ['STATICROOT'] + static_url
+    img_file = request.files['file']
+    file_name = secure_filename(img_file.filename)
+    if img_file and extension in file_name and \
+            not os.path.exists(os.path.join(f_path, file_name)):
+        img_file.save(os.path.join(f_path, file_name))
+        db.add_problem_type(file_name, problem_type_name, problem_type_radius)
+        response = jsonify(msg='Success'), 200
+    else:
+        response = jsonify(msg='Incorrect photo'), 400
+    # valid = validator.problem_type_post(data)
+    # if valid['status']:
+    #     if db.get_problem_type_by_name(data['problem_type_name']):
+    #         response = jsonify(msg='Name already taken'), 400
+    #     else:
+    #         db.add_problem_type(data['problem_type_picture'],
+    #                             data['problem_type_name'],
+    #                             data['problem_type_radius'])
+    #         response = jsonify(msg='Success'), 200
+    # else:
+    #     response = jsonify(msg='Incorrect data'), 400
+    # problem_type_name = request.form['problem_type_name']
     return response
 
 
@@ -905,6 +942,7 @@ def add_problem_type():
 @auto.doc()
 @login_required
 def edit_problem_type():
+    #TO DO docstring
     """Function which edits problem type's name, name and radius by it id.
 
     :rtype: JSON
@@ -921,16 +959,12 @@ def edit_problem_type():
 
     """
     data = request.get_json()
-
-    if db.get_problem_type_by_name(data['problem_type_name']):
-        return jsonify(error='this name already exists'), 400
-
-    db.update_problem_type(data['problem_type_id'],
-                           data['problem_type_picture'],
-                           data['problem_type_name'],
-                           data['problem_type_radius'])
-
-    response = jsonify(status='success',
-                       edited=data['problem_type_name'])
-    # session['access_control'] = permission_control.reload_dct()
+    valid = validator.problem_type_post(data)
+    if valid['status']:
+        db.update_problem_type(data['problem_type_picture'],
+                               data['problem_type_name'],
+                               data['problem_type_radius'])
+        response = jsonify(msg='Success'), 200
+    else:
+        response = jsonify(msg='Incorrect data'), 400
     return response

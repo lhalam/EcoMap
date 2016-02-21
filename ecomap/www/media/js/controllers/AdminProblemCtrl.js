@@ -31,10 +31,11 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.loadProblemType();
         $scope.addProblemTypeModal = false;
         $scope.msg.createSuccess('типу проблеми');
+        $scope.newProblemType = {};
         console.log(data);
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
-        // console.log(arguments[0]['data']['msg']);
+        console.log(arguments[0]['data']['msg']);
         console.log(arguments);
         // console.log(arguments[0]['data']['msg']);
         if (arguments[0]['data']['msg']=='Name already taken')

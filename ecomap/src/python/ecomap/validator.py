@@ -645,7 +645,7 @@ def problem_type_post(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_type_picture', 'problem_type_name', 'problem_type_radius']
+    keys = ['problem_type_name', 'problem_type_radius']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -710,8 +710,7 @@ def problem_type_put(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_type_id', 'problem_type_picture',
-            'problem_type_name', 'problem_type_radius']
+    keys = ['problem_type_id', 'problem_type_name', 'problem_type_radius']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -719,7 +718,7 @@ def problem_type_put(data):
         elif not data[keyname]:
             status['error'].append({keyname: ERROR_MSG['check_empty']
                                     % keyname})
-        elif keyname is 'problem_type_name':
+        if keyname is 'problem_type_name':
             if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
                                         % keyname})

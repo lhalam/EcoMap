@@ -1,5 +1,6 @@
 """Module contains routes, used for admin page."""
 import json
+import os
 
 from flask import request, jsonify, Response, session
 from flask_login import login_required
@@ -8,6 +9,7 @@ from ecomap import validator
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
+from werkzeug import secure_filename
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -875,14 +877,26 @@ def get_problem_type():
 def delete_problem_type():
     '''The method retrieves all probleme types.
        :rtype: JSON.
-       :return: Message if .
+       :request args: `{problem_type_id: 5}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Page was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``
+
+       :statuscode 400: if request is invalid
+       :statuscode 200: if no errors
     '''
     data = request.get_json()
-    db.delete_problem_type(data['problem_type_id'])
-    if not db.get_problem_type_by_id(data['problem_type_id']):
-        response = jsonify(msg='Success')
+    valid = validator.problem_type_delete(data)
+    if valid['status']:
+        db.delete_problem_type(data['problem_type_id'])
+        if not db.get_problem_type_by_id(data['problem_type_id']):
+            response = jsonify(msg='Success'), 200
+        else:
+            response = jsonify(error='Cannot delete!'), 400
     else:
-        response = jsonify(error='Cannot delete!')
+        response = jsonify(msg='Incorrect data'), 400
     return response
 
 
@@ -906,18 +920,39 @@ def add_problem_type():
     :statuscode 200: if no errors
 
     """
-    data = request.get_json()
+    data = request.form
     valid = validator.problem_type_post(data)
     if valid['status']:
         if db.get_problem_type_by_name(data['problem_type_name']):
             response = jsonify(msg='Name already taken'), 400
         else:
-            db.add_problem_type(data['problem_type_picture'],
-                                data['problem_type_name'],
-                                data['problem_type_radius'])
-            response = jsonify(msg='Success'), 200
+            extension = '.png'
+            static_url = '/media/image/markers'
+            f_path = os.environ['STATICROOT'] + static_url
+            img_file = request.files['file']
+            file_name = secure_filename(img_file.filename)
+            if img_file and extension in file_name and not \
+            os.path.exists(os.path.join(f_path, file_name)):
+                img_file.save(os.path.join(f_path, file_name))
+                problem_type_name = request.form['problem_type_name']
+                problem_type_radius = request.form['problem_type_radius']
+                db.add_problem_type(file_name, problem_type_name,
+                                    problem_type_radius)
+                response = jsonify(msg='Success'), 200
+            else:
+                response = jsonify(msg='Wrong data'), 400
     else:
         response = jsonify(msg='Incorrect data'), 400
+    # if valid['status']:
+    #     if db.get_problem_type_by_name(data['problem_type_name']):
+    #         response = jsonify(msg='Name already taken'), 400
+    #     else:
+    #         db.add_problem_type(data['problem_type_picture'],
+    #                             data['problem_type_name'],
+    #                             data['problem_type_radius'])
+    #         response = jsonify(msg='Success'), 200
+    # else:
+    #     response = jsonify(msg='Incorrect data'), 400
     return response
 
 
@@ -941,13 +976,38 @@ def edit_problem_type():
     :statuscode 200: if no errors
 
     """
-    data = request.get_json()
-    valid = validator.problem_type_post(data)
+    # data = {'problem_type_id': request.form['problem_type_id'],
+    #         'problem_type_name': request.form['problem_type_name'],
+    #         'problem_type_radius': request.form['problem_type_radius']}
+    data = request.form
+    valid = validator.problem_type_put(data)
     if valid['status']:
-        db.update_problem_type(data['problem_type_picture'],
-                               data['problem_type_name'],
-                               data['problem_type_radius'])
-        response = jsonify(msg='Success'), 200
+        extension = '.png'
+        static_url = '/media/image/markers'
+        f_path = os.environ['STATICROOT'] + static_url
+        img_file = request.files['file']
+        file_name = secure_filename(img_file.filename)
+        if img_file and extension in file_name and not \
+        os.path.exists(os.path.join(f_path, file_name)):
+            img_file.save(os.path.join(f_path, file_name))
+            problem_type_id = request.form['problem_type_id']
+            problem_type_name = request.form['problem_type_name']
+            problem_type_radius = request.form['problem_type_radius']
+            db.update_problem_type(problem_type_id, file_name,
+                                   problem_type_name, problem_type_radius)
+            response = jsonify(msg='Success'), 200
+        else:
+            response = jsonify(msg='Wrong data'), 400
     else:
         response = jsonify(msg='Incorrect data'), 400
+    # data = secure_filename(img_file.filename)
+    # data = request.get_json()
+    # valid = validator.problem_type_post(data)
+    # if valid['status']:
+    #     db.update_problem_type(data['problem_type_picture'],
+    #                            data['problem_type_name'],
+    #                            data['problem_type_radius'])
+
+    # else:
+    #     response = jsonify(msg='Incorrect data'), 400
     return response

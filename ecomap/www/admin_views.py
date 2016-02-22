@@ -901,11 +901,11 @@ def delete_problem_type():
             os.remove(os.path.join(f_path, file_name[0]))
         db.delete_problem_type(data['problem_type_id'])
         if not db.get_problem_type_by_id(data['problem_type_id']):
-            response = jsonify(msg='Success'), 200
+            response = jsonify(msg='Дані видалено успішно!'), 200
         else:
-            response = jsonify(msg='Wrong data'), 400
+            response = jsonify(msg='Дані не видалено!'), 400
     else:
-        response = jsonify(msg='Incorrect data'), 400
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
@@ -990,29 +990,36 @@ def edit_problem_type():
     basename = 'problem_type_logo'
     suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
     template = "_".join([basename, suffix])
-    # to get file size without changing it
-    logo = request.files['file']
-    old_file_position = request.files['file'].tell()
-    request.files['file'].seek(0, os.SEEK_END)
-    size = request.files['file'].tell()
-    request.files['file'].seek(old_file_position, os.SEEK_SET)
-    if size > FILE_UPLOAD_SIZE:
-        return jsonify(msg='Розмір файлу завеликий!'), 400
     # validation
     if valid['status']:
-        extension = '.png'
-        static_url = '/media/image/markers'
-        f_path = os.environ['STATICROOT'] + static_url
-        fname = secure_filename(logo.filename)
-        file_name = template + fname
-        if logo and extension in file_name:
-            logo.save(os.path.join(f_path, file_name))
-            db.update_problem_type(data['problem_type_id'], file_name,
+        if request.files:
+            logo = request.files['file']
+            old_file_position = request.files['file'].tell()
+            request.files['file'].seek(0, os.SEEK_END)
+            size = request.files['file'].tell()
+            request.files['file'].seek(old_file_position, os.SEEK_SET)
+            if size > FILE_UPLOAD_SIZE:
+                return jsonify(msg='Розмір файлу завеликий!'), 400
+            extension = '.png'
+            static_url = '/media/image/markers'
+            f_path = os.environ['STATICROOT'] + static_url
+            fname = secure_filename(logo.filename)
+            file_name = template + fname
+            if logo and extension in file_name:
+                logo.save(os.path.join(f_path, file_name))
+                db.update_problem_type(data['problem_type_id'], file_name,
+                                       data['problem_type_name'],
+                                       data['problem_type_radius'])
+                response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
+            else:
+                response = jsonify(msg='Розширення файлу має бути .png!'), 400
+        else:
+            old_name = db.get_problem_type_picture(data['problem_type_id'])
+            db.update_problem_type(data['problem_type_id'], old_name[0],
                                    data['problem_type_name'],
                                    data['problem_type_radius'])
-            response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
-        else:
-            response = jsonify(msg='Розширення файлу має бути .png!'), 400
+            response = jsonify(msg='Тип проблеми оновлено!')
+
     else:
         response = jsonify(msg='Так як дані невірні!'), 400
 

@@ -1152,18 +1152,19 @@ def count_problems():
         cursor.execute(query)
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
-    """
-
-    :return:
+    """Count of user's problem
+    :return: count
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(id) FROM `problem` where `user_id` =%s;
-                """
-        cursor.execute(query, (user_id))
+        query = """SELECT COUNT(id) FROM `problem`
+                where `user_id` =%s;"""
+        cursor.execute(query, (user_id,))
         return cursor.fetchone()
+
 
 @retry_query(tries=3, delay=1)
 def add_comment(user_id, problem_id, content, created_date):
@@ -1337,3 +1338,45 @@ def add_problem_type(picture, name, radius):
                           VALUES (%s, %s, %s);
                       """
         cursor.execute(query, (picture, name, radius))
+
+
+@retry_query(tries=3, delay=1)
+def subscription_post(problem_id, user_id, date_subscriptions):
+    """This method adds problem into db.
+       :params: title - new title
+                content - new content
+                proposal - new proposal
+                latitude - new latitude of a new problem
+                longitude - new longitude of a new problem
+                problem_type_id - type of a new problem
+    """
+    with db_pool_rw().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """INSERT INTO `subscription`
+                   (`problem_id`, `user_id`, `date_subscriptions`)
+                   VALUES (%s, %s, %s);
+                """
+        cursor.execute(query, (problem_id, user_id, date_subscriptions))
+        last_id = cursor.lastrowid
+        return last_id
+
+
+@retry_query(tries=3, delay=1)
+def subscription_delete(user_id, problem_id):
+    """This method adds problem into db.
+       :params: title - new title
+                content - new content
+                proposal - new proposal
+                latitude - new latitude of a new problem
+                longitude - new longitude of a new problem
+                problem_type_id - type of a new problem
+    """
+    with db_pool_rw().manager() as conn:
+        conn.autocommit(True)
+        cursor = conn.cursor()
+        query = """DELETE FROM `subscription`                   
+                   WHERE `user_id`=%s AND `problem_id`=%s;
+                """
+        cursor.execute(query, (user_id, problem_id))
+        last_id = cursor.lastrowid

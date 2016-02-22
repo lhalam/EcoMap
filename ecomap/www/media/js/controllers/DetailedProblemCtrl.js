@@ -68,12 +68,32 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         return;
       }
     }
+
     $scope.cls_eye_subs = "fa fa-eye-slash";    
     $scope.chgEyeSubsc = function(){
-        if ($scope.cls_eye_subs === "fa fa-eye-slash")
-            $scope.cls_eye_subs= "fa fa-eye";
-         else
-            $scope.cls_eye_subs = "fa fa-eye-slash";
-    };
+      if ($scope.cls_eye_subs === "fa fa-eye-slash"){
+        $http({
+          method: 'POST',
+          url: '/api/subscription_post',
+          data: {
+            'problem_id': $state.params['id']
+          }
+        }).then(function successCallback(response) {
+          $scope.cls_eye_subs = "fa fa-eye";
+        })
+        
+      }
+      else if ($scope.cls_eye_subs = "fa fa-eye") {
+        $http({
+        method: 'DELETE',
+        url: '/api/subscription_delete',
+        params: {
+          problem_id: $state.params['id']
+        }
+        }).then(function successCallback(response) {
+          $scope.cls_eye_subs = "fa fa-eye-slash";
+        })          
+      }
+  };
   }
 ]);

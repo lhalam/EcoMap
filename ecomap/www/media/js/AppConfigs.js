@@ -32,6 +32,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     url: '/comments',
     templateUrl: '/templates/profileComments.html'
   })
+  .state('user_profile.subscriptions', {
+    url: '/subscriptions',
+    templateUrl: '/templates/profileSubscriptions.html'
+  })
   .state('user_profile.faq', {
     url: '/faq',
     templateUrl: '/templates/profileFaqEdit.html',

@@ -7,7 +7,7 @@
           <td>Тип проблеми</td>
           <td>Радіус</td>
           <td>
-            <button class="btn btn-primary btn-border" 
+            <button class="btn btn-primary btn-border"
                     ng-click="showAddPpoblemTypeModal()">
               <i class="fa fa-plus "></i>&nbsp;&nbsp;додати
             </button>
@@ -17,17 +17,17 @@
       <tbody>
         <tr ng-repeat="problem in Problems">
           <td>
-            <img ng-src="/image/markers/{{problem.picture}}" 
-                 class ="img-responsive" 
+            <img ng-src="/image/markers/{{problem.picture}}"
+                 class ="img-responsive"
                  alt="Marker for problem"/>
           </td>
           <td>{{problem.name}}</td>
           <td>{{problem.radius}}</td>
           <td>
-            <button class="btn btn-danger edit_btn btn-border" 
+            <button class="btn btn-danger edit_btn btn-border"
                     ng-click="deleteProblemType(problem.id)">видалити</button>
 
-            <button class="btn btn-primary edit_btn btn-border" 
+            <button class="btn btn-primary edit_btn btn-border"
                     ng-click="showEditProblemTypeModal(problem.id, problem.picture, problem.name, problem.radius )">змінити</button>
           </td>
         </tr>
@@ -35,9 +35,9 @@
     </table>
   </div>
   <modal title="Додати новий тип проблем" visible="addProblemTypeModal">
-      <form  ng-submit="addProblemSubmit(newProblemType)" 
+      <form  ng-submit="addProblemSubmit(newProblemType)"
              class="form1" name="newProblemTypeForm" novalidate>
-        <div class="form-group" 
+        <div class="form-group"
              ng-class="{'has-error':(newProblemTypeForm.problem_type.$touched || addProblemSub)&& newProblemTypeForm.problem_type.$invalid }">
           <div class="row">
             <div class="col-md-12">
@@ -48,7 +48,7 @@
                        ng-model="newProblemType.name"
                        ng-maxlength="255"
                        required>
-              <div class="help-block" 
+              <div class="help-block"
                    ng-messages="newProblemTypeForm.problem_type.$error"
                    ng-show="newProblemTypeForm.problem_type.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -65,7 +65,7 @@
                      class="form-control"
                      name="radius"
                      ng-model="newProblemType.radius"
-                     ng-minlength="1"
+                     ng-maxlength="255"
                      required>
               <div class="help-block" ng-messages="newProblemTypeForm.radius.$error" ng-show="newProblemTypeForm.radius.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -76,7 +76,7 @@
         <div class="row">
             <div class="col-md-12">
               <div ngf-drop ngf-resize="{width: 50, height: 50, quality: .8, type: 'image/png', ratio: '1:1', centerCrop: true}">
-                  <img ngf-src="newProblemType.picFile" 
+                  <img ngf-src="newProblemType.picFile"
                        class="thumbPhoto center-block">
               </div>
             </div>
@@ -84,20 +84,19 @@
         <div class="form-group" >
           <div class="row">
             <div class="col-md-8 col-sm-8">
-              <button type = "file" 
-                      class="btn btn-info photo-btn add pull-left" 
+              <button type = "file"
+                      class="btn btn-info photo-btn add pull-left"
                       ngf-select=""
                       ng-model="newProblemType.picFile"
                       ngf-resize="{quality: .8, type: 'image/png'}"
-                      name="picture" 
-                      accept="image/*" 
+                      name="picture"
+                      accept="image/*"
                       ngf-pattern="'image/*'"
-                      ngf-max-size="200KB" 
                       required="">Оберіть лого</button>
             </div>
             <div class="col-md-3 col-sm-3">
-              <button type="sumbit" 
-                      class="btn add_button btn-primary btn-border pull-right" 
+              <button type="sumbit"
+                      class="btn add_button btn-primary btn-border pull-right"
                       ng-click="addProblemSub=true">додати</button>
             </div>
           </div>
@@ -105,10 +104,10 @@
       </form>
   </modal>
   <modal title="Редагувати тип проблем" visible="editProblemTypeModal">
-      <form  ng-submit="editProblemSubmit(editProblemTypeObj)" 
+      <form  ng-submit="editProblemSubmit(editProblemTypeObj)"
              ng-init="showPhoto=false"
              name="editProblemForm" novalidate>
-        <div class="form-group" 
+        <div class="form-group"
              ng-class="{'has-error': (editProblemForm.problem_type.$touched ||
                       editProblemSub)&& editProblemForm.problem_type.$invalid }">
           <div class="row">
@@ -120,7 +119,7 @@
                        ng-model="editProblemTypeObj.name"
                        ng-maxlength="255"
                        required/>
-              <div class="help-block" 
+              <div class="help-block"
                    ng-messages="editProblemForm.problem_type.$error"
                    ng-show="editProblemForm.problem_type.$touched || editProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -149,10 +148,10 @@
         <div class="row">
             <div class="col-md-12">
               <div ngf-drop ngf-resize="{width: 20, height: 20, quality: .8, type: 'image/png',  ratio: '1:1', centerCrop: true}">
-                  <img ng-src="/image/markers/{{editProblemTypeObj.picture}}" 
+                  <img ng-src="/image/markers/{{editProblemTypeObj.picture}}"
                        ng-if="showPhoto==false"
                        class="thumbPhoto center-block"/>
-                  <img ngf-src="editProblemTypeObj.picFile" 
+                  <img ngf-src="editProblemTypeObj.picFile"
                        ng-if="showPhoto==true"
                        class="thumbPhoto center-block"/>
               </div>
@@ -161,21 +160,21 @@
         <div class="form-group" >
           <div class="row">
             <div class="col-md-8 col-sm-8">
-              <button type = "file" 
-                      class="btn btn-info photo-btn add pull-left" 
+              <button type = "file"
+                      class="btn btn-info photo-btn add pull-left"
                       ngf-select=""
                       ng-model="editProblemTypeObj.picFile"
                       ngf-resize="{quality: .8, type: 'image/png'}"
-                      name="picture" 
-                      accept="image/*" 
+                      name="picture"
+                      accept="image/*"
                       ngf-pattern="'image/*'"
                       ngf-max-size="200KB"
                       ng-click="showPhoto=true"
                       required="">Оберіть лого</button>
             </div>
             <div class="col-md-3 col-sm-4">
-              <button type="sumbit" 
-                      class="btn add_button btn-primary btn-border pull-left" 
+              <button type="sumbit"
+                      class="btn add_button btn-primary btn-border pull-left"
                       ng-click="editProblemSub=true">додати</button>
             </div>
           </div>

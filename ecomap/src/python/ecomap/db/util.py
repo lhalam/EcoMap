@@ -1369,6 +1369,24 @@ def add_problem_type(picture, name, radius):
 
 
 @retry_query(tries=3, delay=1)
+def get_all_subscriptions(user_id, problem_id):
+    """Return user, found by email.
+    :params email: user email
+    :retrun: tuple with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT * FROM `subscription`
+                WHERE `user_id`=%s AND `problem_id`=%s;
+                """
+        cursor.execute(query, (user_id, problem_id))
+        return cursor.fetchone()
+
+def get_exist_subscriptions(user_id, problem_id):
+    return bool(get_all_subscriptions(user_id, problem_id))
+
+
+@retry_query(tries=3, delay=1)
 def subscription_post(problem_id, user_id, date_subscriptions):
     """This method adds problem into db.
        :params: title - new title
@@ -1381,11 +1399,12 @@ def subscription_post(problem_id, user_id, date_subscriptions):
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
         cursor = conn.cursor()
-        query = """INSERT INTO `subscription`
-                   (`problem_id`, `user_id`, `date_subscriptions`)
-                   VALUES (%s, %s, %s);
-                """
-        cursor.execute(query, (problem_id, user_id, date_subscriptions))
+        if (get_exist_subscriptions(user_id, problem_id) == False):
+            query = """INSERT INTO `subscription`
+                       (`problem_id`, `user_id`, `date_subscriptions`)
+                       VALUES (%s, %s, %s);
+                    """
+            cursor.execute(query, (problem_id, user_id, date_subscriptions))
         last_id = cursor.lastrowid
         return last_id
 

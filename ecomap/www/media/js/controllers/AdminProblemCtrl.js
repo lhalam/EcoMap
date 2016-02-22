@@ -75,7 +75,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
       }, function errorCallback(response) {
         if (arguments[0]['data']['msg']=='Incorrect data')
           $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
-        if (arguments[0]['data']['msg']=='Wrong data')
+        if (arguments[0]['data']['msg']=='Incorrect photo')
           $scope.msg.createError('типу проблеми', $scope.msgError['incorrectPhoto']);
       })
     };

@@ -1,18 +1,19 @@
+# -*- coding: utf-8 -*-
 """Module contains routes, used for admin page."""
 import os
 import json
-import os
+import datetime
 
-from flask import request, jsonify, Response, session
 from flask_login import login_required
-
 from werkzeug import secure_filename
+from flask import request, jsonify, Response, session
 
 from ecomap import validator
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
-from werkzeug import secure_filename
+
+FILE_UPLOAD_SIZE = 204800
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -900,11 +901,11 @@ def delete_problem_type():
             os.remove(os.path.join(f_path, file_name[0]))
         db.delete_problem_type(data['problem_type_id'])
         if not db.get_problem_type_by_id(data['problem_type_id']):
-            response = jsonify(msg='Success'), 200
+            response = jsonify(msg='Дані видалено успішно!'), 200
         else:
-            response = jsonify(msg='Wrong data'), 400
+            response = jsonify(msg='Дані не видалено!'), 400
     else:
-        response = jsonify(msg='Incorrect data'), 400
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
@@ -912,8 +913,63 @@ def delete_problem_type():
 @auto.doc()
 @login_required
 def add_problem_type():
-    #TO DO docstring
-    """Function which add problem type's name, name and radius by it id.
+    """Function which add problem type.
+
+    :rtype: JSON
+    :request args: `{problem_type: "new_name",
+    problem_type_radius:10, problem_type_id:'new_image.png'}`
+    :returnn
+        - If request data is invalid:
+            ``{'status': False, 'error': [list of errors]}``
+        - If all ok:
+            ``{'status': 'success', 'edited': 'problem_type_name'}``
+
+    :statuscode 400: if request is invalid
+    :statuscode 200: if no errors
+
+    """
+    data = request.form
+    valid = validator.problem_type_post(data)
+    # create template name for logo
+    basename = 'problem_type_logo'
+    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    template = "_".join([basename, suffix])
+    # to get file size without changing it
+    logo = request.files['file']
+    old_file_position = request.files['file'].tell()
+    request.files['file'].seek(0, os.SEEK_END)
+    size = request.files['file'].tell()
+    request.files['file'].seek(old_file_position, os.SEEK_SET)
+    if size > FILE_UPLOAD_SIZE:
+        return jsonify(msg='Розмір файлу завеликий!'), 400
+    # validation
+    if valid['status']:
+        if db.get_problem_type_by_name(data['problem_type_name']):
+            response = jsonify(msg='Дане ім’я вже зарезервоване!'), 400
+        else:
+            extension = '.png'
+            static_url = '/media/image/markers'
+            f_path = os.environ['STATICROOT'] + static_url
+            fname = secure_filename(logo.filename)
+            file_name = template + fname
+            if logo and extension in file_name:
+                logo.save(os.path.join(f_path, file_name))
+                db.add_problem_type(file_name, data['problem_type_name'],
+                                    data['problem_type_radius'])
+                response = jsonify(msg='Тип проблеми успішно додано!'), 200
+            else:
+                response = jsonify(msg='Розширення файлу має бути .png!'), 400
+    else:
+        response = jsonify(msg='Так як дані невірні!'), 400
+
+    return response
+
+
+@app.route('/api/problem_type', methods=['PUT'])
+@auto.doc()
+@login_required
+def edit_problem_type():
+    """Function which edits problem type's name, name and radius by it id.
 
     :rtype: JSON
     :request args: `{problem_type: "new_name", problem_type_id: 5,
@@ -930,96 +986,41 @@ def add_problem_type():
     """
     data = request.form
     valid = validator.problem_type_post(data)
+    # create template name for logo
+    basename = 'problem_type_logo'
+    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    template = "_".join([basename, suffix])
+    # validation
     if valid['status']:
-        if db.get_problem_type_by_name(data['problem_type_name']):
-            response = jsonify(msg='Name already taken'), 400
-        else:
+        if request.files:
+            logo = request.files['file']
+            old_file_position = request.files['file'].tell()
+            request.files['file'].seek(0, os.SEEK_END)
+            size = request.files['file'].tell()
+            request.files['file'].seek(old_file_position, os.SEEK_SET)
+            if size > FILE_UPLOAD_SIZE:
+                return jsonify(msg='Розмір файлу завеликий!'), 400
             extension = '.png'
             static_url = '/media/image/markers'
             f_path = os.environ['STATICROOT'] + static_url
-            img_file = request.files['file']
-            file_name = secure_filename(img_file.filename)
-            if img_file and extension in file_name and not \
-                    os.path.exists(os.path.join(f_path, file_name)):
-                img_file.save(os.path.join(f_path, file_name))
-                problem_type_name = request.form['problem_type_name']
-                problem_type_radius = request.form['problem_type_radius']
-                db.add_problem_type(file_name, problem_type_name,
-                                    problem_type_radius)
-                response = jsonify(msg='Success'), 200
+            fname = secure_filename(logo.filename)
+            file_name = template + fname
+            if logo and extension in file_name:
+                logo.save(os.path.join(f_path, file_name))
+                db.update_problem_type(data['problem_type_id'], file_name,
+                                       data['problem_type_name'],
+                                       data['problem_type_radius'])
+                response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
             else:
-                response = jsonify(msg='Incorrect photo'), 400
-    else:
-        response = jsonify(msg='Incorrect data'), 400
-    # if valid['status']:
-    #     if db.get_problem_type_by_name(data['problem_type_name']):
-    #         response = jsonify(msg='Name already taken'), 400
-    #     else:
-    #         db.add_problem_type(data['problem_type_picture'],
-    #                             data['problem_type_name'],
-    #                             data['problem_type_radius'])
-    #         response = jsonify(msg='Success'), 200
-    # else:
-    #     response = jsonify(msg='Incorrect data'), 400
-    return response
-
-
-@app.route('/api/problem_type', methods=['PUT'])
-@auto.doc()
-@login_required
-def edit_problem_type():
-    #TO DO docstring
-    """Function which edits problem type's name, name and radius by it id.
-
-    :rtype: JSON
-    :request args: `{problem_type: "new_name", problem_type_id: 5,
-    problem_type_radius:10, problem_type_id:'new_image.png'}`
-    :returnn
-        - If request data is invalid:
-            ``{'status': False, 'error': [list of errors]}``
-        - If all ok:
-            ``{'status': 'success', 'edited': 'problem_type_name'}``
-
-    :statuscode 400: if request is invalid
-    :statuscode 200: if no errors
-
-    """
-    # data = {'problem_type_id': request.form['problem_type_id'],
-    #         'problem_type_name': request.form['problem_type_name'],
-    #         'problem_type_radius': request.form['problem_type_radius']}
-    data = request.form
-    valid = validator.problem_type_put(data)
-    if valid['status']:
-        extension = '.png'
-        static_url = '/media/image/markers'
-        f_path = os.environ['STATICROOT'] + static_url
-        img_file = request.files['file']
-        file_name = secure_filename(img_file.filename)
-        if img_file and extension in file_name and not \
-                os.path.exists(os.path.join(f_path, file_name)):
-            img_file.save(os.path.join(f_path, file_name))
-            old_file_name = db.get_problem_type_picture(
-                data['problem_type_id'])
-            if os.path.exists(os.path.join(f_path, old_file_name[0])):
-                os.remove(os.path.join(f_path, old_file_name[0]))
-            problem_type_id = request.form['problem_type_id']
-            problem_type_name = request.form['problem_type_name']
-            problem_type_radius = request.form['problem_type_radius']
-            db.update_problem_type(problem_type_id, file_name,
-                                   problem_type_name, problem_type_radius)
-            response = jsonify(msg='Success'), 200
+                response = jsonify(msg='Розширення файлу має бути .png!'), 400
         else:
-            response = jsonify(msg='Incorrect photo'), 400
-    else:
-        response = jsonify(msg='Incorrect data'), 400
-    # data = secure_filename(img_file.filename)
-    # data = request.get_json()
-    # valid = validator.problem_type_post(data)
-    # if valid['status']:
-    #     db.update_problem_type(data['problem_type_picture'],
-    #                            data['problem_type_name'],
-    #                            data['problem_type_radius'])
+            old_name = db.get_problem_type_picture(data['problem_type_id'])
+            db.update_problem_type(data['problem_type_id'], old_name[0],
+                                   data['problem_type_name'],
+                                   data['problem_type_radius'])
+            response = jsonify(msg='Тип проблеми оновлено!')
 
-    # else:
-    #     response = jsonify(msg='Incorrect data'), 400
+    else:
+        response = jsonify(msg='Так як дані невірні!'), 400
+
     return response

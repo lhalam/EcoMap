@@ -80,7 +80,35 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             $scope.msg.sendError('імейлу')
         })
        
-    }};    
+    }};
+    $scope.cls_edit_nick = "fa fa-pencil";
+    $scope.editMode = true;
+    $scope.changeNick = function () {
+      if ($scope.cls_edit_nick === "fa fa-pencil"){
+          $scope.cls_edit_nick = "fa fa-check";
+          $scope.editMode = false;
+      }
+      else if ($scope.cls_edit_nick === "fa fa-check") {
+          if(!$scope.user.data.nickname) {
+            return;
+          }
+          var data = {};
+          data.id = $cookies.get('id');
+          $http({
+          method: 'POST',
+          url: '/api/change_nickname',
+          data: {
+            'id': $scope.user.id,
+            'nickname': $scope.user.data.nickname
+          }
+          }).then(function successCallback(response) {
+              $scope.cls_edit_nick = "fa fa-pencil";
+              $scope.editMode = true;
+              toaster.pop('success', 'Псевдонім', 'Псевдонім було успішно змінено!');
+            })
+      };
+    };
+
     $scope.redirect = function(state){
       $state.go(state);
     };

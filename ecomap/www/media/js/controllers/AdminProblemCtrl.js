@@ -30,16 +30,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.newProblemType = {};
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
-<<<<<<< HEAD
         $scope.msg.createError('типу проблеми', arguments[0]['data']['msg']);
-=======
-        if (arguments[0]['data']['msg']=='Name already taken')
-          $scope.msg.createError('типу проблеми', $scope.msgError['alreadyExist']);
-        if (arguments[0]['data']['msg']=='Incorrect data')
-          $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
-         if (arguments[0]['data']['msg']=='Incorrect photo')
-          $scope.msg.createError('типу проблеми', $scope.msgError['incorrectPhoto']);
->>>>>>> 56359b3b43e13596a822d52097c724b8910ab258
       });
     };
 
@@ -76,16 +67,8 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
-<<<<<<< HEAD
         $scope.addProblemTypeModal = false;
         $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
-=======
-        $scope.editProblemTypeModal = false;
-        if (arguments[0]['data']['msg']=='Incorrect data')
-          $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
-        if (arguments[0]['data']['msg']=='Incorrect photo')
-          $scope.msg.createError('типу проблеми', $scope.msgError['incorrectPhoto']);
->>>>>>> 56359b3b43e13596a822d52097c724b8910ab258
       })
     };
 

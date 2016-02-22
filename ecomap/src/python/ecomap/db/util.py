@@ -200,6 +200,19 @@ def change_user_password(user_id, new_password):
 
 
 @retry_query(tries=3, delay=1)
+def change_user_nickname(user_id, new_nickname):
+    """Change user's nickname.
+    :params: new_nickname - new nickname
+             user_id - id of user
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `nickname`=%s WHERE `id`=%s;"""
+        cursor.execute(query, (new_nickname, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
 def get_user_role_by_email(email):
     """Get all resources.
     :return: tuple of resources

@@ -67,7 +67,9 @@
                      ng-model="newProblemType.radius"
                      ng-minlength="1"
                      required>
-              <div class="help-block" ng-messages="newProblemTypeForm.radius.$error" ng-show="newProblemTypeForm.radius.$touched || addProblemSub">
+              <div class="help-block" 
+                   ng-messages="newProblemTypeForm.radius.$error" 
+                   ng-show="newProblemTypeForm.radius.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
@@ -105,8 +107,7 @@
       </form>
   </modal>
   <modal title="Редагувати тип проблем" visible="editProblemTypeModal">
-      <form  ng-submit="editProblemSubmit(editProblemTypeObj)" 
-             ng-init="showPhoto=false"
+      <form  ng-submit="editProblemSubmit(editProblemTypeObj)"
              name="editProblemForm" novalidate>
         <div class="form-group" 
              ng-class="{'has-error': (editProblemForm.problem_type.$touched ||
@@ -149,11 +150,7 @@
         <div class="row">
             <div class="col-md-12">
               <div ngf-drop ngf-resize="{width: 20, height: 20, quality: .8, type: 'image/png',  ratio: '1:1', centerCrop: true}">
-                  <img ng-src="/image/markers/{{editProblemTypeObj.picture}}" 
-                       ng-if="showPhoto==false"
-                       class="thumbPhoto center-block"/>
-                  <img ngf-src="editProblemTypeObj.picFile" 
-                       ng-if="showPhoto==true"
+                  <img ngf-src="editProblemTypeObj.picFile"
                        class="thumbPhoto center-block"/>
               </div>
             </div>
@@ -170,7 +167,6 @@
                       accept="image/*" 
                       ngf-pattern="'image/*'"
                       ngf-max-size="200KB"
-                      ng-click="showPhoto=true"
                       required="">Оберіть лого</button>
             </div>
             <div class="col-md-3 col-sm-4">

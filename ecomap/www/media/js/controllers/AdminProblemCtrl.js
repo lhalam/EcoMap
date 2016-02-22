@@ -105,7 +105,10 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.loadProblemType();
         $scope.msg.deleteSuccess('типу проблеми');
       }, function errorCallback(response) {
-        $scope.msg.deleteError('типу проблеми', $scope.msgError['alreadyBinded']);
+        if (arguments[0]['data']['msg']=='Incorrect data')
+          $scope.msg.deleteError('типу проблеми', $scope.msgError['incorectData']);
+        if (arguments[0]['data']['msg']=='Wrong data')
+          $scope.msg.deleteError('типу проблеми', $scope.msgError['couldntDelete']);
       })
     };
 

@@ -150,8 +150,8 @@
         <div class="row">
             <div class="col-md-12">
               <div ngf-drop ngf-resize="{width: 20, height: 20, quality: .8, type: 'image/png',  ratio: '1:1', centerCrop: true}">
-                  <img ngf-src="editProblemTypeObj.picFile"
-                       class="thumbPhoto center-block"/>
+                  <img ngf-src="editProblemTypeObj.picFile" ng-src="/image/markers/{{editProblemTypeObj.picture}}"
+                  class="thumbPhoto center-block ng-show"/>
               </div>
             </div>
         </div>
@@ -161,11 +161,12 @@
             <div class="col-md-8 col-sm-8">
               <button type = "file" 
                       class="btn btn-info photo-btn add add_logo pull-left" 
-                      ngf-select=""
+                      ngf-select="true"
                       ng-model="editProblemTypeObj.picFile"
                       ngf-resize="{quality: .8, type: 'image/png'}"
-                      name="picture" 
-                      accept="image/*" 
+                      name="picture"
+                      accept="image/*"
+                      ngf-change="upload(editProblemTypeObj.picture, editProblemTypeObj.picFile)"
                       ngf-pattern="'image/*'"
                       required="">Оберіть лого</button>
             </div>

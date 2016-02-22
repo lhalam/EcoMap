@@ -3,7 +3,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
 
     $scope.msg = msg;
     $scope.msgError = msgError;
-
     $scope.newProblemType = {};
 
     $scope.addProblemTypeModal = false;
@@ -62,7 +61,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         'Cache-Control': 'no-cache'
       },
       data: {
-        file: editProblemTypeObj.picFile,
+        file: editProblemTypeObj.picFile || editProblemTypeObj.picture,
         problem_type_name: editProblemTypeObj.name,
         problem_type_radius: editProblemTypeObj.radius,
         problem_type_id: editProblemTypeObj.id,
@@ -73,6 +72,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
+        $scope.editProblemTypeModal = false;
         if (arguments[0]['data']['msg']=='Incorrect data')
           $scope.msg.createError('типу проблеми', $scope.msgError['incorectData']);
         if (arguments[0]['data']['msg']=='Incorrect photo')

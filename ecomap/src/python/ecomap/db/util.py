@@ -1369,7 +1369,7 @@ def add_problem_type(picture, name, radius):
 
 
 @retry_query(tries=3, delay=1)
-def get_all_subscriptions(user_id, problem_id):
+def get_subscription_by_user_id(user_id, problem_id):
     """Return user, found by email.
     :params email: user email
     :retrun: tuple with user info
@@ -1382,8 +1382,8 @@ def get_all_subscriptions(user_id, problem_id):
         cursor.execute(query, (user_id, problem_id))
         return cursor.fetchone()
 
-def get_exist_subscriptions(user_id, problem_id):
-    return bool(get_all_subscriptions(user_id, problem_id))
+def check_exist_subscriptions(user_id, problem_id):
+    return bool(get_subscription_by_user_id(user_id, problem_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1399,7 +1399,7 @@ def subscription_post(problem_id, user_id, date_subscriptions):
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
         cursor = conn.cursor()
-        if (get_exist_subscriptions(user_id, problem_id) == False):
+        if (check_exist_subscriptions(user_id, problem_id) == False):
             query = """INSERT INTO `subscription`
                        (`problem_id`, `user_id`, `date_subscriptions`)
                        VALUES (%s, %s, %s);

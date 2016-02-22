@@ -44,10 +44,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
       $scope.editProblemTypeModal = true;
     }
     $scope.editProblemSubmit = function(editProblemTypeObj){
-      if (!editProblemTypeObj.name || !editProblemTypeObj.radius) {
-        $scope.msg.editError('типу проблеми', $scope.msgError['incorectData']);
-        return;
-      }
       Upload.upload({
       url: '/api/problem_type',
       method: 'PUT',
@@ -56,7 +52,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         'Cache-Control': 'no-cache'
       },
       data: {
-        file: editProblemTypeObj.picFile || editProblemTypeObj.picture,
+        file: editProblemTypeObj.picFile,
         problem_type_name: editProblemTypeObj.name,
         problem_type_radius: editProblemTypeObj.radius,
         problem_type_id: editProblemTypeObj.id,
@@ -67,7 +63,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
-        $scope.addProblemTypeModal = false;
+        $scope.editProblemTypeModal = false;
         $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
       })
     };

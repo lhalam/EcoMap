@@ -918,7 +918,7 @@ def add_problem_type():
     :rtype: JSON
     :request args: `{problem_type: "new_name",
     problem_type_radius:10, problem_type_id:'new_image.png'}`
-    :returnn
+    :return:
         - If request data is invalid:
             ``{'status': False, 'error': [list of errors]}``
         - If all ok:
@@ -1007,6 +1007,9 @@ def edit_problem_type():
             file_name = template + fname
             if logo and extension in file_name:
                 logo.save(os.path.join(f_path, file_name))
+                old_name = db.get_problem_type_picture(data['problem_type_id'])
+                if os.path.exists(os.path.join(f_path, old_name[0])):
+                    os.remove(os.path.join(f_path, old_name[0]))
                 db.update_problem_type(data['problem_type_id'], file_name,
                                        data['problem_type_name'],
                                        data['problem_type_radius'])

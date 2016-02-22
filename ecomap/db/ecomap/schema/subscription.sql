@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS `subscription` (
   `problem_id` int(10) unsigned NOT NUll, # problem, wich was voted
   `user_id` int(10) unsigned NOT NULL ,   # user who has voted
   `date_subscriptions` int(11) YES NULL ,
-  `severity` enum('1','2','3','4','5') YES NULL ,
+  `severity` enum('1', '2', '3', '4', '5') NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

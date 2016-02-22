@@ -83,23 +83,23 @@
               </div>
             </div>
         </div>
+        <p class="note">*Розмір лого не повинен перевищувати 200KB</p>
         <div class="form-group" >
           <div class="row">
             <div class="col-md-8 col-sm-8">
               <button type = "file" 
-                      class="btn btn-info photo-btn add pull-left" 
+                      class="btn btn-info photo-btn add add_logo pull-left" 
                       ngf-select=""
                       ng-model="newProblemType.picFile"
                       ngf-resize="{quality: .8, type: 'image/png'}"
                       name="picture" 
                       accept="image/*" 
-                      ngf-pattern="'image/*'"
-                      ngf-max-size="200KB" 
+                      ngf-pattern="'image/*'" 
                       required="">Оберіть лого</button>
             </div>
             <div class="col-md-3 col-sm-3">
               <button type="sumbit" 
-                      class="btn add_button btn-primary btn-border pull-right" 
+                      class="btn add_button btn-primary btn-border add_logo pull-right" 
                       ng-click="addProblemSub=true">додати</button>
             </div>
           </div>
@@ -155,23 +155,23 @@
               </div>
             </div>
         </div>
+        <p class="note">*Розмір лого не повинен перевищувати 200KB</p>
         <div class="form-group" >
           <div class="row">
             <div class="col-md-8 col-sm-8">
               <button type = "file" 
-                      class="btn btn-info photo-btn add pull-left" 
+                      class="btn btn-info photo-btn add add_logo pull-left" 
                       ngf-select=""
                       ng-model="editProblemTypeObj.picFile"
                       ngf-resize="{quality: .8, type: 'image/png'}"
                       name="picture" 
                       accept="image/*" 
                       ngf-pattern="'image/*'"
-                      ngf-max-size="200KB"
                       required="">Оберіть лого</button>
             </div>
-            <div class="col-md-3 col-sm-4">
+            <div class="col-md-2 col-sm-4">
               <button type="sumbit" 
-                      class="btn add_button btn-primary btn-border pull-left" 
+                      class="btn add_button btn-primary add_logo_add btn-border pull-left" 
                       ng-click="editProblemSub=true">додати</button>
             </div>
           </div>

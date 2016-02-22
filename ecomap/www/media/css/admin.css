@@ -43,3 +43,16 @@ button{
     margin-top: 10px;
     margin-right: 5px;
 }
+.add_logo{
+    margin-top:0;
+}
+.add_logo_add{
+    margin-top:0;
+    margin-left:25px;
+}
+.note{
+    color: grey;
+    font-size: 12px;
+    margin-top:10px;
+    margin-bottom:0;
+}

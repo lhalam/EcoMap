@@ -395,6 +395,7 @@ def get_comments(problem_id):
                         mimetype='application/json')
     return response
 
+
 @app.route('/api/usersSubscriptions/<int:user_id>', methods=['GET'])
 def get_user_subscriptions(user_id):
     """This method retrieves all user's subscriptions from db and shows it in user
@@ -420,16 +421,18 @@ def get_user_subscriptions(user_id):
     """
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
-    subscription_tuple = db.get_user_subscriptions(user_id, offset, per_page)
+    subscription_tuple = db.get_subscriptions(user_id, offset, per_page)
     count = db.count_user_subscriptions(user_id)
     subscriptions_list = []
     total_count = {}
     logger.info(subscription_tuple)
     for subscription in subscription_tuple:
         subscriptions_list.append({'id': subscription[0],
-                                   'problem_id': subscription[1],
-                                   'user_id': subscription[2],
-                                   'date_subscription': subscription[3]})
+                                    'title': subscription[1],
+                                    'problem_type_id': subscription[2],
+                                    'status': subscription[3],
+                                    'date': subscription[4],                                   
+                                    'date_subscription': subscription[5]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([subscriptions_list, [total_count]]),

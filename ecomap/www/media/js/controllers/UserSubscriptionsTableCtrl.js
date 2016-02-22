@@ -40,21 +40,19 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$http', '$cookies',
         $scope.problemsLength = $scope.selectCount['selected'];
         $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
         $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
-          var stepCount = $scope.selectCount['selected']
-          if ($cookies.get('role')=='user'){
-            $http({
-              method: 'GET',
-                url: 'api/usersSubscriptions/' + user_id,
-                params: {
-                  per_page: $scope.selectCount['selected'],
-                  offset: $scope.selectCount['selected'] * newValue - stepCount,
-                }
-              }).then(function successCallback(response) {
-                $scope.problems = response.data[0];
-                $scope.problemsLength = response.data[1][0]['total_problem_count'];
-                $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-              })
-            }
+          var stepCount = $scope.selectCount['selected']          
+          $http({
+            method: 'GET',
+              url: 'api/usersSubscriptions/' + user_id,
+              params: {
+                per_page: $scope.selectCount['selected'],
+                offset: $scope.selectCount['selected'] * newValue - stepCount,
+              }
+            }).then(function successCallback(response) {
+              $scope.subscriptions = response.data[0];
+              $scope.problemsLength = response.data[1][0]['total_problem_count'];
+              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+            })            
           })
 };
 $scope.loadProblems();

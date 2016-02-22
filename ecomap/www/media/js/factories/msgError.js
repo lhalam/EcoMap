@@ -4,6 +4,7 @@ app.factory('msgError', function(toaster) {
     'alreadyBinded': 'Так як дані вже прив’язані.',
     'incorectData': 'Так як дані невірні.',
     'incorrectPhoto': ' Неправильний формат фото.',
-    'incorrectSize': ' Розмір файлу не повинен перевищувати 200 кілобайт.'
+    'incorrectSize': ' Розмір файлу не повинен перевищувати 200 кілобайт.',
+    'couldntDelete': ' Файл не видалено.'
   }
 })

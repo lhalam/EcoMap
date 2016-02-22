@@ -45,6 +45,30 @@ def change_password():
     return response
 
 
+@app.route('/api/change_nickname', methods=['POST'])
+@auto.doc()
+@login_required
+def change_nickname():
+    """Function, used to change user nickname.
+
+    :rtype: JSON
+    :request agrs: `{id: "6", nickname: "newnickname"}`
+    :return:
+
+        :statuscode 400: request is invalid 
+        :statuscode 200: nickname was successfully changed
+
+    """
+    response = jsonify(), 400
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        user = ecomap_user.get_user_by_id(data['id'])
+        if user:
+            user.change_nickname(data['nickname'])
+            response = jsonify(), 200
+    return response
+
+
 @app.route('/api/user_detailed_info/<int:user_id>')
 @auto.doc()
 @login_required

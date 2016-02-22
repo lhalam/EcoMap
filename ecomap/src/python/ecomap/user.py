@@ -72,6 +72,10 @@ class User(UserMixin):
         new_pass_salted = hash_pass(new_pass)
         util.change_user_password(self.uid, new_pass_salted)
 
+    def change_nickname(self, new_nickname):
+        """Method which changes user's nickname."""
+        util.change_user_nickname(self.uid, new_nickname)
+
     def is_active(self):
         """Overloaded method from UserMixin.
         Since we don't have activation mechanism, we just

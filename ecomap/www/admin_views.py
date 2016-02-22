@@ -894,11 +894,16 @@ def delete_problem_type():
     data = request.get_json()
     valid = validator.problem_type_delete(data)
     if valid['status']:
+        file_name = db.get_problem_type_picture(data['problem_type_id'])
+        static_url = '/media/image/markers'
+        f_path = os.environ['STATICROOT'] + static_url
+        if os.path.exists(os.path.join(f_path, file_name[0])):
+            os.remove(os.path.join(f_path, file_name[0]))
         db.delete_problem_type(data['problem_type_id'])
         if not db.get_problem_type_by_id(data['problem_type_id']):
             response = jsonify(msg='Success'), 200
         else:
-            response = jsonify(error='Cannot delete!'), 400
+            response = jsonify(msg='Wrong data'), 400
     else:
         response = jsonify(msg='Incorrect data'), 400
     return response
@@ -964,7 +969,6 @@ def add_problem_type():
 @auto.doc()
 @login_required
 def edit_problem_type():
-    #TO DO docstring
     """Function which edits problem type's name, name and radius by it id.
 
     :rtype: JSON

@@ -200,6 +200,19 @@ def change_user_password(user_id, new_password):
 
 
 @retry_query(tries=3, delay=1)
+def change_user_nickname(user_id, new_nickname):
+    """Change user's nickname.
+    :params: new_nickname - new nickname
+             user_id - id of user
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `user` SET `nickname`=%s WHERE `id`=%s;"""
+        cursor.execute(query, (new_nickname, user_id))
+        conn.commit()
+
+
+@retry_query(tries=3, delay=1)
 def get_user_role_by_email(email):
     """Get all resources.
     :return: tuple of resources
@@ -1246,7 +1259,7 @@ def change_activity_to_anon(problem_id):
 
 @retry_query(tries=3, delay=1)
 def delete_user(user_id):
-    """Deletes user_id by id from JSON
+    """Deletes user_id by id from JSON.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1258,7 +1271,7 @@ def delete_user(user_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type():
     """Get problem type.
-       :return: tuple with problem type and radious.
+       :return: tuple with problem type name, picture and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1270,8 +1283,8 @@ def get_problem_type():
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_id(problem_type_id):
     """Get problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type.
+       :return: tuple with problem type name, picture and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1283,8 +1296,8 @@ def get_problem_type_by_id(problem_type_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_name(problem_type_name):
     """Get problem type.
-       :params: name
-       :return: tuple with problem type and radious.
+       :params: problem_type_name - name of problem type.
+       :return: tuple with problem type and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1294,10 +1307,22 @@ def get_problem_type_by_name(problem_type_name):
 
 
 @retry_query(tries=3, delay=1)
+def get_problem_type_picture(problem_type_id):
+    """Get problem type.
+       :params: problem_type_id - id of problem type.
+       :return: tuple with problem type picture.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `picture` FROM `problem_type` WHERE `id`=%s;"""
+        cursor.execute(query, (problem_type_id))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def delete_problem_type(problem_type_id):
     """Delete problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1311,8 +1336,10 @@ def delete_problem_type(problem_type_id):
 @retry_query(tries=3, delay=1)
 def update_problem_type(problem_type_id, picture, name, radius):
     """Update problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type,
+                     picture - picture of problem type,
+                     name - name of problem type,
+                     radius - radius of problem type.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1327,8 +1354,9 @@ def update_problem_type(problem_type_id, picture, name, radius):
 @retry_query(tries=3, delay=1)
 def add_problem_type(picture, name, radius):
     """Insert problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: picture - picture of problem type,
+                     name - name of problem type,
+                     radius - radius of problem type.
     """
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
@@ -1338,6 +1366,24 @@ def add_problem_type(picture, name, radius):
                           VALUES (%s, %s, %s);
                       """
         cursor.execute(query, (picture, name, radius))
+
+
+@retry_query(tries=3, delay=1)
+def get_all_subscriptions(user_id, problem_id):
+    """Return user, found by email.
+    :params email: user email
+    :retrun: tuple with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT * FROM `subscription`
+                WHERE `user_id`=%s AND `problem_id`=%s;
+                """
+        cursor.execute(query, (user_id, problem_id))
+        return cursor.fetchone()
+
+def get_exist_subscriptions(user_id, problem_id):
+    return bool(get_all_subscriptions(user_id, problem_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1353,11 +1399,12 @@ def subscription_post(problem_id, user_id, date_subscriptions):
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
         cursor = conn.cursor()
-        query = """INSERT INTO `subscription`
-                   (`problem_id`, `user_id`, `date_subscriptions`)
-                   VALUES (%s, %s, %s);
-                """
-        cursor.execute(query, (problem_id, user_id, date_subscriptions))
+        if (get_exist_subscriptions(user_id, problem_id) == False):
+            query = """INSERT INTO `subscription`
+                       (`problem_id`, `user_id`, `date_subscriptions`)
+                       VALUES (%s, %s, %s);
+                    """
+            cursor.execute(query, (problem_id, user_id, date_subscriptions))
         last_id = cursor.lastrowid
         return last_id
 
@@ -1380,3 +1427,34 @@ def subscription_delete(user_id, problem_id):
                 """
         cursor.execute(query, (user_id, problem_id))
         last_id = cursor.lastrowid
+
+
+@retry_query(tries=3, delay=1)
+def count_user_subscriptions(user_id):
+    """Count of user's subscription
+    :return: count
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `subscription`
+                where `user_id` =%s;"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_subscriptions(user_id, offset, per_page):
+    """Return all registered users from db.
+    :return: tuples with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status, pr.created_date,
+                   pr.latitude, pr.longitude, pr.proposal, pr.content, pr.is_enabled,
+                   sub.date_subscriptions, sub.severity
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   WHERE sub.user_id=%s LIMIT %s,%s;
+                """
+        cursor.execute(query, (user_id, offset, per_page))
+        return cursor.fetchall()

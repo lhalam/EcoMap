@@ -100,6 +100,7 @@ img-crop canvas {
 .photo-btn.add:hover {
     color: whitesmoke;
     background: #337ab7;
+    margin-top:0;
 }
 
 .photo-btn.remove:hover {
@@ -161,8 +162,18 @@ span.image-err{
     transition: all .2s ease-in-out;
 }
 .thumbPhoto{
-  width: 70px;
-  height: 70px;
+  overflow: hidden;
+    z-index: 2;
+    width: 70px;
+    height: 70px;
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .thumb-descr {

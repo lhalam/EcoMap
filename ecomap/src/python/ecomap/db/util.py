@@ -1246,7 +1246,7 @@ def change_activity_to_anon(problem_id):
 
 @retry_query(tries=3, delay=1)
 def delete_user(user_id):
-    """Deletes user_id by id from JSON
+    """Deletes user_id by id from JSON.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1258,7 +1258,7 @@ def delete_user(user_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type():
     """Get problem type.
-       :return: tuple with problem type and radious.
+       :return: tuple with problem type name, picture and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1270,8 +1270,8 @@ def get_problem_type():
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_id(problem_type_id):
     """Get problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type.
+       :return: tuple with problem type name, picture and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1283,8 +1283,8 @@ def get_problem_type_by_id(problem_type_id):
 @retry_query(tries=3, delay=1)
 def get_problem_type_by_name(problem_type_name):
     """Get problem type.
-       :params: name
-       :return: tuple with problem type and radious.
+       :params: problem_type_name - name of problem type.
+       :return: tuple with problem type and radius.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1294,10 +1294,22 @@ def get_problem_type_by_name(problem_type_name):
 
 
 @retry_query(tries=3, delay=1)
+def get_problem_type_picture(problem_type_id):
+    """Get problem type.
+       :params: problem_type_id - id of problem type.
+       :return: tuple with problem type picture.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `picture` FROM `problem_type` WHERE `id`=%s;"""
+        cursor.execute(query, (problem_type_id))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def delete_problem_type(problem_type_id):
     """Delete problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1311,8 +1323,10 @@ def delete_problem_type(problem_type_id):
 @retry_query(tries=3, delay=1)
 def update_problem_type(problem_type_id, picture, name, radius):
     """Update problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: problem_type_id - id of problem type,
+                     picture - picture of problem type,
+                     name - name of problem type,
+                     radius - radius of problem type.
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
@@ -1327,8 +1341,9 @@ def update_problem_type(problem_type_id, picture, name, radius):
 @retry_query(tries=3, delay=1)
 def add_problem_type(picture, name, radius):
     """Insert problem type.
-       :params: id
-       :return: tuple with problem type and radious.
+       :params: picture - picture of problem type,
+                     name - name of problem type,
+                     radius - radius of problem type.
     """
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)

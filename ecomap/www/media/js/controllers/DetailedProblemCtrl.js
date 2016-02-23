@@ -12,7 +12,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
-      $scope.typeName = response.data[0][0]['name'];
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
     }, function errorCallback(error) {
       $state.go('error404');

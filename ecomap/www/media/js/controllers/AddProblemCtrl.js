@@ -24,30 +24,21 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       'content': '',
       'proposal': ''
     };
+    $scope.problemTypes = [];
+      $scope.loadProblemType = function() {
+      $http({
+        method: 'GET',
+        url: '/api/problem_type',
+      }).then(function successCallback(data) {
+         for (var i = 0; i < data.data.length; i++){
+          $scope.problemTypes.push(data.data[i]);
+          $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'] ;
+      }
+      }, function errorCallback(response) {})
+    };
+    $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
-    $scope.problemTypes = [{
-      name: 'Проблеми лісів',
-      id: 1
-    }, {
-      name: 'Сміттєзвалища',
-      id: 2
-    }, {
-      name: 'Незаконна забудова',
-      id: 3
-    }, {
-      name: 'Проблеми водойм',
-      id: 4
-    }, {
-      name: 'Загрози біорізноманіттю',
-      id: 5
-    }, {
-      name: 'Браконьєрство',
-      id: 6
-    }, {
-      name: 'Інші проблеми',
-      id: 7
-    }];
     $scope.createMarker = function(position) {
       $scope.options = {
         scrollwheel: true
@@ -107,7 +98,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.newProblem.longitude = position.coords.longitude;
         var mapCenter = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
         if (width < 1000) {
-          MapFactory.setCenter(mapCenter, 10);          
+          MapFactory.setCenter(mapCenter, 10);
         } else {
           MapFactory.setCenter(mapCenter, 14);
         }

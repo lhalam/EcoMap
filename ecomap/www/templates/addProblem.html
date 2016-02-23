@@ -43,7 +43,8 @@
       <label for="problem_type_id"  class="control-label">Тип проблеми</label>
       <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
         class="form-control" required>
-        <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
+        <option ng-repeat="type in problemTypes" value="{{ type.id }}"><!-- <img ng-src="type.picture"
+                 class ="img-responsive" alt="Marker for problem"/> --> {{type.name}} </option>
       </select>
       <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="addProblemForm.problem_type_id.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>

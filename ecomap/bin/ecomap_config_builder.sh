@@ -7,7 +7,6 @@ CONFROOT=${PRODROOT}/etc
 PYTHONPATH=$PYSRCROOT
 PYTHON=${PYTHON:-/etc/python}
 PYTHON_EGG_CACHE=${PYTHON_EGG_CACHE:-/tmp/.python-eggs}
-LOGLEVEL=${1:-1}
 export PRODROOT PYSRCROOT PYTHONPATH CONFROOT STATICROOT PYTHON_EGG_CACHE
 
-python ${PYSRCROOT}/ecomap/config_builder.py -v$LOGLEVEL
+python ${PYSRCROOT}/ecomap/config_builder.py $@

@@ -89,7 +89,8 @@ def detailed_problem(problem_id):
             'content': problem_data[2], 'proposal': problem_data[3],
             'severity': problem_data[4], 'status': problem_data[5],
             'latitude': problem_data[6], 'longitude': problem_data[7],
-            'problem_type_id': problem_data[8], 'date': problem_data[9]}
+            'problem_type_id': problem_data[8], 'date': problem_data[9],
+            'name': problem_data[10]}
     else:
         return jsonify({'message': ' resource not exists'}), 404
 

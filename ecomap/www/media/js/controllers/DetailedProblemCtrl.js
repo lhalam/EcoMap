@@ -8,9 +8,11 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
+      console.log(response.data);
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
+      $scope.typeName = response.data[0][0]['name'];
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
     }, function errorCallback(error) {
       $state.go('error404');
@@ -25,18 +27,26 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       };
       return statuses[status];
     };
-    $scope.getProblemType = function(type_id) {
-      var types = {
-        1: 'Проблеми лісів',
-        2: 'Сміттєзвалища',
-        3: 'Незаконна забудова',
-        4: 'Проблеми водойм',
-        5: 'Загрози біорізноманіттю',
-        6: 'Браконьєрство',
-        7: 'Інші проблеми'
-      };
-      return types[type_id];
-    };
+    // $scope.getProblemType = function(type_id) {
+    //   // $http({
+    //   //   method: 'GET',
+    //   //   url: '/api/problem_type',
+
+    //   // }).then(function successCallback(data) {
+    //   //   $scope.Problems = data.data;
+    //   //   var type = {};
+    //   //   angular.forEach (objectToIterate, function(value, key) {
+    //   //     type[$scope.Problems[i]['id']] = $scope.Problems[i]['name'];
+    //   //   });{
+    //   //     console.log($scope.Problems[i]['id'])
+    //   //     type[$scope.Problems[i]['id']] = $scope.Problems[i]['name'];
+    //   //   }
+    //   //   console.log($scope.Problems.length);
+    //   // }, function errorCallback(response) {})
+    //   var types = {1:'forest'}
+       
+    //   return types[type_id];
+    // };
 
     $scope.getMinPhoto = function(url){
       var parts = url.split('.');

@@ -1,5 +1,5 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
-  function($scope, $rootScope, $state, $http, toaster, msg, MapFactory) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
@@ -61,14 +61,23 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
             $scope.comments = response.data;
             comment.text = '';
           })
-        }, function errorCallback() {
-          $scope.msg.addCommentError('коммента');
+        }, function errorCallback(response) {
+         if (response.status===405) {
+          $scope.msg.addCommentAnonimError('коммента');}
+         else{
+          $scope.msg.addCommentError('коммента');}
         });
       } else {
         return;
       }
     }
 
+    $scope.colBs = 'col-lg-8';
+    $scope.hideIconSubsc = true;
+    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user'){
+      $scope.colBs = 'col-lg-4';
+      $scope.hideIconSubsc = false;
+   }
     $scope.cls_eye_subs = "fa fa-eye-slash";    
     $scope.chgEyeSubsc = function(){
       if ($scope.cls_eye_subs === "fa fa-eye-slash"){
@@ -80,6 +89,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
           }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye";
+          $scope.msg.createSuccess('підписки');
         })
         
       }
@@ -92,8 +102,17 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
+          $scope.msg.deleteSuccess('підписки');
         })          
       }
   };
   }
 ]);
+
+
+
+
+
+
+
+

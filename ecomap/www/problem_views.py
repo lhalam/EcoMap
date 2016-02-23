@@ -7,7 +7,7 @@ import PIL
 
 
 from flask import request, jsonify, Response
-from flask_login import current_user
+from flask_login import current_user, login_required
 from PIL import Image
 
 from ecomap import validator
@@ -322,6 +322,7 @@ def problem_photo(problem_id):
 
 
 @app.route('/api/problem/add_comment', methods=['POST'])
+@login_required
 def post_comment():
     """Adds new comment to problem.
 
@@ -431,8 +432,8 @@ def get_user_subscriptions(user_id):
                                     'title': subscription[1],
                                     'problem_type_id': subscription[2],
                                     'status': subscription[3],
-                                    'date': subscription[4],                                   
-                                    'date_subscription': subscription[5]})
+                                    'date': subscription[4] * 1000,
+                                    'date_subscription': subscription[10] * 1000})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([subscriptions_list, [total_count]]),

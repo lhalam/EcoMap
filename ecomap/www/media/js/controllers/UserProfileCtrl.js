@@ -104,7 +104,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
           }).then(function successCallback(response) {
               $scope.cls_edit_nick = "fa fa-pencil";
               $scope.editMode = true;
-              toaster.pop('success', 'Псевдонім', 'Псевдонім було успішно змінено!');
+              $scope.msg.editSuccess('псевдоніму');
             })
       };
     };

@@ -8,7 +8,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
-      console.log(response.data);
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];

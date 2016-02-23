@@ -15,18 +15,7 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
       $scope.selectCount = {
         'selected': '5'
       }
-      $scope.getProblemType = function(type_id) {
-        var types = {
-          1: 'Проблеми лісів',
-          2: 'Сміттєзвалища',
-          3: 'Незаконна забудова',
-          4: 'Проблеми водойм',
-          5: 'Загрози біорізноманіттю',
-          6: 'Браконьєрство',
-          7: 'Інші проблеми'
-        };
-        return types[type_id];
-      };
+
       $scope.getStatus = function(status) {
         var statuses = {
           'Unsolved': 'Не вирішено',

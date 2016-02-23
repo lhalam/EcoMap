@@ -70,7 +70,7 @@
           {{problem.nickname}}</td>
         <td ng-model="problem.title" class="problem-title">{{problem.title}}</td>
         <td ng-model="problem.problem_type_id">
-          {{getProblemType(problem.problem_type_id)}}</td>
+          {{problem.name}}</td>
         <td ng-model="problem.status">{{getStatus(problem.status)}}</td>
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
@@ -114,7 +114,7 @@
         <div class="problem-type">
           <p><strong>Тип проблеми:</strong></p>
           <p ng-model="detailedProblem.problem_type_id">
-            {{getProblemType(detailedProblem.problem_type_id)}}
+            {{detailedProblem.name}}
           </p>
         </div>
         <div class="description">

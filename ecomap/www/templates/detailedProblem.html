@@ -11,12 +11,12 @@
           <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
       </div>
-      <div class="col-lg-4">
+      <div ng-class="colBs">
         <div class="solution unsolved" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
         </div>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-4" ng-hide='hideIconSubsc'>
         <div class='eye_subscription'>
           <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>

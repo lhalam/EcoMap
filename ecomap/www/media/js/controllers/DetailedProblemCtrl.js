@@ -26,26 +26,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
       return statuses[status];
     };
-    // $scope.getProblemType = function(type_id) {
-    //   // $http({
-    //   //   method: 'GET',
-    //   //   url: '/api/problem_type',
-
-    //   // }).then(function successCallback(data) {
-    //   //   $scope.Problems = data.data;
-    //   //   var type = {};
-    //   //   angular.forEach (objectToIterate, function(value, key) {
-    //   //     type[$scope.Problems[i]['id']] = $scope.Problems[i]['name'];
-    //   //   });{
-    //   //     console.log($scope.Problems[i]['id'])
-    //   //     type[$scope.Problems[i]['id']] = $scope.Problems[i]['name'];
-    //   //   }
-    //   //   console.log($scope.Problems.length);
-    //   // }, function errorCallback(response) {})
-    //   var types = {1:'forest'}
-       
-    //   return types[type_id];
-    // };
 
     $scope.getMinPhoto = function(url){
       var parts = url.split('.');

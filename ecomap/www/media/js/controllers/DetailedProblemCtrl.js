@@ -1,5 +1,5 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
-  function($scope, $rootScope, $state, $http, toaster, msg, MapFactory) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
@@ -69,6 +69,12 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       }
     }
 
+    $scope.colBs = 'col-lg-8';
+    $scope.hideIconSubsc = true;
+    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user'){
+      $scope.colBs = 'col-lg-4';
+      $scope.hideIconSubsc = false;
+    }
     $scope.cls_eye_subs = "fa fa-eye-slash";    
     $scope.chgEyeSubsc = function(){
       if ($scope.cls_eye_subs === "fa fa-eye-slash"){

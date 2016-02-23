@@ -860,6 +860,17 @@ def get_problem_type():
     '''The method retrieves all probleme types.
        :rtype: JSON.
        :return: json object with problem types.
+       :JSON sample:
+       ``[{"id": 1,
+        "picture": "1.png",
+        "name": "first problem type",
+        "radius": 10,
+        "email": "email@name.ru"},
+        ....
+        {"id": 7,
+        "picture": "7.png",
+        "name": "sevens problem type",
+        "radius": 20]``.
     '''
     problem_type_tuple = db.get_problem_type()
     problem_type_list = []
@@ -884,12 +895,12 @@ def delete_problem_type():
        :request args: `{problem_type_id: 5}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Page was deleted successfully!'}``
+       ``{'msg': 'Problem type was deleted successfully!'}``
        or
-       ``{'msg': 'Cannot delete'}``
+       ``{'msg': 'Cannot delete'}``.
 
-       :statuscode 400: if request is invalid
-       :statuscode 200: if no errors
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
     '''
     data = request.get_json()
     valid = validator.problem_type_delete(data)
@@ -917,15 +928,13 @@ def add_problem_type():
 
     :rtype: JSON
     :request args: `{problem_type: "new_name",
-    problem_type_radius:10, problem_type_id:'new_image.png'}`
-    :return:
-        - If request data is invalid:
-            ``{'status': False, 'error': [list of errors]}``
-        - If all ok:
-            ``{'status': 'success', 'edited': 'problem_type_name'}``
+    problem_type_radius:10, problem_type_id:'new_image.png'}`.
+    :return: confirmation object.
+    :JSON sample:``{'msg': 'Incorrect data'}``
+    or ``{'msg': 'success'}``.
 
-    :statuscode 400: if request is invalid
-    :statuscode 200: if no errors
+    :statuscode 400: if request is invalid.
+    :statuscode 200: if no errors.
 
     """
     data = request.form
@@ -972,16 +981,13 @@ def edit_problem_type():
     """Function which edits problem type's name, name and radius by it id.
 
     :rtype: JSON
-    :request args: `{problem_type: "new_name", problem_type_id: 5,
-    problem_type_radius:10, problem_type_id:'new_image.png'}`
-    :returnn
-        - If request data is invalid:
-            ``{'status': False, 'error': [list of errors]}``
-        - If all ok:
-            ``{'status': 'success', 'edited': 'problem_type_name'}``
+    :request args: `{problem_type_id: 5}`
+    :return: confirmation object.
+    :JSON sample:``{'msg': 'Incorrect data'}``
+    or ``{'msg': 'success'}``.
 
-    :statuscode 400: if request is invalid
-    :statuscode 200: if no errors
+    :statuscode 400: if request is invalid.
+    :statuscode 200: if no errors.
 
     """
     data = request.form

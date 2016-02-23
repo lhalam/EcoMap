@@ -818,3 +818,19 @@ table.UserProblemTable select{
   width:150px;
   height: 150px;
 }
+
+input[type="radio"]{
+  display: none;
+}
+hr.problems{
+  margin-top:0;
+}
+label[for="my_problem"], label[for="all_problem"]{
+  margin-bottom:10px;
+  margin-right: 10px;
+  font-weight: normal;
+  color: grey;
+}
+label[for="my_problem"].check, label[for="all_problem"].check{
+  color:#337ab7;
+}

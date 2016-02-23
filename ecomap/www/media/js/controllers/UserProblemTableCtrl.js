@@ -12,6 +12,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       $scope.selectCount = {
         'selected': '5'
       }  
+
+      $scope.problem_view = false;
+
+      $scope.newValueChoose = function(value){
+        $scope.problem_view = value;
+        $scope.loadProblems();
+      }
+
       $scope.getProblemType = function(type_id) {
         var types = {
           1: 'Проблеми лісів',
@@ -32,6 +40,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         return statuses[status];
       };
       $scope.showTable = false;
+      $scope.nickname = false;
       $scope.loadProblems = function() {
         user_id = $cookies.get('id');
         $scope.msg = msg;
@@ -41,8 +50,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
         $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
           var stepCount = $scope.selectCount['selected']
-          if ($cookies.get('role')=='admin'){
-            $scope.showTable = true;
+          if ($cookies.get('role')=='admin' || $scope.problem_view){
+            if($cookies.get('role')=='admin'){
+              $scope.showTable = true;
+            } else {
+              $scope.nickname = true;
+            }
             $http({
               method: 'GET',
               url: 'api/all_usersProblem',
@@ -53,9 +66,11 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }).then(function successCallback(response) {
               $scope.problems = response.data[0];
               $scope.problemsLength = response.data[1][0]['total_problem_count'];
+              $scope.problemsLeng = response.data[1][0]['total_problem_count'];
               $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
             })
           } else {
+            $scope.nickname = false;
             $http({
               method: 'GET',
               url: 'api/usersProblem/' + user_id,
@@ -66,6 +81,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
+             $scope.problemsLeng = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
           }

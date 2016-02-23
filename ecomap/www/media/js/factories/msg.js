@@ -30,5 +30,8 @@ app.factory('msg', function(toaster) {
     addCommentError: function(msg, type) {
       toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
     },
+    addCommentAnonimError: function(msg, type) {
+      toaster.pop('error', 'Додавання', 'Виникла помилка при додаванні '+ msg +' необхідно зареєструватися!');
+    },
   };
 });

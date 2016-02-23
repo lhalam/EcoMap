@@ -5,7 +5,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
     $scope.msg = msg;
     $scope.tabs = [
       {heading: "Профіль користувача", route: "user_profile.info", active: false, showToUser: true},
-      {heading: "Мої проблеми", route: "user_profile.problems", active: false, showToUser: true},
+      {heading: "Ecomap проблеми", route: "user_profile.problems", active: false, showToUser: true},
       {heading: "Мої коментарі", route: "user_profile.comments", active: false, showToUser: true},
       {heading: "Мої підписки", route: "user_profile.subscriptions", active: false, showToUser: true},
       {heading: "Редагування F.A.Q.", route: "user_profile.faq", active: false, showToUser: false}
@@ -104,7 +104,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
           }).then(function successCallback(response) {
               $scope.cls_edit_nick = "fa fa-pencil";
               $scope.editMode = true;
-              toaster.pop('success', 'Псевдонім', 'Псевдонім було успішно змінено!');
+              $scope.msg.editSuccess('псевдоніму');
             })
       };
     };

@@ -829,10 +829,12 @@ def get_problem_by_id(problem_id):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `content`, `proposal`,
-                   `severity`, `status`, `latitude`,`longitude`,
-                   `problem_type_id`, `created_date`
-                   FROM `problem` WHERE `id`=%s;
+        query = """SELECT p.id, p.title, p.content, p.proposal,
+                   p.severity, p.status, p.latitude,p.longitude,
+                   p.problem_type_id, p.created_date, t.name
+                   FROM `problem` AS p INNER JOIN `problem_type` AS t
+                   ON p.problem_type_id=t.id
+                   WHERE p.id=%s;
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()

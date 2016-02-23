@@ -8,6 +8,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
+      console.log(response.data);
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
@@ -24,18 +25,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'Solved': 'Вирішено'
       };
       return statuses[status];
-    };
-    $scope.getProblemType = function(type_id) {
-      var types = {
-        1: 'Проблеми лісів',
-        2: 'Сміттєзвалища',
-        3: 'Незаконна забудова',
-        4: 'Проблеми водойм',
-        5: 'Загрози біорізноманіттю',
-        6: 'Браконьєрство',
-        7: 'Інші проблеми'
-      };
-      return types[type_id];
     };
 
     $scope.getMinPhoto = function(url){

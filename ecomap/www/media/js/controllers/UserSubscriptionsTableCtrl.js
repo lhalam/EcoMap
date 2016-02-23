@@ -1,8 +1,11 @@
-app.controller('UserSubscriptionsTableCtrl', ['$scope', '$http', '$cookies',
-  function($scope, $http, $cookies) {
+app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$cookies',
+  function($scope, $state, $http, $cookies) {
       $scope.sortType = 'id'; // set the default sort type
       $scope.sortReverse = false;  // set the default sort order
       $scope.searchFish = '';
+      $scope.close = function() {
+        $state.reload();
+      };
       $scope.selectCountObj = {
         '1': '5',
         '2': '10',
@@ -59,6 +62,7 @@ $scope.loadProblems();
 $scope.detailedInfoModal = false;
 $scope.triggerDetailModal = function(problem_id) {
   $scope.detailedInfoModal = !$scope.detailedInfoModal;
+  $scope.current_problem_id = problem_id;
   $http({
     method: 'GET',
     url: '/api/problem_detailed_info/' + problem_id
@@ -67,5 +71,32 @@ $scope.triggerDetailModal = function(problem_id) {
     $scope.comments = response.data[3];
   })
 }
+
+  $scope.cls_eye_subs = "fa fa-eye";    
+  $scope.chgEyeSubsc = function(){
+    if ($scope.cls_eye_subs === "fa fa-eye-slash"){
+      $http({
+        method: 'POST',
+        url: '/api/subscription_post',
+        data: {
+          'problem_id': $scope.current_problem_id
+        }
+      }).then(function successCallback(response) {
+        $scope.cls_eye_subs = "fa fa-eye";
+      })
+      
+    }
+    else if ($scope.cls_eye_subs = "fa fa-eye") {
+      $http({
+      method: 'DELETE',
+      url: '/api/subscription_delete',
+      params: {
+        problem_id: $scope.current_problem_id
+      }
+      }).then(function successCallback(response) {
+        $scope.cls_eye_subs = "fa fa-eye-slash";
+      })          
+    }
+};
 }
 ]);

@@ -42,6 +42,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         'radius': radius
       };
       $scope.editProblemTypeModal = true;
+      $scope.pathLogo = '/image/markers/'+ $scope.editProblemTypeObj.picture;
     }
     $scope.editProblemSubmit = function(editProblemTypeObj){
       Upload.upload({

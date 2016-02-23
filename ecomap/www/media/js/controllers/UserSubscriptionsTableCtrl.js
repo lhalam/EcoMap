@@ -83,6 +83,7 @@ $scope.triggerDetailModal = function(problem_id) {
         }
       }).then(function successCallback(response) {
         $scope.cls_eye_subs = "fa fa-eye";
+        $scope.msg.createSuccess('підписки');
       })
       
     }
@@ -95,6 +96,7 @@ $scope.triggerDetailModal = function(problem_id) {
       }
       }).then(function successCallback(response) {
         $scope.cls_eye_subs = "fa fa-eye-slash";
+        $scope.msg.deleteSuccess('підписки');
       })          
     }
 };

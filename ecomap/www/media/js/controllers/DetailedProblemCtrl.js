@@ -83,6 +83,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
           }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye";
+          $scope.msg.createSuccess('підписки');
         })
         
       }
@@ -95,6 +96,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
         }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
+          $scope.msg.deleteSuccess('підписки');
         })          
       }
   };

@@ -799,9 +799,11 @@ def get_all_problems():
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `latitude`, `longitude`,
-                   `problem_type_id`, `status`, `created_date`
-                   FROM `problem`;
+        query = """SELECT problem.id, title, latitude, longitude,
+                   problem_type_id, status, created_date, problem_type.radius,
+                   problem_type.picture
+                   FROM `problem` INNER JOIN `problem_type`
+                   ON problem.problem_type_id = problem_type.id;
                 """
         cursor.execute(query)
         return cursor.fetchall()

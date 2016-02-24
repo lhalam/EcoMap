@@ -1,5 +1,6 @@
+
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
-  var instance = {};
+  instance = {};
   instance.lat = 49.468077;
   instance.lng = 30.521018;
   instance.centerMap = new google.maps.LatLng(instance.lat, instance.lng);
@@ -57,7 +58,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   instance.loadProblems = function() {
     var markers = [];
     var mcOptions = {gridSize: 80};
-    instance.cluster = new MarkerClusterer(instance.getInst(), [], mcOptions);    
+    instance.cluster = new MarkerClusterer(instance.getInst(), [], mcOptions); 
     $http({
       method: 'GET',
       url: '/api/problems'
@@ -72,20 +73,23 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           problemStatus: marker.status,
           doCluster: true,
           date: marker.date,
-          icon: '/image/markers/' + marker.problem_type_Id + '.png',
+          icon: '/image/markers/' + marker.picture,
+          radius: marker.radius
         });
         new_marker.addListener('click', function() {
           var problem_id = this['id'];
           $state.go('detailedProblem', {
             'id': problem_id
           });
-        });  
+        }); 
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
+
+        instance.markers = markers;
+        console.log(instance.markers)
+        return instance.markers;
       }, function errorCallback() {})
     })
-    instance.markers = markers;
-    return markers;
   }
   instance.refreshCluster = function() {
     instance.cluster.clearMarkers();

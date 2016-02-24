@@ -1217,7 +1217,7 @@ def get_comments_by_problem_id(problem_id):
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
-                          c.user_id, u.first_name, u.last_name
+                          c.user_id, u.nickname
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.problem_id=%s AND c.parent_id=0;
@@ -1237,7 +1237,7 @@ def get_subcomments_by_parent_id(parent_id):
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, 
                           c.parent_id, c.created_date, c.user_id,
-                          u.first_name, u.last_name
+                          u.nickname
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.parent_id=%s;
@@ -1423,9 +1423,10 @@ def add_problem_type(picture, name, radius):
 
 @retry_query(tries=3, delay=1)
 def get_subscription_by_user_id(user_id, problem_id):
-    """Return user, found by email.
-    :params email: user email
-    :retrun: tuple with user info
+    """Function retrieves user's subscriptions'.
+    :param user_id: id of user (int)
+    :param problem_id: id of problem (int)
+    :return: tuple with user info.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1435,19 +1436,21 @@ def get_subscription_by_user_id(user_id, problem_id):
         cursor.execute(query, (user_id, problem_id))
         return cursor.fetchone()
 
+
+@retry_query(tries=3, delay=1)
 def check_exist_subscriptions(user_id, problem_id):
+    """Function checks if there is some user's subscription into db.
+    :return: true or false.
+    """ 
     return bool(get_subscription_by_user_id(user_id, problem_id))
 
 
 @retry_query(tries=3, delay=1)
 def subscription_post(problem_id, user_id, date_subscriptions):
-    """This method adds problem into db.
-       :params: title - new title
-                content - new content
-                proposal - new proposal
-                latitude - new latitude of a new problem
-                longitude - new longitude of a new problem
-                problem_type_id - type of a new problem
+    """Function adds problem into db.
+    :param user_id: id of user (int)
+    :param problem_id: id of problem (int)
+    :param date_subscriptions: date when user subscribed to a problem.
     """
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
@@ -1464,13 +1467,9 @@ def subscription_post(problem_id, user_id, date_subscriptions):
 
 @retry_query(tries=3, delay=1)
 def subscription_delete(user_id, problem_id):
-    """This method adds problem into db.
-       :params: title - new title
-                content - new content
-                proposal - new proposal
-                latitude - new latitude of a new problem
-                longitude - new longitude of a new problem
-                problem_type_id - type of a new problem
+    """Function deletes subscription from db.
+    :param user_id: id of user (int)
+    :param problem_id: id of problem (int).
     """
     with db_pool_rw().manager() as conn:
         conn.autocommit(True)
@@ -1484,8 +1483,9 @@ def subscription_delete(user_id, problem_id):
 
 @retry_query(tries=3, delay=1)
 def count_user_subscriptions(user_id):
-    """Count of user's subscription
-    :return: count
+    """Function counts user's subscriptions.
+    :param user_id: id of user (int)
+    :return: count.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
@@ -1497,14 +1497,19 @@ def count_user_subscriptions(user_id):
 
 @retry_query(tries=3, delay=1)
 def get_subscriptions(user_id, offset, per_page):
-    """Return all registered users from db.
-    :return: tuples with user info
+    """Function retrieves all user's subscriptions from db.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status, pr.created_date,
-                   pr.latitude, pr.longitude, pr.proposal, pr.content, pr.is_enabled,
-                   sub.date_subscriptions, sub.severity, pt.name
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name
                    FROM  `subscription` as sub
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
                    INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id

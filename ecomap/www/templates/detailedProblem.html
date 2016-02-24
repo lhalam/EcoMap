@@ -59,8 +59,34 @@
               <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
             </div>
             <div class="panel-body comment-block">{{comment.content}}</div>
+              <div class="clearfix comment-reply">
+                <div class="pull-left">
+                  <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
+                </div>
+                <div class="pull-right">
+                  <a role="button" ng-click="getSubComments(comment.id)"><i class="fa fa-share"></i> 1 відповідь</a>
+                </div> 
+              </div>
           </div>
         </div>
+      <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
+      <div ng-repeat='subcomment in subcomments'>
+        <div class="col-sm-10 col-sm-offset-2">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <strong>{{subcomment.name}}</strong> <span class="text-muted">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+            </div>
+            <div class="panel-body comment-block">
+              {{subcomment.content}}
+            </div>
+          </div>
+        </div>
+        </div>
+        <form class="col-sm-10 subcomment-form">
+          <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='40'></textarea>
+          <input class='btn btn-success' type='button' ng-click="post_subcomment(subcomment, comment.id)"value='Додати відповідь'>
+        </form>
+      </div>
       </div>
     </uib-tab>
   </uib-tabset>

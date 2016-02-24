@@ -108,12 +108,14 @@ def detailed_problem(problem_id):
                            'user_id': photo_data[2]})
     if comments_data:
         for comment in comments_data:
+            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
             comments.append({'id': comment[0],
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
                              'user_id': comment[4],
-                             'name': comment[5]})
+                             'name': comment[5],
+                             'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
                                     photos, comments]),
@@ -391,12 +393,14 @@ def get_comments(problem_id):
 
     if comments_data:
         for comment in comments_data:
+            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
             comments.append({'id': comment[0],
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
                              'user_id': comment[4],
-                             'name': comment[5]})
+                             'name': comment[5],
+                             'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
@@ -426,6 +430,7 @@ def get_subcomments(parent_id):
     """
 
     comments_data = db.get_subcomments_by_parent_id(parent_id)
+    sub_count = db.get_count_of_parent_subcomments(parent_id)
     comments = []
 
     if comments_data:
@@ -437,10 +442,10 @@ def get_subcomments(parent_id):
                              'created_date': comment[4] * 1000,
                              'user_id': comment[5],
                              'name': comment[6]})
-    response = Response(json.dumps(comments),
+    response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response
-    
+
 
 @app.route('/api/usersSubscriptions/<int:user_id>', methods=['GET'])
 def get_user_subscriptions(user_id):

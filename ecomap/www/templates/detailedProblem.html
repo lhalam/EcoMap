@@ -69,7 +69,7 @@
                   <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
                 </div>
                 <div class="pull-right">
-                  <a role="button" ng-click="getSubComments(comment.id)"><i class="fa fa-share"></i> 1 відповідь</a>
+                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count}} відповідь</a>
                 </div> 
               </div>
           </div>
@@ -89,7 +89,7 @@
         </div>
         <form class="col-sm-10 subcomment-form">
           <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='40'></textarea>
-          <input class='btn btn-success' type='button' ng-click="post_subcomment(subcomment, comment.id)"value='Додати відповідь'>
+          <input class='btn btn-success' type='button' ng-click="post_subcomment(subcomment, comment)"value='Додати відповідь'>
         </form>
       </div>
       </div>

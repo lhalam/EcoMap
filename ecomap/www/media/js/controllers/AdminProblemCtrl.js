@@ -42,12 +42,9 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         'radius': radius
       };
       $scope.editProblemTypeModal = true;
+      $scope.pathLogo = '/image/markers/'+ $scope.editProblemTypeObj.picture;
     }
     $scope.editProblemSubmit = function(editProblemTypeObj){
-      if (!editProblemTypeObj.name || !editProblemTypeObj.radius) {
-        $scope.msg.editError('типу проблеми', $scope.msgError['incorectData']);
-        return;
-      }
       Upload.upload({
       url: '/api/problem_type',
       method: 'PUT',
@@ -56,7 +53,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         'Cache-Control': 'no-cache'
       },
       data: {
-        file: editProblemTypeObj.picFile || editProblemTypeObj.picture,
+        file: editProblemTypeObj.picFile,
         problem_type_name: editProblemTypeObj.name,
         problem_type_radius: editProblemTypeObj.radius,
         problem_type_id: editProblemTypeObj.id,
@@ -67,7 +64,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.editProblemTypeModal = false;
         $scope.msg.editSuccess('типу проблеми');
       }, function errorCallback(response) {
-        $scope.addProblemTypeModal = false;
+        $scope.editProblemTypeModal = false;
         $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
       })
     };
@@ -86,10 +83,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.loadProblemType();
         $scope.msg.deleteSuccess('типу проблеми');
       }, function errorCallback(response) {
-        if (arguments[0]['data']['msg']=='Incorrect data')
-          $scope.msg.deleteError('типу проблеми', $scope.msgError['incorectData']);
-        if (arguments[0]['data']['msg']=='Wrong data')
-          $scope.msg.deleteError('типу проблеми', $scope.msgError['couldntDelete']);
+        $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
       })
     };
 

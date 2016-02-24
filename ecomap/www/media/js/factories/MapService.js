@@ -1,5 +1,5 @@
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
-  var instance = {};
+  instance = {};
   instance.lat = 49.468077;
   instance.lng = 30.521018;
   instance.centerMap = new google.maps.LatLng(instance.lat, instance.lng);
@@ -62,7 +62,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-      console.log(response);
       angular.forEach(response.data, function (marker, key) {
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
@@ -73,7 +72,8 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
           problemStatus: marker.status,
           doCluster: true,
           date: marker.date,
-          icon: '/image/markers/' +marker.problem_type_Id + '.png',
+          icon: '/image/markers/' + marker.picture,
+          radius: marker.radius
         });
         new_marker.addListener('click', function() {
           var problem_id = this['id'];
@@ -83,10 +83,12 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
+
+        instance.markers = markers;
+        console.log(instance.markers)
+        return instance.markers;
       }, function errorCallback() {})
     })
-    instance.markers = markers;
-    return markers;
   }
   instance.refreshCluster = function() {
     instance.cluster.clearMarkers();

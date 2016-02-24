@@ -100,7 +100,7 @@ def check_post_comment(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_id', 'content']
+    keys = ['problem_id','parent_id','content']
 
     for keyname in keys:
         if not has_key(data, keyname):

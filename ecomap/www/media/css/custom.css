@@ -24,7 +24,7 @@ body {
   overflow-y: scroll;
 }
 .select{
-    margin-top: 35px;
+    margin-top: 30px;
 }
 .navbar.navbar-default {
   font-family: "LatoBold", sans serif;
@@ -139,6 +139,13 @@ body {
 
 .form-group label {
   text-align: center;
+}
+label.changeUser{
+  text-align: center;
+  line-height: 2.3;
+  color: grey;
+  font-size: 12px;
+  margin-top:-5px;
 }
 
 #user_form {
@@ -567,6 +574,10 @@ input[type="checkbox"] {
   padding-left: 75%;
 }
 
+.eye_subscription>.fa{  
+  cursor: pointer;
+}
+
 .det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
   word-wrap : break-word;
@@ -818,3 +829,29 @@ table.UserProblemTable select{
   width:150px;
   height: 150px;
 }
+
+hr.problems{
+  margin-top:5px;
+}
+h3.title{
+  margin-bottom:0px;
+}
+
+.comment-reply{
+  padding: 0px 15px 5px 15px;
+  font-size: 12px;
+}
+
+.comment-reply a{
+  text-decoration: none;
+}
+
+.comment-reply a:hover{
+  color: #555;
+}
+
+.subcomment-form{
+  float: right; 
+  padding-top: 0px;
+}
+

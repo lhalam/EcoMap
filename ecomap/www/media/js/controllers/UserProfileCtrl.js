@@ -5,7 +5,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
     $scope.msg = msg;
     $scope.tabs = [
       {heading: "Профіль користувача", route: "user_profile.info", active: false, showToUser: true},
-      {heading: "Мої проблеми", route: "user_profile.problems", active: false, showToUser: true},
+      {heading: "Ecomap проблеми", route: "user_profile.problems", active: false, showToUser: true},
       {heading: "Мої коментарі", route: "user_profile.comments", active: false, showToUser: true},
       {heading: "Мої підписки", route: "user_profile.subscriptions", active: false, showToUser: true},
       {heading: "Редагування F.A.Q.", route: "user_profile.faq", active: false, showToUser: false}
@@ -80,7 +80,35 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             $scope.msg.sendError('імейлу')
         })
        
-    }};    
+    }};
+    $scope.cls_edit_nick = "fa fa-pencil";
+    $scope.editMode = true;
+    $scope.changeNick = function () {
+      if ($scope.cls_edit_nick === "fa fa-pencil"){
+          $scope.cls_edit_nick = "fa fa-check";
+          $scope.editMode = false;
+      }
+      else if ($scope.cls_edit_nick === "fa fa-check") {
+          if(!$scope.user.data.nickname) {
+            return;
+          }
+          var data = {};
+          data.id = $cookies.get('id');
+          $http({
+          method: 'POST',
+          url: '/api/change_nickname',
+          data: {
+            'id': $scope.user.id,
+            'nickname': $scope.user.data.nickname
+          }
+          }).then(function successCallback(response) {
+              $scope.cls_edit_nick = "fa fa-pencil";
+              $scope.editMode = true;
+              $scope.msg.editSuccess('псевдоніму');
+            })
+      };
+    };
+
     $scope.redirect = function(state){
       $state.go(state);
     };

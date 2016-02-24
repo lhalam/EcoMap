@@ -150,8 +150,8 @@
         <div class="row">
             <div class="col-md-12">
               <div ngf-drop ngf-resize="{width: 20, height: 20, quality: .8, type: 'image/png',  ratio: '1:1', centerCrop: true}">
-                  <img ngf-src="editProblemTypeObj.picFile"
-                  class="thumbPhoto center-block"/>
+                  <img ngf-src="editProblemTypeObj.picFile || pathLogo"
+                       class="thumbPhoto center-block"/>
               </div>
             </div>
         </div>

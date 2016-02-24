@@ -1,8 +1,9 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
-  function($scope, $rootScope, $state, $http, toaster, msg, MapFactory) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
+    $scope.subcomments = [];
     $scope.msg = msg;
     $http({
       'method': 'GET',
@@ -15,9 +16,11 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
     }, function errorCallback(error) {
       $state.go('error404');
     });
+
     $scope.close = function() {
       $state.go('map')
     };
+
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -25,24 +28,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
       };
       return statuses[status];
     };
-    $scope.getProblemType = function(type_id) {
-      var types = {
-        1: 'Проблеми лісів',
-        2: 'Сміттєзвалища',
-        3: 'Незаконна забудова',
-        4: 'Проблеми водойм',
-        5: 'Загрози біорізноманіттю',
-        6: 'Браконьєрство',
-        7: 'Інші проблеми'
-      };
-      return types[type_id];
-    };
 
     $scope.getMinPhoto = function(url){
       var parts = url.split('.');
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
+
     $scope.post_comment = function(comment) {
       if (comment) {
         $http({
@@ -50,7 +42,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
           url: '/api/problem/add_comment',
           data: {
             content: comment.text,
-            problem_id: $state.params['id']
+            problem_id: $state.params['id'],
+            parent_id: '0'
           }
         }).then(function successCallback() {
           $scope.msg.addCommentSuccess('коммента');
@@ -61,15 +54,72 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
             $scope.comments = response.data;
             comment.text = '';
           })
-        }, function errorCallback() {
-          $scope.msg.addCommentError('коммента');
+        }, function errorCallback(response) {
+          if (response.status===405) {
+            $scope.msg.addCommentAnonimError('коммента');
+          } else {
+            $scope.msg.addCommentError('коммента');
+          }
         });
       } else {
         return;
       }
     }
 
-    $scope.cls_eye_subs = "fa fa-eye-slash";    
+    $scope.post_subcomment = function(subcomment, parent_id) {
+      if (subcomment) {
+        $http({
+          method: 'POST',
+          url: '/api/problem/add_comment',
+          data: {
+            content: subcomment.text,
+            problem_id: $state.params['id'],
+            parent_id: parent_id
+          }
+        }).then(function successCallback() {
+          $scope.msg.addCommentSuccess('коментаря ');
+          $http({
+            method: 'GET',
+            url: '/api/problem_subcomments/' + parent_id
+          }).then(function successCallback(response) {
+            $scope.subcomments = response.data;
+            subcomment.text = '';
+          })
+        }, function errorCallback(response) {
+         if (response.status===405) {
+          $scope.msg.addCommentAnonimError('коментаря ');}
+         else{
+          $scope.msg.addCommentError('коментаря ');}
+        });
+      } else {
+        return;
+      }
+    }
+
+    $scope.showSubComments = false;
+    $scope.getSubComments = function (parent_id) {
+          if(!$scope.showSubComments) {
+            $http({
+              method: 'GET',
+              url: '/api/problem_subcomments/' + parent_id
+            }).then(function successCallback(response) {
+              $scope.subcomments = response.data;
+            })
+          }
+          $scope.subcomment_parent = parent_id;
+          $scope.showSubComments = $scope.showSubComments ? false: true;
+    }
+
+    
+    $scope.colBs = 'col-lg-8';
+    $scope.hideIconSubsc = true;
+    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user') {
+      $scope.colBs = 'col-lg-4';
+      $scope.hideIconSubsc = false;
+    }
+    
+    $scope.cls_eye_subs = "fa fa-eye-slash";
+
     $scope.chgEyeSubsc = function(){
       if ($scope.cls_eye_subs === "fa fa-eye-slash"){
         $http({
@@ -80,20 +130,28 @@ app.controller('DetailedProblemCtrl', ['$scope', '$rootScope', '$state', '$http'
           }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye";
-        })
-        
-      }
-      else if ($scope.cls_eye_subs = "fa fa-eye") {
+          $scope.msg.createSuccess('підписки');
+        })        
+      } else if ($scope.cls_eye_subs = "fa fa-eye") {
         $http({
-        method: 'DELETE',
-        url: '/api/subscription_delete',
-        params: {
-          problem_id: $state.params['id']
-        }
+          method: 'DELETE',
+          url: '/api/subscription_delete',
+          params: {
+            problem_id: $state.params['id']
+          }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
+          $scope.msg.deleteSuccess('підписки');
         })          
       }
-  };
+    };
   }
 ]);
+
+
+
+
+
+
+
+

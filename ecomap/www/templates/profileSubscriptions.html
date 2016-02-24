@@ -51,7 +51,7 @@
       <tr ng-repeat="subscription in subscriptions | orderBy:sortType:sortReverse">
         <td ng-model="subscription.id">{{subscription.id}}</td>
         <td ng-model="subscription.title" class="problem-title">{{subscription.title}}</td>
-        <td ng-model="subscription.problem_type_id">{{getProblemType(subscription.problem_type_id)}}</td>
+        <td ng-model="subscription.problem_type_id">{{subscription.name}}</td>
         <td ng-model="subscription.status">{{getStatus(subscription.status)}}</td>
         <td>{{subscription.date | date : "dd/MM/yyyy "}}</td>
         <td>{{subscription.date_subscription | date : "dd/MM/yyyy "}}</td>
@@ -94,7 +94,7 @@
         <div class="problem-type">
           <p><strong>Тип проблеми:</strong></p>
           <p ng-model="detailedProblem.problem_type_id">
-            {{getProblemType(detailedProblem.problem_type_id)}}
+            {{detailedProblem.name}}
           </p>
         </div>
         <div class="description">

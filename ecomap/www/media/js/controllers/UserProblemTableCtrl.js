@@ -20,18 +20,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         $scope.loadProblems();
       }
 
-      $scope.getProblemType = function(type_id) {
-        var types = {
-          1: 'Проблеми лісів',
-          2: 'Сміттєзвалища',
-          3: 'Незаконна забудова',
-          4: 'Проблеми водойм',
-          5: 'Загрози біорізноманіттю',
-          6: 'Браконьєрство',
-          7: 'Інші проблеми'
-        };
-        return types[type_id];
-      };
       $scope.getStatus = function(status) {
         var statuses = {
           'Unsolved': 'Не вирішено',
@@ -66,7 +54,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }).then(function successCallback(response) {
               $scope.problems = response.data[0];
               $scope.problemsLength = response.data[1][0]['total_problem_count'];
-              $scope.problemsLeng = response.data[1][0]['total_problem_count'];
+              $scope.count = response.data[1][0]['total_problem_count'];
               $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
             })
           } else {
@@ -81,7 +69,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
-             $scope.problemsLeng = response.data[1][0]['total_problem_count'];
+             $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
           }

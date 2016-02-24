@@ -812,10 +812,11 @@ def get_user_problems(user_id, offset, per_page):
     """Gets all problems posted by given user."""
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `latitude`, `longitude`,
-                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity`
-                   FROM `problem`
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    WHERE `user_id`=%s LIMIT %s,%s;
                 """
         cursor.execute(query, (user_id, offset, per_page))
@@ -829,10 +830,12 @@ def get_problem_by_id(problem_id):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `title`, `content`, `proposal`,
-                   `severity`, `status`, `latitude`,`longitude`,
-                   `problem_type_id`, `created_date`
-                   FROM `problem` WHERE `id`=%s;
+        query = """SELECT p.id, p.title, p.content, p.proposal,
+                   p.severity, p.status, p.latitude,p.longitude,
+                   p.problem_type_id, p.created_date, t.name
+                   FROM `problem` AS p INNER JOIN `problem_type` AS t
+                   ON p.problem_type_id=t.id
+                   WHERE p.id=%s;
                 """
         cursor.execute(query, (problem_id, ))
         return cursor.fetchone()
@@ -1141,12 +1144,13 @@ def get_all_users_problems(offset, per_page):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT problem.id, `title`, `latitude`, `longitude`,
-                   `problem_type_id`, `status`, `created_date`, `is_enabled`,
-                   `severity`, `last_name`, `first_name`, `nickname`
-                   FROM `problem`
-                   INNER JOIN user ON problem.user_id = user.id
-                   GROUP BY `id` LIMIT %s,%s;
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, u.last_name, u.first_name, u.nickname, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   GROUP BY p.id LIMIT %s,%s;
                 """
         cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
@@ -1475,9 +1479,10 @@ def get_subscriptions(user_id, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status, pr.created_date,
                    pr.latitude, pr.longitude, pr.proposal, pr.content, pr.is_enabled,
-                   sub.date_subscriptions, sub.severity
+                   sub.date_subscriptions, sub.severity, pt.name
                    FROM  `subscription` as sub
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
                    WHERE sub.user_id=%s LIMIT %s,%s;
                 """
         cursor.execute(query, (user_id, offset, per_page))

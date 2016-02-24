@@ -60,67 +60,9 @@
       </tr>
     </tbody>
   </table>
-    <div class="row">
-      <div class="col-md-8 col-md-offset-4">
-        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
-      </div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-4">
+      <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
     </div>
-    <modal title="Детальна інформація про проблему" visible="detailedInfoModal" class="det-problem-modal">
-      <div class="title">
-        <h3 ng-bind="detailedProblem.title"></h3>
-      </div>
-      <div class="general">
-        <div class="row">
-          <div class="col-lg-4">
-          <div class="rate">
-            <uib-rating max="5" ng-model="detailedProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
-          </div>
-          </div>
-          <div class="col-lg-4">
-          <div class="solution unsolved" >
-            <strong><span ng-bind="detailedProblem.status" ng-class="{ 'solved': 'detailedProblem.status' == 'solved' }"></span></strong>
-          </div>
-          </div>
-          <div class="col-lg-4">
-            <div class='eye_subscription'>
-              <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
-            </div>
-          </div>
-        </div>
-        <div class="clear"></div>
-      </div>
-      <uib-tabset justified="true">
-      <uib-tab heading="Детально">
-        <div class="problem-type">
-          <p><strong>Тип проблеми:</strong></p>
-          <p ng-model="detailedProblem.problem_type_id">
-            {{detailedProblem.name}}
-          </p>
-        </div>
-        <div class="description">
-          <p><strong>Опис проблеми:</strong></p>
-          <p ng-bind="detailedProblem.content"></p>
-        </div>
-        <div class="proposal">
-          <p><strong>Пропозиції щодо вирішення</strong></p>
-          <p ng-bind="detailedProblem.proposal"></p>
-        </div>
-      </uib-tab>
-      <uib-tab heading="Коментарі">
-        <div class="row">
-          <div class="col-sm-12" ng-repeat='comment in comments'>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <strong>{{comment.name}}</strong>
-                <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-              </div>
-              <div class="panel-body comment-block">
-                {{comment.content}}
-              </div>
-            </div>
-          </div>
-        </div>
-      </uib-tab>
-    </uib-tabset>
-  </modal>
+  </div>
 </div>

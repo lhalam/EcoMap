@@ -3,7 +3,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
-    $scope.subcomments = [];
     $scope.msg = msg;
     $http({
       'method': 'GET',
@@ -13,6 +12,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       $scope.isSubscripted = response.data[0][0]['is_subscripted'];	
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
+      console.log($scope.comments);
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
     	if($scope.isSubscripted === false) {
 				$scope.cls_eye_subs = "fa fa-eye-slash";
@@ -20,7 +20,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     }, function errorCallback(error) {
       $state.go('error404');
     });
-
     $scope.close = function() {
       $state.go('map')
     };
@@ -70,7 +69,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     }
 
-    $scope.post_subcomment = function(subcomment, parent_id) {
+    $scope.post_subcomment = function(subcomment, comment) {
       if (subcomment) {
         $http({
           method: 'POST',
@@ -78,16 +77,17 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           data: {
             content: subcomment.text,
             problem_id: $state.params['id'],
-            parent_id: parent_id
+            parent_id: comment.id
           }
         }).then(function successCallback() {
           $scope.msg.addCommentSuccess('коментаря ');
           $http({
             method: 'GET',
-            url: '/api/problem_subcomments/' + parent_id
+            url: '/api/problem_subcomments/' + comment.id
           }).then(function successCallback(response) {
-            $scope.subcomments = response.data;
+            $scope.subcomments = response.data[0];
             subcomment.text = '';
+            comment.sub_count = response.data[1];
           })
         }, function errorCallback(response) {
          if (response.status===405) {
@@ -100,13 +100,14 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     }
 
+
     $scope.showSubComments = false;
     $scope.getSubComments = function (parent_id) {
           $http({
             method: 'GET',
             url: '/api/problem_subcomments/' + parent_id
           }).then(function successCallback(response) {
-            $scope.subcomments = response.data;
+            $scope.subcomments = response.data[0];
           })
           if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
           $scope.showSubComments = $scope.showSubComments ? false: true;

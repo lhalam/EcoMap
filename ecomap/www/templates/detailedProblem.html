@@ -50,6 +50,11 @@
       <form>
         <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
         <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
+        <div class="checkbox pull-right">
+          <label class="changeUser">
+            <input type="checkbox" ng-model="changeUser" ng-change="change(changeUser)">Анонімно
+          </label>
+        </div>
       </form>
       <div ng-repeat='comment in comments'>
         <div class="col-sm-12">

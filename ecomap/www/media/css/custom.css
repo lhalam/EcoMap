@@ -140,6 +140,13 @@ body {
 .form-group label {
   text-align: center;
 }
+label.changeUser{
+  text-align: center;
+  line-height: 2.3;
+  color: grey;
+  font-size: 12px;
+  margin-top:-5px;
+}
 
 #user_form {
   width: 200px;

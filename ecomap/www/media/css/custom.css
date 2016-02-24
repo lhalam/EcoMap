@@ -802,9 +802,10 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-.comment-input{
+textarea.comment-input{
   width: 100%;
   word-wrap : break-word;
+  resize: none;
 }
 
 .comment-block{

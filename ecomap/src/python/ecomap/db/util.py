@@ -1222,6 +1222,20 @@ def get_comments_by_problem_id(problem_id):
 
 
 @retry_query(tries=3, delay=1)
+def get_user_comments_count(user_id):
+    """Get count of user comments.
+       :params: user_id - id of user
+       :return: count of user comments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+            where `user_id` =%s;"""
+        cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def get_problem_id_for_del(user_id):
     """Query for selecting tuple with problem_id, when
     User profile have to delete.
@@ -1245,6 +1259,16 @@ def change_problem_to_anon(problem_id):
         cursor.execute(query, ("2", problem_id))
         conn.commit()
 
+@retry_query(tries=3, delay=1)
+def change_comments_to_anon(user_id):
+    """Query for change user_id in comment table to id of Anonimus User,
+    when we deleting User-owner of this comment.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """UPDATE `comment` SET `user_id`=%s WHERE `user_id`=%s;"""
+        cursor.execute(query, ("2", user_id))
+        conn.commit()
 
 @retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):

@@ -56,7 +56,7 @@
           <div class="panel panel-default">
             <div class="panel-heading">
               <strong>{{comment.name}}</strong>
-              <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              <span class="text-muted pull-right">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
             </div>
             <div class="panel-body comment-block">{{comment.content}}</div>
               <div class="clearfix comment-reply">
@@ -74,7 +74,7 @@
         <div class="col-sm-10 col-sm-offset-2">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <strong>{{subcomment.name}}</strong> <span class="text-muted">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              <strong>{{subcomment.name}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
             </div>
             <div class="panel-body comment-block">
               {{subcomment.content}}

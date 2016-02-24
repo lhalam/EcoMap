@@ -351,7 +351,7 @@ def post_comment():
 
     if valid['status']:
         created_date = int(time.time())
-        if data['anonim']:
+        if data.has_key('anonim') and data['anonim']:
             user_id = 2
         else:
             user_id = current_user.uid

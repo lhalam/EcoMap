@@ -36,10 +36,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
-    $scope.changeUser = false;
-    
-$scope.change = function(value){
-          $scope.changeUser = value;
+
+    $scope.comment={}
+    $scope.comment.changeUser = false;
     $scope.post_comment = function(comment) {
       if (comment) {
           $http({
@@ -49,7 +48,7 @@ $scope.change = function(value){
               content: comment.text,
               problem_id: $state.params['id'],
               parent_id: '0',
-              anonim: $scope.changeUser
+              anonim: comment.changeUser
             }
           }).then(function successCallback() {
             $scope.msg.addCommentSuccess('коммента');
@@ -71,7 +70,7 @@ $scope.change = function(value){
         return;
       }
     }
-  }
+  
 
     $scope.post_subcomment = function(subcomment, comment) {
       if (subcomment) {

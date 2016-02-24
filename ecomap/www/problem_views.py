@@ -402,7 +402,7 @@ def get_comments(problem_id):
 
 
 @app.route('/api/problem_subcomments/<int:parent_id>', methods=['GET'])
-def get_comments(parent_id):
+def get_subcomments(parent_id):
     """Return all comment subcomments
 
         :rtype: JSON

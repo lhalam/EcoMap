@@ -3,6 +3,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];
+    $scope.subcomments = [];
     $scope.msg = msg;
     $http({
       'method': 'GET',
@@ -41,7 +42,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           url: '/api/problem/add_comment',
           data: {
             content: comment.text,
-            problem_id: $state.params['id']
+            problem_id: $state.params['id'],
+            parent_id: '0'
           }
         }).then(function successCallback() {
           $scope.msg.addCommentSuccess('коммента');
@@ -64,6 +66,51 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     }
 
+    $scope.post_subcomment = function(subcomment, parent_id) {
+      if (subcomment) {
+        $http({
+          method: 'POST',
+          url: '/api/problem/add_comment',
+          data: {
+            content: subcomment.text,
+            problem_id: $state.params['id'],
+            parent_id: parent_id
+          }
+        }).then(function successCallback() {
+          $scope.msg.addCommentSuccess('коментаря ');
+          $http({
+            method: 'GET',
+            url: '/api/problem_subcomments/' + parent_id
+          }).then(function successCallback(response) {
+            $scope.subcomments = response.data;
+            subcomment.text = '';
+          })
+        }, function errorCallback(response) {
+         if (response.status===405) {
+          $scope.msg.addCommentAnonimError('коментаря ');}
+         else{
+          $scope.msg.addCommentError('коментаря ');}
+        });
+      } else {
+        return;
+      }
+    }
+
+    $scope.showSubComments = false;
+    $scope.getSubComments = function (parent_id) {
+          if(!$scope.showSubComments) {
+            $http({
+              method: 'GET',
+              url: '/api/problem_subcomments/' + parent_id
+            }).then(function successCallback(response) {
+              $scope.subcomments = response.data;
+            })
+          }
+          $scope.subcomment_parent = parent_id;
+          $scope.showSubComments = $scope.showSubComments ? false: true;
+    }
+
+    
     $scope.colBs = 'col-lg-8';
     $scope.hideIconSubsc = true;
     if ($cookies.get('role')=='admin' || $cookies.get('role')=='user') {

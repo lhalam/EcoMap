@@ -839,3 +839,21 @@ label[for="my_problem"], label[for="all_problem"]{
 label[for="my_problem"].check, label[for="all_problem"].check{
   color:#337ab7;
 }
+
+.comment-reply{
+  padding: 0px 15px 5px 15px;
+  font-size: 12px;
+}
+
+.comment-reply a{
+  text-decoration: none;
+}
+
+.comment-reply a:hover{
+  color: #555;
+}
+
+.subcomment-form{
+  float: right; 
+  padding-top: 0px;
+}

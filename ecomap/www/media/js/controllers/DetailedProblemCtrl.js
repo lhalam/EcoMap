@@ -90,34 +90,33 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
             comment.sub_count = response.data[1];
           })
         }, function errorCallback(response) {
-         if (response.status===405) {
-          $scope.msg.addCommentAnonimError('коментаря ');}
-         else{
-          $scope.msg.addCommentError('коментаря ');}
+          if (response.status===405) {
+            $scope.msg.addCommentAnonimError('коментаря ');
+          } else {
+            $scope.msg.addCommentError('коментаря ');
+          }
         });
       } else {
         return;
       }
     }
 
-
     $scope.showSubComments = false;
     $scope.getSubComments = function (parent_id) {
-          $http({
-            method: 'GET',
-            url: '/api/problem_subcomments/' + parent_id
-          }).then(function successCallback(response) {
-            $scope.subcomments = response.data[0];
-          })
-          if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
-          $scope.showSubComments = $scope.showSubComments ? false: true;
-        }
-        if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
-          $scope.showSubComments = true;
-        }
-        $scope.subcomment_parent = parent_id;
+      $http({
+        method: 'GET',
+        url: '/api/problem_subcomments/' + parent_id
+      }).then(function successCallback(response) {
+        $scope.subcomments = response.data[0];
+      })
+      if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
+        $scope.showSubComments = $scope.showSubComments ? false: true;
+      }
+      if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
+        $scope.showSubComments = true;
+      }
+      $scope.subcomment_parent = parent_id;
     }
-
     
     $scope.colBs = 'col-lg-8';
     $scope.hideIconSubsc = true;

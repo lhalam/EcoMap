@@ -112,7 +112,7 @@ def detailed_problem(problem_id):
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
                              'user_id': comment[4],
-                             'name': '%s %s' % (comment[5], comment[6])})
+                             'name': comment[5]})
 
     response = Response(json.dumps([[problems], [activities],
                                     photos, comments]),
@@ -395,7 +395,7 @@ def get_comments(problem_id):
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
                              'user_id': comment[4],
-                             'name': '%s %s' % (comment[5], comment[6])})
+                             'name': comment[5]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
@@ -435,7 +435,7 @@ def get_subcomments(parent_id):
                              'parent_id': comment[3],
                              'created_date': comment[4] * 1000,
                              'user_id': comment[5],
-                             'name': '%s %s' % (comment[6], comment[7])})
+                             'name': comment[6]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response

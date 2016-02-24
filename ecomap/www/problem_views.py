@@ -348,6 +348,7 @@ def post_comment():
         created_date = int(time.time())
         db.add_comment(current_user.uid,
                        data['problem_id'],
+                       data['parent_id'],
                        data['content'],
                        created_date)
         db.problem_activity_post(data['problem_id'],
@@ -398,6 +399,47 @@ def get_comments(problem_id):
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
+
+
+@app.route('/api/problem_subcomments/<int:parent_id>', methods=['GET'])
+def get_comments(parent_id):
+    """Return all comment subcomments
+
+        :rtype: JSON
+        :param parent_id: id of parent comment (int)
+        :return:
+            - If problem has comments:
+                ``[{content: "some comment",
+                created_date: 1451001050000,
+                id: 29,
+                name: "user name",
+                problem_id: 22,
+                parent_id: 77,
+                user_id: 6,
+                } ,{...}]``
+            - If user hasn't:
+                ``{}``
+
+        :statuscode 200: no errors
+
+    """
+
+    comments_data = db.get_subcomments_by_parent_id(parent_id)
+    comments = []
+
+    if comments_data:
+        for comment in comments_data:
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'parent_id': comment[3],
+                             'created_date': comment[4] * 1000,
+                             'user_id': comment[5],
+                             'name': '%s %s' % (comment[6], comment[7])})
+    response = Response(json.dumps(comments),
+                        mimetype='application/json')
+    return response
+
 
 
 @app.route('/api/usersSubscriptions/<int:user_id>', methods=['GET'])

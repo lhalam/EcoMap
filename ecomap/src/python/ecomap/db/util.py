@@ -1184,20 +1184,23 @@ def count_user_problems(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def add_comment(user_id, problem_id, content, created_date):
+def add_comment(user_id, problem_id, parent_id, content, created_date):
     """Adds new comment to problem.
        :params: user_id - user id
                 problem_id - id of problem
+                parent_id - id of parent comment
                 content - comment content
                 created_date - create time
     """
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
         query = """INSERT INTO `comment` (`user_id`, `problem_id`,
-                                          `content`, `created_date`)
-                   VALUES (%s, %s, %s, %s);
+                                          `parent_id`, `content`,
+                                          `created_date`)
+                   VALUES (%s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (user_id, problem_id, content, created_date))
+        cursor.execute(query, (user_id, problem_id, parent_id,
+                               content, created_date))
         conn.commit()
 
 
@@ -1215,10 +1218,30 @@ def get_comments_by_problem_id(problem_id):
                           c.user_id, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
-                   WHERE c.problem_id=%s;
+                   WHERE c.problem_id=%s AND c.parent_id=0;
                 """
         cursor.execute(query, (problem_id,))
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_subcomments_by_parent_id(parent_id):
+    """Get all subcomments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: tuple of comments (id, content, problem id,
+                                   parent_id, created date, user id,
+                                   user first name, user last name)
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT c.id, c.content, c.problem_id, 
+                          c.parent_id, c.created_date, c.user_id,
+                          u.first_name, u.last_name
+                   FROM `comment` AS c LEFT JOIN `user` as u
+                   ON c.user_id=u.id
+                   WHERE c.parent_id=%s;
+                """
+        cursor.execute(query, (parent_id,))
+        return cursor.fetchall()        
 
 
 @retry_query(tries=3, delay=1)

@@ -33,7 +33,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
          for (var i = 0; i < data.data.length; i++){
           $scope.problemTypes.push(data.data[i]);
           $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'] ;
-      }
+        }
       }, function errorCallback(response) {})
     };
     $scope.loadProblemType();
@@ -149,7 +149,8 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           },
           zoom: 14
         };
-      }, function errorCallback() {
+      }, function errorCallback(response) {
+        console.log(response);
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };

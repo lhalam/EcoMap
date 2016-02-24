@@ -52,7 +52,12 @@
         <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
         <div class="checkbox pull-right">
           <label class="changeUser">
-            <input type="checkbox" ng-model="changeUser" ng-change="change(changeUser)">Анонімно
+            <input type="checkbox" 
+                   ng-model="changeUser" 
+                   ng-true-value="true" 
+                   ng-false-value="false" 
+                   ng-checked="changeUser == true"
+                   ng-change="change(changeUser)">Анонімно
           </label>
         </div>
       </form>

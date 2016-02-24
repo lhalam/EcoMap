@@ -349,14 +349,18 @@ def post_comment():
 
     if valid['status']:
         created_date = int(time.time())
-        db.add_comment(current_user.uid,
+        if data['anonim']:
+            user_id = 2
+        else:
+            user_id = current_user.uid
+        db.add_comment(user_id,
                        data['problem_id'],
                        data['parent_id'],
                        data['content'],
                        created_date)
         db.problem_activity_post(data['problem_id'],
                                  created_date,
-                                 current_user.uid,
+                                 user_id,
                                  'Updated')
         response = jsonify(message='Comment successfully added.'), 200
     else:

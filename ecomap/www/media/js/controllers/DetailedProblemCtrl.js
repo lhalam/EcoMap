@@ -11,7 +11,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       $scope.selectProblem = response.data[0][0];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
-      console.log($scope.comments);
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
     }, function errorCallback(error) {
       $state.go('error404');
@@ -33,37 +32,42 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
-
+    $scope.changeUser = false;
+    
+$scope.change = function(value){
+          $scope.changeUser = value;
     $scope.post_comment = function(comment) {
       if (comment) {
-        $http({
-          method: 'POST',
-          url: '/api/problem/add_comment',
-          data: {
-            content: comment.text,
-            problem_id: $state.params['id'],
-            parent_id: '0'
-          }
-        }).then(function successCallback() {
-          $scope.msg.addCommentSuccess('коммента');
           $http({
-            method: 'GET',
-            url: '/api/problem_comments/' + $state.params['id']
-          }).then(function successCallback(response) {
-            $scope.comments = response.data;
-            comment.text = '';
-          })
-        }, function errorCallback(response) {
-          if (response.status===405) {
-            $scope.msg.addCommentAnonimError('коммента');
-          } else {
-            $scope.msg.addCommentError('коммента');
-          }
-        });
+            method: 'POST',
+            url: '/api/problem/add_comment',
+            data: {
+              content: comment.text,
+              problem_id: $state.params['id'],
+              parent_id: '0',
+              anonim: $scope.changeUser
+            }
+          }).then(function successCallback() {
+            $scope.msg.addCommentSuccess('коммента');
+            $http({
+              method: 'GET',
+              url: '/api/problem_comments/' + $state.params['id']
+            }).then(function successCallback(response) {
+              $scope.comments = response.data;
+              comment.text = '';
+            })
+          }, function errorCallback(response) {
+            if (response.status===405) {
+              $scope.msg.addCommentAnonimError('коммента');
+            } else {
+              $scope.msg.addCommentError('коммента');
+            }
+          });
       } else {
         return;
       }
     }
+  }
 
     $scope.post_subcomment = function(subcomment, comment) {
       if (subcomment) {

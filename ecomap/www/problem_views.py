@@ -45,7 +45,8 @@ def problems():
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6]})
+                'date': problem[6], 'radius': problem[7],
+                'picture': problem[8]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -439,31 +440,20 @@ def get_subcomments(parent_id):
     response = Response(json.dumps(comments),
                         mimetype='application/json')
     return response
-
-
+    
 
 @app.route('/api/usersSubscriptions/<int:user_id>', methods=['GET'])
 def get_user_subscriptions(user_id):
-    """This method retrieves all user's subscriptions from db and shows it in user
+    """Function retrieves all user's subscriptions from db and shows it in user
     profile page on `my subscriptions` tab.
-    :rtype: JSON
-    :param  user_id: id of user (int)
-    :query limit: limit number. default is 5
-    :query offset: offset number. default is 0
-    :return:
-        - If user has subscriptions:
-            ``[{"id": 190,"title": "name",
-            "latitude": 51.419765,
-            "longitude": 29.520264,
-            "problem_type_id": 1,
-            "status": 0,
-            "date": "2015-02-24T14:27:22.000Z",
-            "severity": '3',
-            "is_enabled": 1
-            },{...}]``
-        - If user haven't:
-            ``{}``
-        :statuscode 200: no errors
+    :param id: id of subscription (int)
+    :param title: title of problem (str)
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param date: date when problem was creared
+    :param date_subscription: date when user subscribed to a problem
+    :param name: name of problem type
+    :type: JSON
     """
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
@@ -478,8 +468,8 @@ def get_user_subscriptions(user_id):
                                    'problem_type_id': subscription[2],
                                    'status': subscription[3],
                                    'date': subscription[4] * 1000,
-                                   'date_subscription': subscription[10] * 1000,
-                                   'name': subscription[12]})
+                                   'date_subscription': subscription[5] * 1000,
+                                   'name': subscription[6]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([subscriptions_list, [total_count]]),
@@ -488,27 +478,12 @@ def get_user_subscriptions(user_id):
 
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
-    """Function which adds data about created problem into DB.
-
-    :content-type: multipart/form-data
-
-    :fparam title: Title of problem ('problem with rivers')
-    :fparam type: id of problem type (2)
-    :fparam lat: lat coordinates (49.8256101)
-    :fparam longitude: lon coordinates (24.0600542)
-    :fparam content: description of problem ('some text')
-    :fparam proposal: proposition for solving problem ('text')
-
-    :rtype: JSON
-    :return:
-            - If request data is invalid:
-                    ``{'status': False, 'error': [list of errors]}``
-            - If all ok:
-                    ``{"added_problem": "problem title", "problem_id": 83}``
-
-    :statuscode 400: request is invalid
-    :statuscode 200: problem was successfully posted
-
+    """Function adds data about subscription into DB.
+    :param problem_id: id of problem (int)
+    :param user_id: id of user (int)
+    :param subscr date: date when user subscribed to a problem
+    :return: response
+    :type: JSON
     """
     if request.method == 'POST':
         data = request.get_json()
@@ -526,27 +501,9 @@ def subscription_post():
 
 @app.route('/api/subscription_delete', methods=['DELETE'])
 def subscription_delete():
-    """Function which adds data about created problem into DB.
-
-    :content-type: multipart/form-data
-
-    :fparam title: Title of problem ('problem with rivers')
-    :fparam type: id of problem type (2)
-    :fparam lat: lat coordinates (49.8256101)
-    :fparam longitude: lon coordinates (24.0600542)
-    :fparam content: description of problem ('some text')
-    :fparam proposal: proposition for solving problem ('text')
-
-    :rtype: JSON
-    :return:
-            - If request data is invalid:
-                    ``{'status': False, 'error': [list of errors]}``
-            - If all ok:
-                    ``{"added_problem": "problem title", "problem_id": 83}``
-
-    :statuscode 400: request is invalid
-    :statuscode 200: problem was successfully posted
-
+    """Function deletes data of subscription from DB.
+    :type: JSON
+    :return: response
     """
     if request.method == 'DELETE':
         logger.info(request.args.get('problem_id'))
@@ -557,6 +514,3 @@ def subscription_delete():
         logger.debug('Subscription post was deleted with id %s', last_id)
         response = jsonify(subscription_id=last_id)
         return response
-
-
-

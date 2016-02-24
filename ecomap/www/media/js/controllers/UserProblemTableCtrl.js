@@ -13,10 +13,17 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       'selected': '5'
     }
     $scope.problem_view = false;
-
-    $scope.newValueChoose = function(value){
-      $scope.problem_view = value;
+    $scope.changeClass="btn-link"
+    $scope.newValueChoose = function(){
+      if($scope.problem_view){
+        $scope.problem_view = false;
+        $scope.changeClass="btn-link";
+        $scope.loadProblems();
+      }else{
+      $scope.problem_view = true;
+      $scope.changeClass="btn-primary"
       $scope.loadProblems();
+      }
     }
 
     $scope.getStatus = function(status) {

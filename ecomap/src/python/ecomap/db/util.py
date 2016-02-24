@@ -1235,7 +1235,7 @@ def get_subcomments_by_parent_id(parent_id):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT c.id, c.content, c.problem_id, 
+        query = """SELECT c.id, c.content, c.problem_id,
                           c.parent_id, c.created_date, c.user_id,
                           u.nickname
                    FROM `comment` AS c LEFT JOIN `user` as u
@@ -1243,8 +1243,21 @@ def get_subcomments_by_parent_id(parent_id):
                    WHERE c.parent_id=%s;
                 """
         cursor.execute(query, (parent_id,))
-        return cursor.fetchall()        
+        return cursor.fetchall()
 
+@retry_query(tries=3, delay=1)
+def get_count_of_parent_subcomments(parent_id):
+    """Get count of subcomments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+                   WHERE parent_id=%s;
+                """
+        cursor.execute(query, (parent_id,))
+        return cursor.fetchone()
 
 @retry_query(tries=3, delay=1)
 def get_user_comments_count(user_id):

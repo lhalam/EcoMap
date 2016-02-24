@@ -89,7 +89,8 @@ def detailed_problem(problem_id):
             'content': problem_data[2], 'proposal': problem_data[3],
             'severity': problem_data[4], 'status': problem_data[5],
             'latitude': problem_data[6], 'longitude': problem_data[7],
-            'problem_type_id': problem_data[8], 'date': problem_data[9]}
+            'problem_type_id': problem_data[8], 'date': problem_data[9],
+            'name': problem_data[10]}
     else:
         return jsonify({'message': ' resource not exists'}), 404
 
@@ -211,7 +212,8 @@ def get_user_problems(user_id):
                               'status': problem[5],
                               'date': problem[6] * 1000,
                               'severity': problem[8],
-                              'is_enabled': problem[7]})
+                              'is_enabled': problem[7],
+                              'name': problem[9]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([problems_list, [total_count]]),
@@ -258,7 +260,8 @@ def get_all_users_problems():
                                   'is_enabled': problem[7],
                                   'last_name': problem[9],
                                   'first_name': problem[10],
-                                  'nickname': problem[11]})
+                                  'nickname': problem[11],
+                                  'name': problem[12]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([problems_list, [total_count]]),
@@ -429,11 +432,12 @@ def get_user_subscriptions(user_id):
     logger.info(subscription_tuple)
     for subscription in subscription_tuple:
         subscriptions_list.append({'id': subscription[0],
-                                    'title': subscription[1],
-                                    'problem_type_id': subscription[2],
-                                    'status': subscription[3],
-                                    'date': subscription[4] * 1000,
-                                    'date_subscription': subscription[10] * 1000})
+                                   'title': subscription[1],
+                                   'problem_type_id': subscription[2],
+                                   'status': subscription[3],
+                                   'date': subscription[4] * 1000,
+                                   'date_subscription': subscription[10] * 1000,
+                                   'name': subscription[12]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([subscriptions_list, [total_count]]),

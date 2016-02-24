@@ -15,9 +15,11 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     }, function errorCallback(error) {
       $state.go('error404');
     });
+
     $scope.close = function() {
       $state.go('map')
     };
+
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -31,6 +33,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
+
     $scope.post_comment = function(comment) {
       if (comment) {
         $http({
@@ -50,10 +53,11 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
             comment.text = '';
           })
         }, function errorCallback(response) {
-         if (response.status===405) {
-          $scope.msg.addCommentAnonimError('коммента');}
-         else{
-          $scope.msg.addCommentError('коммента');}
+          if (response.status===405) {
+            $scope.msg.addCommentAnonimError('коммента');
+          } else {
+            $scope.msg.addCommentError('коммента');
+          }
         });
       } else {
         return;
@@ -62,11 +66,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
 
     $scope.colBs = 'col-lg-8';
     $scope.hideIconSubsc = true;
-    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user'){
+    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user') {
       $scope.colBs = 'col-lg-4';
       $scope.hideIconSubsc = false;
-   }
-    $scope.cls_eye_subs = "fa fa-eye-slash";    
+    }
+    
+    $scope.cls_eye_subs = "fa fa-eye-slash";
+
     $scope.chgEyeSubsc = function(){
       if ($scope.cls_eye_subs === "fa fa-eye-slash"){
         $http({
@@ -78,22 +84,20 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye";
           $scope.msg.createSuccess('підписки');
-        })
-        
-      }
-      else if ($scope.cls_eye_subs = "fa fa-eye") {
+        })        
+      } else if ($scope.cls_eye_subs = "fa fa-eye") {
         $http({
-        method: 'DELETE',
-        url: '/api/subscription_delete',
-        params: {
-          problem_id: $state.params['id']
-        }
+          method: 'DELETE',
+          url: '/api/subscription_delete',
+          params: {
+            problem_id: $state.params['id']
+          }
         }).then(function successCallback(response) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
           $scope.msg.deleteSuccess('підписки');
         })          
       }
-  };
+    };
   }
 ]);
 

@@ -98,16 +98,19 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
 
     $scope.showSubComments = false;
     $scope.getSubComments = function (parent_id) {
-          if(!$scope.showSubComments) {
-            $http({
-              method: 'GET',
-              url: '/api/problem_subcomments/' + parent_id
-            }).then(function successCallback(response) {
-              $scope.subcomments = response.data;
-            })
-          }
-          $scope.subcomment_parent = parent_id;
+          $http({
+            method: 'GET',
+            url: '/api/problem_subcomments/' + parent_id
+          }).then(function successCallback(response) {
+            $scope.subcomments = response.data;
+          })
+          if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
           $scope.showSubComments = $scope.showSubComments ? false: true;
+        }
+        if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
+          $scope.showSubComments = true;
+        }
+        $scope.subcomment_parent = parent_id;
     }
 
     

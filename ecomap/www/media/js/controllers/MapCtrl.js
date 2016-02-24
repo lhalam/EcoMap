@@ -37,7 +37,6 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
       $scope.filterMarker()
     }
     $scope.toggleStatus = function(status) {
-     
       if ($scope.selectedStatus.indexOf(status) !== -1) {
         $scope.selectedStatus.splice($scope.selectedStatus.indexOf(status), 1)
       } else {

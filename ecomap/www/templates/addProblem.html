@@ -48,6 +48,9 @@
       <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="addProblemForm.problem_type_id.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
+      <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="addProblemForm.problem_type_id.$touched || submitted">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
+      </div>
     </div>
     <div class="form-group " ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
       <label for="problemContent" class="control-label">Опис проблеми</label>

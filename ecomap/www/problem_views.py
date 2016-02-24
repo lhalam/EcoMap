@@ -76,10 +76,12 @@ def detailed_problem(problem_id):
     :statuscode 200: problem displayed
 
     """
+    user_id = current_user.uid
     problem_data = db.get_problem_by_id(problem_id)
     activities_data = db.get_activity_by_problem_id(problem_id)
     photos_data = db.get_problem_photos(problem_id)
     comments_data = db.get_comments_by_problem_id(problem_id)
+    subscription_data = db.check_exist_subscriptions(user_id, problem_id)
     photos = []
     activities = {}
     comments = []
@@ -91,7 +93,7 @@ def detailed_problem(problem_id):
             'severity': problem_data[4], 'status': problem_data[5],
             'latitude': problem_data[6], 'longitude': problem_data[7],
             'problem_type_id': problem_data[8], 'date': problem_data[9],
-            'name': problem_data[10]}
+            'name': problem_data[10], 'is_subscripted': subscription_data}
     else:
         return jsonify({'message': ' resource not exists'}), 404
 

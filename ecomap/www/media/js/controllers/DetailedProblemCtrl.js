@@ -10,9 +10,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      $scope.isSubscripted = response.data[0][0]['is_subscripted'];	
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
+    	if($scope.isSubscripted === false) {
+				$scope.cls_eye_subs = "fa fa-eye-slash";
+			} else $scope.cls_eye_subs = "fa fa-eye";	
     }, function errorCallback(error) {
       $state.go('error404');
     });

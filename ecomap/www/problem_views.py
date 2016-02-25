@@ -183,45 +183,43 @@ def post_problem():
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
-    :rtype: JSON
-    :param  user_id: id of user (int)
-    :query limit: limit number. default is 5
-    :query offset: offset number. default is 0
+    :rtype: JSON.
+    :param  user_id: id of user (int).
+    :query limit: limit number. default is 5.
+    :query offset: offset number. default is 0.
     :return:
         - If user has problems:
-            ``[{"id": 190,"title": "name",
-            "latitude": 51.419765,
-            "longitude": 29.520264,
-            "problem_type_id": 1,
-            "status": 0,
-            "date": "2015-02-24T14:27:22.000Z",
-            "severity": '3',
-            "is_enabled": 1
+            ``[{'id': 190, 'title': 'name',
+            'latitude': 51.419765,
+            'longitude': 29.520264,
+            'problem_type_id': 1,
+            'status': 0,
+            'date': "2015-02-24T14:27:22.000Z",
+            'severity': '3',
+            'is_enabled': 1,
+            'name': 'problem with forest'
             },{...}]``
         - If user haven't:
             ``{}``
-        :statuscode 200: no errors
+        :statuscode 200: no errors.
     """
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     problem_tuple = db.get_user_problems(user_id, offset, per_page)
     count = db.count_user_problems(user_id)
-    problems_list = []
-    total_count = {}
+    problems_list = [{'id': problem[0],
+                      'title': problem[1],
+                      'latitude': problem[2],
+                      'logitude': problem[3],
+                      'problem_type_id': problem[4],
+                      'status': problem[5],
+                      'date': problem[6] * 1000,
+                      'severity': problem[8],
+                      'is_enabled': problem[7],
+                      'name': problem[9]}
+                     for problem in problem_tuple] if problem_tuple else []
     logger.info(problem_tuple)
-    for problem in problem_tuple:
-        problems_list.append({'id': problem[0],
-                              'title': problem[1],
-                              'latitude': problem[2],
-                              'logitude': problem[3],
-                              'problem_type_id': problem[4],
-                              'status': problem[5],
-                              'date': problem[6] * 1000,
-                              'severity': problem[8],
-                              'is_enabled': problem[7],
-                              'name': problem[9]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
+    total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
 
@@ -229,9 +227,9 @@ def get_user_problems(user_id):
 @app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
-    :query limit: limit number. default is 5
-    :query offset: offset number. default is 0
-    :rtype: JSON
+    :query limit: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
     :return: list of user's problem represented with next objects:
         ``[{"id": 190,
         "title": "name",
@@ -244,32 +242,29 @@ def get_all_users_problems():
         "is_enabled": 1,
         'last_name': 'name',
         'first_name': 'surname',
-        'nickname': 'nick'}]``
+        'nickname': 'nick',
+        'name': 'problem with forests'}]``
 
     """
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
     count = db.count_problems()
-    total_count = {}
-    problems_list = []
     problem_tuple = db.get_all_users_problems(offset, per_page)
-    if problem_tuple:
-        for problem in problem_tuple:
-            problems_list.append({'id': problem[0],
-                                  'title': problem[1],
-                                  'latitude': problem[2],
-                                  'longitude': problem[3],
-                                  'problem_type_id': problem[4],
-                                  'status': problem[5],
-                                  'date': problem[6] * 1000,
-                                  'severity': problem[8],
-                                  'is_enabled': problem[7],
-                                  'last_name': problem[9],
-                                  'first_name': problem[10],
-                                  'nickname': problem[11],
-                                  'name': problem[12]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
+    problems_list = [{'id': problem[0],
+                      'title': problem[1],
+                      'latitude': problem[2],
+                      'longitude': problem[3],
+                      'problem_type_id': problem[4],
+                      'status': problem[5],
+                      'date': problem[6] * 1000,
+                      'severity': problem[8],
+                      'is_enabled': problem[7],
+                      'last_name': problem[9],
+                      'first_name': problem[10],
+                      'nickname': problem[11],
+                      'name': problem[12]}
+                     for problem in problem_tuple] if problem_tuple else []
+    total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
 
@@ -490,37 +485,39 @@ def get_user_subscriptions(user_id):
 
 @app.route('/api/usersSubscriptions', methods=['GET'])
 def get_all_subscriptions():
-    """Function retrieves all user's subscriptions from db and shows it in user
-    profile page on `my subscriptions` tab.
-    :param id: id of subscription (int)
-    :param title: title of problem (str)
-    :param problem_type_id: id of problem type (int)
-    :param status: status of problem (solved or unsolved)
-    :param date: date when problem was creared
-    :param date_subscription: date when user subscribed to a problem
-    :param name: name of problem type
-    :type: JSON
+    """Function retrieves all user's subscriptions from db and shows it in
+    admin profile page on `my subscriptions` tab.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :param id: id of subscription (int).
+    :param title: title of problem (str).
+    :param problem_type_id: id of problem type (int).
+    :param status: status of problem (solved or unsolved).
+    :param date: date when problem was creared.
+    :param date_subscription: date when user subscribed to a problem.
+    :param name: name of problem type.
+    :last_name: user last name.
+    :first_name: user first name.
+    :nickname: user nickname.
+    :type: JSON.
     """
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     subscription_tuple = db.get_all_subscriptions(offset, per_page)
     count = db.count_all_subscriptions()
-    subscriptions_list = []
-    total_count = {}
+    subscriptions_list = [{'id': subscription[0],
+                           'title': subscription[1],
+                           'problem_type_id': subscription[2],
+                           'status': subscription[3],
+                           'date': subscription[4] * 1000,
+                           'date_subscription': subscription[5] * 1000,
+                           'name': subscription[6],
+                           'last_name': subscription[7],
+                           'first_name': subscription[8],
+                           'nickname': subscription[9]}
+                          for subscription in subscription_tuple]
     logger.info(subscription_tuple)
-    for subscription in subscription_tuple:
-        subscriptions_list.append({'id': subscription[0],
-                                   'title': subscription[1],
-                                   'problem_type_id': subscription[2],
-                                   'status': subscription[3],
-                                   'date': subscription[4] * 1000,
-                                   'date_subscription': subscription[5] * 1000,
-                                   'name': subscription[6],
-                                   'last_name': subscription[7],
-                                   'first_name': subscription[8],
-                                   'nickname': subscription[9]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
+    total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([subscriptions_list, [total_count]]),
                     mimetype='application/json')
 
@@ -544,7 +541,7 @@ def subscription_post():
                                        user_id,
                                        subscr_date)
         logger.debug('New subscription post was created with id %s', last_id)
-        response = jsonify(subscription_id=last_id)        
+        response = jsonify(subscription_id=last_id)
         return response
 
 
@@ -557,7 +554,7 @@ def subscription_delete():
     if request.method == 'DELETE':
         logger.info(request.args.get('problem_id'))
         problem_id = int(request.args.get('problem_id'))
-        user_id = current_user.uid        
+        user_id = current_user.uid
         logger.info(problem_id)
         last_id = db.subscription_delete(user_id, problem_id)
         logger.debug('Subscription post was deleted with id %s', last_id)
@@ -568,15 +565,12 @@ def subscription_delete():
 @app.route('/api/search_usersProblem', methods=['GET'])
 def get_search_users_problems():
     """This method retrieves all user's problem with special nickname from db.
-    :query limit: limit number. default is 5
-    :query offset: offset number. default is 0
-    :rtype: JSON
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
     :return: list of user's problem represented with next objects:
         ``[{"id": 190,
         "title": "name",
-        "latitude": 51.419765,
-        "longitude": 29.520264,
-        "problem_type_id": 1,
         "status": 0,
         "date": "2015-02-24T14:27:22.000Z",
         "severity": '3',
@@ -589,23 +583,19 @@ def get_search_users_problems():
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     count = db.count_user_by_nickname(nickname)
-    total_count = {}
-    problems_list = []
     problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
-    if problem_tuple:
-        for problem in problem_tuple:
-            problems_list.append({'id': problem[0],
-                                  'title': problem[1],
-                                  'status': problem[2],
-                                  'date': problem[3] * 1000,
-                                  'is_enabled': problem[4],
-                                  'severity': problem[5],
-                                  'nickname': problem[6],
-                                  'last_name': problem[7],
-                                  'first_name': problem[8],
-                                  'name': problem[9]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
+    problems_list = [{'id': problem[0],
+                      'title': problem[1],
+                      'status': problem[2],
+                      'date': problem[3] * 1000,
+                      'is_enabled': problem[4],
+                      'severity': problem[5],
+                      'nickname': problem[6],
+                      'last_name': problem[7],
+                      'first_name': problem[8],
+                      'name': problem[9]}
+                     for problem in problem_tuple] if problem_tuple else []
+    total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
 
@@ -672,15 +662,20 @@ def user_comments(user_id):
 
 @app.route('/api/nickname_subscriptions', methods=['GET'])
 def get_user_subscriptions_nickname():
-    """Function retrieves all user's subscriptions from db and shows it in user
-    profile page on `my subscriptios` tab.
-    :param id: id of subscription (int)
-    :param title: title of problem (str)
-    :param problem_type_id: id of problem type (int)
-    :param status: status of problem (solved or unsolved)
-    :param date: date when problem was creared
-    :param date_subscription: date when user subscribed to a problem
-    :param name: name of problem type
+    """Function retrieves all user's subscriptions by nickname from db and
+    shows it using search field on `my subscriptios` tab.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :param id: id of subscription (int).
+    :param title: title of problem (str).
+    :param problem_type_id: id of problem type (int).
+    :param status: status of problem (solved or unsolved).
+    :param date: date when problem was creared.
+    :param date_subscription: date when user subscribed to a problem.
+    :param name: name of problem type.
+    :last_name: user last name.
+    :first_name: user first name.
+    :nickname: user nickname.
     :type: JSON
     """
     nickname = request.args.get('nickname')
@@ -690,21 +685,18 @@ def get_user_subscriptions_nickname():
                                                           offset,
                                                           per_page)
     count = db.count_subscriptions_by_nickname(nickname)
-    subscriptions_list = []
-    total_count = {}
+    subscriptions_list = [{'id': subscription[0],
+                           'title': subscription[1],
+                           'problem_type_id': subscription[2],
+                           'status': subscription[3],
+                           'date': subscription[4] * 1000,
+                           'date_subscription': subscription[5] * 1000,
+                           'name': subscription[6],
+                           'last_name': subscription[7],
+                           'first_name': subscription[8],
+                           'nickname': subscription[9]}
+                          for subscription in subscription_tuple]
     logger.info(subscription_tuple)
-    for subscription in subscription_tuple:
-        subscriptions_list.append({'id': subscription[0],
-                                   'title': subscription[1],
-                                   'problem_type_id': subscription[2],
-                                   'status': subscription[3],
-                                   'date': subscription[4] * 1000,
-                                   'date_subscription': subscription[5] * 1000,
-                                   'name': subscription[6],
-                                   'last_name': subscription[7],
-                                   'first_name': subscription[8],
-                                   'nickname': subscription[9]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
+    total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([subscriptions_list, [total_count]]),
                     mimetype='application/json')

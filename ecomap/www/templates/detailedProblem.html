@@ -72,7 +72,7 @@
                   <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
                 </div>
                 <div class="pull-right">
-                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count}} відповідь</a>
+                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
                 </div> 
               </div>
           </div>

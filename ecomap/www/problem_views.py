@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module contains routes, used for problem table."""
 import json
 import hashlib

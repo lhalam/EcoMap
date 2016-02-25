@@ -34,6 +34,39 @@ def get_user_by_id(user_id):
         return cursor.fetchone()
 
 
+def get_user_by_nickname(nickname, offset, per_page):
+    """Return user, found by email.
+    :params email: user email
+    :retrun: tuple with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.status,
+                   p.created_date, p.is_enabled,
+                   p.severity, u.nickname,
+                   u.last_name, u.first_name, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname = %s LIMIT %s,%s;
+                """
+        cursor.execute(query, (nickname, offset, per_page))
+        return cursor.fetchall()
+
+
+def count_user_by_nickname(nickname):
+    """Count of users with special nickname"""
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(u.nickname)
+                   FROM `problem` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname = %s;
+                """
+        cursor.execute(query, (nickname, ))
+        return cursor.fetchone()
+
+
 @retry_query(tries=3, delay=1)
 def get_user_by_oauth_id(user_id):
     """Return user, found by id.

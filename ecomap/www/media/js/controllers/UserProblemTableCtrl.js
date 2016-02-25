@@ -12,20 +12,19 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     $scope.selectCount = {
       'selected': '5'
     }
-    $scope.problem_view = false;
-    $scope.changeClass="btn-link"
-    $scope.newValueChoose = function(){
-      if($scope.problem_view){
-        $scope.problem_view = false;
-        $scope.changeClass="btn-link";
-        $scope.loadProblems();
-      }else{
-      $scope.problem_view = true;
-      $scope.changeClass="btn-primary"
-      $scope.loadProblems();
-      }
-    }
-
+    // $scope.problem_view = false;
+    // $scope.changeClass="btn-link"
+    // $scope.newValueChoose = function(){
+    //   if($scope.problem_view){
+    //     $scope.problem_view = false;
+    //     $scope.changeClass="btn-link";
+    //     $scope.loadProblems();
+    //   }else{
+    //   $scope.problem_view = true;
+    //   $scope.changeClass="btn-primary"
+    //   $scope.loadProblems();
+    //   }
+    // }
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -36,7 +35,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
 
     $scope.showTable = false;
     $scope.nickname = false;
-
+    $scope.searchNick = null;
     $scope.loadProblems = function() {
       var user_id = $cookies.get('id');
       $scope.msg = msg;
@@ -46,12 +45,25 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
         var stepCount = $scope.selectCount['selected']
-        if ($cookies.get('role')=='admin' || $scope.problem_view){
-          if($cookies.get('role')=='admin'){
-            $scope.showTable = true;
-          } else {
+        if ($scope.searchNick){
+            $scope.showTable = ($cookies.get('role')=='admin')?true:false;
             $scope.nickname = true;
-          }
+            $http({
+              method: 'GET',
+              url: '/api/search_usersProblem',
+              params: {
+                nickname: $scope.searchNick, 
+                per_page: $scope.selectCount['selected'],
+                offset: $scope.selectCount['selected'] * newValue - stepCount
+              }
+            }).then(function successCallback(response) {
+             $scope.searchNick = null;
+             $scope.problems = response.data[0];
+             $scope.problemsLength = response.data[1][0]['total_problem_count'];
+             $scope.count = response.data[1][0]['total_problem_count'];
+             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+           })
+        } else if($cookies.get('role')=='admin'){
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',

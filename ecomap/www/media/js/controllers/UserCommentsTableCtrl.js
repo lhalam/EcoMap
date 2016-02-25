@@ -22,30 +22,30 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     };
 
 
-    $scope.loadProblems = function() {
+    $scope.loadComments = function() {
       var user_id = $cookies.get('id');
       $scope.msg = msg;
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
-      $scope.problemsLength = $scope.selectCount['selected'];
-      $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+      $scope.commentsCount = $scope.selectCount['selected'];
+      $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
         var stepCount = $scope.selectCount['selected']
         if ($cookies.get('role')=='admin'){
           $http({
             method: 'GET',
-            url: 'api/all_usersProblem',
+            url: 'api/all_users_comments',
             params: {
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
           }).then(function successCallback(response) {
-            $scope.problems = response.data[0];
-            $scope.problemsLength = response.data[1][0]['total_problem_count'];
-            $scope.count = response.data[1][0]['total_problem_count'];
-            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+            $scope.comments = response.data[0];
+            $scope.commentsCount = response.data[1][0]['total_comments_count'];
+            $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
           })
         } else {
+          console.log(user_id) 
           $http({
             method: 'GET',
             url: 'api/user_comments/' + user_id,
@@ -62,7 +62,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       })
     };
 
-    $scope.loadProblems();
+    $scope.loadComments();
 
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;

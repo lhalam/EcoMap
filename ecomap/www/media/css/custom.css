@@ -111,17 +111,6 @@ body {
   margin-bottom: 1.2em
 }
 
-
-/*inform about problem block*/
-
-#inform_probl_btn {
-  transition: 0.1s;
-}
-
-#inform_probl_btn:hover {
-  background-color: #aaa;
-}
-
 .inform_probl_block {
   margin-left: 100%;
 }
@@ -856,3 +845,6 @@ h3.title{
   padding-top: 0px;
 }
 
+.container-fluid{
+  background-color: #FFF;
+}

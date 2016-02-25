@@ -51,7 +51,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
               anonim: comment.changeUser
             }
           }).then(function successCallback() {
-            $scope.msg.addCommentSuccess('коммента');
+            $scope.msg.addCommentSuccess('коментаря');
             $http({
               method: 'GET',
               url: '/api/problem_comments/' + $state.params['id']
@@ -61,9 +61,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
             })
           }, function errorCallback(response) {
             if (response.status===405) {
-              $scope.msg.addCommentAnonimError('коммента');
+              $scope.msg.addCommentAnonimError('коментаря');
             } else {
-              $scope.msg.addCommentError('коммента');
+              $scope.msg.addCommentError('коментаря');
             }
           });
       } else {

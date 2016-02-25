@@ -35,7 +35,7 @@ def get_user_by_id(user_id):
 
 
 def get_user_by_nickname(nickname, offset, per_page):
-    """Return user, found by email.
+    """Return user, found by nickname.
     :params email: user email
     :retrun: tuple with user info
     """
@@ -48,9 +48,9 @@ def get_user_by_nickname(nickname, offset, per_page):
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    INNER JOIN `user` AS u ON p.user_id = u.id
-                   WHERE u.nickname = %s LIMIT %s,%s;
+                   WHERE u.nickname LIKE '%{}%' LIMIT {},{};
                 """
-        cursor.execute(query, (nickname, offset, per_page))
+        cursor.execute(query.format(nickname, offset, per_page))
         return cursor.fetchall()
 
 
@@ -61,9 +61,9 @@ def count_user_by_nickname(nickname):
         query = """SELECT count(u.nickname)
                    FROM `problem` AS p
                    INNER JOIN `user` AS u ON p.user_id = u.id
-                   WHERE u.nickname = %s;
+                   WHERE u.nickname LIKE '%{}%';
                 """
-        cursor.execute(query, (nickname, ))
+        cursor.execute(query.format(nickname))
         return cursor.fetchone()
 
 

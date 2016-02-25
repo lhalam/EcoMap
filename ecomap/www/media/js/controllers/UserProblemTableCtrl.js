@@ -12,19 +12,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     $scope.selectCount = {
       'selected': '5'
     }
-    // $scope.problem_view = false;
-    // $scope.changeClass="btn-link"
-    // $scope.newValueChoose = function(){
-    //   if($scope.problem_view){
-    //     $scope.problem_view = false;
-    //     $scope.changeClass="btn-link";
-    //     $scope.loadProblems();
-    //   }else{
-    //   $scope.problem_view = true;
-    //   $scope.changeClass="btn-primary"
-    //   $scope.loadProblems();
-    //   }
-    // }
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -57,7 +44,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
                 offset: $scope.selectCount['selected'] * newValue - stepCount
               }
             }).then(function successCallback(response) {
-             $scope.searchNick = null;
              $scope.problems = response.data[0];
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
              $scope.count = response.data[1][0]['total_problem_count'];

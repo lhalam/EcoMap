@@ -571,3 +571,42 @@ def get_search_users_problems():
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
+
+
+@app.route('/api/nickname_subscriptions', methods=['GET'])
+def get_user_subscriptions_nickname():
+    """Function retrieves all user's subscriptions from db and shows it in user
+    profile page on `my subscriptions` tab.
+    :param id: id of subscription (int)
+    :param title: title of problem (str)
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param date: date when problem was creared
+    :param date_subscription: date when user subscribed to a problem
+    :param name: name of problem type
+    :type: JSON
+    """
+    nickname = 'ad'
+    offset = 0
+    per_page = 5
+    subscription_tuple = db.get_subscriptions_by_nickname(nickname,
+                                                          offset,
+                                                          per_page)
+    count = db.count_subscriptions_by_nickname(nickname)
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'id': subscription[0],
+                                   'title': subscription[1],
+                                   'problem_type_id': subscription[2],
+                                   'status': subscription[3],
+                                   'date': subscription[4] * 1000,
+                                   'date_subscription': subscription[5] * 1000,
+                                   'name': subscription[6],
+                                   'nickname': subscription[7]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')
+

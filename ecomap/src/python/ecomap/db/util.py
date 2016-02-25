@@ -1563,3 +1563,60 @@ def get_subscriptions(user_id, offset, per_page):
                 """
         cursor.execute(query, (user_id, offset, per_page))
         return cursor.fetchall()
+
+
+# def get_problem_id_by_nickname(nickname):
+#     with db_pool_ro().manager() as conn:
+#         cursor = conn.cursor()
+#         query = """ SELECT p.id, p.user_id
+#                 FROM `problem` as p
+#                 INNER JOIN `user` AS u ON p.user_id = u.id
+#                 WHERE u.nickname LIKE '%{}%'
+#                 GROUP BY p.id;
+#                 """
+#         cursor.execute(query.format(nickname))
+#         return cursor.fetchall()
+
+# print get_problem_id_by_nickname('ad')
+
+@retry_query(tries=3, delay=1)
+def get_subscriptions_by_nickname(nickname, offset, per_page):
+    """Function retrieves all user's subscriptions from db by nickname.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name, u.nickname
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON sub.user_id=u.id
+                   WHERE u.nickname LIKE '%{}%' LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def count_subscriptions_by_nickname(nickname):
+    """Function counts user's subscriptions.
+    :param user_id: id of user (int)
+    :return: count.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(s.id)
+                FROM `subscription`as s
+                INNER JOIN `user` as u ON s.user_id=u.id
+                WHERE u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
+        return cursor.fetchone()
+

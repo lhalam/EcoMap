@@ -527,47 +527,18 @@ def subscription_delete():
         return response
 
 
-@app.route('/api/search_usersProblem', methods=['GET'])
-def get_search_users_problems():
-    """This method retrieves all user's problem with special nickname from db.
-    :query limit: limit number. default is 5
-    :query offset: offset number. default is 0
-    :rtype: JSON
-    :return: list of user's problem represented with next objects:
-        ``[{"id": 190,
-        "title": "name",
-        "latitude": 51.419765,
-        "longitude": 29.520264,
-        "problem_type_id": 1,
-        "status": 0,
-        "date": "2015-02-24T14:27:22.000Z",
-        "severity": '3',
-        "is_enabled": 1,
-        'last_name': 'name',
-        'first_name': 'surname',
-        'nickname': 'nick'}]``
-
+@app.route('/api/all_users_comments', methods=['GET'])
+def all_users_comments():
+    """Function gets all comments from DB.
+    :type: JSON
+    :return: response
     """
-    nickname = request.args.get('nickname')
-    offset = int(request.args.get('offset')) or 0
-    per_page = int(request.args.get('per_page')) or 5
-    count = db.count_user_by_nickname(nickname)
-    total_count = {}
-    problems_list = []
-    problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
-    if problem_tuple:
-        for problem in problem_tuple:
-            problems_list.append({'id': problem[0],
-                                  'title': problem[1],
-                                  'status': problem[2],
-                                  'date': problem[3] * 1000,
-                                  'is_enabled': problem[4],
-                                  'severity': problem[5],
-                                  'nickname': problem[6],
-                                  'last_name': problem[7],
-                                  'first_name': problem[8],
-                                  'name': problem[9]})
-    if count:
-        total_count = {'total_problem_count': count[0]}
-    return Response(json.dumps([problems_list, [total_count]]),
-                    mimetype='application/json')
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+    comments = db.get_all_users_comments(offset, per_page)
+    response = []
+    if comments:
+        response = Response(json.dumps(comments),
+                            mimetype='application/json')
+
+    return response

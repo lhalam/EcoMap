@@ -1563,3 +1563,21 @@ def get_subscriptions(user_id, offset, per_page):
                 """
         cursor.execute(query, (user_id, offset, per_page))
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_all_users_comments(offset, per_page):
+    """Get all comments of all users.
+       :params: - offset - pagination option
+                - per_page - pagination option
+       :return: tuples with comments info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   LEFT JOIN `user` as us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 LIMIT %s,%s;
+                """
+        cursor.execute(query, (offset, per_page))
+        return cursor.fetchall()

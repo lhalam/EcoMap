@@ -1,18 +1,22 @@
 <div ng-controller="UserProblemTableCtrl">
   <div class="row">
-    <h3 class="col-md-10">Проблеми {{user.data.surname}} {{user.data.name}}</h3>
-    <div class="col-md-1">
+    <h3 class="col-md-10 title">Проблеми {{user.data.surname}} {{user.data.name}}</h3>
+    <div class="col-md-1 col-sm-2">
       <div class="select">
         <select ng-model="selectCount.selected" 
                 class="form-control" 
-                data-ng-options="select_count as select_count for (select_id,select_count)
-                                in selectCountObj" 
+                data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 
                 ng-change="loadProblems()">
         </select>
       </div>
     </div>
   </div>
-  <hr>
+  <div ng-show="showTable == false">
+    <button ng-model="problem_view" id="button" class="btn {{changeClass}}" 
+           ng-click='newValueChoose()'>Всі проблеми
+    </button>
+  </div>
+  <hr class="problems">
   <table class="table table-stripped UserProblemTable">
     <thead>
       <tr>
@@ -24,7 +28,7 @@
           </span>
         </td>
         <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
-            ng-show='showTable == true'><strong>Нікнейм</strong>
+            ng-show='showTable == true || nickname == true'><strong>Нікнейм</strong>
           <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
           </span>
           <span ng-show="sortType == 'last_name' && sortReverse" class="fa fa-caret-up">
@@ -56,11 +60,11 @@
       <tr ng-repeat="problem in problems | orderBy:sortType:sortReverse">
         <td ng-model="problem.last_name" ng-show='showTable == true'>
           {{problem.first_name}} {{problem.last_name}}</td>
-        <td ng-model="problem.nickname" ng-show='showTable == true'>
+        <td ng-model="problem.nickname" ng-show='showTable == true || nickname==true'>
           {{problem.nickname}}</td>
         <td ng-model="problem.title" class="problem-title">{{problem.title}}</td>
         <td ng-model="problem.problem_type_id">
-          {{getProblemType(problem.problem_type_id)}}</td>
+          {{problem.name}}</td>
         <td ng-model="problem.status">{{getStatus(problem.status)}}</td>
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
@@ -68,7 +72,7 @@
     </tbody>
   </table>
   <p ng-hide="problemsLength==0"><strong>Загальна кількість проблем: </strong>
-     <span>{{problemsLength}}</span>
+     <span>{{count}}</span>
   </p>
     <div class="row">
       <div class="col-md-8 col-md-offset-4">
@@ -104,7 +108,7 @@
         <div class="problem-type">
           <p><strong>Тип проблеми:</strong></p>
           <p ng-model="detailedProblem.problem_type_id">
-            {{getProblemType(detailedProblem.problem_type_id)}}
+            {{detailedProblem.name}}
           </p>
         </div>
         <div class="description">

@@ -22,4 +22,5 @@ INSERT INTO `resource` VALUES (1,'/'),(8,'/api/addResource'),
 (12,'/api/user_page'),(10,'/api/user_roles'),
 (38,'/api/problem_type'),
 (41,'/api/subscription_post'), (42,'/api/subscription_delete'),
-(43,'/api/usersSubscriptions/:idUser'),(44,'/api/change_nickname');
+(43,'/api/usersSubscriptions/:idUser'),(44,'/api/change_nickname'),
+(45,'/api/problem_subcomments/:idParent');

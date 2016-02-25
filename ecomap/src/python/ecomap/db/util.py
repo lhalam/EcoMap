@@ -1620,7 +1620,53 @@ def get_all_users_comments(offset, per_page):
                    cm.created_date, us.nickname, us.first_name, us.last_name
                    FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
-                   WHERE cm.parent_id=0 LIMIT %s,%s;
+                   WHERE cm.parent_id=0 LIMIT {},{};
                 """
-        cursor.execute(query, (offset, per_page))
+        cursor.execute(query.format(offset, per_page))
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_user_comments(offset, per_page, user_id):
+    """Get all comments of user.
+       :params: - offset - pagination option
+                - per_page - pagination option
+       :return: tuples with comments info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   LEFT JOIN `user` as us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 AND cm.user_id={} LIMIT {},{};
+                """
+        cursor.execute(query.format(user_id, offset, per_page))
+        return cursor.fetchall()        
+
+@retry_query(tries=3, delay=1)
+def get_count_comments():
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+                   WHERE parent_id=0;
+                """
+        cursor.execute(query)
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def get_count_user_comments(user_id):
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+                   WHERE parent_id=0 AND user_id={};
+                """
+        cursor.execute(query.format(user_id))
+        return cursor.fetchone()        

@@ -41,7 +41,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             }
           }).then(function successCallback(response) {
             $scope.comments = response.data[0];
-            console.log(response.data[1][0])
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
           })
@@ -55,7 +54,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
           }).then(function successCallback(response) {
-            console
            $scope.comments = response.data[0];
            $scope.commentsCount = response.data[1][0]['total_comments_count'];
            $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;

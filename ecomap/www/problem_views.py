@@ -487,6 +487,43 @@ def get_user_subscriptions(user_id):
                     mimetype='application/json')
 
 
+@app.route('/api/usersSubscriptions', methods=['GET'])
+def get_all_subscriptions():
+    """Function retrieves all user's subscriptions from db and shows it in user
+    profile page on `my subscriptions` tab.
+    :param id: id of subscription (int)
+    :param title: title of problem (str)
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param date: date when problem was creared
+    :param date_subscription: date when user subscribed to a problem
+    :param name: name of problem type
+    :type: JSON
+    """
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    subscription_tuple = db.get_all_subscriptions(offset, per_page)
+    count = db.count_all_subscriptions()
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'id': subscription[0],
+                                   'title': subscription[1],
+                                   'problem_type_id': subscription[2],
+                                   'status': subscription[3],
+                                   'date': subscription[4] * 1000,
+                                   'date_subscription': subscription[5] * 1000,
+                                   'name': subscription[6],
+                                   'last_name': subscription[7],
+                                   'first_name': subscription[8],
+                                   'nickname': subscription[9]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')
+
+
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
     """Function adds data about subscription into DB.
@@ -620,7 +657,9 @@ def get_user_subscriptions_nickname():
                                    'date': subscription[4] * 1000,
                                    'date_subscription': subscription[5] * 1000,
                                    'name': subscription[6],
-                                   'nickname': subscription[7]})
+                                   'last_name': subscription[7],
+                                   'first_name': subscription[8],
+                                   'nickname': subscription[9]})
     if count:
         total_count = {'total_problem_count': count[0]}
     return Response(json.dumps([subscriptions_list, [total_count]]),

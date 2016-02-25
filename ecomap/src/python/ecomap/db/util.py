@@ -1542,6 +1542,19 @@ def count_user_subscriptions(user_id):
 
 
 @retry_query(tries=3, delay=1)
+def count_all_subscriptions():
+    """Function counts user's subscriptions.
+    :param user_id: id of user (int)
+    :return: count.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `subscription`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def get_subscriptions(user_id, offset, per_page):
     """Function retrieves all user's subscriptions from db.
     :param id: id of problem (int)
@@ -1566,6 +1579,31 @@ def get_subscriptions(user_id, offset, per_page):
 
 
 @retry_query(tries=3, delay=1)
+def get_all_subscriptions(offset, per_page):
+    """Function retrieves all user's subscriptions from db.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name,
+                   u.last_name, u.first_name, u.nickname
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON sub.user_id=u.id LIMIT %s,%s;
+                """
+        cursor.execute(query, (offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def get_subscriptions_by_nickname(nickname, offset, per_page):
     """Function retrieves all user's subscriptions from db by nickname.
     :param id: id of problem (int)
@@ -1579,7 +1617,8 @@ def get_subscriptions_by_nickname(nickname, offset, per_page):
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
-                   pr.created_date, sub.date_subscriptions, pt.name, u.nickname
+                   pr.created_date, sub.date_subscriptions, pt.name,
+                   u.last_name, u.first_name, u.nickname
                    FROM  `subscription` as sub
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
                    INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id

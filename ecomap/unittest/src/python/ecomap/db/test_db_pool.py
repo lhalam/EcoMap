@@ -1,52 +1,57 @@
 """Module which contains Test of DBPool."""
 
-import MySQLdb
+import time
 import unittest2
 
-from ecomap.db.db_pool import retry_query, DBPool, DBPoolError, \
-MySQLPoolSizeError
+from ecomap.db import db_pool
+from inspect import isfunction 
 
 
-TRIES = 3
+CONN = {'connection': 'mocked connection', 
+        'last_update': 0,
+        'creation_date': 200.0}
 
-COUNT_TRIES = 1
+class Connection_mock:
 
-CONDITION_RAISE = True
+    """Creating class for mock connection to db."""
 
+    def __init__(self):
+        pass
+    
+    def __repr__(self):
+        return "'mocked connection'"
+    
+    def close(self):
+        self.closed = True
 
-class ConnectionDB(object):
+class MySQLdb_mock:
 
-    """Creating class for connection to db."""
+    """Creating class for mocking MySQLdb."""
 
-    def __enter__(self):
-        return self
+    def __init__(self):
+        pass
 
-    def __exit__(self, *args):
-        self.close()
+    def connect(self, user, host, port, passwd, db, charset,init_command):
+        return Connection_mock()
 
+class Time_mock:
 
-def connect_mock(user, host, port, passwd, db, charset, init_command):
-    """This function mocks connect."""
-    return ConnectionDB()
+    """Creating class for mocking time."""
 
+    def timer(self):
+        return 200.0
 
-@retry_query(TRIES, delay=1)
-def retry_func():
-    """Decorator function handling reconnection issues to DB."""
-    global CONDITION_RAISE
-    if CONDITION_RAISE == True:
-        global COUNT_TRIES
-        COUNT_TRIES += 1
-        if COUNT_TRIES == 3:
-            CONDITION_RAISE = False
-        raise MySQLPoolSizeError()
-    return COUNT_TRIES
+@db_pool.retry_query()
+def retry_success():
+    return "SUCCESS"
 
-
-@retry_query(TRIES, delay=1)
-def PoolSizeError(Error):
-    """Function raise error"""
+@db_pool.retry_query()
+def retry_MySQLPoolSizeError(self):
     raise MySQLPoolSizeError()
+
+@db_pool.retry_query()
+def retry_MySQLdbError(self):
+    raise MySQLdb.Error()
 
 
 class TestCase(unittest2.TestCase):
@@ -55,72 +60,87 @@ class TestCase(unittest2.TestCase):
 
     def setUp(self):
         """Setting up for the test."""
-        global POOL
-        global MySQLdb
-        self.original_db = MySQLdb.connect
-        MySQLdb.connect = connect_mock
-        POOL = DBPool('root', 'root', 'ecomap_db', 'localhost', 3306, 5, 3)
+        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+                                   'localhost', 3306, 5, 3)
 
     def tearDown(self):
         """Cleaning up after the test."""
-        global POOL
-        MySQLdb.connect = self.original_db
-        del POOL
+        del self.POOL
 
     def test_retry_query(self):
-        """Tests decorator retry_query."""
-        self.assertEqual(TRIES, retry_func())
+        """Tests decorator retry_query success."""
+        self.assertEqual(retry_success(), "SUCCESS")
+        self.assertTrue(isfunction(retry_success))
+
+    def test_retry_query_errors(self):
+        """Tests decorator retry_query errors."""
+        exceptDBErr = False
+        try:
+            retry_MySQLPoolSizeError()
+        except:
+            exceptDBErr = True
+        exceptMySqlErr = False
+        try:
+            retry_MySQLdbError(True)
+        except:
+            exceptMySqlErr = True
+        self.assertTrue(exceptDBErr)
+        self.assertTrue(exceptMySqlErr)
 
     def test_create_conn(self):
         """Tests check if connection was created."""
-        self.assertTrue(DBPool._create_conn(POOL))
-        self.assertIsInstance(DBPool._create_conn(POOL), dict)
-
-    def test_retry_query_error(self):
-        """Tests retry query error."""
-        CONDITION = False
-        try:
-            PoolSizeError(True)
-        except DBPoolError:
-            CONDITION = True
-        self.assertTrue(CONDITION)
+        self.original_MySQLdb = db_pool.MySQLdb
+        db_pool.MySQLdb = MySQLdb_mock()
+        self.original_time = db_pool.time.time
+        db_pool.time.time = Time_mock().timer        
+        self.assertEqual(db_pool.DBPool()._create_conn(), CONN)
+        self.assertIsInstance(db_pool.DBPool()._create_conn(), dict)
+        db_pool.MySQLdb = self.original_MySQLdb
+        db_pool.time.time = self.original_time
 
     def test_get_conn_add(self):
         """Tests get conn to add conn."""
-        POOL._connection_pool = []
-        POOL.pool_size = 5
-        POOL.connection_pointer = 0
-        self.assertTrue(POOL._create_conn)
+        self.POOL._connection_pool = []
+        self.POOL.pool_size = 5
+        self.POOL.connection_pointer = 0
+        self.assertTrue(self.POOL._create_conn)
 
     def test_get_conn_pop(self):
         """Tests get conn to pop conn."""
-        POOL._push_conn(POOL._create_conn())
-        connection = POOL._get_conn()
-        self.assertTrue(connection)
+        self.POOL._push_conn(self.POOL._create_conn()) 
+        self.assertTrue(self.POOL._get_conn())
 
     def test_get_conn_error(self):
         """Tests get_conn error."""
-        POOL._connection_pool = []
-        POOL.connection_pointer = 5
-        POOL.pool_size_error = 0
-        with self.assertRaises(MySQLdb.DatabaseError):
-            POOL._get_conn()
+        self.POOL._connection_pool = []
+        self.POOL.connection_pointer = 5
+        self.POOL.pool_size = 0
+        self.assertRaises(TypeError, self.POOL._get_conn())
 
     def test_push_conn(self):
         """Tests push_conn."""
-        conn = POOL._create_conn()
-        POOL._push_conn(conn)
-        self.assertTrue(POOL._connection_pool)
+        self.POOL._connection_pool = []
+        conn = self.POOL._create_conn()
+        self.POOL._push_conn(conn)
+        self.assertTrue(self.POOL._connection_pool)
 
-    def test_manager(self):
-        """Tests manager for push_conn."""
-        POOL._connection_pool = []
-        POOL.connection_pointer = 0
-        POOL.pool_size_error = 5
-        conn = POOL._get_conn()
-        conn['creation_date'] = 0
-        POOL._push_conn(conn)
-        self.assertFalse(POOL._push_conn(conn))
+    def test_close_conn(self):
+        """Tests close_conn."""
+        self.POOL.connection_pointer = 1
+        self.assertIsNone(self.POOL._close_conn
+                         (db_pool.DBPool()._create_conn()))
+
+    def test_manager_close_conn(self):
+        """Tests manager for close conn."""
+        self.POOL._connection_pool = []
+        self.POOL.connection_pointer = 0
+        self.POOL.pool_size = 0
+        try:
+            with self.POOL.manager():
+                time.sleep(2)
+        except:
+            raise
+        self.assertListEqual([], self.POOL._connection_pool)
 
 
 if __name__ == "__main__":

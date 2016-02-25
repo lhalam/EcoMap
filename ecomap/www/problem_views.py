@@ -487,6 +487,43 @@ def get_user_subscriptions(user_id):
                     mimetype='application/json')
 
 
+@app.route('/api/usersSubscriptions', methods=['GET'])
+def get_all_subscriptions():
+    """Function retrieves all user's subscriptions from db and shows it in user
+    profile page on `my subscriptions` tab.
+    :param id: id of subscription (int)
+    :param title: title of problem (str)
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param date: date when problem was creared
+    :param date_subscription: date when user subscribed to a problem
+    :param name: name of problem type
+    :type: JSON
+    """
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    subscription_tuple = db.get_all_subscriptions(offset, per_page)
+    count = db.count_all_subscriptions()
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'id': subscription[0],
+                                   'title': subscription[1],
+                                   'problem_type_id': subscription[2],
+                                   'status': subscription[3],
+                                   'date': subscription[4] * 1000,
+                                   'date_subscription': subscription[5] * 1000,
+                                   'name': subscription[6],
+                                   'last_name': subscription[7],
+                                   'first_name': subscription[8],
+                                   'nickname': subscription[9]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')
+
+
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
     """Function adds data about subscription into DB.
@@ -525,6 +562,51 @@ def subscription_delete():
         logger.debug('Subscription post was deleted with id %s', last_id)
         response = jsonify(subscription_id=last_id)
         return response
+
+
+@app.route('/api/search_usersProblem', methods=['GET'])
+def get_search_users_problems():
+    """This method retrieves all user's problem with special nickname from db.
+    :query limit: limit number. default is 5
+    :query offset: offset number. default is 0
+    :rtype: JSON
+    :return: list of user's problem represented with next objects:
+        ``[{"id": 190,
+        "title": "name",
+        "latitude": 51.419765,
+        "longitude": 29.520264,
+        "problem_type_id": 1,
+        "status": 0,
+        "date": "2015-02-24T14:27:22.000Z",
+        "severity": '3',
+        "is_enabled": 1,
+        'last_name': 'name',
+        'first_name': 'surname',
+        'nickname': 'nick'}]``
+    """
+    nickname = request.args.get('nickname')
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    count = db.count_user_by_nickname(nickname)
+    total_count = {}
+    problems_list = []
+    problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
+    if problem_tuple:
+        for problem in problem_tuple:
+            problems_list.append({'id': problem[0],
+                                  'title': problem[1],
+                                  'status': problem[2],
+                                  'date': problem[3] * 1000,
+                                  'is_enabled': problem[4],
+                                  'severity': problem[5],
+                                  'nickname': problem[6],
+                                  'last_name': problem[7],
+                                  'first_name': problem[8],
+                                  'name': problem[9]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([problems_list, [total_count]]),
+                    mimetype='application/json')
 
 
 @app.route('/api/all_users_comments', methods=['GET'])
@@ -585,4 +667,43 @@ def user_comments(user_id):
     response = Response(json.dumps([comments,[total_count]]),
                         mimetype='application/json')
     return response
-    
+
+
+@app.route('/api/nickname_subscriptions', methods=['GET'])
+def get_user_subscriptions_nickname():
+    """Function retrieves all user's subscriptions from db and shows it in user
+    profile page on `my subscriptios` tab.
+    :param id: id of subscription (int)
+    :param title: title of problem (str)
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param date: date when problem was creared
+    :param date_subscription: date when user subscribed to a problem
+    :param name: name of problem type
+    :type: JSON
+    """
+    nickname = request.args.get('nickname')
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+    subscription_tuple = db.get_subscriptions_by_nickname(nickname,
+                                                          offset,
+                                                          per_page)
+    count = db.count_subscriptions_by_nickname(nickname)
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'id': subscription[0],
+                                   'title': subscription[1],
+                                   'problem_type_id': subscription[2],
+                                   'status': subscription[3],
+                                   'date': subscription[4] * 1000,
+                                   'date_subscription': subscription[5] * 1000,
+                                   'name': subscription[6],
+                                   'last_name': subscription[7],
+                                   'first_name': subscription[8],
+                                   'nickname': subscription[9]})
+    if count:
+        total_count = {'total_problem_count': count[0]}
+    return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')

@@ -347,10 +347,7 @@ def post_comment():
 
     if valid['status']:
         created_date = int(time.time())
-        if data.has_key('anonim') and data['anonim']:
-            user_id = 2
-        else:
-            user_id = current_user.uid
+        user_id = 2 if data.get('anonim') else current_user.uid
         db.add_comment(user_id,
                        data['problem_id'],
                        data['parent_id'],
@@ -601,6 +598,7 @@ def get_search_users_problems():
 
 
 @app.route('/api/all_users_comments', methods=['GET'])
+@login_required
 def all_users_comments():
     """Function gets all comments from DB.
     :type: JSON
@@ -631,6 +629,7 @@ def all_users_comments():
 
 
 @app.route('/api/user_comments/<int:user_id>', methods=['GET'])
+@login_required
 def user_comments(user_id):
     """Function gets all user comments from DB.
     :type: JSON

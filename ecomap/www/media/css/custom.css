@@ -705,9 +705,6 @@ input[type="checkbox"] {
       min-width: 300px;
       max-width: 760px;
     }
-    .col-xs-10.subcomment-form{
-      padding-left: 45px;
-    }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -890,8 +887,6 @@ h3.title{
 .subcomment-form{
   float: right; 
   padding-top: 0px;
-  padding-right:0;
-  padding-left: 30px;
 }
 form.form-inline.form-search{
     padding:10px 0 5px 0;

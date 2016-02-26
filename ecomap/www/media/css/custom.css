@@ -691,7 +691,30 @@ input[type="checkbox"] {
 .flex-item-3 {
   flex: 3;
 }
-
+@media screen and (min-width: 300px) and (max-width: 760px){
+    .flex-item-5{
+      flex-basis:100%;
+    }
+    h3.detailedTitle.show_problem{
+      margin-bottom: 20px;
+    }
+  }
+@media screen and (min-width: 761px) and (max-width: 992px){
+    .flex-item-5{
+      flex-basis:30%;
+    }
+    h3.detailedTitle.show_problem{
+      margin-bottom: 20px;
+    }
+  }
+.solution.unsolved.visible-xs{
+  margin: 10px 15px;
+}
+.eye_subscription.visible-xs{
+  position: relative;
+  top: 5px;
+  left: 20px;
+}
 .overflow-on {
   overflow-y: auto;
 }
@@ -853,4 +876,10 @@ select.form-problems{
 
 .container-fluid{
   background-color: #FFF;
+}
+
+.b-right-side__show-problem{
+  height: 100%;
+  width: 100%;
+  overflow:auto;
 }

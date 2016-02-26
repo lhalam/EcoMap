@@ -691,6 +691,9 @@ input[type="checkbox"] {
 #user_form .form-group, .checkbox {
   margin-left: 15px;
 }
+.subcomment.checkbox{
+      margin: 0;
+    }
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
@@ -701,9 +704,6 @@ input[type="checkbox"] {
     #sidebar{
       min-width: 300px;
       max-width: 760px;
-    }
-    .subcomment.checkbox{
-      margin: 0;
     }
     .col-xs-10.subcomment-form{
       padding-left: 45px;

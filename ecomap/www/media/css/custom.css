@@ -691,6 +691,9 @@ input[type="checkbox"] {
 .flex-item-3 {
   flex: 3;
 }
+.solution.unsolved.forSmall{
+  margin: 10px 10px;
+}
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
@@ -698,6 +701,7 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
+    
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -707,14 +711,6 @@ input[type="checkbox"] {
       margin-bottom: 20px;
     }
   }
-.solution.unsolved.visible-xs{
-  margin: 10px 15px;
-}
-.eye_subscription.visible-xs{
-  position: relative;
-  top: 5px;
-  left: 20px;
-}
 .overflow-on {
   overflow-y: auto;
 }
@@ -819,12 +815,21 @@ textarea.comment-input{
   word-wrap : break-word;
   resize: none;
 }
-
 .comment-block{
-  width: 100%;
   overflow: auto;
   word-wrap : break-word;
 }
+@media screen and (min-width: 300px) and (max-width: 400px){
+  .comment-block{
+  width: 300px;
+  }
+}
+@media screen and (min-width: 761px) and (max-width: 992px){
+  .comment-block{
+  width: 760px;
+  }
+}
+
 
 .problem-title{
   word-wrap: break-word;

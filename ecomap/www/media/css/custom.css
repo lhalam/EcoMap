@@ -9,13 +9,15 @@
 }
 
 
+/* Nav bar*/
 
-body {
-  overflow-x: hidden;
-}
 html, body, .wrapper {
   font-family: "LatoRegular", sans serif;
   height: 100%;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 .body-scroll-shown {
@@ -339,6 +341,13 @@ form {
 }
 
 /*UserProfile styles*/
+@media screen and (max-width: 960px) {
+  .panel-body .profile {
+    float: left;
+    margin-left: 28px;
+    margin-bottom: 15px;
+  }
+}
 
 .user-profile {
   margin-top: 30px;
@@ -689,9 +698,6 @@ input[type="checkbox"] {
 .flex-item-3 {
   flex: 3;
 }
-.solution.unsolved.forSmall{
-  margin: 10px 10px;
-}
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
@@ -699,9 +705,13 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
-    #sidebar{
-      min-width: 300px;
-      max-width: 760px;
+    .solution.unsolved.visible-xs{
+      margin: 10px 15px;
+    }
+    .eye_subscription.visible-xs{
+      position: relative;
+      top: 5px;
+      left: 20px;
     }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
@@ -711,27 +721,7 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
-    #sidebar{
-      min-width: 300px;
-      max-width: 500px;
-    }
   }
-@media screen and (min-width: 993px) and (max-width: 1200px){
-    #sidebar{
-      min-width: 300px;
-      max-width: 500px;
-    }
-  }
-@media screen and (min-width: 1201px){
-    #sidebar{
-      min-width: 300px;
-      max-width: 500px;
-    }
-  }
-.eye_subscription.forSmall{
-  position:relative;
-  top: 5px;
-}
 .overflow-on {
   overflow-y: auto;
 }
@@ -838,12 +828,12 @@ table .form-control{
 textarea{
   resize: none;
 }
+
 .comment-block{
+  width: 100%;
   overflow: auto;
   word-wrap : break-word;
-  width: 100%;
 }
-
 
 .problem-title{
   word-wrap: break-word;

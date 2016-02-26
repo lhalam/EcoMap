@@ -710,6 +710,10 @@ input[type="checkbox"] {
       margin-bottom: 20px;
     }
   }
+.eye_subscription.forSmall{
+  position:relative;
+  top: 5px;
+}
 .overflow-on {
   overflow-y: auto;
 }

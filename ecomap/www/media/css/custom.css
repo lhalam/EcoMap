@@ -143,10 +143,6 @@ label.changeUser{
   margin-top: 20px;
 }
 
-#user_form .form-group, .checkbox {
-  margin-left: 15px;
-}
-
 .checkbox {
   font-size: 0.8em
 }
@@ -692,6 +688,9 @@ input[type="checkbox"] {
 .solution.unsolved.forSmall{
   margin: 10px 10px;
 }
+#user_form .form-group, .checkbox {
+  margin-left: 15px;
+}
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
@@ -702,6 +701,12 @@ input[type="checkbox"] {
     #sidebar{
       min-width: 300px;
       max-width: 760px;
+    }
+    .subcomment.checkbox{
+      margin: 0;
+    }
+    .col-xs-10.subcomment-form{
+      padding-left: 45px;
     }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
@@ -885,6 +890,8 @@ h3.title{
 .subcomment-form{
   float: right; 
   padding-top: 0px;
+  padding-right:0;
+  padding-left: 30px;
 }
 form.form-inline.form-search{
     padding:10px 0 5px 0;

@@ -73,40 +73,40 @@
         </div>
         <input class='btn btn-success' type='submit' value='Додати коментар'>
       </form>
-      <div class="row" ng-repeat='comment in comments'>
-        <div class="col-sm-12 col-xs-12">
+      <div ng-repeat='comment in comments'>
+        <div>
           <div class="panel panel-default">
             <div class="panel-heading">
               <strong>{{comment.name}}</strong>
               <span class="text-muted pull-right">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
             </div>
             <div class="panel-body comment-block">{{comment.content}}</div>
-              <div class="clearfix comment-reply">
-                <div class="pull-left">
-                  <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
-                </div>
-                <div class="pull-right">
-                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
-                </div> 
+            <div class="clearfix comment-reply">
+              <div class="pull-left">
+                <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
               </div>
+              <div class="pull-right">
+                <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
+              </div> 
+            </div>
           </div>
         </div>
       <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
-      <div ng-repeat='subcomment in subcomments'>
-        <div class="col-sm-10 col-sm-offset-2">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <strong>{{subcomment.name}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-            </div>
-            <div class="panel-body comment-block">
-              {{subcomment.content}}
+        <div ng-repeat='subcomment in subcomments'>
+          <div>
+            <div class="panel panel-default col-lg-offset-3 col-xs-offset-3">
+              <div class="panel-heading">
+                <strong>{{subcomment.name}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              </div>
+              <div class="panel-body comment-block">
+                {{subcomment.content}}
+              </div>
             </div>
           </div>
         </div>
-        </div>
-        <form class="col-sm-10 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
-          <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='40'></textarea>
-          <div class="checkbox pull-right" ng-show="showAnonymCheckBox">
+        <form class="col-sm-10 col-xs-10 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
+          <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38'></textarea>
+          <div class="subcomment checkbox" ng-show="showAnonymCheckBox">
           <label class="changeUser">
             <input type="checkbox" 
                    ng-model="comment.changeUser" 
@@ -114,7 +114,7 @@
                    ng-false-value="false">Анонімно
           </label>
           </div>
-          <input class='btn btn-success' type='submit' value='Додати відповідь'>
+          <input class='btn btn-success col-xs-9' type='submit' value='Додати відповідь'>
         </form>
       </div>
       </div>

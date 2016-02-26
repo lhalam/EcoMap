@@ -41,7 +41,7 @@
     <strong>Псевдонім: </strong>
     <span ng-bind="user.data.nickname" ng-show="editMode"></span>
     <input name="newnickname" type="text" ng-model="user.data.nickname"  value="{{user.data.nickname}}" ng-hide="editMode" required>
-    <span ng-class="cls_edit_nick" ng-click="changeNick()"></span>
+    <span role="button" ng-class="cls_edit_nick" ng-click="changeNick()"></span>
   </p>
   <p><strong>Електронна пошта: </strong> <span ng-bind="user.data.email"></span></p>
   <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>

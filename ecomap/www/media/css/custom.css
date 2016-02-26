@@ -698,6 +698,14 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
+    .solution.unsolved.visible-xs{
+      margin: 10px 15px;
+    }
+    .eye_subscription.visible-xs{
+      position: relative;
+      top: 5px;
+      left: 20px;
+    }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -707,14 +715,6 @@ input[type="checkbox"] {
       margin-bottom: 20px;
     }
   }
-.solution.unsolved.visible-xs{
-  margin: 10px 15px;
-}
-.eye_subscription.visible-xs{
-  position: relative;
-  top: 5px;
-  left: 20px;
-}
 .overflow-on {
   overflow-y: auto;
 }

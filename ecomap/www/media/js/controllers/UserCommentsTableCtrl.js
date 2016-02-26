@@ -3,6 +3,8 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';
+    $scope.showUserInfo = false;
+    $scope.showSubComments = false;
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -43,6 +45,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             $scope.comments = response.data[0];
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
+            $scope.showUserInfo = true;
           })
         } else {
           console.log(user_id) 
@@ -63,6 +66,21 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     };
 
     $scope.loadComments();
+    $scope.loadSubComments = function(parent_id) {
+       $http({
+        method: 'GET',
+        url: '/api/problem_subcomments/' + parent_id
+      }).then(function successCallback(response) {
+        $scope.subcomments = response.data[0];
+      })
+       if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
+        $scope.showSubComments = $scope.showSubComments ? false: true;
+      }
+      if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
+        $scope.showSubComments = true;
+      }
+      $scope.subcomment_parent = parent_id;
+    }
 
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;

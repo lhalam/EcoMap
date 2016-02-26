@@ -9,15 +9,13 @@
 }
 
 
-/* Nav bar*/
-
-html, body, .wrapper {
-  font-family: "LatoRegular", sans serif;
-  height: 100%;
-}
 
 body {
   overflow-x: hidden;
+}
+html, body, .wrapper {
+  font-family: "LatoRegular", sans serif;
+  height: 100%;
 }
 
 .body-scroll-shown {
@@ -701,6 +699,10 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
+    #sidebar{
+      min-width: 300px;
+      max-width: 760px;
+    }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -708,6 +710,22 @@ input[type="checkbox"] {
     }
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
+    }
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+@media screen and (min-width: 993px) and (max-width: 1200px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+@media screen and (min-width: 1201px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
     }
   }
 .eye_subscription.forSmall{
@@ -823,16 +841,7 @@ textarea{
 .comment-block{
   overflow: auto;
   word-wrap : break-word;
-}
-@media screen and (min-width: 300px) and (max-width: 400px){
-  .comment-block{
-  width: 300px;
-  }
-}
-@media screen and (min-width: 761px) and (max-width: 992px){
-  .comment-block{
-  width: 760px;
-  }
+  width: 100%;
 }
 
 

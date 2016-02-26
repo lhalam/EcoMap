@@ -910,3 +910,16 @@ select.form-problems{
   width: 100%;
   overflow:auto;
 }
+
+.input-group .no-float{
+	float: none;
+}
+
+.comment-row{
+	margin: 5px;
+}
+
+.comment-row a{
+	color: black;
+	text-decoration: none;
+}

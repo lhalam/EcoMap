@@ -56,11 +56,11 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
-          }).then(function successCallback(response) {
-           $scope.comments = response.data[0];
-           $scope.commentsCount = response.data[1][0]['total_comments_count'];
-           $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
-         })
+            }).then(function successCallback(response) {
+               $scope.comments = response.data[0];
+               $scope.commentsCount = response.data[1][0]['total_comments_count'];
+               $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
+            })
         }
       })
     };
@@ -70,21 +70,21 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
        $http({
         method: 'GET',
         url: '/api/problem_subcomments/' + parent_id
-      }).then(function successCallback(response) {
-        $scope.subcomments = response.data[0];
-      })
-       if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
-        $scope.showSubComments = $scope.showSubComments ? false: true;
-      }
-      if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
-        $scope.showSubComments = true;
-      }
-      $scope.subcomment_parent = parent_id;
+        }).then(function successCallback(response) {
+            $scope.subcomments = response.data[0];
+        })
+        if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {
+            $scope.showSubComments = $scope.showSubComments ? false: true;
+        }
+        if($scope.showSubComments === false && $scope.subcomment_parent !== parent_id) {
+            $scope.showSubComments = true;
+        }
+        $scope.subcomment_parent = parent_id;
     }
 
     $scope.triggerDetailModal = function(problem_id) {
-      var url = '/#/detailedProblem/' + problem_id;
-      window.open(url, '_blank');
+        var url = '/#/detailedProblem/' + problem_id;
+        window.open(url, '_blank');
     }
   }
 ]);

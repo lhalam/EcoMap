@@ -90,6 +90,7 @@
     <script src='/js/controllers/DetailedProblemCtrl.js'></script>
     <script src='/js/controllers/RestorePasswordCtrl.js'></script>
     <script src='/js/controllers/userDeleteConfirmation.js'></script>
+    <script src='/js/controllers/UserCommentsTableCtrl.js'></script>
 
 
 </head>
@@ -140,7 +141,7 @@
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
   <div class="flex-container flex-row flex-item-1">
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
-    <div ui-view="sidebar" class="flex-item-1 flex-container flex-column" ng-show="checkState('detailedProblem') || checkState('addProblem')"></div>
+    <div ui-view="sidebar" class="flex-item-1 flex-item-5 flex-container flex-column" ng-show="checkState('detailedProblem') || checkState('addProblem')"></div>
   </div>
 </div>
 </body>

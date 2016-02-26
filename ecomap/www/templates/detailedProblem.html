@@ -1,23 +1,29 @@
 <script src="/js/libs/jquery.swipebox.min.js"></script>
 <link rel="stylesheet" href="/css/swipebox.min.css">
 
-<div class="flex-item-1 flex-container flex-column problemBlock">
+<div class="flex-item-5 flex-container flex-column problemBlock">
   <i class="fa fa-times fa-2x close" ng-click="close()"></i>
-  <h3 class="detailedTitle">{{selectProblem.title}}</h3>
+  <h3 class="detailedTitle show_problem">{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-lg-4 col-md-4 col-xs-12">
         <div class="rate">
           <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
       </div>
-      <div ng-class="colBs">
-        <div class="solution unsolved" >
+      <div ng-class="colBs col-lg-4 col-md-4 col-xs-6">
+        <div class="solution unsolved visible-xs pull-left" >
+          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
+        </div>
+        <div class="solution unsolved hidden-xs" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
         </div>
       </div>
-      <div class="col-lg-4" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription'>
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-6" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription visible-xs pull-right'>
+          <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
+        </div>
+        <div class='eye_subscription hidden-xs'>
           <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>

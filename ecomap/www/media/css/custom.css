@@ -701,7 +701,6 @@ input[type="checkbox"] {
     h3.detailedTitle.show_problem{
       margin-bottom: 20px;
     }
-    
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -810,9 +809,11 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-textarea.comment-input{
+.comment-input{
   width: 100%;
   word-wrap : break-word;
+}
+textarea{
   resize: none;
 }
 .comment-block{
@@ -879,7 +880,8 @@ select.form-problems{
   margin-top: 10px;
 }
 
-.container-fluid{
+.container-fluid,
+.navbar-default .navbar-nav>.open>a:hover{
   background-color: #FFF;
 }
 

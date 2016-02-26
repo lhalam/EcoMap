@@ -561,7 +561,7 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-.det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
   word-wrap : break-word;
 }
@@ -686,7 +686,8 @@ input[type="checkbox"] {
   flex: 3;
 }
 .solution.unsolved.forSmall{
-  margin: 10px 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 #user_form .form-group, .checkbox {
   margin-left: 15px;
@@ -698,9 +699,6 @@ input[type="checkbox"] {
     .flex-item-5{
       flex-basis:100%;
     }
-    h3.detailedTitle.show_problem{
-      margin-bottom: 20px;
-    }
     #sidebar{
       min-width: 300px;
       max-width: 760px;
@@ -709,9 +707,6 @@ input[type="checkbox"] {
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
       flex-basis:30%;
-    }
-    h3.detailedTitle.show_problem{
-      margin-bottom: 20px;
     }
     #sidebar{
       min-width: 300px;

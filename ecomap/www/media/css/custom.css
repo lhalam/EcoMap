@@ -791,9 +791,11 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-textarea.comment-input{
+.comment-input{
   width: 100%;
   word-wrap : break-word;
+}
+textarea{
   resize: none;
 }
 
@@ -845,6 +847,7 @@ h3.title{
   padding-top: 0px;
 }
 
-.container-fluid{
+.container-fluid,
+.navbar-default .navbar-nav>.open>a:hover{
   background-color: #FFF;
 }

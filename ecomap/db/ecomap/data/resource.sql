@@ -27,4 +27,5 @@ INSERT INTO `resource` VALUES (1,'/'),(8,'/api/addResource'),
 (46,'/api/search_usersProblem'),
 (47,'/api/nickname_subscriptions'),
 (48,'/api/usersSubscriptions'),
-(49, 'api/search_users_comments');
+(49, 'api/search_users_comments'),
+(50, 'api/nickname_exist');

@@ -19,6 +19,22 @@ def get_user_by_email(email):
 
 
 @retry_query(tries=3, delay=1)
+def get_user_by_nick_name(nickname):
+    """Return user, found by email.
+    :params email: user email
+    :retrun: tuple with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
+                   FROM `user` WHERE `nickname`=%s;
+                """
+        cursor.execute(query, (nickname,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def get_user_by_id(user_id):
     """Return user, found by id.
     :params user_id: id of user

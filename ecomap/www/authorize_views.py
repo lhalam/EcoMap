@@ -95,6 +95,19 @@ def email_exist():
         return jsonify(isValid=bool(user))
 
 
+@app.route('/api/nickname_exist', methods=['POST'])
+@auto.doc()
+def nickname_exist():
+    """Function for AJAX call from frontend.
+    Validates unique nickname identifier before registering a new user
+    :return: json with status 200 or 400
+    """
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        user = db.get_user_by_nick_name(data['nickname'])
+        return jsonify(isValid=bool(user))
+
+
 @app.route('/api/login', methods=['POST'])
 @auto.doc()
 def login():

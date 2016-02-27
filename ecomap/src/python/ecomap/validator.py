@@ -46,7 +46,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_empty': '%s value is empty.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
-             'check_nickname_exist': 'nickname allready exists.',
+             'check_nickname_exist': 'nickname already exists.',
              'name_exists': '"%s" name allready exists.',
              'check_coordinates': '%s is not coordinates.',
              'check_coordinates_length': '%s is out of range.'}

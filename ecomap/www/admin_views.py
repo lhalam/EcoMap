@@ -1033,3 +1033,72 @@ def edit_problem_type():
         response = jsonify(msg='Так як дані невірні!'), 400
 
     return response
+
+    
+@app.route('/api/tempdata', methods=['GET'])
+@auto.doc()
+@login_required
+def get_tempdata():
+    '''The method retrieves all tempdata.
+       :rtype: JSON.
+       :return: json object with tempdata.
+       :JSON sample:
+       ``[{"id": 1,
+        "first_name": "Ivan",
+        "last_name": "Ivanenko",
+        "nickname": Ivan89,
+        "creation_date": 14334353432,
+        "type": 'password','delete'},
+        ....
+        {"id": 1,
+        "first_name": "Ivan",
+        "last_name": "Ivanenko",
+        "nickname": Ivan89,
+        "creation_date": 14334353432,
+        "type": 'password','delete'}]``.
+    '''
+    
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    tempdata_tuple = db.get_all_user_operations(offset, per_page)
+    tempdata_list = []
+    if tempdata_tuple:
+        for tempdata in tempdata_tuple:
+            tempdata_list.append({'id': tempdata[0],
+                                  'first_name': tempdata[1],
+                                  'last_name': tempdata[2],
+                                  'nickname': tempdata[3],
+                                  'creation_date': tempdata[4],
+                                  'type': tempdata[5],
+                                 })
+    response = Response(json.dumps(tempdata_list),
+                        mimetype='application/json')
+    return response
+@app.route("/api/tempdata", methods=['DELETE'])
+@auto.doc()
+@login_required
+def tempdata_delete():
+    """Function which deletes tempdata from database by it id.
+
+    :rtype: JSON
+    :request args: `{user_operation_id: 5}`
+    :return:
+        
+        - If all ok:
+            ``{'status': 'success', 'deleted_tempdata': 'user_operation_id'}``
+
+    :statuscode 400: if role has assigned permissions or request invalid
+    :statuscode 200: if no errors
+
+    """
+    data = request.get_json()
+
+    if data:
+        db.delete_user_operation(data['user_operation_id'])
+        response = jsonify(msg='success',
+                        deleted_tempdata=data['user_operation_id'])
+    else:
+        db.delete_all_users_operations()
+        response = jsonify(msg='success')
+    return response

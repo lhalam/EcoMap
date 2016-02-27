@@ -7,6 +7,7 @@ from ecomap import validator
 REGISTRATION_DATA = {'email': 'admin@gmail.com',
                      'first_name': 'admin',
                      'last_name': 'admin',
+                     'nickname': 'lolol',
                      'password': 'db51903d292a412e4ef2079add791eae',
                      'pass_confirm': 'db51903d292a412e4ef2079add791eae'}
 
@@ -28,6 +29,7 @@ TEST_DATA_PERMISSION = {'resource_id': 121,
                         'description': 'user'}
 
 TEST_DATA_POST_COMNT = {'content': 'comment',
+                        'parent_id': "0",
                         'problem_id': 77}
 
 ROLE_PERMISSION = {'role_id': 3,
@@ -206,7 +208,7 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_has_key(self):
         """Testing check_post_comment function if data has all keys."""
-        invalid_data = {'content': 'comment'}
+        invalid_data = {'content': 'comment', 'parent_id': 12}
         ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['has_key']
                                               % 'problem_id'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -214,7 +216,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_empty(self):
         """Testing check_post_comment function if value is not empty."""
-        invalid_data = {'content': 'comment', 'problem_id': None}
+        invalid_data = {'content': 'comment',
+                        'problem_id': None,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['check_empty']
                                               % 'problem_id'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -222,7 +226,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_str(self):
         """Testing check_post_comment function if type is invalid."""
-        invalid_data = {'content': [1, 2, 3], 'problem_id': 77}
+        invalid_data = {'content': [1, 2, 3],
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_string']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -230,7 +236,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_min_length(self):
         """Testing check_post_comment function if value is not too short."""
-        invalid_data = {'content': 'q', 'problem_id': 77}
+        invalid_data = {'content': 'q',
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_minimum_length']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -238,7 +246,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_max_length(self):
         """Testing check_post_comment function if value is not too long."""
-        invalid_data = {'content': 'q' * 256, 'problem_id': 77}
+        invalid_data = {'content': 'q' * 256,
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_maximum_length']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),

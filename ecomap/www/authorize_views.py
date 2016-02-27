@@ -211,10 +211,11 @@ def oauth_login(provider):
     access_token = dict(parse_qsl(resource.text))
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
+    nickname = profile['name'] + str(time.time())
     logger.info(profile['picture']['data']['url'])
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
-                                         profile['name'],
+                                         nickname,
                                          profile['email'],
                                          provider,
                                          profile['id'])

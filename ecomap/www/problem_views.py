@@ -751,3 +751,27 @@ def search_users_comments():
         total_count = {'total_comments_count': comments_count[0]}
     return Response(json.dumps([comments, [total_count]]),
                     mimetype='application/json')
+
+
+@app.route('/api/problem_type_filtration', methods=['GET'])
+def get_problem_type_for_filtration():
+    '''The method retrieves all probleme types.
+       :rtype: JSON.
+       :return: json object with problem types.
+       :JSON sample:
+       ``[{"id": 1,
+        "name": "first problem type"},
+        ....
+        {"id": 7,
+        "name": "sevens problem type"]``.
+    '''
+    problem_type_tuple = db.get_problem_type_for_filtration()
+    problem_type_list = []
+    if problem_type_tuple:
+        for problem in problem_type_tuple:
+            problem_type_list.append({'id': problem[0],
+                                      'name': problem[1]
+                                      })
+    response = Response(json.dumps(problem_type_list),
+                        mimetype='application/json')
+    return response

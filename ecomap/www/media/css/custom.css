@@ -831,10 +831,11 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-.comment-input{
+.comment-input, .wrapping{
   width: 100%;
   word-wrap : break-word;
 }
+
 textarea{
   resize: none;
 }

@@ -27,8 +27,5 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$cookies', '$state',
     }).success(function(resp) {
       $scope.faqTitles = resp;      
     });
-    $('.navbar-collapse a:not(.dropdown-toggle)').click(function(){
-        $(".navbar-collapse").collapse('hide');
-    });
   }
 ]);

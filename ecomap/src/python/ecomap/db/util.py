@@ -1272,7 +1272,7 @@ def get_subcomments_by_parent_id(parent_id):
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id,
                           c.parent_id, c.created_date, c.user_id,
-                          u.nickname
+                          u.nickname, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.parent_id=%s;

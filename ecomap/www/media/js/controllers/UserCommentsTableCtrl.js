@@ -48,7 +48,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             $scope.showUserInfo = true;
           })
         } else {
-          console.log(user_id) 
           $http({
             method: 'GET',
             url: 'api/user_comments/' + user_id,

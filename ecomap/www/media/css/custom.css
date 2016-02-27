@@ -9,15 +9,13 @@
 }
 
 
-/* Nav bar*/
-
-html, body, .wrapper {
-  font-family: "LatoRegular", sans serif;
-  height: 100%;
-}
 
 body {
   overflow-x: hidden;
+}
+html, body, .wrapper {
+  font-family: "LatoRegular", sans serif;
+  height: 100%;
 }
 
 .body-scroll-shown {
@@ -143,10 +141,6 @@ label.changeUser{
 
 #user_form input {
   margin-top: 20px;
-}
-
-#user_form .form-group, .checkbox {
-  margin-left: 15px;
 }
 
 .checkbox {
@@ -341,13 +335,6 @@ form {
 }
 
 /*UserProfile styles*/
-@media screen and (max-width: 960px) {
-  .panel-body .profile {
-    float: left;
-    margin-left: 28px;
-    margin-bottom: 15px;
-  }
-}
 
 .user-profile {
   margin-top: 30px;
@@ -574,7 +561,7 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-.det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
   word-wrap : break-word;
 }
@@ -698,30 +685,50 @@ input[type="checkbox"] {
 .flex-item-3 {
   flex: 3;
 }
+.solution.unsolved.forSmall{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#user_form .form-group, .checkbox {
+  margin-left: 15px;
+}
+.subcomment.checkbox{
+      margin: 0;
+    }
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
     }
-    h3.detailedTitle.show_problem{
-      margin-bottom: 20px;
-    }
-    .solution.unsolved.visible-xs{
-      margin: 10px 15px;
-    }
-    .eye_subscription.visible-xs{
-      position: relative;
-      top: 5px;
-      left: 20px;
+    #sidebar{
+      min-width: 300px;
+      max-width: 760px;
     }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
       flex-basis:30%;
     }
-    h3.detailedTitle.show_problem{
-      margin-bottom: 20px;
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
     }
   }
+@media screen and (min-width: 993px) and (max-width: 1200px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+@media screen and (min-width: 1201px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+.eye_subscription.forSmall{
+  position:relative;
+  top: 5px;
+}
 .overflow-on {
   overflow-y: auto;
 }
@@ -828,12 +835,12 @@ table .form-control{
 textarea{
   resize: none;
 }
-
 .comment-block{
-  width: 100%;
   overflow: auto;
   word-wrap : break-word;
+  width: 100%;
 }
+
 
 .problem-title{
   word-wrap: break-word;
@@ -892,4 +899,17 @@ select.form-problems{
   height: 100%;
   width: 100%;
   overflow:auto;
+}
+
+.input-group .no-float{
+	float: none;
+}
+
+.comment-row{
+	margin: 5px;
+}
+
+.comment-row a{
+	color: black;
+	text-decoration: none;
 }

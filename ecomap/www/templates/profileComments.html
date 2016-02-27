@@ -12,63 +12,45 @@
     </div>
   </div>
   <hr class="problems">
-  <table class="table table-stripped">
-    <thead>
-      <tr>
-        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
-            ng-show='showUserInfo'><strong>Користувач</strong>
-          <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'last_name' && sortReverse" class="fa fa-caret-up">
-          </span>
-        </td>
-        <td ng-click="sortType = 'nickname'; sortReverse = !sortReverse"><strong>Псевдонім</strong>
-          <span ng-show="sortType == 'nickname' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'nickname' && sortReverse" class="fa fa-caret-up">
-          </span>
-        </td>
-        <td ng-click="sortType = 'date';sortReverse = !sortReverse"><strong>Дата створення</strong>
-          <span ng-show="sortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
-        </td>
-        <td ng-click="sortType = 'text';sortReverse = !sortReverse"><strong>Текст коментаря</strong>
-          <span ng-show="sortType == 'text' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'text' && sortReverse" class="fa fa-caret-up">
-          </span>
-        </td>
-        <td><strong ng-click="sortType = 'answer';sortReverse = !sortReverse">Відповіді</strong>
-          <span ng-show="sortType == 'answer' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'answer' && sortReverse" class="fa fa-caret-up"></span>
-        </td>
-        <td><strong>Детальне інфо</strong> 
-        </td>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat-start="comment in comments | orderBy:sortType:sortReverse">
-        <td ng-show='showUserInfo'>
-          {{comment.first_name}} {{comment.last_name}}</td>
-        <td>{{comment.nickname}}</td>
-        <td>{{comment.created_date | date : "dd/MM/yyyy "}}</td> 
-        <td class="problem-title">{{comment.content}}</td>
-        <td><a role="button" ng-click="loadSubComments(comment.id)" ng-show="comment.sub_count">{{comment.sub_count | answerFilter}}</a></td>
-        <td><a href="" ng-click="triggerDetailModal(comment.problem_id)">переглянути проблему</a></td>
-      </tr>
-      <tr ng-repeat-end ng-if="comment.id===subcomment_parent" ng-show="showSubComments" ng-repeat='subcomment in subcomments | orderBy:sortType:sortReverse'>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>{{subcomment.name}}</td>
-          <td>{{subcomment.created_date | date : "dd/MM/yyyy "}}</td> 
-          <td>{{subcomment.content}}</td>
-      </tr>
-    </tbody>
-  </table>
-  <p ng-hide="commentsLength"><strong>Загальна кількість коментарів: </strong>
-     <span>{{commentsCount}}</span>
-  </p>
+    <div class="row comment-row" ng-repeat-start="comment in comments | orderBy:sortType:sortReverse">
+        <div class="input-group myclass col-lg-12 col-xs-12" >
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1">
+                <div>
+                    <span>{{comment.nickname}}</span>
+                </div>    
+                <div>
+                    <span>{{comment.created_date | date : "dd/MM/yyyy "}}</span>
+                </div>
+            </div>
+            <div class="form-control no-float col-lg-9 col-xs-9">
+                <span>{{comment.content}}</span>
+            </div>
+
+            <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="comment.sub_count" >
+                <a role="button" ng-click="loadSubComments(comment.id)" title="Переглянути відповіді">{{comment.sub_count}} <i class="fa fa-commenting-o"></i></a>
+            </div>
+
+            <div class="input-group-addon no-float col-lg-1 col-xs-1">
+                <i class="fa fa-info-circle fa-2x" ng-click="triggerDetailModal(comment.problem_id)" role='button' title="Перейти до проблеми"></i>
+            </div>
+        </div>
+    </div>
+    <div class="row comment-row" ng-repeat-end ng-if="comment.id===subcomment_parent" ng-show="showSubComments" ng-repeat='subcomment in subcomments | orderBy:sortType:sortReverse'>
+        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
+                <span>{{subcomment.name}}</span><br>
+                <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
+            </div>
+                <div class="form-control no-float col-lg-8 col-xs-8">
+                    <span>{{subcomment.content}}</span>
+                </div>
+           </div>
+    </div>       
+
+    <p ng-hide="commentsLength">
+        <strong>Загальна кількість коментарів: </strong>
+        <span>{{commentsCount}}</span>
+    </p>
     <div class="row">
       <div class="col-md-8 col-md-offset-4">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >

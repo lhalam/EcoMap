@@ -896,6 +896,10 @@ select.form-problems{
   margin-top: 10px;
 }
 
+select.form-comments{
+  margin-top: 10px;
+}
+
 .container-fluid,
 .navbar-default .navbar-nav>.open>a:hover{
   background-color: #FFF;

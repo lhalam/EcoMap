@@ -1,14 +1,24 @@
 <div ng-controller="UserCommentsTableCtrl">
   <div class="row">
     <h3 class="col-md-10 title">Коментарі {{user.data.surname}} {{user.data.name}}</h3>
-    <div class="col-md-1 col-sm-2">
-      <div class="select">
+  </div>
+  <div class="row">
+    <div class="col-md-5 col-sm-6 col-xs-6">
+        <form class="form-inline form-search" name="search">
+            <input type="text" ng-model="searchNick" 
+                    class="form-control"
+                    ng-init="showSearch" 
+                    ng-change="loadComments()"
+                    placeholder="Пошук по нікнейму" />
+            <i ng-click="loadComments()" class="fa fa-search"></i>
+        </form>
+    </div>
+    <div class="col-md-offset-6 col-md-1 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
         <select ng-model="selectCount.selected" 
-                class="form-control" 
+                class="form-control form-comments" 
                 data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 
                 ng-change="loadComments()">
         </select>
-      </div>
     </div>
   </div>
   <hr class="problems">
@@ -16,8 +26,8 @@
         <div class="input-group myclass col-lg-12 col-xs-12" >
             <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1">
                 <div>
-                    <span ng-hide="showUserInfo">{{comment.nickname}}</span>
-                    <span ng-show="showUserInfo">{{comment.first_name}} {{comment.last_name}}</span>
+                    <span ng-hide="showFullUserInfo">{{comment.nickname}}</span>
+                    <span ng-show="showFullUserInfo">{{comment.first_name}} {{comment.last_name}}</span>
                 </div>    
                 <div>
                     <span>{{comment.created_date | date : "dd/MM/yyyy "}}</span>
@@ -39,8 +49,9 @@
     <div class="row comment-row" ng-repeat-end ng-if="comment.id===subcomment_parent" ng-show="showSubComments" ng-repeat='subcomment in subcomments | orderBy:sortType:sortReverse'>
         <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1">
             <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
-                <span ng-hide="showUserInfo">{{subcomment.nickname}}</span>
-                <span ng-show="showUserInfo">{{subcomment.first_name}} {{subcomment.last_name}}</span><br>
+                <span ng-hide="showFullUserInfo">{{subcomment.nickname}}</span>
+                <span ng-show="showFullUserInfo">{{subcomment.first_name}} {{subcomment.last_name}}</span>
+                <br>
                 <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
             </div>
                 <div class="form-control no-float col-lg-8 col-xs-8">
@@ -49,7 +60,7 @@
            </div>
     </div>       
 
-    <p ng-hide="commentsLength">
+    <p>
         <strong>Загальна кількість коментарів: </strong>
         <span>{{commentsCount}}</span>
     </p>

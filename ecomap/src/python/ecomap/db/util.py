@@ -1713,3 +1713,41 @@ def get_count_user_comments(user_id):
                 """
         cursor.execute(query.format(user_id))
         return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_count_comments_by_nickname(nickname):
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(c.id)
+                FROM `comment` AS c
+                INNER JOIN `user` AS u ON c.user_id = u.id
+                WHERE c.parent_id=0 AND u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_nickname(nickname, offset, per_page):
+    """Function retrieves all user's comments from db by nickname.
+    :param nickname: nickname of problem.
+    :param offset: pagination option.
+    :param per_page: pagination option.
+    :return: tuples with user comments info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   INNER JOIN `user` AS us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
+                   LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, offset, per_page))
+        return cursor.fetchall()

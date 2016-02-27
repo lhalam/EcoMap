@@ -604,7 +604,18 @@ def get_search_users_problems():
 def all_users_comments():
     """Function gets all comments from DB.
     :type: JSON
-    :return: response
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's comments and total_count:
+    ``[{"id": 2,
+        "content": "Awesome comment.",
+        "problem_id": 12,
+        "created_date": "2015-02-24T14:27:22.000Z",
+        "nickname": 'Pomidor',
+        "first_name": 'Ivan',
+        'last_name': 'Kozak',
+        'sub_count': 15}]``
     """
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
@@ -621,11 +632,11 @@ def all_users_comments():
                              'created_date': comment[3] * 1000,
                              'nickname': comment[4],
                              'first_name': comment[5],
-                             'last_name' : comment[6],
+                             'last_name': comment[6],
                              'sub_count': subcomments_count[0]})
     if count:
-        total_count = {'total_comments_count': count[0]}                               
-    response = Response(json.dumps([comments,[total_count]]),
+        total_count = {'total_comments_count': count[0]}
+    response = Response(json.dumps([comments, [total_count]]),
                         mimetype='application/json')
     return response
 
@@ -700,4 +711,43 @@ def get_user_subscriptions_nickname():
     logger.info(subscription_tuple)
     total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([subscriptions_list, [total_count]]),
+                    mimetype='application/json')
+
+
+@app.route('/api/search_users_comments', methods=['GET'])
+def search_users_comments():
+    """This method retrieves all user's comments with special nickname from db.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's problem represented with next objects:
+    ``[{"id": 2,
+        "content": "Awesome comment.",
+        "problem_id": 12,
+        "created_date": "2015-02-24T14:27:22.000Z",
+        "nickname": 'Pomidor',
+        "first_name": 'Ivan',
+        'last_name': 'Kozak',
+        'sub_count': 15}]``
+    """
+    nickname = request.args.get('nickname')
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    comments_count = db.get_count_comments_by_nickname(nickname)
+    comment_tuple = db.get_comments_by_nickname(nickname, offset, per_page)
+    comments = []
+    if comment_tuple:
+        for comment in comment_tuple:
+            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
+            comments.append({'id': comment[0],
+                             'content': comment[1],
+                             'problem_id': comment[2],
+                             'created_date': comment[3] * 1000,
+                             'nickname': comment[4],
+                             'first_name': comment[5],
+                             'last_name': comment[6],
+                             'sub_count': subcomments_count[0]})
+    if comments_count:
+        total_count = {'total_comments_count': comments_count[0]}
+    return Response(json.dumps([comments, [total_count]]),
                     mimetype='application/json')

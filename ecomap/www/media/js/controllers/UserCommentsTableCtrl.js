@@ -3,8 +3,9 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';
-    $scope.showUserInfo = false;
+    $scope.showFullUserInfo = false;
     $scope.showSubComments = false;
+    $scope.searchNick = null;
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -29,11 +30,27 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       $scope.msg = msg;
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
-      $scope.commentsCount = $scope.selectCount['selected'];
-      $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
+      $scope.commentsLength = $scope.selectCount['selected'];
+      $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
-        var stepCount = $scope.selectCount['selected']
-        if ($cookies.get('role')=='admin'){
+      var stepCount = $scope.selectCount['selected']
+      if ($scope.searchNick){
+          showFullUserInfo = ($cookies.get('role')=='admin') ? true: false;;
+          $http({
+          method: 'GET',
+          url: '/api/search_users_comments',
+          params: {
+            nickname: $scope.searchNick, 
+            per_page: $scope.selectCount['selected'],
+            offset: $scope.selectCount['selected'] * newValue - stepCount
+          }
+          }).then(function successCallback(response) {
+         $scope.comments = response.data[0];
+         $scope.commentsCount = response.data[1][0]['total_comments_count'];
+         $scope.commentsLength = response.data[1][0]['total_comments_count'];
+         $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+           })
+        } else if ($cookies.get('role')=='admin'){
           $http({
             method: 'GET',
             url: 'api/all_users_comments',
@@ -44,8 +61,9 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
           }).then(function successCallback(response) {
             $scope.comments = response.data[0];
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
-            $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
-            $scope.showUserInfo = true;
+            $scope.commentsLength = response.data[1][0]['total_comments_count'];
+            $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+            $scope.showFullUserInfo = true;
           })
         } else {
           $http({
@@ -58,7 +76,8 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             }).then(function successCallback(response) {
                $scope.comments = response.data[0];
                $scope.commentsCount = response.data[1][0]['total_comments_count'];
-               $scope.bigTotalItems = $scope.commentsCount / $scope.selectCount['selected'] * 10;
+               $scope.commentsLength = response.data[1][0]['total_comments_count'];
+               $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
             })
         }
       })

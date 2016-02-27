@@ -1380,6 +1380,18 @@ def get_problem_type():
 
 
 @retry_query(tries=3, delay=1)
+def get_problem_type_for_filtration():
+    """Get problem type.
+       :return: tuple with problem type name and id.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `name` FROM `problem_type`;"""
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
 def get_problem_type_by_id(problem_type_id):
     """Get problem type.
        :params: problem_type_id - id of problem type.

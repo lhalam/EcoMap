@@ -440,7 +440,9 @@ def get_subcomments(parent_id):
                              'parent_id': comment[3],
                              'created_date': comment[4] * 1000,
                              'user_id': comment[5],
-                             'name': comment[6]})
+                             'nickname': comment[6],
+                             'first_name': comment[7],
+                             'last_name': comment[8]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response

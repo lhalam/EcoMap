@@ -17,7 +17,9 @@ html, body, .wrapper {
   font-family: "LatoRegular", sans serif;
   height: 100%;
 }
-
+#filterProb{
+  font-size: 12px;
+}
 .body-scroll-shown {
   overflow-y: scroll;
 }
@@ -796,7 +798,7 @@ input[type="checkbox"] {
   list-style: none;
   margin-top: 0.3em;
   padding-left: 0.55em;
-  font-size: 1.25em;
+  font-size: 1.1em;
   height: 1.75em;
 }
 .indicator{

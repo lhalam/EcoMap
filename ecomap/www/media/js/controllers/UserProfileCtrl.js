@@ -105,6 +105,8 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
               $scope.cls_edit_nick = "fa fa-pencil";
               $scope.editMode = true;
               $scope.msg.editSuccess('псевдоніму');
+            },function errorCallback() {
+              $scope.msg.editNicknameError('псевдоніму')
             })
       };
     };

@@ -1,7 +1,8 @@
-app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$auth', '$state',
-  function($scope, $http, $cookies, $auth, $state) {
+app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$rootScope', '$auth', '$state',
+  function($scope, $http, $cookies, $rootScope,$auth, $state) {
     $scope.newUser = {};
     $scope.Register = function(user) {
+      $rootScope.isFetching = true;
       $scope.submitted = true;
       if (!user.email || !user.first_name || !user.last_name || !user.nickname || !user.password || !user.pass_confirm) {
         return null;
@@ -13,9 +14,11 @@ app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$auth', '$state'
           credentials.password = $scope.newUser.password;
           $auth.login(credentials).then(function(responce) {
             $state.go('map');
+            $rootScope.isFetching = false;
           });
-          $scope.newUser = {};
-        }, function errorCallback(responce) {});
+        }, function errorCallback(responce) {
+          $rootScope.isFetching = false;
+        });
       }
     };
   }

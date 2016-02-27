@@ -24,18 +24,19 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       'content': '',
       'proposal': ''
     };
-    $scope.problemTypes = [];
       $scope.loadProblemType = function() {
+      $scope.problemTypes = [];
       $http({
         method: 'GET',
         url: '/api/problem_type',
       }).then(function successCallback(data) {
          for (var i = 0; i < data.data.length; i++){
           $scope.problemTypes.push(data.data[i]);
-          $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'] ;
+          $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
         }
       }, function errorCallback(response) {})
     };
+
     $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -112,11 +113,36 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
     /*End of map & markers section*/
     /*Problem posting section*/
+    $scope.calcDistance  = function (fromLat, fromLng, toLat, toLng) {
+      return google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
+   }
+    $scope.loadProblem = function() {
+        $scope.allProblems = [];
+        $http({
+      method: 'GET',
+      url: '/api/problems',
+      }).then(function successCallback(response) {
+          for (var i = 0; i < response.data.length; i++){
+          $scope.allProblems.push(response.data[i]);
+        }
+        console.log($scope.allProblems);
+      }, function errorCallback(response) {})
+    };
+    $scope.loadProblem();
     $scope.addProblemTab = true;
     $scope.addPhotosTab = false;
     $scope.goToPhotos = function(form) {
       if (!form.$invalid) {
         $scope.addProblemTab = false;
+        for (var i = 0; i<$scope.allProblems.length; i++){
+          if ($scope.newProblem['type'] == $scope.allProblems[i]['problem_type_Id'] &&
+          $scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'], 
+          $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
+            toaster.pop('warning', 'Тип проблеми', 'Проблема даного типу в радіусі '+$scope.allProblems[i]['radius']+' метрів вже існує.');
+            break;
+              }
+          }
         $scope.addPhotosTab = true;
       }
     };

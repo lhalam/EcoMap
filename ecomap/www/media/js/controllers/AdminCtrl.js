@@ -27,6 +27,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
     { heading: 'Ролі', route:'admin.roles', active:false },
     { heading: 'Користувачі', route:'admin.users', active:false },
     { heading: 'Тип проблеми', route:'admin.problems', active:false },
+    { heading: 'Тимчасові дані', route:'admin.tempdata', active:false },
     ];
 
     $scope.$on('$stateChangeSuccess', function() {
@@ -96,11 +97,22 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
       }, function errorCallback(response) {})
     }
 
+    $scope.loadTempData = function() {
+      $http({
+        method: 'GET',
+        url: '/api/tempdata',
+      }).then(function successCallback(data) {
+        $scope.Tempdata = data.data;
+        console.log($scope.Tempdata)
+      }, function errorCallback(response) {})
+    }
+
     $scope.loadData = function() {
       $scope.loadRole()
       $scope.loadRes()
       $scope.loadPerm()
       $scope.loadProblemType()
+      $scope.loadTempData()
     }
     $scope.loadData()
   }]);

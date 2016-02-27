@@ -108,10 +108,12 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
               $scope.msg.editSuccess('псевдоніму');
             },function errorCallback() {
               if ($scope.old_nick===$scope.user.data.nickname){
-                  $scope.cls_edit_nick = "fa fa-pencil";
-                  $scope.editMode = true;
+                $scope.cls_edit_nick = "fa fa-pencil";
+                $scope.editMode = true;
               }
-              $scope.msg.editNicknameError('псевдоніму')
+              else{
+                $scope.msg.editNicknameError('псевдоніму')
+              }
             })
       };
     };

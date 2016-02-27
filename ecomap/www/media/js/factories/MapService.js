@@ -84,11 +84,10 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
 
-        instance.markers = markers;
-        console.log(instance.markers)
-        return instance.markers;
       }, function errorCallback() {})
     })
+    instance.markers = markers;
+        return instance.markers;
   }
   instance.refreshCluster = function() {
     instance.cluster.clearMarkers();

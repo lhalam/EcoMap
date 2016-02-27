@@ -7,19 +7,21 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
     $scope.toogleFilter = function() {
       $scope.filterTrigger = !$scope.filterTrigger;
     }
-    $scope.Types = {
-      '1': 'Проблеми лісів',
-      '2': 'Сміттєзвалища',
-      '3': 'Незаконна забудова',
-      '4': 'Проблеми водойм',
-      '5': 'Загрози біорізноманіттю',
-      '6': 'Браконьєрство',
-      '7': 'Інші проблеми'
-    }
+
+     $scope.loadProblemType = function() {
+      $scope.Types = {};
+      $http({
+        method: 'GET',
+        url: '/api/problem_type',
+      }).then(function successCallback(data) {
+        var problemTypes = data.data;
+         for (var i = 0; i < data.data.length; i++){
+          $scope.Types[String(problemTypes[i]['id'])] = problemTypes[i]['name'];
+        }
     $scope.Status = {
       'Unsolved': 'Нова',
       'Resolved': 'Вирішена'
-    }
+    };
     $scope.selectedType = [];
     $scope.selectedStatus = [];
     for (type in $scope.Types) {
@@ -28,6 +30,9 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
     for (s in $scope.Status) {
       $scope.selectedStatus.push(s)
     }
+      }, function errorCallback(response) {})
+    };
+    $scope.loadProblemType();
     $scope.toggleType = function(type_id) {
       if ($scope.selectedType.indexOf(type_id + '') !== -1) {
         $scope.selectedType.splice($scope.selectedType.indexOf(type_id), 1)
@@ -38,14 +43,15 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
     }
     $scope.toggleStatus = function(status) {
       if ($scope.selectedStatus.indexOf(status) !== -1) {
-        $scope.selectedStatus.splice($scope.selectedStatus.indexOf(status), 1)
+        $scope.selectedStatus.splice($scope.selectedStatus.indexOf(status), 1);
       } else {
         $scope.selectedStatus.push(status)
       }
       $scope.filterMarker()
     }
+    $scope.dt={}
     $scope.selectTime = function(marker) {
-      if (!$scope.dt) {
+      if (!$scope.dt.to || !$scope.dt.from) {
         return false
       } else if (marker.date > $scope.dt.from.getTime() / 1000 && marker.date < $scope.dt.to.getTime() / 1000) {
         return false

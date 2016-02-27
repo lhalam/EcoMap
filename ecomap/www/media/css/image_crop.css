@@ -101,7 +101,6 @@ img-crop canvas {
 .photo-btn.add:hover {
     color: whitesmoke;
     background: #337ab7;
-    margin-top:0;
 }
 
 .photo-btn.remove:hover {

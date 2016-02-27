@@ -913,7 +913,7 @@ select.form-comments{
 
 .input-group .no-float{
 	float: none;
-    word-break: break-all;
+    word-break: break-word;
 }
 
 .comment-row{

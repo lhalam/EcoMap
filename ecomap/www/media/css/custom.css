@@ -74,8 +74,6 @@ html, body, .wrapper {
 
 /*problems filter */
 
-.problem_filter {}
-
 .toogle {
   cursor: pointer;
   position: absolute;
@@ -88,8 +86,6 @@ html, body, .wrapper {
   padding: 0.1em;
   z-index: 99999999;
 }
-
-.list-group-item {}
 
 #filter {
   position: absolute;
@@ -335,6 +331,13 @@ form {
 }
 
 /*UserProfile styles*/
+@media screen and (max-width: 960px) {
+  .panel-body .profile {
+    float: left;
+    margin-left: 28px;
+    margin-bottom: 15px;
+  }
+}
 
 .user-profile {
   margin-top: 30px;

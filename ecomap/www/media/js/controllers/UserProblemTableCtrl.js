@@ -50,6 +50,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
         } else if($cookies.get('role')=='admin'){
+          $scope.showTable = true;
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',

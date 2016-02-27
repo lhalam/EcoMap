@@ -4,8 +4,10 @@
       <div class="form-group" ng-class="{ 'has-error': (addRoleForm.roleName.$touched || addRoleSub) && addRoleForm.roleName.$invalid }">
         <div class="row">
           <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-          <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
-          <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addRoleSub=true">додати</button></div>
+        </div>
+        <div class="row">
+          <div class="col-md-11 col-sm-11 col-xs-10"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
+          <div class="col-md-1 col-sm-1 col-xs-2"><button type="submit" class="btn btn-primary btn-border" ng-click="addRoleSub=true">додати</button></div>
         </div>
 
         <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched || addRoleSub">
@@ -20,8 +22,8 @@
       <div class="form-group" ng-class="{ 'has-error': (editRoleForm.roleName.$touched || editRoleSub) && editRoleForm.roleName.$invalid }">
         <div class="row">
           <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-          <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
-          <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSubFunc()">Змінити</button></div>
+          <div class="col-md-11 col-sm-11 col-xs-10"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
+          <div class="col-md-1 col-sm-1 col-xs-2"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSubFunc()">Змінити</button></div>
         </div>
         <div class="help-block" ng-messages="editRoleForm.roleName.$error" ng-show="editRoleForm.roleName.$touched || editRoleSub">
           <div ng-messages-include="/templates/error_msgs.html"></div>

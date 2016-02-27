@@ -59,7 +59,7 @@ img-crop canvas {
 }
 
 .profile span.text-content {
-    margin: auto;
+  margin: auto;
   background: rgba(0,0,0,0.5);
   color: white;
   cursor: pointer;
@@ -83,7 +83,8 @@ img-crop canvas {
 }
 
 .photo-btn{
-    margin: 10px 0;
+    margin-bottom: 10px;
+    margin-top: 10px;
     width: 49.5%;
 }
 
@@ -100,7 +101,6 @@ img-crop canvas {
 .photo-btn.add:hover {
     color: whitesmoke;
     background: #337ab7;
-    margin-top:0;
 }
 
 .photo-btn.remove:hover {

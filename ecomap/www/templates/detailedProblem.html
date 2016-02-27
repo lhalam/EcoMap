@@ -1,30 +1,41 @@
 <script src="/js/libs/jquery.swipebox.min.js"></script>
 <link rel="stylesheet" href="/css/swipebox.min.css">
 
-<div class="flex-item-1 flex-container flex-column problemBlock">
+<div class="flex-item-5 flex-container flex-column problemBlock">
   <i class="fa fa-times fa-2x close" ng-click="close()"></i>
-  <h3 class="detailedTitle">{{selectProblem.title}}</h3>
+  <h3 class="detailedTitle show_problem">{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-      <div class="col-lg-4">
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <div class="rate">
           <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
         </div>
       </div>
-      <div ng-class="colBs">
-        <div class="solution unsolved" >
-          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
+        <div class="solution unsolved hidden-xs hidden-sm" >
+          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
         </div>
       </div>
-      <div class="col-lg-4" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription'>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription hidden-xs hidden-sm'>
           <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
     </div>
-    <div class="clear"></div>
+    <div class="row hidden-md hidden-lg">
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">
+        <div class="solution unsolved forSmall pull-left" >
+          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription forSmall pull-right'>
+          <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
+        </div>
+      </div>
+    </div>
   </div>
-  <uib-tabset justified="true" class="tabs">
+  <uib-tabset justified="true" class="col-xs-12 col-sm-12 tabs">
     <uib-tab heading="Детально">
       <div class="row problem-type">
         <div class="col-md-12"><strong>Тип проблеми:</strong></div>
@@ -42,31 +53,38 @@
         <div class="col-md-12"><strong>Фото:</strong></div>     
         <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"
            ng-repeat="photo in photos">
-          <img src="{{getMinPhoto(photo.url)}}" alt="{{photo.description}}" height="100" width="100">
+          <img src="{{getMinPhoto(photo.url)}}" 
+               alt="{{photo.description}}" 
+               height="100" width="100"
+               class="img-responsive"/>
         </a>
       </div>
     </uib-tab>
     <uib-tab heading="Коментарі">
-      <form name="newComment" ng-submit="post_comment(comment)">
-        <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
-        <div class="checkbox pull-right" ng-show="showAnonymCheckBox">
-          <label class="changeUser">
-            <input type="checkbox" 
-                   ng-model="comment.changeUser" 
-                   ng-true-value="true" 
-                   ng-false-value="false">Анонімно
-          </label>
-        </div>
-        <input class='btn btn-success' type='submit' value='Додати коментар'>
-      </form>
+      <div class="row">
+        <form name="newComment" ng-submit="post_comment(comment)"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
+          <div class="checkbox pull-right" ng-show="showAnonymCheckBox">
+            <label class="changeUser">
+              <input type="checkbox" 
+                     ng-model="comment.changeUser" 
+                     ng-true-value="true" 
+                     ng-false-value="false"/>Анонімно
+            </label>
+          </div>
+          <input class='btn btn-success' type='submit' value='Додати коментар'/>
+        </form>
+      </div>
       <div ng-repeat='comment in comments'>
-        <div class="col-sm-12">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <strong>{{comment.name}}</strong>
-              <span class="text-muted pull-right">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-            </div>
-            <div class="panel-body comment-block">{{comment.content}}</div>
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <strong>{{comment.name}}</strong>
+                <span class="text-muted pull-right">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              </div>
+              <div class="panel-body comment-block">{{comment.content}}</div>
               <div class="clearfix comment-reply">
                 <div class="pull-left">
                   <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
@@ -75,34 +93,37 @@
                   <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
                 </div> 
               </div>
-          </div>
-        </div>
-      <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
-      <div ng-repeat='subcomment in subcomments'>
-        <div class="col-sm-10 col-sm-offset-2">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <strong>{{subcomment.name}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-            </div>
-            <div class="panel-body comment-block">
-              {{subcomment.content}}
             </div>
           </div>
         </div>
-        </div>
-        <form class="col-sm-10 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
-          <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='40'></textarea>
-          <div class="checkbox pull-right" ng-show="showAnonymCheckBox">
-          <label class="changeUser">
-            <input type="checkbox" 
-                   ng-model="comment.changeUser" 
-                   ng-true-value="true" 
-                   ng-false-value="false">Анонімно
-          </label>
+        <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
+          <div ng-repeat='subcomment in subcomments' class="row">
+              <div class="col-lg-offset-3 col-lg-9 col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <strong>{{subcomment.nickname}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                </div>
+                <div class="panel-body comment-block">
+                  {{subcomment.content}}
+                </div>
+                </div>
+              </div>  
           </div>
-          <input class='btn btn-success' type='submit' value='Додати відповідь'>
-        </form>
-      </div>
+          <div class="row">
+          <form class="col-lg-9 col-md-9 col-sm-9 col-xs-9 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
+            <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38'></textarea>
+            <div class="subcomment checkbox" ng-show="showAnonymCheckBox">
+            <label class="changeUser">
+              <input type="checkbox" 
+                     ng-model="comment.changeUser" 
+                     ng-true-value="true" 
+                     ng-false-value="false">Анонімно
+            </label>
+            </div>
+            <input class='btn btn-success col-xs-9' type='submit' value='Додати відповідь'>
+          </form>
+          </div>
+        </div>
       </div>
     </uib-tab>
   </uib-tabset>

@@ -86,7 +86,7 @@
         <p class="note">*Розмір лого не повинен перевищувати 200KB</p>
         <div class="form-group" >
           <div class="row">
-            <div class="col-md-8 col-sm-8">
+            <div class="col-md-8 col-sm-8 col-xs-9">
               <button type = "file"
                       class="btn btn-info photo-btn add add_logo pull-left"
                       ngf-select=""
@@ -97,7 +97,7 @@
                       ngf-pattern="'image/*'"
                       required="">Оберіть лого</button>
             </div>
-            <div class="col-md-3 col-sm-3">
+            <div class="col-md-3 col-sm-3 col-xs-2">
               <button type="sumbit"
                       class="btn add_button btn-primary btn-border add_logo pull-right"
                       ng-click="addProblemSub=true">додати</button>
@@ -113,7 +113,7 @@
              ng-class="{'has-error': (editProblemForm.problem_type.$touched ||
                       editProblemSub)&& editProblemForm.problem_type.$invalid }">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 col-xs-12">
               <label for="" class="control-label" >Тип проблеми: </label >
                 <input type="text"
                        class="form-control"
@@ -133,7 +133,7 @@
               ng-class="{'has-error':(editProblemForm.radius.$touched || editProblemSub)&&
                         editProblemForm.radius.$invalid }">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 col-xs-12">
             <label for="" class="control-label">Радіус: </label >
               <input type="number"
                      class="form-control"
@@ -148,7 +148,7 @@
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12 col-xs-12">
               <div ngf-drop ngf-resize="{width: 20, height: 20, quality: .8, type: 'image/png',  ratio: '1:1', centerCrop: true}">
                   <img ngf-src="editProblemTypeObj.picFile || pathLogo"
                        class="thumbPhoto center-block"/>
@@ -158,7 +158,7 @@
         <p class="note">*Розмір лого не повинен перевищувати 200KB</p>
         <div class="form-group" >
           <div class="row">
-            <div class="col-md-8 col-sm-8">
+            <div class="col-md-8 col-sm-8 col-xs-9">
               <button type = "file"
                       class="btn btn-info photo-btn add add_logo pull-left"
                       ngf-select=""
@@ -169,9 +169,9 @@
                       ngf-pattern="'image/*'"
                       required="">Оберіть лого</button>
             </div>
-            <div class="col-md-2 col-sm-4">
+            <div class="col-md-2 col-sm-4 col-xs-2">
               <button type="sumbit"
-                      class="btn add_button btn-primary add_logo_add btn-border pull-left"
+                      class="btn add_button btn-primary btn-border pull-right"
                       ng-click="editProblemSub=true">додати</button>
             </div>
           </div>

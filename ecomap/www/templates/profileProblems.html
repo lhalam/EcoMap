@@ -3,17 +3,16 @@
     <h3 class="col-md-10 title">Проблеми {{user.data.surname}} {{user.data.name}}</h3>
   </div>
   <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-5 col-sm-6 col-xs-6">
       <form class="form-inline form-search" name="search">
         <input type="text" ng-model="searchNick" 
                class="form-control"
                ng-init="showSearch" 
                ng-change="loadProblems()"
                placeholder="Пошук по нікнейму" />
-        <i ng-click="loadProblems()" class="fa fa-search"></i>
       </form>
     </div>
-    <div class="col-md-offset-6 col-md-1 col-sm-2">
+    <div class="col-lg-offset-5 col-lg-1 col-md-offset-5 col-md-1 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
         <select ng-model="selectCount.selected" 
                 class="form-control form-problems" 
                 data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 
@@ -22,6 +21,7 @@
     </div>
   </div>
   <hr class="problems">
+  <div class="table-responsive">
   <table class="table table-stripped UserProblemTable">
     <thead>
       <tr>
@@ -76,12 +76,15 @@
       </tr>
     </tbody>
   </table>
+  </div>
   <p ng-hide="problemsLength==0"><strong>Загальна кількість проблем: </strong>
      <span>{{count}}</span>
   </p>
-    <div class="row">
-      <div class="col-md-8 col-md-offset-4">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2 col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-lg-offset-4 col-lg-8">
+      <div class="center-block">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
       </div>
     </div>
+  </div>
 </div>

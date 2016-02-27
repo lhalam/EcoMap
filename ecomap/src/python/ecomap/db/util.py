@@ -20,8 +20,8 @@ def get_user_by_email(email):
 
 @retry_query(tries=3, delay=1)
 def get_user_by_nick_name(nickname):
-    """Return user, found by email.
-    :params email: user email
+    """Return user, found by nickname.
+    :params nickname: user nickname
     :retrun: tuple with user info
     """
     with db_pool_ro().manager() as conn:

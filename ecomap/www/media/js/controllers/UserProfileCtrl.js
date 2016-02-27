@@ -27,6 +27,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
         method: 'GET'
       }).success(function(response) {
         $scope.user.data = response;
+        $scope.old_nick = response.nickname;
         $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/150x150';
       });
     }
@@ -106,6 +107,10 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
               $scope.editMode = true;
               $scope.msg.editSuccess('псевдоніму');
             },function errorCallback() {
+              if ($scope.old_nick===$scope.user.data.nickname){
+                  $scope.cls_edit_nick = "fa fa-pencil";
+                  $scope.editMode = true;
+              }
               $scope.msg.editNicknameError('псевдоніму')
             })
       };

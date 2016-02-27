@@ -1751,3 +1751,73 @@ def get_comments_by_nickname(nickname, offset, per_page):
                 """
         cursor.execute(query.format(nickname, offset, per_page))
         return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_subscriptions(user_id, offset, per_page):
+    """Function retrieves all user's subscriptions from db.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   WHERE sub.user_id=%s LIMIT %s,%s;
+                """
+        cursor.execute(query, (user_id, offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_all_user_operations(offset, per_page):
+    """Function retrieves all user's operation from db.
+    :param id: id of user_activity (int)
+    :param count id: count of user_activity (int)
+    :param user_first_name: user's first_name ('Ivan')
+    :param user_last_name: user's last_name ('Ivanenko')
+    :param user_nickname: user's nickname ('Ivan89')
+    :param creation_date: date when activity created
+    :param type: type of operation(delete or password)
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT uoper.id, u.first_name, u.last_name, u.nickname, 
+                   uoper.creation_date, uoper.type
+                   FROM  `user` as u
+                   INNER JOIN `user_operation` as uoper ON u.id=uoper.user_id
+                   LIMIT %s,%s;
+                """
+        cursor.execute(query, (offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def delete_user_operation(user_operation_id):
+    """Delete problem type.
+       :params: user_operation_id - id of user_operation.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user_operation`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (user_operation_id))
+        conn.commit()
+
+@retry_query(tries=3, delay=1)
+def delete_all_users_operations():
+    """Delete all data from table user_operation.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user_operation`;
+                """
+        cursor.execute(query, ())
+        conn.commit()

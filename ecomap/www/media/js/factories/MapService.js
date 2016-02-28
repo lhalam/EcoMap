@@ -83,9 +83,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
-
         instance.markers = markers;
-        console.log(instance.markers)
         return instance.markers;
       }, function errorCallback() {})
     })
@@ -105,5 +103,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     map.setZoom(instance.zoom);
     map.setCenter(instance.centerMap);
   };
+
   return instance;
 }]);

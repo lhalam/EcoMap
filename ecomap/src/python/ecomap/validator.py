@@ -20,6 +20,7 @@ COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$')
 LENGTHS = {'email': [5, 100],
            'first_name': [2, 255],
            'last_name': [2, 255],
+           'nickname': [1, 100],
            'password': [6, 100],
            'pass_confirm': [6, 100],
            'resource_name': [2, 100],
@@ -45,6 +46,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_empty': '%s value is empty.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
+             'check_nickname_exist': 'nickname already exists.',
              'name_exists': '"%s" name allready exists.',
              'check_coordinates': '%s is not coordinates.',
              'check_coordinates_length': '%s is out of range.'}
@@ -60,7 +62,8 @@ def user_registration(data):
                 and error keynamename saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['email', 'first_name', 'last_name', 'password', 'pass_confirm']
+    keys = ['email', 'first_name', 'last_name',
+            'nickname', 'password', 'pass_confirm']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -84,6 +87,9 @@ def user_registration(data):
             elif check_email_exist(data[keyname]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_email_exist']})
+        elif keyname is 'nickname' and check_nickname_exist(data[keyname]):
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_nickname_exist']})
 
     if status['error']:
         status['status'] = False
@@ -811,6 +817,16 @@ def check_email_exist(email):
                 False - if name is free not in database
     """
     return bool(db.get_user_by_email(email))
+
+
+def check_nickname_exist(nickname):
+    """Validator function which checks if nickname is allready in database.
+       :params: dictionary - dictionary
+                keyname - key (nickname)
+       :return: True - if it is in database
+                False - if name is free not in database
+    """
+    return bool(db.get_user_by_nick_name(nickname))
 
 
 def role_name_exists(role_name):

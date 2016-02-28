@@ -1,8 +1,8 @@
 <h3>Відомості про аккаунт</h3>
 <hr>
-<div class="profile" >
-  <img
-  class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
+<div class="row">
+<div class="profile">
+  <img class="img-responsive avatar"  ng-src="{{ user.data.avatar }}">
   <div ng-controller="ChangePhotoCtrl">
     <span class="text-content" ng-click = "showModalPhoto()" >
     <span>змінити фото</span>
@@ -34,23 +34,24 @@
     </modal>
   </div>
 </div>
-<div class="user-info">
+<div class="user-info col-xs-12 col-sm-12 col-md-6 col-lg-6">
   <p><strong>Імя: </strong><span ng-bind="user.data.name"></span></p>
   <p><strong>Прізвище: </strong><span ng-bind="user.data.surname"></span></p>
   <p>
     <strong>Псевдонім: </strong>
     <span ng-bind="user.data.nickname" ng-show="editMode"></span>
-    <input name="newnickname" type="text" ng-model="user.data.nickname"  value="{{user.data.nickname}}" ng-hide="editMode" required>
-    <span ng-class="cls_edit_nick" ng-click="changeNick()"></span>
+    <input name="newnickname" type="text" ng-model="user.data.nickname" ng-enter="changeNick()" value="{{user.data.nickname}}" ng-hide="editMode" required>
+    <span role="button" ng-class="cls_edit_nick" ng-click="changeNick()"></span>
   </p>
   <p><strong>Електронна пошта: </strong> <span ng-bind="user.data.email"></span></p>
   <p><strong>Роль користувача: </strong><span ng-bind="user.data.role"></span></p>
+</div>
 </div>
 <br>
 <h3>Зміна пароля</h3>
 <hr>
 <div class="row">
-  <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
     <form  class="change-password" ng-submit='changePassword(password, changePasswordForm);submitted=false' name="changePasswordForm" novalidate>
       <div class="form-group" ng-class="{ 'has-error': (changePasswordForm.old_pass.$touched || submitted) && changePasswordForm.old_pass.$invalid || getWrongPass()}">
         <label for="old_pass" class="control-label">Старий пароль:</label>

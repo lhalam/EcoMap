@@ -7,6 +7,7 @@ from ecomap import validator
 REGISTRATION_DATA = {'email': 'admin@gmail.com',
                      'first_name': 'admin',
                      'last_name': 'admin',
+                     'nickname': 'super_nick',
                      'password': 'db51903d292a412e4ef2079add791eae',
                      'pass_confirm': 'db51903d292a412e4ef2079add791eae'}
 
@@ -28,6 +29,7 @@ TEST_DATA_PERMISSION = {'resource_id': 121,
                         'description': 'user'}
 
 TEST_DATA_POST_COMNT = {'content': 'comment',
+                        'parent_id': "0",
                         'problem_id': 77}
 
 ROLE_PERMISSION = {'role_id': 3,
@@ -57,6 +59,8 @@ EMAIL_DATA = {'admin.mail@gmail.com': (1L,
                                        u'db51903d292a412e4ef2079add791eae',
                                        None)}
 
+NICKNAME_DATA = {'admin': 'admin'}
+
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
 HASH_DATA_DIC = {HASH_DATA: 1L}
@@ -79,6 +83,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_empty': '%s value is empty.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
+             'check_nickname_exist': 'nickname already exists.',
              'name_exists': '"%s" name allready exists.',
              'check_coordinates': '%s is not coordinates.',
              'check_coordinates_length': '%s is out of range.',
@@ -97,6 +102,10 @@ def check_email_exist_mock(email):
     """Mock of email_exists function."""
     return bool(EMAIL_DATA.get(email))
 
+def check_nickname_exist_mock(nickname):
+    """Mock of check_nickname_exist function"""
+    return bool(NICKNAME_DATA.get(nickname))
+
 def role_name_exists_mock(role_name):
     """Mock of role_name_exists function."""
     return bool(ROLES_DATA.get(role_name))
@@ -114,6 +123,8 @@ class TestValidator(unittest2.TestCase):
         validator.check_email_exist = check_email_exist_mock
         self.orifinal_validator_db = validator.db.check_hash_in_db
         validator.db.check_hash_in_db = check_hash_in_db_mock
+        self.original_check_nickname_exist = validator.check_nickname_exist
+        validator.check_nickname_exist = check_nickname_exist_mock
 
     def tearDown(self):
         """Cleaning up after the test."""
@@ -121,6 +132,7 @@ class TestValidator(unittest2.TestCase):
         validator.resource_name_exists = self.original_resource_name_exists
         validator.check_email_exist = self.original_check_email_exist
         validator.db.check_hash_in_db = self.orifinal_validator_db
+        validator.check_nickname_exist = self.original_check_nickname_exist
 
     def test_registr_return_dict(self):
         """Testing user_registration function if it returns dictionary."""
@@ -194,6 +206,14 @@ class TestValidator(unittest2.TestCase):
         REGISTRATION_DATA['email'] = 'admin@gmail.com'
         self.assertEqual(return_data, ERROR_DATA)
 
+    def test_registr_check_nickname_exist(self):
+        """Testing user_registration function if nickname exists."""
+        REGISTRATION_DATA['nickname'] = 'admin'
+        return_data = validator.user_registration(REGISTRATION_DATA)
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['check_nickname_exist']}]
+        REGISTRATION_DATA['nickname'] = 'super_nick'
+        self.assertEqual(return_data, ERROR_DATA)
+
     def test_post_com_return_dict(self):
         """Testing check_post_comment function if it returns dictionary."""
         self.assertIsInstance(validator.check_post_comment(TEST_DATA_POST_COMNT),
@@ -206,7 +226,7 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_has_key(self):
         """Testing check_post_comment function if data has all keys."""
-        invalid_data = {'content': 'comment'}
+        invalid_data = {'content': 'comment', 'parent_id': 12}
         ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['has_key']
                                               % 'problem_id'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -214,7 +234,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_empty(self):
         """Testing check_post_comment function if value is not empty."""
-        invalid_data = {'content': 'comment', 'problem_id': None}
+        invalid_data = {'content': 'comment',
+                        'problem_id': None,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['check_empty']
                                               % 'problem_id'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -222,7 +244,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_str(self):
         """Testing check_post_comment function if type is invalid."""
-        invalid_data = {'content': [1, 2, 3], 'problem_id': 77}
+        invalid_data = {'content': [1, 2, 3],
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_string']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -230,7 +254,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_min_length(self):
         """Testing check_post_comment function if value is not too short."""
-        invalid_data = {'content': 'q', 'problem_id': 77}
+        invalid_data = {'content': 'q',
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_minimum_length']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),
@@ -238,7 +264,9 @@ class TestValidator(unittest2.TestCase):
 
     def test_post_com_check_max_length(self):
         """Testing check_post_comment function if value is not too long."""
-        invalid_data = {'content': 'q' * 256, 'problem_id': 77}
+        invalid_data = {'content': 'q' * 256,
+                        'problem_id': 77,
+                        'parent_id': 12}
         ERROR_DATA['error'] = [{'content': ERROR_MSG['check_maximum_length']
                                            % 'content'}]
         self.assertDictEqual(validator.check_post_comment(invalid_data),

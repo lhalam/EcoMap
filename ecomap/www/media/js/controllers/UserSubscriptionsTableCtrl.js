@@ -22,7 +22,8 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
     };
 
     $scope.showTable = false;
-
+    $scope.nickname = false;
+    $scope.searchNick = null;
     $scope.loadProblems = function() {
       var user_id = $cookies.get('id');
       $scope.msg = msg;
@@ -31,7 +32,41 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
       $scope.problemsLength = $scope.selectCount['selected'];
       $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
-        var stepCount = $scope.selectCount['selected']          
+        var stepCount = $scope.selectCount['selected'];
+        if ($scope.searchNick){
+            $scope.showTable = ($cookies.get('role')=='admin')?true:false;
+            $scope.nickname = true;
+            $http({
+              method: 'GET',
+              url: '/api/nickname_subscriptions',
+              params: {
+                nickname: $scope.searchNick, 
+                per_page: $scope.selectCount['selected'],
+                offset: $scope.selectCount['selected'] * newValue - stepCount
+              }
+            }).then(function successCallback(response) {
+             $scope.subscriptions = response.data[0];
+             $scope.problemsLength = response.data[1][0]['total_problem_count'];
+             $scope.count = response.data[1][0]['total_problem_count'];
+             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+           })
+        } else if($cookies.get('role')=='admin'){
+          $scope.showTable = true;
+          $http({
+            method: 'GET',
+            url: '/api/usersSubscriptions',
+            params: {
+              per_page: $scope.selectCount['selected'],
+              offset: $scope.selectCount['selected'] * newValue - stepCount,
+            }
+          }).then(function successCallback(response) {
+            $scope.subscriptions = response.data[0];
+            $scope.problemsLength = response.data[1][0]['total_problem_count'];
+            $scope.count = response.data[1][0]['total_problem_count'];
+            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+          })
+        }else{  
+        $scope.nickname = false;    
         $http({
           method: 'GET',
           url: 'api/usersSubscriptions/' + user_id,
@@ -40,11 +75,12 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
             offset: $scope.selectCount['selected'] * newValue - stepCount,
           }
         }).then(function successCallback(response) {
-            $scope.subscriptions = response.data[0];
-            $scope.problemsLength = response.data[1][0]['total_problem_count'];
-            $scope.count = response.data[1][0]['total_problem_count'];
-            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-        })            
+          $scope.subscriptions = response.data[0];
+          $scope.problemsLength = response.data[1][0]['total_problem_count'];
+          $scope.count = response.data[1][0]['total_problem_count'];
+          $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+        })
+        }            
       })
     };
 

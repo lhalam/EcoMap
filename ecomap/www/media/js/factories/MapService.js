@@ -1,3 +1,4 @@
+
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
   instance = {};
   instance.lat = 49.468077;
@@ -83,10 +84,11 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
-        instance.markers = markers;
-        return instance.markers;
+
       }, function errorCallback() {})
     })
+    instance.markers = markers;
+        return instance.markers;
   }
   instance.refreshCluster = function() {
     instance.cluster.clearMarkers();
@@ -103,6 +105,5 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     map.setZoom(instance.zoom);
     map.setCenter(instance.centerMap);
   };
-
   return instance;
 }]);

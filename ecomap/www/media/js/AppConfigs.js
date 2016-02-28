@@ -86,6 +86,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     templateUrl: '/templates/problemsAdmin.html',
     controller: 'ProblemCtrl'
   })
+  .state('admin.tempdata', {
+    url: '/tempdata',
+    templateUrl: '/templates/tempdataAdmin.html',
+    controller: 'TempDataCtrl'
+  })
   .state('faq', {
     url: '/faq/:faqAlias',
     templateUrl: '/templates/detailedFaq.html',

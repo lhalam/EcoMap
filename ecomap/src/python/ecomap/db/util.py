@@ -19,6 +19,22 @@ def get_user_by_email(email):
 
 
 @retry_query(tries=3, delay=1)
+def get_user_by_nick_name(nickname):
+    """Return user, found by nickname.
+    :params nickname: user nickname
+    :retrun: tuple with user info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
+                   `email`, `password`, `avatar`
+                   FROM `user` WHERE `nickname`=%s;
+                """
+        cursor.execute(query, (nickname,))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def get_user_by_id(user_id):
     """Return user, found by id.
     :params user_id: id of user
@@ -31,6 +47,41 @@ def get_user_by_id(user_id):
                    FROM `user` WHERE `id`=%s;
                 """
         cursor.execute(query, (user_id,))
+        return cursor.fetchone()
+
+
+def get_user_by_nickname(nickname, offset, per_page):
+    """Return information about creation problem by user, found by nickname.
+    :params nickname: user nickname.
+    :retrun: tuple with user and problem info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.status,
+                   p.created_date, p.is_enabled,
+                   p.severity, u.nickname,
+                   u.last_name, u.first_name, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%' LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, offset, per_page))
+        return cursor.fetchall()
+
+
+def count_user_by_nickname(nickname):
+    """Count of problems created by user with special nickname.
+    :return: count of problems.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(p.id)
+                   FROM `problem` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
         return cursor.fetchone()
 
 
@@ -1237,7 +1288,7 @@ def get_subcomments_by_parent_id(parent_id):
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id,
                           c.parent_id, c.created_date, c.user_id,
-                          u.nickname
+                          u.nickname, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.parent_id=%s;
@@ -1342,6 +1393,18 @@ def get_problem_type():
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type`;"""
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problem_type_for_filtration():
+    """Get problem type.
+       :return: tuple with problem type name and id.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `name` FROM `problem_type`;"""
         cursor.execute(query)
         return cursor.fetchall()
 
@@ -1509,6 +1572,19 @@ def count_user_subscriptions(user_id):
 
 
 @retry_query(tries=3, delay=1)
+def count_all_subscriptions():
+    """Function counts user's subscriptions.
+    :param user_id: id of user (int)
+    :return: count.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `subscription`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
 def get_subscriptions(user_id, offset, per_page):
     """Function retrieves all user's subscriptions from db.
     :param id: id of problem (int)
@@ -1530,3 +1606,246 @@ def get_subscriptions(user_id, offset, per_page):
                 """
         cursor.execute(query, (user_id, offset, per_page))
         return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_subscriptions(offset, per_page):
+    """Function retrieves all user's subscriptions from db.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name,
+                   u.last_name, u.first_name, u.nickname
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON sub.user_id=u.id LIMIT %s,%s;
+                """
+        cursor.execute(query, (offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_subscriptions_by_nickname(nickname, offset, per_page):
+    """Function retrieves all user's subscriptions from db by nickname.
+    :param nickname: nickname of problem.
+    :param title: title of problem ('problem with rivers').
+    :param problem_type_id: id of problem type (int).
+    :param status: status of problem (solved or unsolved).
+    :param created_date: date when problem was creared.
+    :param date_subscriptions: date when user subscribed to a problem.
+    :param last_name: user last_name.
+    :param first_name: user first_name.
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name,
+                   u.last_name, u.first_name, u.nickname
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON sub.user_id=u.id
+                   WHERE u.nickname LIKE '%{}%' LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, offset, per_page))
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def count_subscriptions_by_nickname(nickname):
+    """Function counts user's subscriptions.
+    :param nickname: nickname of user.
+    :return: count.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(s.id)
+                FROM `subscription`as s
+                INNER JOIN `user` as u ON s.user_id=u.id
+                WHERE u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_users_comments(offset, per_page):
+    """Get all comments of all users.
+       :params: - offset - pagination option
+                - per_page - pagination option
+       :return: tuples with comments info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   LEFT JOIN `user` as us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 LIMIT {},{};
+                """
+        cursor.execute(query.format(offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_user_comments(offset, per_page, user_id):
+    """Get all comments of user.
+       :params: - offset - pagination option
+                - per_page - pagination option
+       :return: tuples with comments info
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   LEFT JOIN `user` as us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 AND cm.user_id={} LIMIT {},{};
+                """
+        cursor.execute(query.format(user_id, offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_count_comments():
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+                   WHERE parent_id=0;
+                """
+        cursor.execute(query)
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def get_count_user_comments(user_id):
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`
+                   WHERE parent_id=0 AND user_id={};
+                """
+        cursor.execute(query.format(user_id))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_count_comments_by_nickname(nickname):
+    """Get count of comments of parent comment.
+       :params: parent_id - id of parent comment
+       :return: count of subcomments
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(c.id)
+                FROM `comment` AS c
+                INNER JOIN `user` AS u ON c.user_id = u.id
+                WHERE c.parent_id=0 AND u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_comments_by_nickname(nickname, offset, per_page):
+    """Function retrieves all user's comments from db by nickname.
+    :param nickname: nickname of problem.
+    :param offset: pagination option.
+    :param per_page: pagination option.
+    :return: tuples with user comments info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT  cm.id, cm.content, cm.problem_id,
+                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   FROM  `comment` as cm
+                   INNER JOIN `user` AS us ON cm.user_id=us.id
+                   WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
+                   LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_subscriptions(user_id, offset, per_page):
+    """Function retrieves all user's subscriptions from db.
+    :param id: id of problem (int)
+    :param title: title of problem ('problem with rivers')
+    :param problem_type_id: id of problem type (int)
+    :param status: status of problem (solved or unsolved)
+    :param created_date: date when problem was creared
+    :param date_subscriptions: date when user subscribed to a problem
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
+                   pr.created_date, sub.date_subscriptions, pt.name
+                   FROM  `subscription` as sub
+                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
+                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
+                   WHERE sub.user_id=%s LIMIT %s,%s;
+                """
+        cursor.execute(query, (user_id, offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def get_all_user_operations(offset, per_page):
+    """Function retrieves all user's operation from db.
+    :param id: id of user_activity (int)
+    :param count id: count of user_activity (int)
+    :param user_first_name: user's first_name ('Ivan')
+    :param user_last_name: user's last_name ('Ivanenko')
+    :param user_nickname: user's nickname ('Ivan89')
+    :param creation_date: date when activity created
+    :param type: type of operation(delete or password)
+    :return: tuples with user info.
+    """
+    with db_pool_ro().manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT uoper.id, u.first_name, u.last_name, u.nickname, 
+                   uoper.creation_date, uoper.type
+                   FROM  `user` as u
+                   INNER JOIN `user_operation` as uoper ON u.id=uoper.user_id
+                   LIMIT %s,%s;
+                """
+        cursor.execute(query, (offset, per_page))
+        return cursor.fetchall()
+
+@retry_query(tries=3, delay=1)
+def delete_user_operation(user_operation_id):
+    """Delete problem type.
+       :params: user_operation_id - id of user_operation.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user_operation`
+                   WHERE `id`=%s;
+                """
+        cursor.execute(query, (user_operation_id))
+        conn.commit()
+
+@retry_query(tries=3, delay=1)
+def delete_all_users_operations():
+    """Delete all data from table user_operation.
+    """
+    with db_pool_rw().manager() as conn:
+        cursor = conn.cursor()
+        query = """DELETE FROM `user_operation`;
+                """
+        cursor.execute(query, ())
+        conn.commit()

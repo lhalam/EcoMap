@@ -24,6 +24,33 @@
    }
  });
 
+app.directive('availableNickname', function($http) {
+   var toId;
+   return {
+     restrict: 'A',
+     require: 'ngModel',
+     link: function(scope, elem, attr, ctrl) {
+       scope.$watch(attr.ngModel, function(value) {
+         if (toId) clearTimeout(toId);
+         toId = setTimeout(function() {
+           if(scope.newUser.nickname) {
+             $http({
+               url: '/api/nickname_exist',
+               method: 'POST',
+               data: scope.newUser
+             })
+             .then(function successCallback(responce) {
+               ctrl.$setValidity('availableNickname', !responce.data['isValid']);
+             },
+             function errorCallback(responce) {});
+           }
+         }, 200);
+       })
+     }
+   }
+ });
+
+
 app.directive('compareTo', function() {
     return {
         require: 'ngModel',

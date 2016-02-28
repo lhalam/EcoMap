@@ -60,10 +60,11 @@ def change_nickname():
 
     """
     response = jsonify(), 400
+
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
         user = ecomap_user.get_user_by_id(data['id'])
-        if user:
+        if user and not (db.get_user_by_nick_name(data['nickname'])):
             user.change_nickname(data['nickname'])
             response = jsonify(), 200
     return response

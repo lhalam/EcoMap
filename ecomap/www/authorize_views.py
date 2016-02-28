@@ -95,6 +95,19 @@ def email_exist():
         return jsonify(isValid=bool(user))
 
 
+@app.route('/api/nickname_exist', methods=['POST'])
+@auto.doc()
+def nickname_exist():
+    """Function for AJAX call from frontend.
+    Validates unique nickname identifier before registering a new user
+    :return: json with status 200 or 400
+    """
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        user = db.get_user_by_nick_name(data['nickname'])
+        return jsonify(isValid=bool(user))
+
+
 @app.route('/api/login', methods=['POST'])
 @auto.doc()
 def login():
@@ -185,7 +198,7 @@ def oauth_login(provider):
 
     access_token_url = 'https://graph.facebook.com/oauth/access_token'
     graph_api_url = 'https://graph.facebook.com/v2.5/me?fields=email,'\
-                    'first_name,last_name,name,id,picture.type(large)'
+                    'first_name,last_name,id,picture.type(large)'
 
     params = {
         'client_id': request.json['clientId'],
@@ -198,10 +211,11 @@ def oauth_login(provider):
     access_token = dict(parse_qsl(resource.text))
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
+    nickname = profile['last_name'] + str(time.time())
     logger.info(profile['picture']['data']['url'])
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
-                                         profile['name'],
+                                         nickname,
                                          profile['email'],
                                          provider,
                                          profile['id'])

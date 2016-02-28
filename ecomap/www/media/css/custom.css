@@ -9,17 +9,17 @@
 }
 
 
-/* Nav bar*/
-
-html, body, .wrapper {
-  font-family: "LatoRegular", sans serif;
-  height: 100%;
-}
 
 body {
   overflow-x: hidden;
 }
-
+html, body, .wrapper {
+  font-family: "LatoRegular", sans serif;
+  height: 100%;
+}
+#filterProb{
+  font-size: 12px;
+}
 .body-scroll-shown {
   overflow-y: scroll;
 }
@@ -71,12 +71,20 @@ body {
   background-color: #fff;
 }
 
-.modal-dialog form {}
-
+#fetching{
+  width:100%;
+  height:100%;
+  position: relative;
+  z-index: 1000;
+  font-size: 50px;
+}
+#fetching img{
+  display: block;
+  margin-left: 45%;
+  margin-top: 20%;
+}
 
 /*problems filter */
-
-.problem_filter {}
 
 .toogle {
   cursor: pointer;
@@ -90,8 +98,6 @@ body {
   padding: 0.1em;
   z-index: 99999999;
 }
-
-.list-group-item {}
 
 #filter {
   position: absolute;
@@ -109,17 +115,6 @@ body {
 #filter h4 {
   text-align: center;
   margin-bottom: 1.2em
-}
-
-
-/*inform about problem block*/
-
-#inform_probl_btn {
-  transition: 0.1s;
-}
-
-#inform_probl_btn:hover {
-  background-color: #aaa;
 }
 
 .inform_probl_block {
@@ -154,10 +149,6 @@ label.changeUser{
 
 #user_form input {
   margin-top: 20px;
-}
-
-#user_form .form-group, .checkbox {
-  margin-left: 15px;
 }
 
 .checkbox {
@@ -352,6 +343,13 @@ form {
 }
 
 /*UserProfile styles*/
+@media screen and (max-width: 960px) {
+  .panel-body .profile {
+    float: left;
+    margin-left: 28px;
+    margin-bottom: 15px;
+  }
+}
 
 .user-profile {
   margin-top: 30px;
@@ -578,7 +576,7 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 
-.det-problem-modal .problem-type, .detailedTitle, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
+.det-problem-modal .problem-type, .det-problem-modal .description, .det-problem-modal .proposal, .det-problem-modal .photos, .problemBlock .problem-type, .problemBlock .description, .problemBlock .proposal, .problemBlock .photos {
   padding: 10px;
   word-wrap : break-word;
 }
@@ -702,7 +700,50 @@ input[type="checkbox"] {
 .flex-item-3 {
   flex: 3;
 }
-
+.solution.unsolved.forSmall{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#user_form .form-group, .checkbox {
+  margin-left: 15px;
+}
+.subcomment.checkbox{
+      margin: 0;
+    }
+@media screen and (min-width: 300px) and (max-width: 760px){
+    .flex-item-5{
+      flex-basis:100%;
+    }
+    #sidebar{
+      min-width: 300px;
+      max-width: 760px;
+    }
+  }
+@media screen and (min-width: 761px) and (max-width: 992px){
+    .flex-item-5{
+      flex-basis:30%;
+    }
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+@media screen and (min-width: 993px) and (max-width: 1200px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+@media screen and (min-width: 1201px){
+    #sidebar{
+      min-width: 300px;
+      max-width: 500px;
+    }
+  }
+.eye_subscription.forSmall{
+  position:relative;
+  top: 5px;
+}
 .overflow-on {
   overflow-y: auto;
 }
@@ -767,7 +808,7 @@ input[type="checkbox"] {
   list-style: none;
   margin-top: 0.3em;
   padding-left: 0.55em;
-  font-size: 1.25em;
+  font-size: 1.1em;
   height: 1.75em;
 }
 .indicator{
@@ -802,17 +843,20 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
-textarea.comment-input{
+.comment-input, .wrapping{
   width: 100%;
   word-wrap : break-word;
-  resize: none;
 }
 
+textarea{
+  resize: none;
+}
 .comment-block{
-  width: 100%;
   overflow: auto;
   word-wrap : break-word;
+  width: 100%;
 }
+
 
 .problem-title{
   word-wrap: break-word;
@@ -855,4 +899,38 @@ h3.title{
   float: right; 
   padding-top: 0px;
 }
+form.form-inline.form-search{
+    padding:10px 0 5px 0;
+}
+select.form-problems{
+  margin-top: 10px;
+}
 
+select.form-comments{
+  margin-top: 10px;
+}
+
+.container-fluid,
+.navbar-default .navbar-nav>.open>a:hover{
+  background-color: #FFF;
+}
+
+.b-right-side__show-problem{
+  height: 100%;
+  width: 100%;
+  overflow:auto;
+}
+
+.input-group .no-float{
+	float: none;
+    word-break: break-word;
+}
+
+.comment-row{
+	margin: 5px;
+}
+
+.comment-row a{
+	color: black;
+	text-decoration: none;
+}

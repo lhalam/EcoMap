@@ -31,7 +31,10 @@ app.factory('msg', function(toaster) {
       toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
     },
     addCommentAnonimError: function(msg, type) {
-      toaster.pop('error', 'Додавання', 'Виникла помилка при додаванні '+ msg +' необхідно зареєструватися!');
+      toaster.pop('error', 'Додавання', 'Виникла помилка при додаванні '+ msg +' необхідно зареєструватися або залогінитись!');
     },
+    editNicknameError: function(msg, type) {
+      toaster.pop('error', 'Редагування', 'Виникла помилка при редагуванні '+ msg +' даний псевдонім вже зайнятий');
+    }
   };
 });

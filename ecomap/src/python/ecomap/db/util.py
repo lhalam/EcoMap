@@ -1716,9 +1716,8 @@ def get_user_comments(offset, per_page, user_id):
 
 @retry_query(tries=3, delay=1)
 def get_count_comments():
-    """Get count of comments of parent comment.
-       :params: parent_id - id of parent comment
-       :return: count of subcomments
+    """Get count of comments.
+       :return: count of comments
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()

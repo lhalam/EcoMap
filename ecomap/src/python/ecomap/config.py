@@ -43,7 +43,7 @@ class Config(object):
         self.log.info('Parse ecomap.conf.')
         config = SafeConfigParser()
         for fname in os.listdir(self.path):
-            if not (fname.startswith('_')) and fname.endswith(".conf"):
+            if not (fname.startswith('_')) and fname.endswith('.conf'):
                 with open(os.path.join(self.path, fname)) as config_file:
                     config.readfp(config_file)
         sections = config.sections()

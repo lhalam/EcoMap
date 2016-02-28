@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """Module contains routes, used for admin page."""
 import os
+import PIL
 import json
+import time
+import hashlib
 import datetime
 
+from PIL import Image
 from flask_login import login_required
 from werkzeug import secure_filename
 from flask import request, jsonify, Response, session
@@ -14,6 +18,7 @@ from ecomap.db import util as db
 from ecomap.permission import permission_control
 
 FILE_UPLOAD_SIZE = 204800
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -938,36 +943,20 @@ def add_problem_type():
 
     """
     data = request.form
+    file_to_save = request.files
     valid = validator.problem_type_post(data)
-    # create template name for logo
-    basename = 'problem_type_logo'
-    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-    template = "_".join([basename, suffix])
-    # to get file size without changing it
-    logo = request.files['file']
-    old_file_position = request.files['file'].tell()
-    request.files['file'].seek(0, os.SEEK_END)
-    size = request.files['file'].tell()
-    request.files['file'].seek(old_file_position, os.SEEK_SET)
-    if size > FILE_UPLOAD_SIZE:
-        return jsonify(msg='Розмір файлу завеликий!'), 400
-    # validation
     if valid['status']:
         if db.get_problem_type_by_name(data['problem_type_name']):
             response = jsonify(msg='Дане ім’я вже зарезервоване!'), 400
         else:
-            extension = '.png'
-            static_url = '/media/image/markers'
-            f_path = os.environ['STATICROOT'] + static_url
-            fname = secure_filename(logo.filename)
-            file_name = template + fname
-            if logo and extension in file_name:
-                logo.save(os.path.join(f_path, file_name))
+            file_name = save_file(file_to_save, '/media/image/markers')
+            if file_name:
                 db.add_problem_type(file_name, data['problem_type_name'],
                                     data['problem_type_radius'])
                 response = jsonify(msg='Тип проблеми успішно додано!'), 200
             else:
-                response = jsonify(msg='Розширення файлу має бути .png!'), 400
+                response = jsonify(msg='Проблема при додаванні фото.'
+                                   'Спробуйте пізніше!'), 400
     else:
         response = jsonify(msg='Так як дані невірні!'), 400
 
@@ -992,49 +981,59 @@ def edit_problem_type():
     """
     data = request.form
     valid = validator.problem_type_post(data)
-    # create template name for logo
-    basename = 'problem_type_logo'
-    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-    template = "_".join([basename, suffix])
-    # validation
+    static_url = '/media/image/markers'
+    f_path = os.environ['STATICROOT'] + static_url
     if valid['status']:
-        if request.files:
-            logo = request.files['file']
-            old_file_position = request.files['file'].tell()
-            request.files['file'].seek(0, os.SEEK_END)
-            size = request.files['file'].tell()
-            request.files['file'].seek(old_file_position, os.SEEK_SET)
-            if size > FILE_UPLOAD_SIZE:
-                return jsonify(msg='Розмір файлу завеликий!'), 400
-            extension = '.png'
-            static_url = '/media/image/markers'
-            f_path = os.environ['STATICROOT'] + static_url
-            fname = secure_filename(logo.filename)
-            file_name = template + fname
-            if logo and extension in file_name:
-                logo.save(os.path.join(f_path, file_name))
-                old_name = db.get_problem_type_picture(data['problem_type_id'])
-                if os.path.exists(os.path.join(f_path, old_name[0])):
-                    os.remove(os.path.join(f_path, old_name[0]))
-                db.update_problem_type(data['problem_type_id'], file_name,
-                                       data['problem_type_name'],
-                                       data['problem_type_radius'])
-                response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
-            else:
-                response = jsonify(msg='Розширення файлу має бути .png!'), 400
+        old_name = db.get_problem_type_picture(data['problem_type_id'])
+        file_to_save = request.files
+        file_name = save_file(file_to_save, static_url)
+        if file_name:
+            if os.path.exists(os.path.join(f_path, old_name[0])):
+                os.remove(os.path.join(f_path, old_name[0]))
+            db.update_problem_type(data['problem_type_id'], file_name,
+                                   data['problem_type_name'],
+                                   data['problem_type_radius'])
+            response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
         else:
-            old_name = db.get_problem_type_picture(data['problem_type_id'])
             db.update_problem_type(data['problem_type_id'], old_name[0],
                                    data['problem_type_name'],
                                    data['problem_type_radius'])
-            response = jsonify(msg='Тип проблеми оновлено!')
-
+            response = jsonify(msg='Тип проблеми оновлено!'), 200
     else:
         response = jsonify(msg='Так як дані невірні!'), 400
 
     return response
 
-    
+
+def save_file(form, static_url='uploads/'):
+    """Method to save a file from a form."""
+    file_to_save = form
+    if file_to_save:
+        extension = form['file'].filename.rsplit('.', 1)[1]
+        if extension in ALLOWED_EXTENSIONS:
+            f_path = os.environ['STATICROOT'] + static_url
+            now = time.time()*100000
+            unique_key = (int(now))
+            hashed_name = hashlib.md5(str(unique_key))
+            original_file = '%s.%s' % (hashed_name.hexdigest(), extension)
+            file_to_save['file'].save(os.path.join(f_path, original_file))
+            basewidth = 100
+            img = Image.open(os.path.join(f_path, original_file))
+            wpercent = (basewidth/float(img.size[0]))
+            hsize = int((float(img.size[1])*float(wpercent)))
+            img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            f_name = '%s%s.%s' % (hashed_name.hexdigest(), '.min', extension)
+            img.save(os.path.join(f_path, f_name))
+            os.remove(os.path.join(f_path, original_file))
+            response = f_name
+        else:
+            response = False
+    else:
+        response = False
+
+    return response
+
+
 @app.route('/api/tempdata', methods=['GET'])
 @auto.doc()
 @login_required
@@ -1057,7 +1056,7 @@ def get_tempdata():
         "creation_date": 14334353432,
         "type": 'password','delete'}]``.
     '''
-    
+
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
 
@@ -1075,6 +1074,8 @@ def get_tempdata():
     response = Response(json.dumps(tempdata_list),
                         mimetype='application/json')
     return response
+
+
 @app.route("/api/tempdata", methods=['DELETE'])
 @auto.doc()
 @login_required
@@ -1084,7 +1085,7 @@ def tempdata_delete():
     :rtype: JSON
     :request args: `{user_operation_id: 5}`
     :return:
-        
+
         - If all ok:
             ``{'status': 'success', 'deleted_tempdata': 'user_operation_id'}``
 
@@ -1097,7 +1098,7 @@ def tempdata_delete():
     if data:
         db.delete_user_operation(data['user_operation_id'])
         response = jsonify(msg='success',
-                        deleted_tempdata=data['user_operation_id'])
+                           deleted_tempdata=data['user_operation_id'])
     else:
         db.delete_all_users_operations()
         response = jsonify(msg='success')

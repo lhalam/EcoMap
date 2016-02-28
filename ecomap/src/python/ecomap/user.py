@@ -2,6 +2,7 @@
 import hashlib
 import time
 
+from flask import request
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
@@ -166,7 +167,8 @@ def register(first_name, last_name, nickname, email, password):
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
     message = generate_email('registration', _CONFIG['email.from_address'],
-                             email, (first_name, last_name, email, password))
+                             email, (first_name, last_name, email,
+                             password, request.url_root))
     send_email(_CONFIG['email.server_name'],
                _CONFIG['email.user_name'],
                _CONFIG['email.server_password'],

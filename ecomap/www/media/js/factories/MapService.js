@@ -1,3 +1,4 @@
+
 app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
   instance = {};
   instance.lat = 49.468077;

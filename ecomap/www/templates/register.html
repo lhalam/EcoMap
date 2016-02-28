@@ -34,7 +34,7 @@
 
             <div class="form-group" ng-class="{ 'has-error': (registerForm.nickname.$touched || submitted) && registerForm.nickname.$invalid }">
               <label for="nickname" class="control-label">Псевдонім</label>
-              <input type="text"  ng-model="newUser.nickname" name="nickname" ng-maxlength="100" class="form-control" id="nickname" placeholder="Псевдонім" data-error="Необхідно ввести псевдонім!" required/>
+              <input type="text"  ng-model="newUser.nickname" name="nickname" ng-maxlength="100" class="form-control" id="nickname" placeholder="Псевдонім" required available-nickname/>
               <div class="help-block" ng-messages="registerForm.nickname.$error" ng-show="registerForm.nickname.$touched || submitted">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>

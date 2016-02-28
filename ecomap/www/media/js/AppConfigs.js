@@ -1,5 +1,5 @@
 app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
- function($stateProvider, $urlRouterProvider, $authProvider) {
+ function($stateProvider, $urlRouterProvider, $authProvider ) {
   $stateProvider
   .state('error404', {
     url: '/error404',
@@ -171,7 +171,6 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       url: '/userConfirm?hash_sum',
       controller: 'userDeleteConfirmation'
     })
-
     .state('register', {
       url: '/register',
       templateUrl: '/templates/register.html',

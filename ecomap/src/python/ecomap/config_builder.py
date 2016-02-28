@@ -49,7 +49,7 @@ def configvars_parser():
     template_config = {section: {key: value or None
                                  for (key, value) in config.items(section)}
                        for section in config.sections()}
-    logging.debug('Dictionary with list of variables was created.')
+    logging.debug('Dictionary with dictionary of variables was created.')
     return template_config
 
 

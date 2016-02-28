@@ -26,7 +26,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
       method: 'GET',
       url: '/api/getTitles'
     }).success(function(resp) {
-      $scope.faqTitles = resp;      
+      $scope.faqTitles = resp;
     });
   }
 ]);

@@ -29,9 +29,8 @@ LENGTHS = {'email': [5, 100],
            'title': [2, 255],
            'content': [2, 255],
            'problem_type_id': [1, 255],
-           'problem_type_name': [1, 50],
+           'problem_type_name': [2, 50],
            'problem_type_radius': [1, 10],
-           'problem_type_picture': [1, 50],
            'user_id': [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],
@@ -671,15 +670,6 @@ def problem_type_post(data):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
-        elif keyname is 'problem_type_radius':
-            if not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_minimum_length']
-                                        % keyname})
-            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_maximum_length']
-                                        % keyname})
 
     if status['error']:
         status['status'] = False
@@ -736,16 +726,6 @@ def problem_type_put(data):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
-        elif keyname is 'problem_type_radius':
-            if not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_minimum_length']
-                                        % keyname})
-            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_maximum_length']
-                                        % keyname})
-
     if status['error']:
         status['status'] = False
 

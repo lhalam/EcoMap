@@ -61,6 +61,10 @@ EMAIL_DATA = {'admin.mail@gmail.com': (1L,
 
 NICKNAME_DATA = {'admin': 'admin'}
 
+PROBLEM_TYPE_DATA = {'problem_type_id': 3,
+                     'problem_type_name': 'name',
+                     'problem_type_radius': 10}
+
 HASH_DATA = 'f10551c61d8f9d264125e1314287933df10551c61d8f9d264125e1314287933d'
 
 HASH_DATA_DIC = {HASH_DATA: 1L}
@@ -961,6 +965,145 @@ class TestValidator(unittest2.TestCase):
         """Test user_photo_deletion function if status is correct."""
         self.assertDictEqual(validator.user_photo_deletion(TEST_DATA),
                              VALID_STATUS)
+
+    def test_prob_type_del_return_dict(self):
+        """Testing problem_type if it returns dictionary."""
+        self.assertIsInstance(validator.problem_type_delete(PROBLEM_TYPE_DATA),
+                              dict)
+
+    def test_prob_type_del_correct_stat(self):
+        """Testing problem_type function if status is correct."""
+        self.assertDictEqual(validator.problem_type_delete(PROBLEM_TYPE_DATA),
+                             VALID_STATUS)
+
+    def test_prob_type_del_has_key(self):
+        """Testing problem_type function if data has all keys."""
+        invalid_data = {'wrong_key': 3}
+        ERROR_DATA['error'] = [{'problem_type_id': ERROR_MSG['has_key']
+                                % 'problem_type_id'}]
+        self.assertEqual(validator.problem_type_delete(invalid_data),
+                         ERROR_DATA)
+
+    def test_prob_type_del_check_empty(self):
+        """Testing problem_type function if value is not empty."""
+        invalid_data = {'problem_type_id': None}
+        ERROR_DATA['error'] = [{'problem_type_id': ERROR_MSG['check_empty']
+                                % 'problem_type_id'}]
+        self.assertEqual(validator.problem_type_delete(invalid_data),
+                         ERROR_DATA)
+
+    def test_post_prob_type_return_dict(self):
+        """Testing problem_type_post function if it returns dictionary."""
+        self.assertIsInstance(validator.problem_type_post(PROBLEM_TYPE_DATA),
+                              dict)
+
+    def test_post_prob_type_correct_stat(self):
+        """Testing problem_type_post function if status is correct."""
+        self.assertDictEqual(validator.problem_type_post(PROBLEM_TYPE_DATA),
+                             VALID_STATUS)
+
+    def test_post_prob_type_has_key(self):
+        """Testing problem_type_post function if data has all keys."""
+        invalid_data = {'wrong_key': 'name', 'problem_type_radius': 12}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['has_key']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_post(invalid_data),
+                             ERROR_DATA)
+
+    def test_post_prob_type_check_empty(self):
+        """Testing problem_type_post function if value is not empty."""
+        invalid_data = {'problem_type_name': None,
+                        'problem_type_radius': 73}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_empty']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_post(invalid_data),
+                             ERROR_DATA)
+
+    def test_post_prob_type_check_str(self):
+        """Testing problem_type_post function if type is invalid."""
+        invalid_data = {'problem_type_name': [1, 2, 3],
+                        'problem_type_radius': 10}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_string']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_post(invalid_data),
+                             ERROR_DATA)
+
+    def test_post_prob_type_min_length(self):
+        """Testing problem_type_post function if value is not too short."""
+        invalid_data = {'problem_type_name': 'q',
+                        'problem_type_radius': 10}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_minimum_length']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_post(invalid_data),
+                             ERROR_DATA)
+
+    def test_post_prob_type_check_max_length(self):
+        """Testing problem_type_post function if value is not too long."""
+        invalid_data = {'problem_type_name': 'q' * 256,
+                        'problem_type_radius': 10}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_maximum_length']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_post(invalid_data),
+                             ERROR_DATA)
+
+    def test_put_prob_type_return_dict(self):
+        """Testing problem_type_put function if it returns dictionary."""
+        self.assertIsInstance(validator.problem_type_put(PROBLEM_TYPE_DATA),
+                              dict)
+
+    def test_put_prob_type_correct_stat(self):
+        """Testing problem_type_put function if status is correct."""
+        self.assertDictEqual(validator.problem_type_put(PROBLEM_TYPE_DATA),
+                             VALID_STATUS)
+
+    def test_put_prob_type_has_key(self):
+        """Testing problem_type_put function if data has all keys."""
+        invalid_data = {'problem_type_name': 'name', 'problem_type_radius': 12,
+                        'wrong_key': 2}
+        ERROR_DATA['error'] = [{'problem_type_id': ERROR_MSG['has_key']
+                                % 'problem_type_id'}]
+        self.assertDictEqual(validator.problem_type_put(invalid_data),
+                             ERROR_DATA)
+
+    def test_put_prob_type_check_empty(self):
+        """Testing problem_type_put function if value is not empty."""
+        invalid_data = {'problem_type_name': 'name',
+                        'problem_type_radius': None,
+                        'problem_type_id': 2}
+        ERROR_DATA['error'] = [{'problem_type_radius': ERROR_MSG['check_empty']
+                                % 'problem_type_radius'}]
+        self.assertDictEqual(validator.problem_type_put(invalid_data),
+                             ERROR_DATA)
+
+    def test_put_prob_type_check_str(self):
+        """Testing problem_type_put function if type is invalid."""
+        invalid_data = {'problem_type_name': [1, 2, 3],
+                        'problem_type_radius': 10,
+                        'problem_type_id': 2}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_string']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_put(invalid_data),
+                             ERROR_DATA)
+
+    def test_put_prob_type_min_length(self):
+        """Testing problem_type_put function if value is not too short."""
+        invalid_data = {'problem_type_name': 'q',
+                        'problem_type_radius': 10,
+                        'problem_type_id': 2}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_minimum_length']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_put(invalid_data),
+                             ERROR_DATA)
+
+    def test_put_prob_type_check_max_length(self):
+        """Testing problem_type_put function if value is not too long."""
+        invalid_data = {'problem_type_name': 'q' * 256,
+                        'problem_type_radius': 10,
+                        'problem_type_id': 2}
+        ERROR_DATA['error'] = [{'problem_type_name': ERROR_MSG['check_maximum_length']
+                                % 'problem_type_name'}]
+        self.assertDictEqual(validator.problem_type_put(invalid_data),
+                             ERROR_DATA)
 
     def test_user_photo_del_has_key(self):
         """Testing user_photo_deletion function if data has all keys."""

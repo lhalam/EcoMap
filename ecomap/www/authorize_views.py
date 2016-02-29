@@ -364,7 +364,7 @@ def delete_user():
         problem_list = []
         for tuple_with_problem_id in tuple_of_problems:
             problem_list.append(tuple_with_problem_id[0])
-        if db.get_user_comments_count != 0:
+        if db.get_user_comments_count:
             db.change_comments_to_anon(user_id[0])
         if problem_list:
             for problem_id in problem_list:

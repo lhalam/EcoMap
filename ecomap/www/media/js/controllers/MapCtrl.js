@@ -16,7 +16,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
       }).then(function successCallback(data) {
         var problemTypes = data.data;
          for (var i = 0; i < data.data.length; i++){
-          $scope.Types[problemTypes[i]['id']] = problemTypes[i]['name'];
+          $scope.Types[String(problemTypes[i]['id'])] = problemTypes[i]['name'];
         }
     $scope.Status = {
       'Unsolved': 'Нова',

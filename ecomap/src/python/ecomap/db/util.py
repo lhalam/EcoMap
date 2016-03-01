@@ -1,6 +1,7 @@
 """This module contains functions for interacting with Database."""
 from ecomap.db.db_pool import db_pool_rw, db_pool_ro, retry_query
 
+ANONYMOUS_ID = "2"
 
 @retry_query(tries=3, delay=1)
 def get_user_by_email(email):
@@ -1310,6 +1311,7 @@ def get_count_of_parent_subcomments(parent_id):
         cursor.execute(query, (parent_id,))
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def get_user_comments_count(user_id):
     """Get count of user comments.
@@ -1345,8 +1347,9 @@ def change_problem_to_anon(problem_id):
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
-        cursor.execute(query, ("2", problem_id))
+        cursor.execute(query, (ANONYMOUS_ID, problem_id))
         conn.commit()
+
 
 @retry_query(tries=3, delay=1)
 def change_comments_to_anon(user_id):
@@ -1356,8 +1359,9 @@ def change_comments_to_anon(user_id):
     with db_pool_rw().manager() as conn:
         cursor = conn.cursor()
         query = """UPDATE `comment` SET `user_id`=%s WHERE `user_id`=%s;"""
-        cursor.execute(query, ("2", user_id))
+        cursor.execute(query, (ANONYMOUS_ID, user_id))
         conn.commit()
+
 
 @retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):
@@ -1370,7 +1374,7 @@ def change_activity_to_anon(problem_id):
         query = """UPDATE `problem_activity` SET `user_id`=%s
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query, ("2", problem_id))
+        cursor.execute(query, (ANONYMOUS_ID, problem_id))
         conn.commit()
 
 

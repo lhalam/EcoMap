@@ -18,9 +18,9 @@ COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$')
 
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
-           'first_name': [2, 255],
-           'last_name': [2, 255],
-           'nickname': [1, 100],
+           'first_name': [2, 20],
+           'last_name': [2, 20],
+           'nickname': [1, 30],
            'password': [6, 100],
            'pass_confirm': [6, 100],
            'resource_name': [2, 100],

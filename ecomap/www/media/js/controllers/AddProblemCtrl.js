@@ -137,7 +137,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.addProblemTab = false;
         for (var i = 0; i<$scope.allProblems.length; i++){
           if ($scope.newProblem['type'] == $scope.allProblems[i]['problem_type_Id'] &&
-          $scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'], 
+          $scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
           $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
             toaster.pop('warning', 'Тип проблеми', 'Проблема даного типу в радіусі '+$scope.allProblems[i]['radius']+' метрів вже існує.');
             break;

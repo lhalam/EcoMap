@@ -40,7 +40,7 @@
   <div  ng-form name="changeNicknameForm" class="form-inline" ng-class="{ 'has-error': changeNicknameForm.newnickname.$invalid }">
       <strong>Псевдонім: </strong>
       <span ng-bind="user.data.nickname" ng-show="editMode"></span>
-      <input name="newnickname" ng-class="{'form-control': !editMode}" type="text" ng-model="user.data.nickname" ng-maxlength="50" value="{{user.data.nickname}}" ng-hide="editMode" data-error="Необхідно ввести псевдонім!" ng-enter="changeNick()" required>
+      <input name="newnickname" ng-class="{'form-control': !editMode}" type="text" ng-model="user.data.nickname" ng-maxlength="25" value="{{user.data.nickname}}" ng-hide="editMode" data-error="Необхідно ввести псевдонім!" ng-enter="changeNick()" required>
       <span role="button" ng-class="cls_edit_nick" ng-click="changeNick()"></span>
       <div class="help-block has-error" ng-messages="changeNicknameForm.newnickname.$error" ng-show="changeNicknameForm.newnickname.$error">
         <div ng-messages-include="/templates/error_msgs.html"></div>

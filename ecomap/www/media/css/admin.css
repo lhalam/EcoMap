@@ -38,13 +38,12 @@ button{
 .img-responsive{
     width: 25px;
 }
-
-.add_button{
-    margin-top: 10px;
-    margin-right: 5px;
-}
 .add_logo{
-    margin-top:0;
+    margin-top:0px;
+}
+.add_button{
+    margin-top: 24px;
+    margin-right: 5px;
 }
 .add_logo_add{
     margin-top:0;

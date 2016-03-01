@@ -63,10 +63,17 @@ def change_nickname():
 
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
+        valid = validator.change_nickname(data)
         user = ecomap_user.get_user_by_id(data['id'])
-        if user and not (db.get_user_by_nick_name(data['nickname'])):
-            user.change_nickname(data['nickname'])
-            response = jsonify(), 200
+        if valid['status']:
+            if user:
+                user.change_nickname(data['nickname'])
+                response = jsonify(), 200
+            else:
+                response = jsonify(), 400    
+        else:
+            response = Response(json.dumps(valid),
+                                mimetype='application/json'), 400        
     return response
 
 

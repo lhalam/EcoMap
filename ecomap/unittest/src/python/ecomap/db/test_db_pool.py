@@ -46,7 +46,7 @@ class TestCase(unittest2.TestCase):
 
     def test_retry_query(self):
         """Tests decorator retry_query success."""
-        @db_pool.retry_query
+        @db_pool.retry_query()
         def retry_success():
             return "SUCCESS"
         self.assertEqual(retry_success(), "SUCCESS")
@@ -58,7 +58,7 @@ class TestCase(unittest2.TestCase):
 
     def test_create_conn(self):
         """Tests check if connection was created."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
         self.assertEqual(db_pool.DBPool()._create_conn()['connection'],
                                                     CONN['connection'])
@@ -66,58 +66,59 @@ class TestCase(unittest2.TestCase):
 
     def test_get_conn_add(self):
         """Tests get conn to add conn."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        self.POOL._connection_pool = []
-        self.POOL.connection_pointer = 0
-        self.assertTrue(self.POOL._get_conn)
+        POOL._connection_pool = []
+        POOL.connection_pointer = 0
+        self.assertTrue(POOL._get_conn)
 
     def test_get_conn_pop(self):
         """Tests get conn to pop conn."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        self.POOL._connection_pool = [CONN]
-        self.assertTrue(self.POOL._get_conn())
+        POOL._connection_pool = [CONN]
+        self.assertTrue(POOL._get_conn())
 
     def test_get_conn_error(self):
         """Tests get_conn error."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 0)
-        self.POOL._connection_pool = []
-        self.POOL.connection_pointer = 5
-        self.assertRaises(TypeError, lambda: self.POOL._get_conn(),
-            self.POOL.connection_pointer, self.POOL._connection_pool)
+        POOL._connection_pool = []
+        POOL.connection_pointer = 5
+        self.assertRaises(TypeError, lambda: POOL._get_conn(),
+            POOL.connection_pointer, POOL._connection_pool)
 
     def test_push_conn(self):
         """Tests push_conn."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        self.POOL._connection_pool = []
-        conn = self.POOL._create_conn()
-        self.POOL._push_conn(conn)
-        self.assertTrue(self.POOL._connection_pool)
+        POOL._connection_pool = []
+        conn = POOL._create_conn()
+        POOL._push_conn(conn)
+        self.assertTrue(POOL._connection_pool)
 
     def test_close_conn(self):
         """Tests close_conn."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 0)
-        self.POOL.connection_pointer = 0
-        self.assertTrue(self.POOL._close_conn)
+        POOL.connection_pointer = 0
+        self.assertTrue(POOL._close_conn)
 
     def test_manager_close_conn(self):
         """Tests manager for close conn."""
-        self.POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 1, 1)
-        self.POOL._connection_pool = [CONN]
-        self.POOL.connection_pointer = 0
+        POOL._connection_pool = [CONN]
+        POOL.connection_pointer = 0
         try:
-            with self.POOL.manager():
+            with POOL.manager():
                 time.sleep(2)
         except:
             raise
-        self.assertListEqual([CONN], self.POOL._connection_pool)
+        self.assertListEqual([CONN], POOL._connection_pool)
 
 
 if __name__ == "__main__":
     unittest2.main()
+
 

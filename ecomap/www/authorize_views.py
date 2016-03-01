@@ -360,12 +360,12 @@ def delete_user():
     if valid['status']:
         user_id = db.get_user_id_by_hash(data['hash_sum'])
         logger.warning(user_id)
-        tuple_of_problems = db.get_problem_id_for_del(user_id[0])
+        tuple_of_problems = db.get_problem_id_for_del(user_id)
         problem_list = []
         for tuple_with_problem_id in tuple_of_problems:
             problem_list.append(tuple_with_problem_id[0])
-        if db.get_user_comments_count != 0:
-            db.change_comments_to_anon(user_id[0])
+        if db.get_user_comments_count(user_id)[0]:
+            db.change_comments_to_anon(user_id)
         if problem_list:
             for problem_id in problem_list:
                 db.change_problem_to_anon(problem_id)

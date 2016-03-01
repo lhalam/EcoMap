@@ -2,11 +2,11 @@ app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$rootScope', '$a
   function($scope, $http, $cookies, $rootScope,$auth, $state) {
     $scope.newUser = {};
     $scope.Register = function(user) {
-      $rootScope.isFetching = true;
       $scope.submitted = true;
       if (!user.email || !user.first_name || !user.last_name || !user.nickname || !user.password || !user.pass_confirm) {
         return null;
       }
+      $rootScope.isFetching = true;
       if (user.password == user.pass_confirm) {
         $auth.signup(user).then(function successCallback(responce) {
           var credentials = {};

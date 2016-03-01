@@ -10,7 +10,7 @@
           <div class="panel-content register">
             <div class="form-group" ng-class="{ 'has-error': (registerForm.email.$touched || submitted) && registerForm.email.$invalid }">
               <label for="email" class="control-label">Електронна адреса</label>
-              <input type="email"  ng-model="newUser.email" name="email" ng-maxlength="100" ng-change="checkIfExists()" class="form-control" id="email" placeholder="Електронна адреса" required available-email/>
+              <input type="email"  ng-model="newUser.email" name="email" ng-maxlength="100" ng-change="checkIfExists()" class="form-control" id="email" placeholder="Електронна адреса" ng-pattern= "/^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/" required available-email/>
               <div class="help-block" ng-messages="registerForm.email.$error" ng-show="registerForm.email.$touched || submitted">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>

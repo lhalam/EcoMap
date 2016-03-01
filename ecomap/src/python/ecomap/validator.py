@@ -18,9 +18,9 @@ COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$')
 
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
-           'first_name': [2, 255],
-           'last_name': [2, 255],
-           'nickname': [1, 100],
+           'first_name': [2, 20],
+           'last_name': [2, 20],
+           'nickname': [1, 25],
            'password': [6, 100],
            'pass_confirm': [6, 100],
            'resource_name': [2, 100],
@@ -53,7 +53,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
 
 def user_registration(data):
     """Validates user registration form. Checks: email, password,
-       confirm password, first name, last name.
+       confirm password, first name, last name, nickname.
        :params: data - json object
        :return: dictionary with status key and error keys. By
                 default status is True, and error is empty.

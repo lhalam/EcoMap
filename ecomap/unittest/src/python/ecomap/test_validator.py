@@ -73,6 +73,9 @@ CHANGE_PASS_DATA = {'id': 6,
                     'old_pass': 'oldpasswd',
                     'password': 'newpasswd'}
 
+CHANGE_NICK_DATA = {'id': 5,
+                    'nickname':'admin'}
+
 VALID_STATUS = {'status': True,
                 'error': []}
 
@@ -869,6 +872,46 @@ class TestValidator(unittest2.TestCase):
         ERROR_DATA['error'] = [{'password': ERROR_MSG['check_maximum_length']
                                             % 'password'}]
         self.assertDictEqual(validator.change_password(post_data), ERROR_DATA)
+
+    def test_change_nick_return_dict(self):
+        """Testing change_nickname function if it returns dictionary."""
+        self.assertIsInstance(validator.change_nickname(CHANGE_NICK_DATA), dict)
+
+    def test_change_nick_has_key(self):
+        """Testing change_nickname function if data has all keys."""
+        permission_data = {}
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['has_key'] % 'nickname'}]
+        self.assertDictEqual(validator.change_nickname(permission_data),
+                             ERROR_DATA)
+
+    def test_change_nick_check_empty(self):
+        """Testing change_nickname function if value is not empty."""
+        invalid_data = {'nickname': ''}
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['check_empty']
+                                            % 'nickname'}]
+        self.assertDictEqual(validator.change_nickname(invalid_data),
+                             ERROR_DATA)
+
+    def test_change_nick_check_str(self):
+        """Testing change_nickname function if type is invalid."""
+        invalid_data = {'nickname': 1321521}
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['check_string']
+                                            % 'nickname'}]
+        self.assertDictEqual(validator.change_nickname(invalid_data),
+                             ERROR_DATA)
+
+    def test_change_nick_max_length(self):
+        """Testing change_nickname function if value is not too long."""
+        post_data = {'nickname': '1' * 256}
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['check_maximum_length']
+                                            % 'nickname'}]
+        self.assertDictEqual(validator.change_nickname(post_data), ERROR_DATA)
+
+    def test_change_nick_nickname_exist(self):
+        """Testing change_nickname function if nickname exists."""
+        return_data = validator.change_nickname(CHANGE_NICK_DATA)
+        ERROR_DATA['error'] = [{'nickname': ERROR_MSG['check_nickname_exist']}]
+        self.assertEqual(return_data, ERROR_DATA)
 
     def test_probl_post_return_dict(self):
         """Testing problem_post function if it returns dictionary."""

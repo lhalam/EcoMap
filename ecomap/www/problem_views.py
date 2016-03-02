@@ -793,7 +793,8 @@ def get_problem_type_for_filtration():
     if problem_type_tuple:
         for problem in problem_type_tuple:
             problem_type_list.append({'id': problem[0],
-                                      'name': problem[1]
+                                      'picture': problem[1],
+                                      'name': problem[2]
                                       })
     response = Response(json.dumps(problem_type_list),
                         mimetype='application/json')

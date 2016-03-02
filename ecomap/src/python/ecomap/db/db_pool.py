@@ -65,13 +65,28 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
         return inner
     return retry_wrapper
 
+DB_POOL = {
+        'read': {'instance' : None, 'lock': threading.RLock()},
+        'write': {'instance' : None, 'lock': threading.RLock()},
+          }
+# DB_POOL = {'read': None, 'write': None}
+# DB_POOL_LOCK = {'read': threading.RLock(), 'write': threading.RLock()}
+def pool_manager(pool_name):
+        if DB_POOL[pool_name]['instance'] is None:
+            with DB_POOL[pool_name]['lock']:
+                if DB_POOL[pool_name]['instance'] is None:
+                    if pool_name == 'read':
+                        DB_POOL[pool_name]['instance'] = db_pool_ro
+                    else:
+                        DB_POOL[pool_name]['instance'] = db_pool_rw
+        return DB_POOL[pool_name]['instance']
+
 
 class DBPool(object):
     """DBPool class represents DB pool, which
     handles and manages work with database
     connections.
     """
-    __metaclass__ = ecomap.utils.Singleton
 
     def __init__(self, user, passwd, db_name, host, port, ttl, pool_size):
         self._connection_pool = []
@@ -89,6 +104,7 @@ class DBPool(object):
     def __del__(self):
         for conn in self._connection_pool:
             self._close_conn(conn)
+   
 
     def _create_conn(self):
         """Method _create_conn creates connection object.
@@ -139,6 +155,21 @@ class DBPool(object):
         else:
             self._close_conn(conn)
 
+    @contextmanager
+    def transaction(self):
+        with self.lock:
+            conn = self._get_conn()
+            cursor = conn['connection'].cursor()
+        try:
+            yield cursor
+            conn['connection'].commit()
+        except Exception:
+            conn['connection'].rollback()
+            raise
+        finally:
+            conn['connection'].close()
+
+
     def _close_conn(self, conn):
         """Protected method _close_conn closes connection
         before returning it to pool.
@@ -160,7 +191,7 @@ class DBPool(object):
         self._connection_pool.append(conn)
 
 
-db_pool_rw = lambda: DBPool(user=_CONFIG['db.rw.user'],
+db_pool_rw = DBPool(user=_CONFIG['db.rw.user'],
                             passwd=_CONFIG['db.rw.password'],
                             db_name=_CONFIG['db.db'],
                             host=_CONFIG['db.rw.host'],
@@ -168,10 +199,11 @@ db_pool_rw = lambda: DBPool(user=_CONFIG['db.rw.user'],
                             ttl=_CONFIG['db.connection_lifetime'],
                             pool_size=_CONFIG['db.rw.pool_size'])
 
-db_pool_ro = lambda: DBPool(user=_CONFIG['db.ro.user'],
+db_pool_ro = DBPool(user=_CONFIG['db.ro.user'],
                             passwd=_CONFIG['db.ro.password'],
                             db_name=_CONFIG['db.db'],
                             host=_CONFIG['db.ro.host'],
                             port=_CONFIG['db.ro.port'],
                             ttl=_CONFIG['db.connection_lifetime'],
                             pool_size=_CONFIG['db.ro.pool_size'])
+

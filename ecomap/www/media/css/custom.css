@@ -934,3 +934,8 @@ select.form-comments{
 	color: black;
 	text-decoration: none;
 }
+
+.responsive-icon{
+      height: 20px; 
+      width: 15px;
+}

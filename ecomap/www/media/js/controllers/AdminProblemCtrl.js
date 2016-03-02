@@ -83,7 +83,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.loadProblemType();
         $scope.msg.deleteSuccess('типу проблеми');
       }, function errorCallback(response) {
-        $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
+        $scope.msg.deleteError('типу проблеми', arguments[0]['data']['msg']);
       })
     };
 

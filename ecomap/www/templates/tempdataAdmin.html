@@ -15,7 +15,7 @@
           </td>
         </tr>
       </thead>
-      <tbody>
+      <tbody ng-show="showMe">
         <tr ng-repeat="temp in Tempdata">
           <td>{{temp.first_name}}</td>
           <td>{{temp.last_name}}</td>
@@ -26,17 +26,15 @@
             <button class="btn btn-danger edit_btn btn-border"
                     ng-click="deleteTempData(temp.id)">видалити</button>
           </td>
-
         </tr>
       </tbody>
     </table>
-    <div class="row">
+    <h3 class="text-center" ng-hide="hideMe">Тимчасові дані відсутні.</h3>
+    <div class="row" ng-show="showMe">
       <div class="col-md-8 col-md-offset-4">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
       </div>
-    </div>
-      
+    </div>   
   </div>
 </div>
-
 

@@ -1789,7 +1789,7 @@ def get_problems_title(problem_ids):
         problem title as value.
        :params: problems_id - list of problem_ids.
     """
-    with db_pool_rw().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT id, title from `problem`
                 WHERE id IN ({});

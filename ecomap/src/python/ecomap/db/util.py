@@ -823,7 +823,7 @@ def get_users_pagination(offset, per_page):
     """
     with db_pool_ro().manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+        query = """SELECT u.id, u.first_name, u.last_name, u.nickname, u.email, r.name
                    FROM  `user_role` AS ur
                    INNER JOIN `user` AS u ON ur.user_id=u.id
                    INNER JOIN `role` AS r ON ur.role_id=r.id

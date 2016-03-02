@@ -103,16 +103,16 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             'nickname': $scope.user.data.nickname
           }
           }).then(function successCallback(response) {
+              $scope.old_nick = $scope.user.data.nickname;
               $scope.cls_edit_nick = "fa fa-pencil";
               $scope.editMode = true;
               $scope.msg.editSuccess('псевдоніму');
-            },function errorCallback() {
-              if ($scope.old_nick===$scope.user.data.nickname){
+            },function errorCallback(response) {
+              if ($scope.old_nick===$scope.user.data.nickname) {
                 $scope.cls_edit_nick = "fa fa-pencil";
                 $scope.editMode = true;
-              }
-              else{
-                $scope.msg.editNicknameError('псевдоніму')
+              } else {
+                toaster.pop('error', 'Редагування' , response.data.error[0].nickname); 
               }
             })
       };

@@ -4,10 +4,20 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
     $scope.msg = msg;
     $scope.msgError = msgError;
     $scope.newProblemType = {};
+    $scope.showNew = false;
 
     $scope.addProblemTypeModal = false;
     $scope.showAddPpoblemTypeModal = function() {
+      $scope.showNew = true;
       $scope.addProblemTypeModal = true;
+    };
+
+    $scope.check = function(formFile) {
+      if (formFile.$error.maxSize) {
+        return toaster.pop('error', 'Фото профілю', 'Розмір фото перевищує максимально допустимий!');
+      } else {
+        return true
+      }
     };
 
     $scope.addProblemSubmit = function(newProblemType) {
@@ -30,6 +40,7 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.newProblemType = {};
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
+        $scope.newProblemType = {};
         $scope.msg.createError('типу проблеми', arguments[0]['data']['msg']);
       });
     };

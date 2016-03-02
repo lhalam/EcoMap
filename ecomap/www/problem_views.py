@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Module contains routes, used for problem table."""
-import json
-import hashlib
-import time
 import os
-import PIL
+import json
+import time
+import hashlib
 
+import PIL
 
 from flask import request, jsonify, Response
 from flask_login import current_user, login_required
@@ -15,6 +15,8 @@ from ecomap import validator
 from ecomap.db import util as db
 from ecomap.app import app, logger, auto, _CONFIG
 
+
+ANONYMUS_USER_ID = 2
 
 
 @app.route('/api/problems')
@@ -347,7 +349,7 @@ def post_comment():
 
     if valid['status']:
         created_date = int(time.time())
-        user_id = 2 if data.get('anonim') else current_user.uid
+        user_id = ANONYMUS_USER_ID if data.get('anonim') else current_user.uid
         db.add_comment(user_id,
                        data['problem_id'],
                        data['parent_id'],

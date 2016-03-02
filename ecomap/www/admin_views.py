@@ -822,12 +822,14 @@ def get_all_users_info():
         ``[[{"role_name": "admin",
         "first_name": "username",
         "last_name": "UserSurname",
+        "nickname": "admin_nickname",
         "id": 1,
         "email": "email@name.ru"},
         ....
         {"role_name": "user",
         "first_name": "Username",
         "last_name": "UserSurname",
+        "nickname": "user_nickname"
         "id": 5,
         "email": "email@gmail.com"}],
         [{"total_users": 2}]]``
@@ -845,10 +847,12 @@ def get_all_users_info():
 
     if query:
         for user_data in query:
-            users.append({'id': user_data[0], 'first_name': user_data[1],
+            users.append({'id': user_data[0], 
+                          'first_name': user_data[1],
                           'last_name': user_data[2],
-                          'email': user_data[3],
-                          'role_name': user_data[4]})
+                          'nickname': user_data[3],
+                          'email': user_data[4],
+                          'role_name': user_data[5]})
     if count:
         total_count = {'total_users': count[0]}
 

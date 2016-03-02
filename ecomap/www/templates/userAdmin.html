@@ -6,6 +6,7 @@
         <tr>
           <td>Ім’я</td>
           <td>Прізвище</td>
+          <td>Псевдонім</td>
           <td>e-mail</td>
           <td>Роль</td>
           <td>
@@ -18,6 +19,7 @@
         <tr ng-repeat="user in selectedUsers">
           <td>{{user.first_name}}</td>
           <td>{{user.last_name}}</td>
+          <td>{{user.nickname}}</td>
           <td>{{user.email}}</td>
           <td>
             <select ng-model="user.role_name" class="form-control" data-ng-options="role_ob as role_ob for (role_ob,role_id) in Roles">

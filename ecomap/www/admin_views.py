@@ -13,7 +13,7 @@ from ecomap import validator
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
-from my_class import ProblemType
+# from admin_views_model import ProblemType
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 MARKERS_PATH = '/media/image/markers'
@@ -879,20 +879,20 @@ def get_problem_type():
         "name": "sevens problem type",
         "radius": 20]``.
     '''
-    get_type = ProblemType(request)
-    response = get_type.get()
+    # get_type = ProblemType(request)
+    # response = get_type.get()
 
-    # problem_type_tuple = db.get_problem_type()
-    # problem_type_list = []
-    # if problem_type_tuple:
-    #     for problem in problem_type_tuple:
-    #         problem_type_list.append({'id': problem[0],
-    #                                  'picture': problem[1],
-    #                                   'name': problem[2],
-    #                                   'radius': problem[3]
-    #                                   })
-    # response = Response(json.dumps(problem_type_list),
-    #                     mimetype='application/json')
+    problem_type_tuple = db.get_problem_type()
+    problem_type_list = []
+    if problem_type_tuple:
+        for problem in problem_type_tuple:
+            problem_type_list.append({'id': problem[0],
+                                     'picture': problem[1],
+                                      'name': problem[2],
+                                      'radius': problem[3]
+                                      })
+    response = Response(json.dumps(problem_type_list),
+                        mimetype='application/json')
     return response
 
 

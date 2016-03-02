@@ -737,13 +737,14 @@ def get_page_by_id(page_id):
         return cursor.fetchone()
 
 
+@retry_query(tries=3, delay=1)
 def get_all_users():
     """Return all registered users from db.
     :return: tuples with user info
     """
     with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.nickname, u.email, r.name
+        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
                    FROM  `user_role` as ur
                    INNER JOIN `user` as u ON ur.user_id=u.id
                    INNER JOIN `role` as r ON ur.role_id=r.id;
@@ -775,7 +776,7 @@ def get_users_pagination(offset, per_page):
     """
     with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+        query = """SELECT u.id, u.first_name, u.last_name, u.nickname, u.email, r.name
                    FROM  `user_role` AS ur
                    INNER JOIN `user` AS u ON ur.user_id=u.id
                    INNER JOIN `role` AS r ON ur.role_id=r.id
@@ -1331,8 +1332,24 @@ def get_problem_type_for_filtration():
     """
     with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `name` FROM `problem_type`;"""
+        query = """SELECT `id`, `picture`, `name` FROM `problem_type`;"""
         cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problems_by_type(problem_type_id):
+    """Get problems by type.
+       :return: tuple with problem type name and id.
+    """
+    with pool_manager('read').manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.problem_type_id,
+                           p.status, p.created_date, p.is_enabled,
+                           p.severity, pt.name, pt.radius
+                           FROM problem AS p INNER JOIN problem_type AS pt ON
+                           pt.id=p.problem_type_id WHERE pt.id=%s;"""
+        cursor.execute(query, (problem_type_id))
         return cursor.fetchall()
 
 

@@ -790,14 +790,31 @@ input[type="checkbox"] {
   position: absolute;
   background-color: #fff;
   padding-left: 5px;
-  height: 2em;
-  width: 6em;
+  height: 25px;
+  width: 80px;
   border:2px solid #bbb;
   border-bottom: none;
   border-radius: 5px 5px 0px 0;
   transform: rotate(90deg);
   right: -55px;
   bottom: 70px;
+}
+ .map-toogle{
+  z-index: 9999;
+  cursor: pointer;
+  position: absolute;
+  background-color: #fff;
+  padding-left: 5px;
+  height: 25px;
+  width: 80px;
+  border: 2px solid #bbb;
+  border-bottom: none;
+  border-radius: 5px 5px 0px 0;
+  transform: rotate(90deg);
+  left: -29px;
+  bottom: 400px;
+  font-size: 12px;
+  font-family: "LatoRegular", sans serif;
 }
 .time {
   text-align: right;

@@ -166,7 +166,6 @@ def check_exist_id(user_id, host, db_user, db_pasword, db_name):
                 """
         cursor.execute(query, (user_id, ))
         mysql.close()
-        logging.debug('User is in database: %s', bool(cursor.fetchone()))
         return bool(cursor.fetchone())
     except MySQLdb.Error as mysql_error:
         logging.error('Error checking exist of a user into database!',
@@ -188,7 +187,7 @@ def execute_query(query, host, db_user, db_pasword, db_name):
         cursor.execute(query)
         mysql.commit()
         mysql.close()
-        logging.info('User added to db.')
+        logging.debug('User added to db.')
     except MySQLdb.Error as mysql_error:
         logging.error('Error adding a user into database!', exc_info=True)
         raise ConfigBuilderMysqlError(mysql_error)
@@ -212,11 +211,11 @@ def add_user(user_id, first_name, last_name, nickname, email, password, host,
         query = ("""UPDATE `user` SET `first_name` = '{}', `last_name` = '{}',
                                       `nickname` = '{}', `email` = '{}',
                                       `password` = '{}'
-                                WHERE `id` = '{};
+                                WHERE `id` = '{}';
                   """).format(first_name, last_name, nickname, email,
                               password, user_id)
         execute_query(query, host, db_user, db_pasword, db_name)
-        logging.debug('User %s %s updated in database.', first_name, last_name)
+        logging.info('User %s %s updated in database.', first_name, last_name)
     else:
         query = ("""INSERT INTO `user` (`first_name`,
                                         `last_name`,
@@ -226,7 +225,7 @@ def add_user(user_id, first_name, last_name, nickname, email, password, host,
                     VALUES ('{}', '{}', '{}', '{}', '{}');
                  """).format(first_name, last_name, nickname, email, password)
         execute_query(query, host, db_user, db_pasword, db_name)
-        logging.debug('User %s %s insert in database.', first_name, last_name)
+        logging.info('User %s %s insert in database.', first_name, last_name)
 
 
 def main():

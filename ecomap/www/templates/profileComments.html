@@ -23,7 +23,15 @@
   <hr class="problems">
     <div class="row comment-row" ng-repeat-start="comment in comments | orderBy:sortType:sortReverse">
         <div class="input-group myclass col-lg-12 col-xs-12" >
-            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1" title="Проблема: {{comment.problem_title}}&#010;Користувач: {{comment.first_name}} {{comment.last_name}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1" ng-show="showFullUserInfo" title="Проблема: {{comment.problem_title}}&#010;Користувач: {{comment.first_name}} {{comment.last_name}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+                <div>
+                    <span>{{comment.nickname}}</span>
+                </div>
+                <div>
+                    <span>{{comment.created_date | date : "dd/MM/yyyy"}}</span>
+                </div>
+            </div>
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1" ng-show="!showFullUserInfo" title="Проблема: {{comment.problem_title}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
                 <div>
                     <span>{{comment.nickname}}</span>
                 </div>

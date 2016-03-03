@@ -1,5 +1,12 @@
 app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory) {
+    $rootScope.showMe = false;
+    $rootScope.toogleFilter = function(){
+      $rootScope.showMe = !$rootScope.showMe;
+      MapFactory.turnResizeOn();
+      MapFactory.mapInstance.setZoom(7);
+    }
+    
     $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };

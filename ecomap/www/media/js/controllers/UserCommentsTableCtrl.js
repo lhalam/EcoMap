@@ -24,7 +24,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       return statuses[status];
     };
 
-
     $scope.loadComments = function() {
       var user_id = $cookies.get('id');
       $scope.msg = msg;
@@ -46,6 +45,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
           }
           }).then(function successCallback(response) {
          $scope.comments = response.data[0];
+         $scope.hideComments = ($scope.comments.length)?true:false;
          $scope.commentsCount = response.data[1][0]['total_comments_count'];
          $scope.commentsLength = response.data[1][0]['total_comments_count'];
          $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
@@ -60,6 +60,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             }
           }).then(function successCallback(response) {
             $scope.comments = response.data[0];
+            $scope.hideComments = ($scope.comments.length)?true:false;
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.commentsLength = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
@@ -75,6 +76,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             }
             }).then(function successCallback(response) {
                $scope.comments = response.data[0];
+               $scope.hideComments = ($scope.comments.length)?true:false;
                $scope.commentsCount = response.data[1][0]['total_comments_count'];
                $scope.commentsLength = response.data[1][0]['total_comments_count'];
                $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;

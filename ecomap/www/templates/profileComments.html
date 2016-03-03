@@ -23,7 +23,7 @@
   <hr class="problems">
     <div class="row comment-row" ng-repeat-start="comment in comments | orderBy:sortType:sortReverse">
         <div class="input-group myclass col-lg-12 col-xs-12" >
-            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1" ng-show="showFullUserInfo" title="Проблема: {{comment.problem_title}}&#010;Користувач: {{comment.first_name}} {{comment.last_name}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" ng-show="showFullUserInfo" data-toggle="tooltip" data-placement="top" title="Проблема: {{comment.problem_title}}&#010;Користувач: {{comment.first_name}} {{comment.last_name}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}" tooltip>
                 <div>
                     <span>{{comment.nickname}}</span>
                 </div>
@@ -31,7 +31,7 @@
                     <span>{{comment.created_date | date : "dd/MM/yyyy"}}</span>
                 </div>
             </div>
-            <div class="input-group-addon no-float col-lg-2 col-xs-2" id="basic-addon1" ng-show="!showFullUserInfo" title="Проблема: {{comment.problem_title}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" ng-show="!showFullUserInfo" data-toggle="tooltip" data-placement="top" title="Проблема: {{comment.problem_title}}&#010;Час: {{comment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}" tooltip>
                 <div>
                     <span>{{comment.nickname}}</span>
                 </div>
@@ -44,17 +44,17 @@
             </div>
 
             <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="comment.sub_count" >
-                <a role="button" ng-click="loadSubComments(comment.id)" title="Переглянути відповіді">{{comment.sub_count}} <i class="fa fa-commenting-o"></i></a>
+                <a role="button" ng-click="loadSubComments(comment.id)" data-toggle="tooltip" data-placement="top" title="Переглянути відповіді" tooltip>{{comment.sub_count}} <i class="fa fa-commenting-o"></i></a>
             </div>
 
             <div class="input-group-addon no-float col-lg-1 col-xs-1">
-                <i class="fa fa-info-circle fa-2x" ng-click="triggerDetailModal(comment.problem_id)" role='button' title="Перейти до проблеми"></i>
+                <i class="fa fa-info-circle fa-2x" ng-click="triggerDetailModal(comment.problem_id)" role='button' data-toggle="tooltip" data-placement="top" title="Перейти до проблеми" tooltip></i>
             </div>
         </div>
     </div>
     <div class="row comment-row" ng-repeat-end ng-if="comment.id===subcomment_parent" ng-show="showSubComments" ng-repeat='subcomment in subcomments | orderBy:sortType:sortReverse'>
-        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1"ng-show="showFullUserInfo"title="Користувач: {{subcomment.first_name}} {{subcomment.last_name}}&#010;Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
-            <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
+        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" ng-show="showFullUserInfo">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" data-toggle="tooltip" data-placement="top" title="Користувач: {{subcomment.first_name}} {{subcomment.last_name}}&#010;Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}" tooltip>
                 <span>{{subcomment.nickname}}</span>
                 <br>
                 <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
@@ -63,8 +63,8 @@
                     <span>{{subcomment.content}}</span>
                 </div>
         </div>
-        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" ng-show="!showFullUserInfo"title="Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
-            <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
+        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" ng-show="!showFullUserInfo">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2" data-toggle="tooltip" data-placement="left" title="Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}" tooltip>
                 <span>{{subcomment.nickname}}</span>
                 <br>
                 <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>

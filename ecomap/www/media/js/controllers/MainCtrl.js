@@ -1,9 +1,11 @@
-app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory) {
+app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
     $rootScope.isFetching=false;
 
     $rootScope.showMe = false;
     $rootScope.toogleFilter = function(){
       $rootScope.showMe = !$rootScope.showMe;
+      MapFactory.turnResizeOn();
+      MapFactory.mapInstance.setZoom(7);
     }
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();

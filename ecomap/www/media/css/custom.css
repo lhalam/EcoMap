@@ -339,7 +339,7 @@ form {
 
 /*Map styles*/
 .map-div{
-  width: 100%;
+  width: 1%;
 }
 
 /*UserProfile styles*/
@@ -721,6 +721,9 @@ input[type="checkbox"] {
     .flex6{
       min-width: 0;
       max-width: 0;
+    }
+    .flex-item-2{
+      width: 1px;
     }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){

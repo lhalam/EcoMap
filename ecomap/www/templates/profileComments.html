@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="row comment-row" ng-repeat-end ng-if="comment.id===subcomment_parent" ng-show="showSubComments" ng-repeat='subcomment in subcomments | orderBy:sortType:sortReverse'>
-        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" title="Користувач: {{subcomment.first_name}} {{subcomment.last_name}}&#010;Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1"ng-show="showFullUserInfo"title="Користувач: {{subcomment.first_name}} {{subcomment.last_name}}&#010;Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
             <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
                 <span>{{subcomment.nickname}}</span>
                 <br>
@@ -62,7 +62,17 @@
                 <div class="form-control no-float col-lg-8 col-xs-8">
                     <span>{{subcomment.content}}</span>
                 </div>
-           </div>
+        </div>
+        <div class="input-group myclass col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" ng-show="!showFullUserInfo"title="Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}">
+            <div class="input-group-addon no-float col-lg-2 col-xs-2 " id="basic-addon1">
+                <span>{{subcomment.nickname}}</span>
+                <br>
+                <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
+            </div>
+                <div class="form-control no-float col-lg-8 col-xs-8">
+                    <span>{{subcomment.content}}</span>
+                </div>
+        </div>
     </div>
     <p>
         <strong>Загальна кількість коментарів: </strong>

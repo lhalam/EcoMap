@@ -64,8 +64,7 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
          This script will run config builder in your console.
     </li>
     <li>You will have to type config values, and where it`s possible you can use default one. Example :<br>
-        <code>
-        <pre>
+        <pre><code>
         [apache_server_admin] Admin email for apache config [default:admin@ecomap.com]: admin.email@gmail.com
         [oauth_facebook_secret] Facebook_secret for facebook authentication [default:20b8495bdd654cde3e0be0a9ccd8a362]: 20b8495bdd654cde3e0be0a9ccd8a362
         [ecomap_unknown_email] Email for unknown user [default:anonymous@ecomap.com]: anonymous@ecomap.com
@@ -104,8 +103,7 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
         [email_user_name] Email user name for email distribution [default:ecomaptest]: ECOMAP
         [rw_db_pool_size] Read / write pool size of ecomap database [default:3]: 7
         [ecomap_unknown_first_name] First name for unknown user [default:anonymous]: iamanon
-        </pre>
-        </code>
+        </code></pre>
     </li>
     <li> After this it will create config files in <code>ecomap/etc/</code> directory and insert in database admin and anononymous with appropriate data.
     </li>

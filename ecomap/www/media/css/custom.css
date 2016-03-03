@@ -939,3 +939,8 @@ select.form-comments{
       height: 20px; 
       width: 15px;
 }
+
+.tooltip-inner {
+    white-space:pre;
+    max-width:none;
+}

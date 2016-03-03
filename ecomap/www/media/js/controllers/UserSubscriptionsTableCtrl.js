@@ -46,7 +46,6 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
               }
             }).then(function successCallback(response) {
              $scope.subscriptions = response.data[0];
-             $scope.hideSubscriptions = ($scope.subscriptions.length)?true:false;
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
@@ -62,7 +61,6 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
             }
           }).then(function successCallback(response) {
             $scope.subscriptions = response.data[0];
-            $scope.hideSubscriptions = ($scope.subscriptions.length)?true:false;
             $scope.problemsLength = response.data[1][0]['total_problem_count'];
             $scope.count = response.data[1][0]['total_problem_count'];
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
@@ -78,7 +76,6 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
           }
         }).then(function successCallback(response) {
           $scope.subscriptions = response.data[0];
-          $scope.hideSubscriptions = ($scope.subscriptions.length)?true:false;
           $scope.problemsLength = response.data[1][0]['total_problem_count'];
           $scope.count = response.data[1][0]['total_problem_count'];
           $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;

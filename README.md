@@ -102,8 +102,8 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
         [email_server_name] SMTP server name [default:smtp.gmail.com]: smtp.i.ua
         [email_user_name] Email user name for email distribution [default:ecomaptest]: ECOMAP
         [rw_db_pool_size] Read / write pool size of ecomap database [default:3]: 7
-        [ecomap_unknown_first_name] First name for unknown user [default:anonymous]: iamanon
-        </code></pre>
+        [ecomap_unknown_first_name] First name for unknown user [default:anonymous]: iamanon</code>
+        </pre>
     </li>
     <li> After this it will create config files in <code>ecomap/etc/</code> directory and insert in database admin and anononymous with appropriate data.
     </li>

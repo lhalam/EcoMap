@@ -1282,6 +1282,7 @@ def change_problem_to_anon(problem_id):
         query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
         conn.execute(query, (ANONYMOUS_ID, problem_id))
 
+
 @retry_query(tries=3, delay=1)
 def change_comments_to_anon(user_id):
     """Query for change user_id in comment table to id of Anonimus User,
@@ -1290,6 +1291,16 @@ def change_comments_to_anon(user_id):
     with pool_manager('write').transaction() as conn:
         query = """UPDATE `comment` SET `user_id`=%s WHERE `user_id`=%s;"""
         conn.execute(query, (ANONYMOUS_ID, user_id))
+
+
+@retry_query(tries=3, delay=1)
+def change_comment_by_id(comment_id, content):
+    """Query for change content in comment table.
+    """
+    with pool_manager('write').transaction() as conn:
+        query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
+        conn.execute(query, (content, comment_id))
+
 
 @retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):

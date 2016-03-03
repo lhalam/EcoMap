@@ -1,6 +1,10 @@
-app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state',
-  function($scope, $http, $auth, $rootScope, $cookies, $state) {
+app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory) {
     $rootScope.isFetching=false;
+
+    $rootScope.showMe = false;
+    $rootScope.toogleFilter = function(){
+      $rootScope.showMe = !$rootScope.showMe;
+    }
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };

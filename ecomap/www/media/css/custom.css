@@ -714,30 +714,43 @@ input[type="checkbox"] {
     .flex-item-5{
       flex-basis:100%;
     }
-    #sidebar{
+    .sidebar{
       min-width: 300px;
       max-width: 760px;
+    }
+    .flex6{
+      min-width: 0;
+      max-width: 0;
     }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
       flex-basis:30%;
     }
-    #sidebar{
+    .sidebar{
       min-width: 300px;
       max-width: 500px;
+    }
+    .hideMe{
+      display: none;
     }
   }
 @media screen and (min-width: 993px) and (max-width: 1200px){
-    #sidebar{
+    .sidebar{
       min-width: 300px;
       max-width: 500px;
     }
+    .hideMe{
+      display: none;
+    }
   }
 @media screen and (min-width: 1201px){
-    #sidebar{
+    .sidebar{
       min-width: 300px;
       max-width: 500px;
+    }
+    .hideMe{
+      display: none;
     }
   }
 .eye_subscription.forSmall{

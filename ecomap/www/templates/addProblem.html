@@ -1,4 +1,7 @@
-<div class="flex-item-1 flex-container flex-column addProblemBlock">
+<div class="map-toogle hideMe" ng-click="toogleFilter()">
+  Карта
+</div>
+<div class="flex-item-1 flex-container flex-column addProblemBlock" ng-if="showMe==false">
   <uib-tabset justified="true">
   <uib-tab heading="Опис" active="addProblemTab" >
   <form name="addProblemForm"

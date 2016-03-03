@@ -64,8 +64,8 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
          This script will run config builder in your console.
     </li>
     <li>You will have to type config values, and where it`s possible you can use default one. Example :<br>
-        <pre><code>
-        [apache_server_admin] Admin email for apache config [default:admin@ecomap.com]: admin.email@gmail.com
+        <pre>
+        <code>[apache_server_admin] Admin email for apache config [default:admin@ecomap.com]: admin.email@gmail.com
         [oauth_facebook_secret] Facebook_secret for facebook authentication [default:20b8495bdd654cde3e0be0a9ccd8a362]: 20b8495bdd654cde3e0be0a9ccd8a362
         [ecomap_unknown_email] Email for unknown user [default:anonymous@ecomap.com]: anonymous@ecomap.com
         [ro_db_host] Read ecomap database server hostname [default:None]: localhost

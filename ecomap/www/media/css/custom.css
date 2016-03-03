@@ -895,6 +895,10 @@ h3.title{
   color: #555;
 }
 
+.comment-update:hover{
+  color: #555;
+}
+
 .subcomment-form{
   float: right; 
   padding-top: 0px;
@@ -943,4 +947,24 @@ select.form-comments{
 .tooltip-inner {
     white-space:pre;
     max-width:none;
+}
+
+.comment-update {
+  margin-left: 5px; 
+  color: #337ab7;
+}
+
+.editComment:hover {
+  color: #337ab7;
+  text-decoration: underline;
+}
+
+.comment-input {
+  border-radius: 0px;
+  border-color: rgb(169, 169, 169);
+}
+
+.cancel-comment {
+  color:#a6abb5;
+  font-size: 10px;
 }

@@ -327,6 +327,27 @@ def problem_photo(problem_id):
     return response
 
 
+@app.route('/api/change_comment', methods=['POST'])
+def change_comment_by_id():
+    """This method update comment content.
+    :rtype: JSON
+    :param id: comment_id `{id: 2}`
+    :param content: comment content
+
+    :statuscode 400: error updating comment
+    :statuscode 200: comment added successfully
+
+    """
+    response = jsonify(), 400
+    data = request.get_json()
+    if data:
+        valid = validator.change_comment(data)
+        if valid['status']:
+            db.change_comment_by_id(data['id'], data['content'])
+            response = jsonify(), 200
+    return response
+
+
 @app.route('/api/problem/add_comment', methods=['POST'])
 @login_required
 def post_comment():

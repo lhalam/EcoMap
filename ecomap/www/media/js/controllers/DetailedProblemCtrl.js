@@ -7,7 +7,10 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.comment={}
     $scope.comment.changeUser = false;
     $scope.showSubComments = false;
+    $scope.editMode = false;
+    $scope.editCommentid = null;
     $scope.showAnonymCheckBox = $cookies.get('id') ? true: false;
+    $scope.user_id = $cookies.get('id');
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
@@ -130,6 +133,38 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     }
 
     $scope.cls_eye_subs = "fa fa-eye-slash";
+
+    $scope.showCommentInput = function(comment_id, comment_content) {
+      $scope.editMode = true;
+      $scope.editCommentid = comment_id;
+      $scope.oldContent = comment_content;
+    };
+
+    $scope.cancelComment = function(comment) {
+      comment.content = $scope.oldContent;
+      $scope.oldContent = null;
+      $scope.editMode = false;  
+    };
+
+    $scope.changeComment = function (comment_id, comment_content) {
+            $scope.editCommentid = comment_id;
+            if($scope.oldContent !== comment_content) {
+            $http({
+              method: 'POST',
+              url: '/api/change_comment',
+              data: {
+                'id': comment_id,
+                'content': comment_content
+              }
+            }).then(function successCallback(response) {
+                $scope.msg.editSuccess('коментаря');
+            } ,function errorCallback(response) {
+                $scope.msg.editError('коментаря');
+            })
+          } 
+          $scope.oldContent = null;
+          $scope.editMode = false;        
+    };
 
     $scope.chgEyeSubsc = function(){
       if ($scope.cls_eye_subs === "fa fa-eye-slash"){

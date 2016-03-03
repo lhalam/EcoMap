@@ -29,8 +29,8 @@
         </tr>
       </tbody>
     </table>
-    <h3 class="text-center" ng-hide="hideMe">Тимчасові дані відсутні.</h3>
-    <div class="row" ng-show="showMe">
+    <h3 class="text-center" ng-hide="hideMe==true">Тимчасовo дані відсутні.</h3>
+    <div class="row" ng-show="hideMe == false">
       <div class="col-md-8 col-md-offset-4">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
       </div>

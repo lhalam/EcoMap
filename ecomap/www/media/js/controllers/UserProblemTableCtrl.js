@@ -45,6 +45,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               }
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
+             $scope.hideMe = ($scope.problems.length)?true:false;
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
@@ -60,6 +61,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }
           }).then(function successCallback(response) {
             $scope.problems = response.data[0];
+            $scope.hideMe = ($scope.problems.length)?true:false;
             $scope.problemsLength = response.data[1][0]['total_problem_count'];
             $scope.count = response.data[1][0]['total_problem_count'];
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
@@ -75,6 +77,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             }
           }).then(function successCallback(response) {
            $scope.problems = response.data[0];
+           $scope.hideMe = ($scope.problems.length)?true:false;
            $scope.problemsLength = response.data[1][0]['total_problem_count'];
            $scope.count = response.data[1][0]['total_problem_count'];
            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;

@@ -103,13 +103,7 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
         url: '/api/tempdata',
       }).then(function successCallback(data) {
         $scope.Tempdata = data.data;
-        if ($scope.Tempdata.length){
-          $scope.showMe = true;
-          $scope.hideMe = true;
-        }
-        else{
-          $scope.showMe = false;
-          $scope.hideMe = false;}
+        $scope.hideMe = ($scope.Tempdata.length)?true:false;
       }, function errorCallback(response) {})
     }
 

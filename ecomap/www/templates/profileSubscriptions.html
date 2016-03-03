@@ -82,7 +82,8 @@
     <strong>Загальна кількість підписок: </strong>
     <span>{{count}}</span>
   </p>
-  <div class="row">
+  <h3 class="text-center" ng-hide="hideSubscriptions == true">Підписки відсутні.</h3>
+  <div class="row" ng-hide="hideSubscriptions == false">
     <div class="col-md-8 col-md-offset-4">
       <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
     </div>

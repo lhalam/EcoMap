@@ -80,7 +80,8 @@
   <p ng-hide="problemsLength==0"><strong>Загальна кількість проблем: </strong>
      <span>{{count}}</span>
   </p>
-  <div class="row">
+  <h3 class="text-center" ng-hide="hideMe == true">Ecomap проблеми відсутні.</h3>
+  <div class="row" ng-hide="hideMe == false">
     <div class="col-md-8 col-md-offset-2 col-xs-offset-2 col-xs-8 col-sm-offset-2 col-sm-8 col-lg-offset-4 col-lg-8">
       <div class="center-block">
         <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >

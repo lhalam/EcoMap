@@ -1,6 +1,6 @@
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
-    $rootScope.showMe = false;
+    $rootScope.showSidebarProblem = false;
     $scope.photos = [];
     $scope.maxSeverity = [1, 2, 3, 4, 5];
     $scope.comments = [];

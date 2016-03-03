@@ -725,6 +725,9 @@ input[type="checkbox"] {
     .flex-item-2{
       width: 1px;
     }
+    form {
+      padding: 6% 7%;
+    }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{

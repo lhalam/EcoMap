@@ -1,8 +1,8 @@
 app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory) {
-    $rootScope.showMe = false;
+    $rootScope.showSidebarProblem = false;
     $rootScope.toogleFilter = function(){
-      $rootScope.showMe = !$rootScope.showMe;
+      $rootScope.showSidebarProblem = !$rootScope.showSidebarProblem;
       MapFactory.turnResizeOn();
       MapFactory.mapInstance.setZoom(7);
     }

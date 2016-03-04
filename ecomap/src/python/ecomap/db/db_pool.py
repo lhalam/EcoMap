@@ -19,6 +19,8 @@ from ecomap.config import Config
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
+DB_POOL = {'ro': None, 'rw': None}
+DB_POOL_LOCK = {'ro': threading.RLock(), 'rw': threading.RLock()}
 
 
 class MySQLPoolSizeError(MySQLdb.DatabaseError):
@@ -65,29 +67,12 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
         return inner
     return retry_wrapper
 
-DB_POOL = {
-        'read': {'instance' : None, 'lock': threading.RLock()},
-        'write': {'instance' : None, 'lock': threading.RLock()},
-          }
-# DB_POOL = {'read': None, 'write': None}
-# DB_POOL_LOCK = {'read': threading.RLock(), 'write': threading.RLock()}
-def pool_manager(pool_name):
-        if DB_POOL[pool_name]['instance'] is None:
-            with DB_POOL[pool_name]['lock']:
-                if DB_POOL[pool_name]['instance'] is None:
-                    if pool_name == 'read':
-                        DB_POOL[pool_name]['instance'] = db_pool_ro
-                    else:
-                        DB_POOL[pool_name]['instance'] = db_pool_rw
-        return DB_POOL[pool_name]['instance']
-
 
 class DBPool(object):
     """DBPool class represents DB pool, which
     handles and manages work with database
     connections.
     """
-
     def __init__(self, user, passwd, db_name, host, port, ttl, pool_size):
         self._connection_pool = []
         self.connection_pointer = 0
@@ -166,9 +151,10 @@ class DBPool(object):
         except Exception:
             conn['connection'].rollback()
             raise
-        finally:
-            conn['connection'].close()
-
+        if conn['creation_date'] + self.connection_ttl < time.time():
+            self._push_conn(conn)
+        else:
+            self._close_conn(conn)
 
     def _close_conn(self, conn):
         """Protected method _close_conn closes connection
@@ -191,19 +177,15 @@ class DBPool(object):
         self._connection_pool.append(conn)
 
 
-db_pool_rw = DBPool(user=_CONFIG['db.rw.user'],
-                            passwd=_CONFIG['db.rw.password'],
+def pool_manager(pool_name):
+    if DB_POOL[pool_name] is None:
+        with DB_POOL_LOCK[pool_name]:
+            if DB_POOL[pool_name] is None:
+                DB_POOL[pool_name] = DBPool(user=_CONFIG['db.%s.user' % pool_name],
+                            passwd=_CONFIG['db.%s.password' % pool_name],
                             db_name=_CONFIG['db.db'],
-                            host=_CONFIG['db.rw.host'],
-                            port=_CONFIG['db.rw.port'],
+                            host=_CONFIG['db.%s.host' % pool_name],
+                            port=_CONFIG['db.%s.port' % pool_name] ,
                             ttl=_CONFIG['db.connection_lifetime'],
-                            pool_size=_CONFIG['db.rw.pool_size'])
-
-db_pool_ro = DBPool(user=_CONFIG['db.ro.user'],
-                            passwd=_CONFIG['db.ro.password'],
-                            db_name=_CONFIG['db.db'],
-                            host=_CONFIG['db.ro.host'],
-                            port=_CONFIG['db.ro.port'],
-                            ttl=_CONFIG['db.connection_lifetime'],
-                            pool_size=_CONFIG['db.ro.pool_size'])
-
+                            pool_size=_CONFIG['db.%s.pool_size'  % pool_name])
+    return DB_POOL[pool_name]

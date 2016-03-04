@@ -84,6 +84,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
     }};
     $scope.cls_edit_nick = "fa fa-pencil";
     $scope.editMode = true;
+    $scope.hasError = false;
     $scope.changeNick = function () {
       if ($scope.cls_edit_nick === "fa fa-pencil"){
           $scope.cls_edit_nick = "fa fa-check";
@@ -112,11 +113,20 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
                 $scope.cls_edit_nick = "fa fa-pencil";
                 $scope.editMode = true;
               } else {
-                toaster.pop('error', 'Редагування' , response.data.error[0].nickname); 
+                $scope.hasError = true;
+                toaster.pop('error', 'Редагування' , response.data.error[0].nickname);
               }
             })
       };
     };
+
+
+    $scope.changeErroClass = function(){
+      if ($scope.hasError){
+        $scope.hasError = !$scope.hasError;
+      }
+
+    }
 
     $scope.redirect = function(state){
       $state.go(state);

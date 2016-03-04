@@ -1,6 +1,6 @@
-app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state',
-  function($scope, $http, $auth, $rootScope, $cookies, $state) {
+app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
     $rootScope.isFetching=false;
+
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };

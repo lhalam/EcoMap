@@ -166,7 +166,6 @@ def check_exist_id(user_id, host, db_user, db_pasword, db_name):
                 """
         cursor.execute(query, (user_id, ))
         mysql.close()
-        logging.info('User is in database: %s', bool(cursor.fetchone()))
         return bool(cursor.fetchone())
     except MySQLdb.Error as mysql_error:
         logging.error('Error checking exist of a user into database!',
@@ -174,13 +173,9 @@ def check_exist_id(user_id, host, db_user, db_pasword, db_name):
         raise ConfigBuilderMysqlError(mysql_error)
 
 
-def insert_user(first_name, last_name, nickname, email, password, host,
-                db_user, db_pasword, db_name):
-    """Function creates connection to db and adds new user into it.
-    :param first_name: first name of user.
-    :param last_name: last name of user.
-    :param email: email of user.
-    :param password: hashed password of user.
+def execute_query(query, host, db_user, db_pasword, db_name):
+    """Function creates connection to db and execute query.
+    :param query: query to database.
     :param host: database host name.
     :param db_user: database user.
     :param db_pasword: database password.
@@ -189,52 +184,12 @@ def insert_user(first_name, last_name, nickname, email, password, host,
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
         cursor = mysql.cursor()
-        query = """INSERT INTO `user` (`first_name`,
-                                       `last_name`,
-                                       `nickname`,
-                                       `email`,
-                                       `password`)
-                   VALUES (%s, %s, %s, %s, %s);
-                """
-        cursor.execute(query, (first_name, last_name, nickname, email,
-                       password))
+        cursor.execute(query)
         mysql.commit()
-        logging.info('User %s %s was successfully added to database %s',
-                     first_name, last_name, db_name)
         mysql.close()
+        logging.debug('User added to db.')
     except MySQLdb.Error as mysql_error:
         logging.error('Error adding a user into database!', exc_info=True)
-        raise ConfigBuilderMysqlError(mysql_error)
-
-
-def edit_user(user_id, first_name, last_name, nickname, email, password, host,
-              db_user, db_pasword, db_name):
-    """Function creates connection to db and adds new user into it.
-    :param user_id: id of user.
-    :param first_name: first name of user.
-    :param last_name: last name of user.
-    :param email: email of user.
-    :param password: hashed password of user.
-    :param host: database host name.
-    :param db_user: database user.
-    :param db_pasword: database password.
-    :param db_name: database name.
-    """
-    try:
-        mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
-        cursor = mysql.cursor()
-        query = """UPDATE `user` SET `first_name` = %s, `last_name` = %s,
-                        `nickname` = %s, `email` = %s, `password` = %s
-                   WHERE `id` = %s;
-                """
-        cursor.execute(query, (first_name, last_name, nickname, email,
-                               password, user_id))
-        mysql.commit()
-        logging.info('User %s %s was successfully update in database %s',
-                     first_name, last_name, db_name)
-        mysql.close()
-    except MySQLdb.Error as mysql_error:
-        logging.error('Error updating a user into database!', exc_info=True)
         raise ConfigBuilderMysqlError(mysql_error)
 
 
@@ -253,11 +208,24 @@ def add_user(user_id, first_name, last_name, nickname, email, password, host,
     :param db_name: database name.
     """
     if check_exist_id(user_id, host, db_user, db_pasword, db_name):
-        edit_user(user_id, first_name, last_name, nickname, email, password,
-                  host, db_user, db_pasword, db_name)
+        query = ("""UPDATE `user` SET `first_name` = '{}', `last_name` = '{}',
+                                      `nickname` = '{}', `email` = '{}',
+                                      `password` = '{}'
+                                WHERE `id` = '{}';
+                  """).format(first_name, last_name, nickname, email,
+                              password, user_id)
+        execute_query(query, host, db_user, db_pasword, db_name)
+        logging.info('User %s %s updated in database.', first_name, last_name)
     else:
-        insert_user(first_name, last_name, nickname, email, password, host,
-                    db_user, db_pasword, db_name)
+        query = ("""INSERT INTO `user` (`first_name`,
+                                        `last_name`,
+                                        `nickname`,
+                                        `email`,
+                                        `password`)
+                    VALUES ('{}', '{}', '{}', '{}', '{}');
+                 """).format(first_name, last_name, nickname, email, password)
+        execute_query(query, host, db_user, db_pasword, db_name)
+        logging.info('User %s %s insert in database.', first_name, last_name)
 
 
 def main():

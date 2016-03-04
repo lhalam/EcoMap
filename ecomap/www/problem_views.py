@@ -327,6 +327,27 @@ def problem_photo(problem_id):
     return response
 
 
+@app.route('/api/change_comment', methods=['POST'])
+def change_comment_by_id():
+    """This method update comment content.
+    :rtype: JSON
+    :param id: comment_id `{id: 2}`
+    :param content: comment content
+
+    :statuscode 400: error updating comment
+    :statuscode 200: comment added successfully
+
+    """
+    response = jsonify(), 400
+    data = request.get_json()
+    if data:
+        valid = validator.change_comment(data)
+        if valid['status']:
+            db.change_comment_by_id(data['id'], data['content'])
+            response = jsonify(), 200
+    return response
+
+
 @app.route('/api/problem/add_comment', methods=['POST'])
 @login_required
 def post_comment():
@@ -613,6 +634,7 @@ def all_users_comments():
     ``[{"id": 2,
         "content": "Awesome comment.",
         "problem_id": 12,
+        "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
@@ -626,11 +648,14 @@ def all_users_comments():
     comments = []
     total_count = {}
     if comments_data:
+        problems_id = [comment[2] for comment in comments_data]
+        problems_title = db.get_problems_title(problems_id)
         for comment in comments_data:
             subcomments_count = db.get_count_of_parent_subcomments(comment[0])
             comments.append({'id': comment[0],
                              'content': comment[1],
                              'problem_id': comment[2],
+                             'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
                              'nickname': comment[4],
                              'first_name': comment[5],
@@ -648,7 +673,20 @@ def all_users_comments():
 def user_comments(user_id):
     """Function gets all user comments from DB.
     :type: JSON
-    :return: response
+    :user_id: id of user.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's comments and total_count:
+    ``[{"id": 2,
+        "content": "Awesome comment.",
+        "problem_id": 12,
+        "problem_title": "Forest Problem",
+        "created_date": "2015-02-24T14:27:22.000Z",
+        "nickname": 'Pomidor',
+        "first_name": 'Ivan',
+        'last_name': 'Kozak',
+        'sub_count': 15}]``
     """
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
@@ -657,18 +695,21 @@ def user_comments(user_id):
     comments = []
     total_count = {}
     if comments_data:
+        problems_id = [comment[2] for comment in comments_data]
+        problems_title = db.get_problems_title(problems_id)
         for comment in comments_data:
             subcomments_count = db.get_count_of_parent_subcomments(comment[0])
             comments.append({'id': comment[0],
                              'content': comment[1],
                              'problem_id': comment[2],
+                             'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
                              'nickname': comment[4],
                              'first_name': comment[5],
                              'last_name' : comment[6],
                              'sub_count': subcomments_count[0]})
     if count:
-        total_count = {'total_comments_count': count[0]}                               
+        total_count = {'total_comments_count': count[0]}
     response = Response(json.dumps([comments,[total_count]]),
                         mimetype='application/json')
     return response
@@ -726,6 +767,7 @@ def search_users_comments():
     ``[{"id": 2,
         "content": "Awesome comment.",
         "problem_id": 12,
+        "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
@@ -739,11 +781,14 @@ def search_users_comments():
     comment_tuple = db.get_comments_by_nickname(nickname, offset, per_page)
     comments = []
     if comment_tuple:
+        problems_id = [comment[2] for comment in comment_tuple]
+        problems_title = db.get_problems_title(problems_id)
         for comment in comment_tuple:
             subcomments_count = db.get_count_of_parent_subcomments(comment[0])
             comments.append({'id': comment[0],
                              'content': comment[1],
                              'problem_id': comment[2],
+                             'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
                              'nickname': comment[4],
                              'first_name': comment[5],

@@ -56,6 +56,7 @@
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
   <script src="/js/directives/ngEnter.js"></script>
+  <script src="/js/directives/tooltip.js"></script>
 
   <!-- AngularJS factories -->
   <script src="/js/factories/msg.js"></script>
@@ -92,7 +93,6 @@
     <script src='/js/controllers/RestorePasswordCtrl.js'></script>
     <script src='/js/controllers/userDeleteConfirmation.js'></script>
     <script src='/js/controllers/UserCommentsTableCtrl.js'></script>
-
 
 </head>
 <body ng-controller="MainCtrl">
@@ -141,10 +141,11 @@
       </div>
     </div>
   </nav>
+  
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
   <div class="flex-container flex-row flex-item-1">
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
-    <div ui-view="sidebar" id="sidebar" class="flex-item-1 flex-item-5 flex-container flex-column"
+    <div ui-view="sidebar"  class="sidebar flex-item-1 flex-item-5 flex-container flex-column" ng-class="{flex6: showSidebarProblem, sidebar: !showSidebarProblem}"
      ng-show="checkState('detailedProblem') || checkState('addProblem')"></div>
   </div>
 </div>

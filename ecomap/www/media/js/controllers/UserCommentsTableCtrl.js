@@ -24,7 +24,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       return statuses[status];
     };
 
-
     $scope.loadComments = function() {
       var user_id = $cookies.get('id');
       $scope.msg = msg;

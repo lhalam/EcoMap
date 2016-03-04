@@ -1,5 +1,5 @@
 """This module contains functions for interacting with Database."""
-from ecomap.db.db_pool import db_pool_rw, db_pool_ro, retry_query
+from ecomap.db.db_pool import retry_query, pool_manager
 
 ANONYMOUS_ID = "2"
 
@@ -9,7 +9,7 @@ def get_user_by_email(email):
     :params email: user email
     :retrun: tuple with user info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
                    `email`, `password`, `avatar`
@@ -25,7 +25,7 @@ def get_user_by_nick_name(nickname):
     :params nickname: user nickname
     :retrun: tuple with user info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
                    `email`, `password`, `avatar`
@@ -41,7 +41,7 @@ def get_user_by_id(user_id):
     :params user_id: id of user
     :return: tuple with user info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`, `nickname`,
                    `email`, `password`, `avatar`
@@ -56,7 +56,7 @@ def get_user_by_nickname(nickname, offset, per_page):
     :params nickname: user nickname.
     :retrun: tuple with user and problem info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.status,
                    p.created_date, p.is_enabled,
@@ -75,7 +75,7 @@ def count_user_by_nickname(nickname):
     """Count of problems created by user with special nickname.
     :return: count of problems.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT count(p.id)
                    FROM `problem` AS p
@@ -92,7 +92,7 @@ def get_user_by_oauth_id(user_id):
     :params user_id: id of user
     :return: tuple with user info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `first_name`, `last_name`,
                    `nickname`, `email`, `password`
@@ -110,13 +110,11 @@ def add_oauth_to_user(user_id, oauth_provider, oauth_uid):
        :params oauth_provider: provider name
        :params oauth_uid: user id from provider
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `oauth_provider`=%s,
                    `oauth_uid`=%s WHERE `id`=%s;
                 """
-        cursor.execute(query, (oauth_provider, oauth_uid, user_id))
-        conn.commit()
+        conn.execute(query, (oauth_provider, oauth_uid, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -129,9 +127,7 @@ def facebook_insert(first_name, last_name, nickname, email, password,
              email - email of user
              password - hashed password of user
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
                                        `nickname`,
@@ -141,9 +137,9 @@ def facebook_insert(first_name, last_name, nickname, email, password,
                                        `oauth_uid`)
                    VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (first_name, last_name, nickname, email, password,
+        conn.execute(query, (first_name, last_name, nickname, email, password,
                                provider, uid))
-        registered_user_id = cursor.lastrowid
+        registered_user_id = conn.lastrowid
         return registered_user_id
 
 
@@ -155,9 +151,7 @@ def insert_user(first_name, last_name, nickname, email, password):
              email - email of user
              password - hashed password of user
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user` (`first_name`,
                                        `last_name`,
                                        `nickname`,
@@ -165,8 +159,8 @@ def insert_user(first_name, last_name, nickname, email, password):
                                        `password`)
                    VALUES (%s, %s, %s, %s ,%s);
                 """
-        cursor.execute(query, (first_name, last_name, nickname, email, password))
-        registered_user_id = cursor.lastrowid
+        conn.execute(query, (first_name, last_name, nickname, email, password))
+        registered_user_id = conn.lastrowid
         return registered_user_id
 
 
@@ -176,13 +170,11 @@ def add_users_role(user_id, role_id):
     :params: user_id - id of recenty created user
              role_id - default is "User"
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user_role` (`user_id`, `role_id`)
                    VALUES (%s, %s);
                 """
-        cursor.execute(query, (user_id, role_id))
+        conn.execute(query, (user_id, role_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -191,7 +183,7 @@ def get_role_id(name='user'):
        :params: name - name of role, default - 'user'
        :return: tuple with id of role
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `role`
                    WHERE `name`=%s;"""
@@ -205,7 +197,7 @@ def get_role_by_name(name='user'):
        :params: name - name of role, default - 'user'
        :return: tuple with id of role
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `role`
                    WHERE `name`=%s;"""
@@ -219,11 +211,9 @@ def insert_user_avatar(user_id, img_path):
     :params: user_id - unique id user
              img_path - path to avatar image
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `avatar`=%s WHERE id=%s;"""
-        cursor.execute(query, (img_path, user_id))
-        conn.commit()
+        conn.execute(query, (img_path, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -231,11 +221,9 @@ def delete_user_avatar(user_id):
     """Deletes user profile photo from db.
     :params: user_id - unique id user
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `avatar`='' WHERE `id`=%s;"""
-        cursor.execute(query, (user_id,))
-        conn.commit()
+        conn.execute(query, (user_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -244,11 +232,9 @@ def change_user_password(user_id, new_password):
     :params: new_password - new password
              user_id - id of user
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `password`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (new_password, user_id))
-        conn.commit()
+        conn.execute(query, (new_password, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -257,11 +243,9 @@ def change_user_nickname(user_id, new_nickname):
     :params: new_nickname - new nickname
              user_id - id of user
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `nickname`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (new_nickname, user_id))
-        conn.commit()
+        conn.execute(query, (new_nickname, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -269,7 +253,7 @@ def get_user_role_by_email(email):
     """Get all resources.
     :return: tuple of resources
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name FROM `user_role` AS ur
                    INNER JOIN `user` AS u ON ur.user_id=u.id
@@ -285,7 +269,7 @@ def get_all_permissions_by_role():
     """This query created for Restriction class.
     Restriction class is for lesser entering to DB.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name, res.resource_name, p.action, p.modifier
                    FROM `role_permission` AS rp INNER JOIN `permission` AS p ON
@@ -302,7 +286,7 @@ def get_user_role_by_id(user_id):
     """Get all resources.
     :return: tuple of resources
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT r.name FROM `role` AS r
                    INNER JOIN `user_role` AS ur ON r.id=ur.role_id
@@ -317,7 +301,7 @@ def get_all_resources(offset, per_page):
     """Get all resources.
     :return: tuple of resources
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `resource_name` FROM `resource`
                    ORDER BY `id` LIMIT %s,%s;"""
@@ -331,7 +315,7 @@ def get_resource_id(resource_name):
     :params: resource_name - name of resource
     :return: tuple, containing id
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `resource` WHERE `resource_name`=%s;"""
         cursor.execute(query, (resource_name,))
@@ -343,13 +327,11 @@ def add_resource(resource_name):
     """Adds new resource in db.
     :params: resource_name - name of new resource
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `resource` (`resource_name`)
                    VALUES (%s);
                 """
-        cursor.execute(query, (resource_name,))
-        conn.commit()
+        conn.execute(query, (resource_name,))
 
 
 @retry_query(tries=3, delay=1)
@@ -358,13 +340,11 @@ def edit_resource_name(new_resource_name, resource_id):
     :params: new_resource_name - new name of resource
              resource_id - id of  resource we change name
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `resource` SET `resource_name`=%s
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (new_resource_name, resource_id))
-        conn.commit()
+        conn.execute(query, (new_resource_name, resource_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -372,7 +352,7 @@ def get_all_roles():
     """Return all roles in db.
     :return: tuple, containing all roles
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `name` FROM `role`;"""
         cursor.execute(query)
@@ -384,11 +364,9 @@ def insert_role(role_name):
     """Insert new role into db.
     :params: role_name - name of role
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `role` (`name`) VALUES (%s);"""
-        cursor.execute(query, (role_name,))
-        conn.commit()
+        conn.execute(query, (role_name,))
 
 
 @retry_query(tries=3, delay=1)
@@ -397,11 +375,9 @@ def edit_role(new_role_name, role_id):
     :params: role_name - new name of role
              role_id - if of role
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `role` SET `name`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (new_role_name, role_id))
-        conn.commit()
+        conn.execute(query, (new_role_name, role_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -410,7 +386,7 @@ def get_all_permissions_by_resource(resource_id):
     :params: resource_id - id of resource
     :return: tuple, containing permissions
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `action`, `modifier`, `description`
                    FROM `permission` WHERE `resource_id`=%s;
@@ -426,7 +402,7 @@ def get_all_permissions(offset, per_page):
              - per_page - pagination option
     :return: tuple, containing permissions
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, r.resource_name, p.action, p.modifier,
                    p.description
@@ -445,7 +421,7 @@ def get_all_permission_list():
     :params: resource_id - id of resource
     :return: tuple, containing permissions
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, r.resource_name, p.action, p.modifier,
                    p.description
@@ -465,16 +441,14 @@ def insert_permission(resource_id, action, modifier, description):
              modifier - modifier (Own, Any, None)
              description - short description to this permission
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `permission` (`resource_id`,
                                              `action`,
                                              `modifier`,
                                              `description`)
                    VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (resource_id, action, modifier, description))
-        conn.commit()
+        conn.execute(query, (resource_id, action, modifier, description))
 
 
 @retry_query(tries=3, delay=1)
@@ -485,13 +459,11 @@ def edit_permission(action, modifier, permission_id, description):
              permission_id - if of permission we want to update
              description - short description to this permission
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `permission` SET `description`=%s, `action`=%s,
                    `modifier`=%s WHERE `id`=%s;
                 """
-        cursor.execute(query, (description, action, modifier, permission_id))
-        conn.commit()
+        conn.execute(query, (description, action, modifier, permission_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -501,7 +473,7 @@ def get_permission_id(resource_id, action, modifier):
              action - action (POST, GET, DELETE, PUT)
              modifier - modifier (Own, Any, None)
     :return: tuple, containing permission id"""
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `permission` WHERE `resource_id`=%s AND
                    `action`=%s AND `modifier`=%s;
@@ -516,14 +488,12 @@ def set_role_to_user(user_id, role_id):
     :params: user_id - id of user
              role_id - id of role
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user_role` (`user_id`,
                                             `role_id`)
                    VALUES (%s, %s);
                 """
-        cursor.execute(query, (user_id, role_id))
-        conn.commit()
+        conn.execute(query, (user_id, role_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -532,11 +502,9 @@ def change_user_role(role_id, user_id):
     :params: user_id - id of user
              role_id - id of role
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user_role` SET `role_id`=%s WHERE `user_id`=%s;"""
-        cursor.execute(query, (role_id, user_id))
-        conn.commit()
+        conn.execute(query, (role_id, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -545,14 +513,12 @@ def add_role_permission(role_id, permission_id):
     :params: role_id - id of role
              permission_id - id of permission
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `role_permission` (`role_id`,
                                                   `permission_id`)
                    VALUES (%s, %s);
                 """
-        cursor.execute(query, (role_id, permission_id))
-        conn.commit()
+        conn.execute(query, (role_id, permission_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -562,7 +528,7 @@ def get_role_permission(role_id):
        :return: tuple, containing tuples with permission id,
                 action, modifier and description
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.action, p.modifier, p.description
                    FROM `role_permission` AS rp
@@ -578,13 +544,11 @@ def delete_permissions_by_role_id(role_id):
     """Deletes all permissions from role_permission table by role_id.
     :params: role_id - id of role
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE `role_permission` FROM `role_permission`
                    WHERE `role_id`=%s;
                 """
-        cursor.execute(query, (role_id,))
-        conn.commit()
+        conn.execute(query, (role_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -595,7 +559,7 @@ def check_resource_deletion(res_id):
         :params: res_id = key for searching in parent table 'permission'
         :return: tuple, empty if not found
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `resource_id` FROM `permission`
                    WHERE `resource_id`=%s;
@@ -609,11 +573,9 @@ def delete_resource_by_id(res_id):
     """delete resource in db.
     :params: res_id - key for searching resource name in DB for deleting
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `resource` WHERE `id`=%s;"""
-        cursor.execute(query, (res_id,))
-        conn.commit()
+        conn.execute(query, (res_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -625,7 +587,7 @@ def check_permission_deletion(permission_id):
                                  'role_permission'
         :return: tuple, empty if not found
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `permission_id` FROM `role_permission`
                    WHERE `permission_id`=%s;
@@ -639,11 +601,9 @@ def delete_permission_by_id(permission_id):
     """Delete permission row in db.
     :params: permission_id - key for searching resource name in DB for deleting
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `permission` WHERE `id`=%s;"""
-        cursor.execute(query, (permission_id,))
-        conn.commit()
+        conn.execute(query, (permission_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -654,7 +614,7 @@ def check_role_deletion(role_id):
         :params: role_id = key for searching in table 'role_permission'
         :return: tuple, empty if not found
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `role_id` FROM `role_permission`
                    WHERE `role_id`=%s;
@@ -668,11 +628,9 @@ def delete_role_by_id(role_id):
     """Delete role name in db.
     :params: role_id - key for searching resource name in DB for deleting
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `role` WHERE `id`=%s;"""
-        cursor.execute(query, (role_id,))
-        conn.commit()
+        conn.execute(query, (role_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -680,7 +638,7 @@ def get_pages_titles():
     """This method retrieves brief info from db
        about all pages(ex-resources).
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `title`, `alias`, `is_enabled` FROM `page`;"""
         cursor.execute(query)
@@ -693,7 +651,7 @@ def get_page_by_alias(alias):
        page from db via it's alias.
        :returns tuple with data.
     `"""
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `title`, `alias`, `description`, `content`,
                    `meta_keywords`, `meta_description`, `is_enabled`
@@ -717,8 +675,7 @@ def edit_page(page_id, title, alias, descr, content,
                 meta_descr - new meta_description
                 is_enabled - changed view option
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `page`
                    SET `title`=%s, `alias`=%s,
                    `description`=%s, `content`=%s,
@@ -726,9 +683,8 @@ def edit_page(page_id, title, alias, descr, content,
                    `is_enabled`=%s
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (title, alias, descr, content,
+        conn.execute(query, (title, alias, descr, content,
                                meta_key, meta_descr, is_enabled, page_id))
-        conn.commit()
 
 
 @retry_query(tries=3, delay=1)
@@ -743,16 +699,14 @@ def add_page(title, alias, descr, content,
                 meta_descr - new meta_description
                 is_enabled - changed view option
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `page` (`title`, `alias`, `description`,
                                        `content`, `meta_keywords`,
                                        `meta_description`, `is_enabled`)
                    VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (title, alias, descr, content,
+        conn.execute(query, (title, alias, descr, content,
                                meta_key, meta_descr, is_enabled))
-        conn.commit()
 
 
 @retry_query(tries=3, delay=1)
@@ -761,11 +715,9 @@ def delete_page_by_id(page_id):
        :params: id - id of the page, which needs to be
        deleted.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `page` WHERE `id`=%s;"""
-        cursor.execute(query, (page_id,))
-        conn.commit()
+        conn.execute(query, (page_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -774,7 +726,7 @@ def get_page_by_id(page_id):
        page from db via it's id.
        :returns tuple with data.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id`, `title`, `alias`, `description`, `content`,
                    `meta_keywords`, `meta_description`, `is_enabled`
@@ -785,11 +737,12 @@ def get_page_by_id(page_id):
         return cursor.fetchone()
 
 
+@retry_query(tries=3, delay=1)
 def get_all_users():
     """Return all registered users from db.
     :return: tuples with user info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
                    FROM  `user_role` as ur
@@ -805,7 +758,7 @@ def get_permission_control_data():
     """Gets resources with permissions and role_permissions.
     :return: list of permissions
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         sql = """SELECT r.name, res.resource_name, p.action, p.modifier
                  FROM role_permission AS rp
@@ -821,9 +774,9 @@ def get_permission_control_data():
 def get_users_pagination(offset, per_page):
     """Users per page
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT u.id, u.first_name, u.last_name, u.email, r.name
+        query = """SELECT u.id, u.first_name, u.last_name, u.nickname, u.email, r.name
                    FROM  `user_role` AS ur
                    INNER JOIN `user` AS u ON ur.user_id=u.id
                    INNER JOIN `role` AS r ON ur.role_id=r.id
@@ -837,7 +790,7 @@ def get_users_pagination(offset, per_page):
 def count_users():
     """Users per page
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(*) FROM `user`;"""
         cursor.execute(query)
@@ -849,7 +802,7 @@ def get_all_problems():
     """Return all problems in db.
     :return: tuple, containing all problems
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT problem.id, title, latitude, longitude,
                    problem_type_id, status, created_date, problem_type.radius,
@@ -864,7 +817,7 @@ def get_all_problems():
 @retry_query(tries=3, delay=1)
 def get_user_problems(user_id, offset, per_page):
     """Gets all problems posted by given user."""
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
@@ -882,7 +835,7 @@ def get_problem_by_id(problem_id):
     :params: problem_id - id of problem which was selected
     :return: list with lists where located dictionary
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.content, p.proposal,
                    p.severity, p.status, p.latitude,p.longitude,
@@ -901,7 +854,7 @@ def get_activity_by_problem_id(problem_id):
     :params: problem_id - id of problem which was selected
     :return: tuple with problem_activity info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `created_date`, `problem_id`, `user_id`,
                    `activity_type` FROM `problem_activity`
@@ -922,18 +875,16 @@ def problem_post(title, content, proposal, latitude, longitude,
                 longitude - new longitude of a new problem
                 problem_type_id - type of a new problem
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `problem`
                    (`title`, `content`, `proposal`, `latitude`, `longitude`,
                     `problem_type_id`,`created_date`, `user_id`)
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (title, content, proposal, latitude,
+        conn.execute(query, (title, content, proposal, latitude,
                                longitude, problem_type_id, created_date,
                                user_id))
-        last_id = cursor.lastrowid
+        last_id = conn.lastrowid
         return last_id
 
 
@@ -944,15 +895,13 @@ def problem_activity_post(problem_id, created_date, user_id, act_type):
                 created_date - time of problem creation
                 user_id - id of user that posted problem
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `problem_activity`
                    (`problem_id`, `created_date`, `user_id`,
                     `activity_type`)
                    VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (problem_id, created_date, user_id, act_type))
+        conn.execute(query, (problem_id, created_date, user_id, act_type))
 
 
 @retry_query(tries=3, delay=1)
@@ -961,7 +910,7 @@ def get_id_problem_owner(problem_id):
     :params: problem_id - id of problem which was selected
     :return: tuple with problem_activity info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `created_date`, `problem_id`, `user_id`,
                    `activity_type` FROM `problem_activity`
@@ -980,20 +929,18 @@ def add_problem_photo(problem_id, photo_url, photo_descr, user_id):
     :param user_id:
     :return:
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `photo`
                    (`name`, `description`, `problem_id`, user_id)
                    VALUES (%s, %s, %s, %s);
                 """
-        cursor.execute(query, (photo_url, photo_descr, problem_id, user_id))
-        conn.commit()
+        conn.execute(query, (photo_url, photo_descr, problem_id, user_id))
 
 
 @retry_query(tries=3, delay=1)
 def get_problem_photos(problem_id):
     """Gets all photos posted by user to problem."""
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `name`, `description`, `user_id`
                    FROM `photo` WHERE `problem_id`=%s;
@@ -1005,7 +952,7 @@ def get_problem_photos(problem_id):
 @retry_query(tries=3, delay=1)
 def get_problem_owner(problem_id):
     """Gets all photos posted by user to problem."""
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `user_id` FROM `problem` WHERE `id`=%s;"""
         cursor.execute(query, (problem_id,))
@@ -1015,31 +962,27 @@ def get_problem_owner(problem_id):
 @retry_query(tries=3, delay=1)
 def insert_into_restore_password(hashed, user_id, create_time):
     """Inserts info restore_password table new line."""
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user_operation` (`creation_date`,
                                                    `hash_sum`,
                                                    `user_id`,
                                                    `type`)
                    VALUES (%s, %s, %s, 'password');
                 """
-        cursor.execute(query, (create_time, hashed, user_id))
-        conn.commit()
+        conn.execute(query, (create_time, hashed, user_id))
 
 
 @retry_query(tries=3, delay=1)
 def insert_into_hash_delete(hex_hash, user_id, create_time):
     """Inserts into user_operation table new line."""
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `user_operation`(`creation_date`,
                                                   `hash_sum`,
                                                   `user_id`,
                                                   `type`)
                     VALUES (%s, %s, %s, 'delete');
                 """
-        cursor.execute(query, (create_time, hex_hash, user_id))
-        conn.commit()
+        conn.execute(query, (create_time, hex_hash, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1048,7 +991,7 @@ def check_hash_in_db(hashed):
        :params: hashed - hash sum
        :return: time
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `creation_date`
                    FROM `user_operation`
@@ -1064,13 +1007,11 @@ def restore_password(user_id, password):
        :params: user_id - user id
                 password - new password
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `user` SET `password`=%s
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (password, user_id))
-        conn.commit()
+        conn.execute(query, (password, user_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1079,7 +1020,7 @@ def get_user_id_by_hash(hash_sum):
        :params: hash_sum - hash sum
        :return: user id
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `user_id` FROM `user_operation`
                    WHERE `hash_sum`=%s;
@@ -1098,7 +1039,7 @@ def get_hash_data(startime, endtime):
              of change tries)
 
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
                    FROM `user_operation` AS p
@@ -1120,7 +1061,7 @@ def get_deletion_data(startime, endtime):
              of tries)
 
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  p.creation_date, u.first_name, u.email, count(u.id)
                    FROM `user_operation` AS p
@@ -1139,14 +1080,12 @@ def clear_password_hash(startime, endtime):
     :return:
     """
 
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `user_operation`
                    WHERE `creation_date` BETWEEN %d AND %d
                    AND `type` = 'password';
                 """
-        cursor.execute(query % (startime, endtime))
-        conn.commit()
+        conn.execute(query % (startime, endtime))
 
 
 @retry_query(tries=3, delay=1)
@@ -1155,14 +1094,12 @@ def clear_user_deletion_hash(startime, endtime):
     :return:
     """
 
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').manager() as conn:
         query = """DELETE FROM `user_operation`
                    WHERE `creation_date` BETWEEN %d AND %d
                    AND `type` = 'delete';
                 """
-        cursor.execute(query % (startime, endtime))
-        conn.commit()
+        conn.execute(query % (startime, endtime))
 
 
 @retry_query(tries=3, delay=1)
@@ -1170,7 +1107,7 @@ def count_resources():
     """Users per page
     :return: count of user's problem per page
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `resource`;"""
         cursor.execute(query)
@@ -1182,7 +1119,7 @@ def count_permissions():
     """
     :return:
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(p.id) FROM permission AS p
                    INNER JOIN resource AS r
@@ -1196,7 +1133,7 @@ def get_all_users_problems(offset, per_page):
     """Function selects from db all problems created by user.
     :return: tuple with problem data.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
@@ -1216,7 +1153,7 @@ def count_problems():
 
     :return:
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `problem`;
                 """
@@ -1229,7 +1166,7 @@ def count_user_problems(user_id):
     """Count of user's problem
     :return: count
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `problem`
                 where `user_id` =%s;"""
@@ -1246,16 +1183,14 @@ def add_comment(user_id, problem_id, parent_id, content, created_date):
                 content - comment content
                 created_date - create time
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT INTO `comment` (`user_id`, `problem_id`,
                                           `parent_id`, `content`,
                                           `created_date`)
                    VALUES (%s, %s, %s, %s, %s);
                 """
-        cursor.execute(query, (user_id, problem_id, parent_id,
+        conn.execute(query, (user_id, problem_id, parent_id,
                                content, created_date))
-        conn.commit()
 
 
 @retry_query(tries=3, delay=1)
@@ -1266,7 +1201,7 @@ def get_comments_by_problem_id(problem_id):
                                    created date, user id,
                                    user first name, user last name)
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
                           c.user_id, u.nickname
@@ -1285,7 +1220,7 @@ def get_subcomments_by_parent_id(parent_id):
                                    parent_id, created date, user id,
                                    user first name, user last name)
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id,
                           c.parent_id, c.created_date, c.user_id,
@@ -1303,7 +1238,7 @@ def get_count_of_parent_subcomments(parent_id):
        :params: parent_id - id of parent comment
        :return: count of subcomments
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
                    WHERE parent_id=%s;
@@ -1311,14 +1246,13 @@ def get_count_of_parent_subcomments(parent_id):
         cursor.execute(query, (parent_id,))
         return cursor.fetchone()
 
-
 @retry_query(tries=3, delay=1)
 def get_user_comments_count(user_id):
     """Get count of user comments.
        :params: user_id - id of user
        :return: count of user comments
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
             where `user_id` =%s;"""
@@ -1332,7 +1266,7 @@ def get_problem_id_for_del(user_id):
     User profile have to delete.
     :return:tuple with problem_id
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
         cursor.execute(query, (user_id,))
@@ -1344,11 +1278,9 @@ def change_problem_to_anon(problem_id):
     """Query for change user_id in problem table to id of Anonimus User,
     when we deleting User-owner of this problem.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `problem` SET `user_id`=%s WHERE `id`=%s;"""
-        cursor.execute(query, (ANONYMOUS_ID, problem_id))
-        conn.commit()
+        conn.execute(query, (ANONYMOUS_ID, problem_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1356,11 +1288,18 @@ def change_comments_to_anon(user_id):
     """Query for change user_id in comment table to id of Anonimus User,
     when we deleting User-owner of this comment.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `comment` SET `user_id`=%s WHERE `user_id`=%s;"""
-        cursor.execute(query, (ANONYMOUS_ID, user_id))
-        conn.commit()
+        conn.execute(query, (ANONYMOUS_ID, user_id))
+
+
+@retry_query(tries=3, delay=1)
+def change_comment_by_id(comment_id, content):
+    """Query for change content in comment table.
+    """
+    with pool_manager('write').transaction() as conn:
+        query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
+        conn.execute(query, (content, comment_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1369,24 +1308,20 @@ def change_activity_to_anon(problem_id):
     table to id of Anonimus User,
     when we deleting User-owner of this problem.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `problem_activity` SET `user_id`=%s
                     WHERE `problem_id`=%s;
                 """
-        cursor.execute(query, (ANONYMOUS_ID, problem_id))
-        conn.commit()
+        conn.execute(query, (ANONYMOUS_ID, problem_id))
 
 
 @retry_query(tries=3, delay=1)
 def delete_user(user_id):
     """Deletes user_id by id from JSON.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `user` WHERE id=%s;"""
-        cursor.execute(query, (user_id,))
-        conn.commit()
+        conn.execute(query, (user_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -1394,7 +1329,7 @@ def get_problem_type():
     """Get problem type.
        :return: tuple with problem type name, picture and radius.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type`;"""
         cursor.execute(query)
@@ -1406,10 +1341,26 @@ def get_problem_type_for_filtration():
     """Get problem type.
        :return: tuple with problem type name and id.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id`, `name` FROM `problem_type`;"""
+        query = """SELECT `id`, `picture`, `name` FROM `problem_type`;"""
         cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def get_problems_by_type(problem_type_id):
+    """Get problems by type.
+       :return: tuple with problem type name and id.
+    """
+    with pool_manager('read').manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.problem_type_id,
+                           p.status, p.created_date, p.is_enabled,
+                           p.severity, pt.name, pt.radius
+                           FROM problem AS p INNER JOIN problem_type AS pt ON
+                           pt.id=p.problem_type_id WHERE pt.id=%s;"""
+        cursor.execute(query, (problem_type_id))
         return cursor.fetchall()
 
 
@@ -1419,7 +1370,7 @@ def get_problem_type_by_id(problem_type_id):
        :params: problem_type_id - id of problem type.
        :return: tuple with problem type name, picture and radius.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type` WHERE `id`=%s;"""
         cursor.execute(query, (problem_type_id))
@@ -1432,7 +1383,7 @@ def get_problem_type_by_name(problem_type_name):
        :params: problem_type_name - name of problem type.
        :return: tuple with problem type and radius.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type` WHERE `name`=%s;"""
         cursor.execute(query, (problem_type_name))
@@ -1445,7 +1396,7 @@ def get_problem_type_picture(problem_type_id):
        :params: problem_type_id - id of problem type.
        :return: tuple with problem type picture.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `picture` FROM `problem_type` WHERE `id`=%s;"""
         cursor.execute(query, (problem_type_id))
@@ -1457,13 +1408,11 @@ def delete_problem_type(problem_type_id):
     """Delete problem type.
        :params: problem_type_id - id of problem type.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `problem_type`
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (problem_type_id,))
-        conn.commit()
+        conn.execute(query, (problem_type_id,))
 
 
 @retry_query(tries=3, delay=1)
@@ -1474,14 +1423,12 @@ def update_problem_type(problem_type_id, picture, name, radius):
                      name - name of problem type,
                      radius - radius of problem type.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """UPDATE `problem_type` SET `picture`=%s,
                                          `name`=%s, `radius`=%s
                           WHERE `id`=%s;
                       """
-        cursor.execute(query, (picture, name, radius, problem_type_id))
-        conn.commit()
+        conn.execute(query, (picture, name, radius, problem_type_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1491,14 +1438,12 @@ def add_problem_type(picture, name, radius):
                      name - name of problem type,
                      radius - radius of problem type.
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """INSERT  INTO `problem_type` (`picture`,
                                          `name`, `radius`)
                           VALUES (%s, %s, %s);
                       """
-        cursor.execute(query, (picture, name, radius))
+        conn.execute(query, (picture, name, radius))
 
 
 @retry_query(tries=3, delay=1)
@@ -1508,7 +1453,7 @@ def get_subscription_by_user_id(user_id, problem_id):
     :param problem_id: id of problem (int)
     :return: tuple with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `subscription`
                 WHERE `user_id`=%s AND `problem_id`=%s;
@@ -1532,16 +1477,14 @@ def subscription_post(problem_id, user_id, date_subscriptions):
     :param problem_id: id of problem (int)
     :param date_subscriptions: date when user subscribed to a problem.
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         if (check_exist_subscriptions(user_id, problem_id) == False):
             query = """INSERT INTO `subscription`
                        (`problem_id`, `user_id`, `date_subscriptions`)
                        VALUES (%s, %s, %s);
                     """
-            cursor.execute(query, (problem_id, user_id, date_subscriptions))
-        last_id = cursor.lastrowid
+            conn.execute(query, (problem_id, user_id, date_subscriptions))
+        last_id = conn.lastrowid
         return last_id
 
 
@@ -1551,14 +1494,12 @@ def subscription_delete(user_id, problem_id):
     :param user_id: id of user (int)
     :param problem_id: id of problem (int).
     """
-    with db_pool_rw().manager() as conn:
-        conn.autocommit(True)
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `subscription`                   
                    WHERE `user_id`=%s AND `problem_id`=%s;
                 """
-        cursor.execute(query, (user_id, problem_id))
-        last_id = cursor.lastrowid
+        conn.execute(query, (user_id, problem_id))
+        last_id = conn.lastrowid
 
 
 @retry_query(tries=3, delay=1)
@@ -1567,7 +1508,7 @@ def count_user_subscriptions(user_id):
     :param user_id: id of user (int)
     :return: count.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `subscription`
                 where `user_id` =%s;"""
@@ -1581,7 +1522,7 @@ def count_all_subscriptions():
     :param user_id: id of user (int)
     :return: count.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `subscription`;"""
         cursor.execute(query)
@@ -1599,7 +1540,7 @@ def get_subscriptions(user_id, offset, per_page):
     :param date_subscriptions: date when user subscribed to a problem
     :return: tuples with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
                    pr.created_date, sub.date_subscriptions, pt.name
@@ -1623,7 +1564,7 @@ def get_all_subscriptions(offset, per_page):
     :param date_subscriptions: date when user subscribed to a problem
     :return: tuples with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
                    pr.created_date, sub.date_subscriptions, pt.name,
@@ -1650,7 +1591,7 @@ def get_subscriptions_by_nickname(nickname, offset, per_page):
     :param first_name: user first_name.
     :return: tuples with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
                    pr.created_date, sub.date_subscriptions, pt.name,
@@ -1671,7 +1612,7 @@ def count_subscriptions_by_nickname(nickname):
     :param nickname: nickname of user.
     :return: count.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(s.id)
                 FROM `subscription`as s
@@ -1689,7 +1630,7 @@ def get_all_users_comments(offset, per_page):
                 - per_page - pagination option
        :return: tuples with comments info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
                    cm.created_date, us.nickname, us.first_name, us.last_name
@@ -1700,6 +1641,7 @@ def get_all_users_comments(offset, per_page):
         cursor.execute(query.format(offset, per_page))
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_user_comments(offset, per_page, user_id):
     """Get all comments of user.
@@ -1707,7 +1649,7 @@ def get_user_comments(offset, per_page, user_id):
                 - per_page - pagination option
        :return: tuples with comments info
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
                    cm.created_date, us.nickname, us.first_name, us.last_name
@@ -1718,12 +1660,13 @@ def get_user_comments(offset, per_page, user_id):
         cursor.execute(query.format(user_id, offset, per_page))
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_count_comments():
     """Get count of comments.
        :return: count of comments
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
                    WHERE parent_id=0;
@@ -1731,13 +1674,14 @@ def get_count_comments():
         cursor.execute(query)
         return cursor.fetchone()
 
+
 @retry_query(tries=3, delay=1)
 def get_count_user_comments(user_id):
     """Get count of comments of parent comment.
        :params: parent_id - id of parent comment
        :return: count of subcomments
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
                    WHERE parent_id=0 AND user_id={};
@@ -1752,7 +1696,7 @@ def get_count_comments_by_nickname(nickname):
        :params: parent_id - id of parent comment
        :return: count of subcomments
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(c.id)
                 FROM `comment` AS c
@@ -1771,7 +1715,7 @@ def get_comments_by_nickname(nickname, offset, per_page):
     :param per_page: pagination option.
     :return: tuples with user comments info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  cm.id, cm.content, cm.problem_id,
                    cm.created_date, us.nickname, us.first_name, us.last_name
@@ -1794,7 +1738,7 @@ def get_subscriptions(user_id, offset, per_page):
     :param date_subscriptions: date when user subscribed to a problem
     :return: tuples with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
                    pr.created_date, sub.date_subscriptions, pt.name
@@ -1818,7 +1762,7 @@ def get_all_user_operations(offset, per_page):
     :param type: type of operation(delete or password)
     :return: tuples with user info.
     """
-    with db_pool_ro().manager() as conn:
+    with pool_manager('read').manager() as conn:
         cursor = conn.cursor()
         query = """SELECT uoper.id, u.first_name, u.last_name, u.nickname, 
                    uoper.creation_date, uoper.type
@@ -1834,21 +1778,33 @@ def delete_user_operation(user_operation_id):
     """Delete problem type.
        :params: user_operation_id - id of user_operation.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
         query = """DELETE FROM `user_operation`
                    WHERE `id`=%s;
                 """
-        cursor.execute(query, (user_operation_id))
-        conn.commit()
+        conn.execute(query, (user_operation_id))
 
 @retry_query(tries=3, delay=1)
 def delete_all_users_operations():
     """Delete all data from table user_operation.
     """
-    with db_pool_rw().manager() as conn:
-        cursor = conn.cursor()
+    with pool_manager('write').transaction() as conn:
+        #cursor = conn.cursor()
         query = """DELETE FROM `user_operation`;
                 """
-        cursor.execute(query, ())
-        conn.commit()
+        conn.execute(query)
+
+@retry_query(tries=3, delay=1)
+def get_problems_title(problem_ids):
+    """Get dictionary with problem id as key and
+        problem title as value.
+       :params: problems_id - list of problem_ids.
+    """
+    with pool_manager('read').manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT id, title from `problem`
+                WHERE id IN ({});
+                """
+        cursor.execute(query.format(', '.join(map(str, problem_ids))))
+        return dict(cursor.fetchall())
+

@@ -16,7 +16,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
       }).then(function successCallback(data) {
         var problemTypes = data.data;
          for (var i = 0; i < data.data.length; i++){
-          $scope.Types[String(problemTypes[i]['id'])] = problemTypes[i]['name'];
+          $scope.Types[String(problemTypes[i]['id'])] = [problemTypes[i]['picture'], problemTypes[i]['name']];
         }
     $scope.Status = {
       'Unsolved': 'Нова',
@@ -37,7 +37,7 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
       if ($scope.selectedType.indexOf(type_id + '') !== -1) {
         $scope.selectedType.splice($scope.selectedType.indexOf(type_id), 1)
       } else {
-        $scope.selectedType.push(type_id)
+        $scope.selectedType.push(type_id);
       }
       $scope.filterMarker()
     }

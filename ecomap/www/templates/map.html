@@ -13,21 +13,22 @@
     </div>
     <p class="heading">
     Тип проблеми:
-    </p>
     <ul class="problTypes">
-      <li ng-repeat="(type_id, type) in Types" ng-click="toggleType(type_id)">
-        {{type}}
-        <i class="fa fa-check indicator" ng-if="selectedType.indexOf(type_id) !== -1"></i>
+    <li ng-repeat="(type_id, type) in Types" ng-click="toggleType(type_id)">
+      <img ng-src="/image/markers/{{type[0]}}" class="responsive-icon" alt="Marker for problem"/>
+        {{type[1]}}
+        <i class="fa fa-check-circle-o indicator fa-lg" ng-if="selectedType.indexOf(type_id) !== -1"></i>
+        <i class="fa fa-circle-o  indicator fa-lg" ng-if="selectedType.indexOf(type_id) === -1"></i>
       </li>
     </ul>
-
     <p class="heading">
     Статус проблеми:
     </p>
     <ul class="status">
       <li ng-repeat="(status, status_descr) in Status" ng-click="toggleStatus(status)">
         {{status_descr}}
-        <i class="fa fa-check indicator" ng-if="selectedStatus.indexOf(status) !== -1"></i>
+        <i class="fa fa-check-circle-o  indicator fa-lg" ng-if="selectedStatus.indexOf(status) !== -1"></i>
+        <i class="fa fa-circle-o  indicator fa-lg" ng-if="selectedStatus.indexOf(status) === -1"></i>
       </li>
     </ul>
   </div>

@@ -1,24 +1,22 @@
 # -*- coding: utf-8 -*-
 """Module contains routes, used for admin page."""
 import os
-import PIL
 import json
 import time
 import hashlib
-import datetime
 
 from PIL import Image
 from flask_login import login_required
-from werkzeug import secure_filename
 from flask import request, jsonify, Response, session
 
 from ecomap import validator
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
+# from admin_views_model import ProblemType
 
-FILE_UPLOAD_SIZE = 204800
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+MARKERS_PATH = '/media/image/markers'
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -824,12 +822,14 @@ def get_all_users_info():
         ``[[{"role_name": "admin",
         "first_name": "username",
         "last_name": "UserSurname",
+        "nickname": "admin_nickname",
         "id": 1,
         "email": "email@name.ru"},
         ....
         {"role_name": "user",
         "first_name": "Username",
         "last_name": "UserSurname",
+        "nickname": "user_nickname"
         "id": 5,
         "email": "email@gmail.com"}],
         [{"total_users": 2}]]``
@@ -847,10 +847,12 @@ def get_all_users_info():
 
     if query:
         for user_data in query:
-            users.append({'id': user_data[0], 'first_name': user_data[1],
+            users.append({'id': user_data[0], 
+                          'first_name': user_data[1],
                           'last_name': user_data[2],
-                          'email': user_data[3],
-                          'role_name': user_data[4]})
+                          'nickname': user_data[3],
+                          'email': user_data[4],
+                          'role_name': user_data[5]})
     if count:
         total_count = {'total_users': count[0]}
 
@@ -877,6 +879,9 @@ def get_problem_type():
         "name": "sevens problem type",
         "radius": 20]``.
     '''
+    # get_type = ProblemType(request)
+    # response = get_type.get()
+
     problem_type_tuple = db.get_problem_type()
     problem_type_list = []
     if problem_type_tuple:
@@ -907,19 +912,23 @@ def delete_problem_type():
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     '''
+    # del_type = ProblemType(request)
+    # response = del_type.delete()
     data = request.get_json()
     valid = validator.problem_type_delete(data)
     if valid['status']:
         file_name = db.get_problem_type_picture(data['problem_type_id'])
-        static_url = '/media/image/markers'
-        f_path = os.environ['STATICROOT'] + static_url
-        if os.path.exists(os.path.join(f_path, file_name[0])):
-            os.remove(os.path.join(f_path, file_name[0]))
-        db.delete_problem_type(data['problem_type_id'])
-        if not db.get_problem_type_by_id(data['problem_type_id']):
-            response = jsonify(msg='Дані видалено успішно!'), 200
+        f_path = os.environ['STATICROOT'] + MARKERS_PATH
+        if not db.get_problems_by_type(data['problem_type_id']):
+            if os.path.exists(os.path.join(f_path, file_name[0])):
+                os.remove(os.path.join(f_path, file_name[0]))
+            db.delete_problem_type(data['problem_type_id'])
+            if not db.get_problem_type_by_id(data['problem_type_id']):
+                response = jsonify(msg='Дані видалено успішно!'), 200
+            else:
+                response = jsonify(msg='Дані не видалено!'), 400
         else:
-            response = jsonify(msg='Дані не видалено!'), 400
+            response = jsonify(msg='Так як дані прив\'язані!'), 400
     else:
         response = jsonify(msg='Некоректні дані!'), 400
     return response
@@ -942,6 +951,8 @@ def add_problem_type():
     :statuscode 200: if no errors.
 
     """
+    # add_type = ProblemType(request)
+    # response = add_type.post()
     data = request.form
     file_to_save = request.files
     valid = validator.problem_type_post(data)
@@ -949,7 +960,7 @@ def add_problem_type():
         if db.get_problem_type_by_name(data['problem_type_name']):
             response = jsonify(msg='Дане ім’я вже зарезервоване!'), 400
         else:
-            file_name = save_file(file_to_save, '/media/image/markers')
+            file_name = save_file(file_to_save, MARKERS_PATH)
             if file_name:
                 db.add_problem_type(file_name, data['problem_type_name'],
                                     data['problem_type_radius'])
@@ -979,14 +990,15 @@ def edit_problem_type():
     :statuscode 200: if no errors.
 
     """
+    # edit_type = ProblemType(request)
+    # response = edit_type.update()
     data = request.form
     valid = validator.problem_type_post(data)
-    static_url = '/media/image/markers'
-    f_path = os.environ['STATICROOT'] + static_url
+    f_path = os.environ['STATICROOT'] + MARKERS_PATH
     if valid['status']:
         old_name = db.get_problem_type_picture(data['problem_type_id'])
         file_to_save = request.files
-        file_name = save_file(file_to_save, static_url)
+        file_name = save_file(file_to_save, MARKERS_PATH)
         if file_name:
             if os.path.exists(os.path.join(f_path, old_name[0])):
                 os.remove(os.path.join(f_path, old_name[0]))
@@ -1012,16 +1024,15 @@ def save_file(form, static_url='uploads/'):
         extension = form['file'].filename.rsplit('.', 1)[1]
         if extension in ALLOWED_EXTENSIONS:
             f_path = os.environ['STATICROOT'] + static_url
-            now = time.time()*100000
-            unique_key = (int(now))
+            unique_key = time.time()
             hashed_name = hashlib.md5(str(unique_key))
             original_file = '%s.%s' % (hashed_name.hexdigest(), extension)
             file_to_save['file'].save(os.path.join(f_path, original_file))
-            basewidth = 100
+            basewidth = 50
             img = Image.open(os.path.join(f_path, original_file))
             wpercent = (basewidth/float(img.size[0]))
             hsize = int((float(img.size[1])*float(wpercent)))
-            img = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
+            img = img.resize((basewidth, hsize), Image.ANTIALIAS)
             f_name = '%s%s.%s' % (hashed_name.hexdigest(), '.min', extension)
             img.save(os.path.join(f_path, f_name))
             os.remove(os.path.join(f_path, original_file))

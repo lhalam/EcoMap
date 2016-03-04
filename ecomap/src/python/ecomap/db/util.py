@@ -1310,7 +1310,7 @@ def change_comment_by_id(comment_id, content):
 def change_comment_by_id(comment_id, content):
     """Query for change content in comment table.
     """
-    with pool_manager('write').transaction() as conn:
+    with pool_manager(READ_WRITE).transaction() as conn:
         query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
         conn.execute(query, (content, comment_id))
 
@@ -1807,19 +1807,21 @@ def delete_all_users_operations():
                 """
         conn.execute(query)
 
+
 @retry_query(tries=3, delay=1)
 def get_problems_title(problem_ids):
     """Get dictionary with problem id as key and
         problem title as value.
        :params: problems_id - list of problem_ids.
     """
-    with pool_manager('read').manager() as conn:
+    with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT id, title from `problem`
                 WHERE id IN ({});
                 """
         cursor.execute(query.format(', '.join(map(str, problem_ids))))
         return dict(cursor.fetchall())
+
 
 @retry_query(tries=3, delay=1)
 def get_problems_title(problem_ids):

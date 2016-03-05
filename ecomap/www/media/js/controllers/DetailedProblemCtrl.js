@@ -142,6 +142,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     };
 
     $scope.cancelComment = function(comment) {
+      if(!$scope.oldContent) {
+        return;
+      }
       comment.content = $scope.oldContent;
       $scope.editMode = false;
       $scope.oldContent = null;
@@ -166,9 +169,10 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
             } ,function errorCallback(response) {
                   $scope.msg.editError('коментаря', '')
             })
-          } 
+          }
+          $scope.editMode = false;
           $scope.oldContent = null;
-          $scope.editMode = false;        
+        
     };
 
     $scope.chgEyeSubsc = function(){

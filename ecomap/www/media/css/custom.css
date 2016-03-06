@@ -348,6 +348,7 @@ form {
     float: left;
     margin-left: 28px;
     margin-bottom: 15px;
+    padding-right: 35px;
   }
 }
 
@@ -921,6 +922,18 @@ h3.title{
 .comment-reply{
   padding: 0px 15px 5px 15px;
   font-size: 12px;
+  position: relative;
+  right: 3px;
+}
+
+.subcomment-reply{
+  position: absolute;
+  right: 8px;
+  top: 45px;
+}
+
+.subcomment-reply+.comment-block{
+  padding-right: 22px;
 }
 
 .comment-reply a{

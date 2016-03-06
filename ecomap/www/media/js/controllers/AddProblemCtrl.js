@@ -6,7 +6,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       MapFactory.turnResizeOn();
       MapFactory.mapInstance.setZoom(7);
     }
-    
+
      $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
@@ -43,12 +43,13 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           $scope.problemTypes[i]['selected'] = false;
         }
          $scope.chosen = $scope.problemTypes[0];
+         $scope.newProblem.type = $scope.chosen['id'];
          $('.selected-items-box').click(function(){
          $('.multiple-select-wrapper .list').slideToggle();
          });
       }, function errorCallback(response) {})
     };
- 
+
     $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -98,14 +99,14 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       timeout: 3000,
       maximumAge: 0
     };
- 
+
     function error(err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
     }
     $scope.locateUser = function() {
       navigator.geolocation.getCurrentPosition(getUserPosition, error, options);
       var width = window.innerWidth;
- 
+
       function getUserPosition(position) {
         $scope.newProblem.latitude = position.coords.latitude;
         $scope.newProblem.longitude = position.coords.longitude;
@@ -250,9 +251,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
- 
+
   $scope.getSelectedItemOnly = function(){
- 
+
    for(var i = 0 ; i < $scope.problemTypes.length;  i++){
     if ($scope.problemTypes[i]['selected']==true)
       $scope.chosen =  $scope.problemTypes[i];

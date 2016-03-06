@@ -65,6 +65,7 @@ def allow_any_param(universal_key):
 
 RULEST_DICT = {':idUser': get_current_user_id,
                ':idParent': allow_any_param,
+               ':idType': allow_any_param,
                ':alias': allow_any_param,
                ':idPage': allow_any_param,
                ':provider': allow_any_param,

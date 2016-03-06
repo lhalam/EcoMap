@@ -129,31 +129,35 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       return google.maps.geometry.spherical.computeDistanceBetween(
         new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
    }
-    $scope.loadProblem = function() {
+    $scope.loadProblem = function(id) {
         $scope.allProblems = [];
         $http({
-      method: 'GET',
-      url: '/api/problems',
+          method: 'GET',
+          url: '/api/problems_radius/' + id,
       }).then(function successCallback(response) {
           for (var i = 0; i < response.data.length; i++){
           $scope.allProblems.push(response.data[i]);
+
         }
+        $scope.radiusFunc();
       }, function errorCallback(response) {})
     };
-    $scope.loadProblem();
-    $scope.addProblemTab = true;
-    $scope.addPhotosTab = false;
-    $scope.goToPhotos = function(form) {
-      if (!form.$invalid) {
-        $scope.addProblemTab = false;
-        for (var i = 0; i<$scope.allProblems.length; i++){
+    $scope.radiusFunc = function(){
+      for (var i = 0; i<$scope.allProblems.length; i++){
           if ($scope.newProblem['type'] == $scope.allProblems[i]['problem_type_Id'] &&
           $scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
           $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
             toaster.pop('warning', 'Тип проблеми', 'Проблема даного типу в радіусі '+$scope.allProblems[i]['radius']+' метрів вже існує.');
             break;
-              }
-          }
+            }
+      }
+    }
+    $scope.addProblemTab = true;
+    $scope.addPhotosTab = false;
+    $scope.goToPhotos = function(form) {
+      if (!form.$invalid) {
+        $scope.addProblemTab = false;
+        $scope.loadProblem($scope.newProblem['type']);
         $scope.addPhotosTab = true;
       }
     };
@@ -264,6 +268,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
    }
    $scope.getSelectedItemOnly();
     $('.multiple-select-wrapper .list').slideUp();
+  // $scope.loadProblem($scope.newProblem['type']);
   }
 }
 ]);

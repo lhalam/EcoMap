@@ -34,6 +34,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
         // $cookies.put('id', responce.data.id);
         // $cookies.put('role', responce.data.role);
         $state.go('map');
-    };
-  }
-]);
+       })
+      };
+    }
+  ]);

@@ -105,7 +105,7 @@ def check_post_comment(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_id','parent_id','content']
+    keys = ['problem_id', 'parent_id', 'content']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -116,10 +116,6 @@ def check_post_comment(data):
         elif keyname is 'content':
             if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
-                                        % keyname})
-            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_minimum_length']
                                         % keyname})
             elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:

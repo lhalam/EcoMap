@@ -44,3 +44,4 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
     };
   }
 ]);
+

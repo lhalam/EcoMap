@@ -1120,3 +1120,13 @@ select.form-comments{
 .title{
   color: white;
 }
+
+.comments-nickname{
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub-comments-count{
+  min-width: 60px;
+}

@@ -88,15 +88,15 @@
               <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
                 <div class="pull-left">
                   <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
-                  <span role="button" ng-show="comment.user_id == user_id" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(comment.id, comment.content)" tooltip></span>
+                  <span role="button" ng-show="comment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(comment)" tooltip></span>
                 </div>
                 <div class="pull-right">
                   <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
                 </div> 
               </div>
 
-              <div ng-show="editMode && editCommentid == comment.id">
-                <textarea name="newcomment" ng-class="{'form-control': editMode}" type="text" ng-model="comment.content"  value="{{comment.content}}" ng-enter="changeComment(comment.id, comment.content)" class="comment-input" ng-esc="cancelComment(comment)" required></textarea>
+              <div ng-form name="editComment" ng-show="editMode && editCommentid == comment.id" ng-class="{ 'has-error': editComment.newcomment.$invalid || hasError }">
+                <textarea name="newcomment" ng-class="{'form-control': editMode}" type="text" ng-model="comment.content" ng-maxlength="255" value="{{comment.content}}" ng-enter="changeComment(comment)" class="comment-input" ng-esc="cancelComment(comment)" required></textarea>
               </div>
               <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == comment.id">
                 <span>Натисніть ESC, щоб </span>
@@ -112,17 +112,18 @@
                   <div class="panel-heading clearfix">
                     <strong class="pull-left">{{subcomment.nickname}}</strong> <span class="text-muted pull-right">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
                   </div>
+                   <div class="clearfix comment-reply subcomment-reply" ng-show="!editMode || editCommentid != subcomment.id">
+                    <div class="pull-left">
+                      <span role="button" ng-show="subcomment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="left" title="Редагувати" ng-click="showCommentInput(subcomment)" tooltip></span>
+                    </div>
+                  </div>
                   <div class="panel-body comment-block" ng-show="!editMode || editCommentid != subcomment.id" ng-bind="subcomment.content">
                     {{subcomment.content}}
                   </div>
-                  <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
-                    <div class="pull-left">
-                      <span role="button" ng-show="subcomment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(subcomment.id, subcomment.content)" tooltip></span>
-                    </div>
-                  </div>
+                
 
-                  <div ng-show="editMode && editCommentid == subcomment.id">
-                    <textarea name="newcomment" ng-class="{'form-control': editMode}" type="text" ng-model="subcomment.content"  value="{{subcomment.content}}" ng-enter="changeComment(subcomment.id, subcomment.content)" class="comment-input" ng-esc="cancelComment(subcomment)" required></textarea>
+                  <div ng-form name="changeSubcomment" ng-show="editMode && editCommentid == subcomment.id" ng-class="{ 'has-error': changeSubcomment.newsubcomment.$invalid || hasError }">
+                    <textarea name="newsubcomment" ng-class="{'form-control': editMode}" type="text" ng-model="subcomment.content" ng-maxlength="255" value="{{subcomment.content}}" ng-enter="changeComment(subcomment)" class="comment-input" ng-esc="cancelComment(subcomment)" required></textarea>
                   </div>
                   <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == subcomment.id">
                     <span>Натисніть ESC, щоб </span>

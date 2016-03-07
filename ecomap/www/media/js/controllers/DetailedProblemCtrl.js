@@ -135,36 +135,44 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
 
     $scope.cls_eye_subs = "fa fa-eye-slash";
 
-    $scope.showCommentInput = function(comment_id, comment_content) {
+    $scope.showCommentInput = function(comment) {
       $scope.editMode = true;
-      $scope.editCommentid = comment_id;
-      $scope.oldContent = comment_content;
+      $scope.editCommentid = comment.id;
+      $scope.oldContent = comment.content;
     };
 
     $scope.cancelComment = function(comment) {
+      if(!$scope.oldContent) {
+        return;
+      }
       comment.content = $scope.oldContent;
+      $scope.editMode = false;
       $scope.oldContent = null;
-      $scope.editMode = false;  
     };
 
-    $scope.changeComment = function (comment_id, comment_content) {
-            $scope.editCommentid = comment_id;
-            if($scope.oldContent !== comment_content) {
+    $scope.changeComment = function (comment) {
+            $scope.editCommentid = comment.id;
+            if(!comment.content) {
+              $scope.msg.editError('коментаря', ' Некоректна довжина коментаря.');
+              return;
+            }
+            if($scope.oldContent !== comment.content) {
             $http({
               method: 'POST',
               url: '/api/change_comment',
               data: {
-                'id': comment_id,
-                'content': comment_content
+                'id': comment.id,
+                'content': comment.content,
               }
             }).then(function successCallback(response) {
                 $scope.msg.editSuccess('коментаря');
             } ,function errorCallback(response) {
-                $scope.msg.editError('коментаря');
+                  $scope.msg.editError('коментаря', '')
             })
-          } 
+          }
+          $scope.editMode = false;
           $scope.oldContent = null;
-          $scope.editMode = false;        
+        
     };
 
     $scope.chgEyeSubsc = function(){

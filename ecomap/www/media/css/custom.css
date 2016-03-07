@@ -340,6 +340,7 @@ form {
 /*Map styles*/
 .map-div{
   width: 1%;
+  height: 100%;
 }
 
 /*UserProfile styles*/
@@ -685,7 +686,9 @@ input[type="checkbox"] {
 .flex-column {
   flex-direction: column;
 }
-
+/*.main-flex{
+  height: 100%;
+}*/
 .flex-row {
   flex-direction: row;
 }

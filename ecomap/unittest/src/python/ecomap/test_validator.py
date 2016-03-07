@@ -259,15 +259,6 @@ class TestValidator(unittest2.TestCase):
         self.assertDictEqual(validator.check_post_comment(invalid_data),
                              ERROR_DATA)
 
-    def test_post_com_min_length(self):
-        """Testing check_post_comment function if value is not too short."""
-        invalid_data = {'content': 'q',
-                        'problem_id': 77,
-                        'parent_id': 12}
-        ERROR_DATA['error'] = [{'content': ERROR_MSG['check_minimum_length']
-                                           % 'content'}]
-        self.assertDictEqual(validator.check_post_comment(invalid_data),
-                             ERROR_DATA)
 
     def test_post_com_check_max_length(self):
         """Testing check_post_comment function if value is not too long."""

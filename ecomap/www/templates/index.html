@@ -141,7 +141,9 @@
       </div>
     </div>
   </nav>
-  
+  <div id="fetching" ng-show="isFetching==true">
+    <img src="/image/swipebox/712.gif">
+  </div>
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
   <div class="flex-container flex-row flex-item-1 main-flex">
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>

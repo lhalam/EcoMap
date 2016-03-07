@@ -27,20 +27,13 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
         }
       });
     };
-    $rootScope.isFetching=false;
     $scope.authenticate = function(provider) {
-      $rootScope.isFetching=true;
-      setTimeout(function(){
-        $rootScope.isFetching=false;
-      }, 10000);
       $auth.authenticate(provider).then(function successCallback(responce) {
         // $cookies.put('name', responce.data.name);
         // $cookies.put('surname', responce.data.surname);
         // $cookies.put('id', responce.data.id);
         // $cookies.put('role', responce.data.role);
         $state.go('map');
-        $rootScope.isFetching=false;
-      })
     };
   }
 ]);

@@ -5,13 +5,11 @@ import json
 import time
 import hashlib
 
-# from PIL import Image
-from flask import request, jsonify, Response
+from flask import request, Response
 from PIL import Image
 
 from ecomap.db import util as db
-# from ecomap import validator
-from ecomap.models import BaseModel
+from base_view_model import BaseModel
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 MARKERS_PATH = '/media/image/markers'
@@ -21,13 +19,17 @@ class ProblemType(BaseModel):
 
     '''Class for working with problem types.'''
 
-    fields = ['*', 'id', 'picture', 'name', 'radius']
+    fields = {'*': '*',
+              'id': 'id',
+              'picture': 'picture',
+              'name': 'name',
+              'radius': 'radius'}
     table = 'problem_type'
-    status_code = [200, 401, 402, 403]
+    status_code = [200, 401, 402]
 
     def get_all(self):
         '''The method retrieves all probleme types.'''
-        problem_type_tuple = db.get_problem_type()
+        problem_type_tuple = self.get_all_from_db()
         problem_type_list = []
         if problem_type_tuple:
             for problem in problem_type_tuple:
@@ -41,51 +43,49 @@ class ProblemType(BaseModel):
 
     def add(self):
         '''The method adds new problem type.'''
-        data = self.request.form
-        if self.validation(data):
-            if db.get_problem_type_by_name(data['problem_type_name']):
-                response = 401
-            else:
-                file_name = self.save_file(MARKERS_PATH)
-                if file_name:
-                    db.add_problem_type(file_name, data['problem_type_name'],
-                                        data['problem_type_radius'])
-                    response = jsonify(msg='Тип проблеми успішно додано!'), 200
-                else:
-                    response = jsonify(msg='Проблема при додаванні фото.'
-                                       'Спробуйте пізніше!'), 400
+        data = request.form
+        if self.get_problem_type(self.fields['*'], self.fields['name'],
+                                 data['problem_type_name']):
+            response = self.status_code[1]
         else:
-            response = jsonify(msg='Так як дані невірні!'), 400
+            file_name = self.save_file(MARKERS_PATH)
+            if file_name:
+                self.insert_into_db(file_name, data['problem_type_name'],
+                                    data['problem_type_radius'])
+                response = self.status_code[0]
+            else:
+                response = self.status_code[2]
         return response
 
     def edit(self):
         '''The method edits new problem type.'''
-        data = self.request.form
-        if self.validation(data):
-            old_name = db.get_problem_type_picture(data['problem_type_id'])
-            f_path = os.environ['STATICROOT'] + MARKERS_PATH
-            file_name = self.save_file(MARKERS_PATH)
-            if file_name:
-                if os.path.exists(os.path.join(f_path, old_name[0])):
-                    os.remove(os.path.join(f_path, old_name[0]))
-                db.update_problem_type(data['problem_type_id'], file_name,
-                                       data['problem_type_name'],
-                                       data['problem_type_radius'])
-                response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
-            else:
-                db.update_problem_type(data['problem_type_id'], old_name[0],
-                                       data['problem_type_name'],
-                                       data['problem_type_radius'])
-                response = jsonify(msg='Тип проблеми оновлено!'), 200
+        data = request.form
+        old_name = self.get_problem_type(self.fields['picture'],
+                                         self.fields['id'],
+                                         data['problem_type_id'])
+        f_path = os.environ['STATICROOT'] + MARKERS_PATH
+        file_name = self.save_file(MARKERS_PATH)
+        if file_name:
+            if os.path.exists(os.path.join(f_path, old_name[0])):
+                os.remove(os.path.join(f_path, old_name[0]))
+            self.update_field_in_db(data['problem_type_id'], file_name,
+                                    data['problem_type_name'],
+                                    data['problem_type_radius'],
+                                    self.fields['id'])
+            response = self.status_code[0]
         else:
-            response = jsonify(msg='Так як дані невірні!'), 400
+            db.self.update_field_in_db(data['problem_type_id'], old_name[0],
+                                       data['problem_type_name'],
+                                       data['problem_type_radius'],
+                                       self.fields['id'])
+            response = self.status_code[0]
         return response
 
     def delete(self):
         '''The method deletes new problem type.'''
         data = request.get_json()
-        file_name = self.get_problem_type(self.fields[2],
-                                          self.table, self.fields[1],
+        file_name = self.get_problem_type(self.fields['picture'],
+                                          self.fields['id'],
                                           data['problem_type_id'])
         f_path = os.environ['STATICROOT'] + MARKERS_PATH
         if not db.get_problems_by_type(data['problem_type_id']):
@@ -104,7 +104,7 @@ class ProblemType(BaseModel):
 
     def save_file(self, static_url):
         """Method to save a file from a form."""
-        file_to_save = self.request.files
+        file_to_save = request.files
         if file_to_save:
             extension = file_to_save['file'].filename.rsplit('.', 1)[1].lower()
             if extension in ALLOWED_EXTENSIONS:
@@ -130,39 +130,38 @@ class ProblemType(BaseModel):
 
         return response
 
-        def get_all_from_db(self):
-            '''Method gets all problem types from db.'''
-            query = '''SELECT * FROM `problem_type`;'''
-            response = db.read_method(query)
-            return response
+    def get_all_from_db(self):
+        '''Method gets all problem types from db.'''
+        query = '''SELECT * FROM `problem_type`;'''
+        response = db.read_method(query)
+        return response
 
-        def get_problem_type(self, field, table, filtration, type_id):
-            '''Method selects picture from proble type.'''
-            query = ('''SELECT `'{}'` FROM `'{}'`
-                            WHERE `'{}'`='{}';''').format(field, table,
-                                                          filtration, type_id)
-            response = db.read_method(query)
-            return response
+    def get_problem_type(self, field, filtration, type_id):
+        '''Method selects picture from proble type.'''
+        query = ('''SELECT `'{}'` FROM `problem_type`
+                        WHERE `'{}'`='{}';''').format(field,
+                                                      filtration, type_id)
+        response = db.read_method(query)
+        return response
 
-        def remove_from_db(self, problem_type_id):
-            '''Method removes problem type from db.'''
-            query = ('''DELETE FROM `problem_type`
-                            WHERE id='{}';''').format(problem_type_id)
-            db.write_method(query)
+    def remove_from_db(self, problem_type_id):
+        '''Method removes problem type from db.'''
+        query = ('''DELETE FROM `problem_type`
+                        WHERE id='{}';''').format(problem_type_id)
+        db.write_method(query)
 
-        def insert_into_db(self, picture, name, radius):
-            ''' '''
-            query = ('''INSERT  INTO `problem_type` (`picture`,
-                                         `name`, `radius`)
-                          VALUES ('{}', '{}', '{}');''').format()
-            db.write_method(query)
+    def insert_into_db(self, picture, name, radius):
+        ''' '''
+        query = ('''INSERT  INTO `problem_type` (`picture`,
+                                     `name`, `radius`)
+                      VALUES ('{}', '{}', '{}');''').format()
+        db.write_method(query)
 
-        def update_field_in_db(self, type_id, picture, name, radius, filtration):
-            ''' '''
-            query = ('''UPDATE `problem_type` SET `picture`='{}',
-                                         `name`='{}', `radius`='{}'
-                          WHERE `'{}'`='{}';''').format(picture, name,
-                                                        radius, filtration,
-                                                        type_id)
-            db.write_method(query)
-
+    def update_field_in_db(self, type_id, picture, name, radius, filtration):
+        ''' '''
+        query = ('''UPDATE `problem_type` SET `picture`='{}',
+                                     `name`='{}', `radius`='{}'
+                      WHERE `'{}'`='{}';''').format(picture, name,
+                                                    radius, filtration,
+                                                    type_id)
+        db.write_method(query)

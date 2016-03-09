@@ -601,7 +601,7 @@ def get_search_users_problems():
         'first_name': 'surname',
         'nickname': 'nick'}]``
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     count = db.count_user_by_nickname(nickname)

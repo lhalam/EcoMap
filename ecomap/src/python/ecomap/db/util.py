@@ -1836,19 +1836,3 @@ def get_problems_title(problem_ids):
                 """
         cursor.execute(query.format(', '.join(map(str, problem_ids))))
         return dict(cursor.fetchall())
-
-
-@retry_query(tries=3, delay=1)
-def write_method(query):
-    """Delete all data from table user_operation.
-    """
-    with pool_manager(READ_WRITE).transaction() as conn:
-        conn.execute(query)
-
-
-@retry_query(tries=3, delay=1)
-def read_method(query):
-    """Delete all data from table user_operation.
-    """
-    with pool_manager(READ_ONLY).transaction() as conn:
-        conn.execute(query)

@@ -45,7 +45,7 @@ class ProblemType(BaseModel):
                 response = self.status_code[2]
         return response
 
-    def edit(self, id, name, radius, file):
+    def edit(self, id):
         '''The method edits new problem type.'''
         # data = request.form
         self.id = id
@@ -56,11 +56,11 @@ class ProblemType(BaseModel):
             if os.path.exists(os.path.join(f_path, old_name[0])):
                 os.remove(os.path.join(f_path, old_name[0]))
             self.update_field_in_db(self.id, file_name,
-                                    name, radius)
+                                    self.name, self.radius)
             response = self.status_code[0]
         else:
             db.self.update_field_in_db(self.id, old_name[0],
-                                       name, radius)
+                                       self.name, self.radius)
             response = self.status_code[0]
         return response
 

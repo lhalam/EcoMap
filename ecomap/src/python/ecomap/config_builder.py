@@ -13,8 +13,8 @@ from ConfigParser import SafeConfigParser
 import MySQLdb
 
 ROOT_PATH = os.environ['CONFROOT']
-ADMIN_USER_ID = 1
-ANONYMOUS_USER_ID = 2
+ADMIN_USER_ID = '1'
+ANONYMOUS_USER_ID = '2'
 
 CONFIG_TYPES = {'str': {'regex': '.*',
                         'eval': '%s'},
@@ -150,30 +150,8 @@ def hash_pass(password, secret_key):
     return hashlib.md5(salted_password).hexdigest()
 
 
-def check_exist_id(user_id, host, db_user, db_pasword, db_name):
-    """Function checks if user's id is in db.
-    :param user_id: id of user.
-    :param host: database host name.
-    :param db_user: database user.
-    :param db_pasword: database password.
-    :param db_name: database name.
-    :return: true or false.
-    """
-    try:
-        mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
-        cursor = mysql.cursor()
-        query = """SELECT * FROM `user` WHERE id = %s;
-                """
-        cursor.execute(query, (user_id, ))
-        mysql.close()
-        return bool(cursor.fetchone())
-    except MySQLdb.Error as mysql_error:
-        logging.error('Error checking exist of a user into database!',
-                      exc_info=True)
-        raise ConfigBuilderMysqlError(mysql_error)
-
-
-def execute_query(query, host, db_user, db_pasword, db_name):
+def insert_user(user_id, first_name, last_name, nickname, email, password,
+                host, db_user, db_pasword, db_name):
     """Function creates connection to db and execute query.
     :param query: query to database.
     :param host: database host name.
@@ -184,48 +162,29 @@ def execute_query(query, host, db_user, db_pasword, db_name):
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
         cursor = mysql.cursor()
-        cursor.execute(query)
+        query = """INSERT INTO `user` (`id`,
+                                       `first_name`,
+                                       `last_name`,
+                                       `nickname`,
+                                       `email`,
+                                       `password`)
+               VALUES ('%s', '%s', '%s', '%s', '%s', '%s')
+               ON DUPLICATE KEY UPDATE `first_name` = '%s',
+                                       `last_name` = '%s',
+                                       `nickname` = '%s',
+                                       `email` = '%s',
+                                       `password` = '%s';
+            """
+        cursor.execute(query % (user_id, first_name, last_name, nickname,
+                                email, password, first_name, last_name,
+                                nickname, email, password))
         mysql.commit()
         mysql.close()
-        logging.debug('User added to db.')
+        logging.info('User added or update in db.')
     except MySQLdb.Error as mysql_error:
         logging.error('Error adding a user into database!', exc_info=True)
         raise ConfigBuilderMysqlError(mysql_error)
 
-
-def add_user(user_id, first_name, last_name, nickname, email, password, host,
-             db_user, db_pasword, db_name):
-    """Function will insert user in database if user isn't in database or
-    update column with information if it is.
-    :param user_id: id of user.
-    :param first_name: first name of user.
-    :param last_name: last name of user.
-    :param email: email of user.
-    :param password: hashed password of user.
-    :param host: database host name.
-    :param db_user: database user.
-    :param db_pasword: database password.
-    :param db_name: database name.
-    """
-    if check_exist_id(user_id, host, db_user, db_pasword, db_name):
-        query = ("""UPDATE `user` SET `first_name` = '{}', `last_name` = '{}',
-                                      `nickname` = '{}', `email` = '{}',
-                                      `password` = '{}'
-                                WHERE `id` = '{}';
-                  """).format(first_name, last_name, nickname, email,
-                              password, user_id)
-        execute_query(query, host, db_user, db_pasword, db_name)
-        logging.info('User %s %s updated in database.', first_name, last_name)
-    else:
-        query = ("""INSERT INTO `user` (`first_name`,
-                                        `last_name`,
-                                        `nickname`,
-                                        `email`,
-                                        `password`)
-                    VALUES ('{}', '{}', '{}', '{}', '{}');
-                 """).format(first_name, last_name, nickname, email, password)
-        execute_query(query, host, db_user, db_pasword, db_name)
-        logging.info('User %s %s insert in database.', first_name, last_name)
 
 
 def main():
@@ -247,20 +206,20 @@ def main():
     try:
         user_input = input_user_data(configvars_parser())
         create_config_files(user_input)
-        add_user(ADMIN_USER_ID, 'admin', 'admin', 'admin',
-                 user_input['ecomap_admin_user_email'],
-                 hash_pass(user_input['ecomap_admin_user_password'],
-                           user_input['ecomap_secret_key']),
-                 user_input['rw_db_host'], user_input['rw_db_user'],
-                 user_input['rw_db_password'], user_input['db_name'])
-        add_user(ANONYMOUS_USER_ID, user_input['ecomap_unknown_first_name'],
-                 user_input['ecomap_unknown_last_name'],
-                 user_input['ecomap_unknown_nickname'],
-                 user_input['ecomap_unknown_email'],
-                 hash_pass(user_input['ecomap_admin_user_password'],
-                           user_input['ecomap_secret_key']),
-                 user_input['rw_db_host'], user_input['rw_db_user'],
-                 user_input['rw_db_password'], user_input['db_name'])
+        insert_user(ADMIN_USER_ID, 'admin', 'admin', 'admin',
+                    user_input['ecomap_admin_user_email'],
+                    hash_pass(user_input['ecomap_admin_user_password'],
+                              user_input['ecomap_secret_key']),
+                    user_input['rw_db_host'], user_input['rw_db_user'],
+                    user_input['rw_db_password'], user_input['db_name'])
+        insert_user(ANONYMOUS_USER_ID, user_input['ecomap_unknown_first_name'],
+                    user_input['ecomap_unknown_last_name'],
+                    user_input['ecomap_unknown_nickname'],
+                    user_input['ecomap_unknown_email'],
+                    hash_pass(user_input['ecomap_admin_user_password'],
+                              user_input['ecomap_secret_key']),
+                    user_input['rw_db_host'], user_input['rw_db_user'],
+                    user_input['rw_db_password'], user_input['db_name'])
     except (BaseConfigBuilderError, ConfigBuilderMysqlError):
         logging.error('Error creating configurations for project! '
                       'Read a traceback to find a problem.', exc_info=True)

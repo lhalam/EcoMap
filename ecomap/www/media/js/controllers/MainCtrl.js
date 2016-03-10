@@ -4,13 +4,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     $scope.isAuthenticated = function() {
       return $auth.isAuthenticated();
     };
-    $scope.getUsername = function() {
-      if ($cookies.get('name') && $cookies.get('surname')) {
-        return $cookies.get('name') + ' ' + $cookies.get('surname');
-      } else {
-        return null;
-      }
-    };
+    
     $scope.isAdmin = function() {
       var role = $cookies.get('role');
       if (role == 'admin') {
@@ -28,5 +22,15 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     }).success(function(resp) {
       $scope.faqTitles = resp;
     });
+
+    
+    if ($cookies.get("id")) {
+      $http({
+        method: 'GET',
+        url: '/api/user_detailed_info/' + $cookies.get("id")
+      }).success(function(responce) {
+        $rootScope.UserCredentials = responce.name + ' ' + responce.surname;
+      });
+    }  
   }
 ]);

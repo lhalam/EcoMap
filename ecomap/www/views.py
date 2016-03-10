@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 This module holds all views controls for
 ecomap project.
@@ -28,7 +28,7 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
+    logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
 
 
 @app.before_request

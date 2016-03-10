@@ -70,7 +70,7 @@
         <td ng-model="subscription.nickname" class="problem-title" ng-show="showTable==true || nickname==true">{{subscription.nickname}}</td>
         <td ng-model="subscription.title" class="problem-title">{{subscription.title}}</td>
         <td ng-model="subscription.problem_type_id">{{subscription.name}}</td>
-        <td ng-model="subscription.status">{{subscription.status}}</td>
+        <td ng-model="subscription.status">{{getStatus(subscription.status)}}</td>
         <td>{{subscription.date | date : "dd/MM/yyyy "}}</td>
         <td>{{subscription.date_subscription | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(subscription.id)">переглянути</a></td>

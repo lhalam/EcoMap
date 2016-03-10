@@ -1836,3 +1836,18 @@ def get_problems_title(problem_ids):
                 """
         cursor.execute(query.format(', '.join(map(str, problem_ids))))
         return dict(cursor.fetchall())
+
+@retry_query(tries=3, delay=1)
+def count_subscriptions_by_problem_id():
+    """Count of problems created by user with special nickname.
+    :return: count of problems.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(s.problem_id), p.title 
+                   FROM `subscription` AS s 
+                   INNER JOIN `problem` AS p ON s.problem_id = p.id 
+                   GROUP BY s.problem_id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()

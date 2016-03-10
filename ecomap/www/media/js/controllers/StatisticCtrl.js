@@ -36,4 +36,12 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
         'title': 'How Much Pizza I Ate Last Night'
     };
 
-  }])
+    $http({
+        method: 'GET',
+        url: '/api/countSubscriptions',
+    }).then(function successCallback(response) {
+        $scope.subscriptions = response.data[0];
+        console.log($scope.subscriptions);
+    })
+
+}])

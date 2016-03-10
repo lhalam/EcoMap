@@ -1130,3 +1130,48 @@ select.form-comments{
 .sub-comments-count{
   min-width: 60px;
 }
+
+.statistic {
+    margin: 10px 0;
+    text-align: center;
+}
+.topProblems {
+  display: inline-block;
+  margin: 15px 5px;
+  margin-right: 4%;
+}
+.statistic h2{
+  font-size: 34px;
+  font-weight: bold;
+}
+.topItem>a {
+  padding: 5px;
+  border: rgba(0,0,0,.1) solid;
+  margin: 5px;
+  display: inline-block;
+  width: 100%;
+  font-family: arial;
+}
+.topItem>a >li {
+  font-size: 18px;
+  color: #000;
+  line-height: 1;
+  position: relative;
+  text-align: left;
+  height: 4em;
+  list-style-type: none;
+  font-family: arial;
+}
+.topItem>a>li>p {
+  color: #7B7B7C;
+  position: absolute;
+  right: 5px;
+  bottom: -5px;
+}
+.topProblems a:hover{
+  text-decoration: none;
+}
+.topItem>a>li>p>i{
+  padding-right: 4px;
+  padding-bottom: 1px;
+}

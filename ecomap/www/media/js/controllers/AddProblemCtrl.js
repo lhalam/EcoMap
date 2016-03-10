@@ -1,12 +1,13 @@
 app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory) {
     $rootScope.showSidebarProblem = false;
-    $rootScope.toogleFilter = function(){
+    $rootScope.toogleMap = function(){
       $rootScope.showSidebarProblem = !$rootScope.showSidebarProblem;
+      if ($rootScope.showSidebarProblem ) $scope.changeToogleMap = 'проблема';
+      else $scope.changeToogleMap = 'карта';
       MapFactory.turnResizeOn();
       MapFactory.mapInstance.setZoom(7);
     }
-
      $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };

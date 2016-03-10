@@ -1175,3 +1175,15 @@ select.form-comments{
   padding-right: 4px;
   padding-bottom: 1px;
 }
+.pie-chart h1, .pie-chart p{
+  color: rgb(51, 51, 51);
+  font-size: 30px;
+  text-align: center;
+  font-family: "LatoBold";
+}
+label.checked{
+  border-bottom: 1px solid rgb(51, 51, 51);;
+}
+.period input{
+  display: none;
+}

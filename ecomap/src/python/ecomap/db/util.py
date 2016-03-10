@@ -1837,9 +1837,8 @@ def get_problems_title(problem_ids):
         cursor.execute(query.format(', '.join(map(str, problem_ids))))
         return dict(cursor.fetchall())
 
-
 @retry_query(tries=3, delay=1)
-def count_type(problem_type_id, posted_date):
+def count_all_type(problem_type_id):
     """Get dictionary with problem id as key and
         problem title as value.
        :params: problems_id - list of problem_ids.
@@ -1849,9 +1848,26 @@ def count_type(problem_type_id, posted_date):
         query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
                                 INNER JOIN `problem_type`
                                 ON problem.problem_type_id = problem_type.id
-                WHERE problem_type_id = {} AND
-                FROM_UNIXTIME(created_date, '%Y-%m-%d') = '{}';
-                """).format(problem_type_id, posted_date)
+                WHERE problem_type_id = {};
+                """).format(problem_type_id)
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_type(problem_type_id, date_format, posted_date):
+    """Get dictionary with problem id as key and
+        problem title as value.
+       :params: problems_id - list of problem_ids.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
+                                INNER JOIN `problem_type`
+                                ON problem.problem_type_id = problem_type.id
+                WHERE problem_type_id = '{}' AND
+                FROM_UNIXTIME(created_date, '{}') = '{}';
+                """).format(problem_type_id, date_format, posted_date)
         cursor.execute(query)
         return cursor.fetchone()
 
@@ -1864,3 +1880,4 @@ def count_problem_types():
         query = """SELECT COUNT(id) FROM `problem_type`;"""
         cursor.execute(query)
         return cursor.fetchone()
+

@@ -42,7 +42,35 @@
 			</div>
 		</div>
 	</div>
-	<h1>Статистика за весь час</h1>
-	<p>Кількість доданих проблем за останній день | тиждень | місяць</p>
-	<div google-chart chart="chartObject" style="height:600px; width:100%;"></div>
+	<div class="pie-chart">
+		<div class="row">
+			<div class="col-lg-4 col-lg-offset-4 col-sm-12">
+				<h1>Статистика за весь час</h1>
+			</div>
+		</div>
+		<p>Кількість доданих проблем за останній
+			<label class="period" ng-class="{checked: period==1}">
+					<input type="radio" ng-value="1" name="period" ng-model="period" 
+								 ng-change="change(period)">день
+			</label> | 
+			<label class="period" ng-class="{checked: period==2}">
+					<input type="radio" ng-value="2" name="period" ng-model="period" 
+								 ng-change="change(period)">тиждень
+			</label> | 
+			<label class="period" ng-class="{checked: period==3}">
+					<input type="radio" ng-value="3" name="period" ng-model="period" 
+								 ng-change="change(period)">місяць
+			</label> |
+			<label class="period" ng-class="{checked: period==4}">
+					<input type="radio" ng-value="4" name="period" ng-model="period" 
+								 ng-change="change(period)">рік
+			</label>
+		</p>
+		<p><label class="period" ng-class="{checked: !period}">
+					<input type="radio" ng-value="0" name="period" ng-model="period" 
+								 ng-change="change(period)">за весь час
+			</label>
+		</p>
+		<div google-chart chart="chartObject" style="height:600px; width:100%;"></div>
+	</div>
 </div>

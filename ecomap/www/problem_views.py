@@ -877,12 +877,20 @@ def statistic_problems():
         'last_name': 'Kozak',
         'sub_count': 15}]``
     """
-    posted_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    period = int(request.args.get('date'))
     count_problem_types = db.count_problem_types()[0]
-    static_list = [{'type': db.count_type(problem_types, posted_date)[1],
-                    'count': db.count_type(problem_types, posted_date)[0]}
-                   for problem_types in range(1, count_problem_types+1)]
+    if not period:
+        static_list = [{'type': db.count_all_type(problem_types)[1],
+                        'count': db.count_all_type(problem_types)[0]}
+                       for problem_types in range(1, count_problem_types+1)]
+    else:
+        date_format = '%Y-%m-%d' if period == 1 else '%U' if period == 2 else '%Y-%m' if period == 3 else '%Y'
+        posted_date = datetime.datetime.now().strftime(date_format)
+        static_list = [{'type': db.count_type(problem_types, date_format,
+                                              posted_date)[1],
+                        'count': db.count_type(problem_types, date_format,
+                                               posted_date)[0]}
+                       for problem_types in range(1, count_problem_types+1)]
     return Response(json.dumps(static_list), mimetype='application/json')
-
 
 

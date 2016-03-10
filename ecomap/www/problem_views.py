@@ -4,6 +4,7 @@ import os
 import json
 import time
 import hashlib
+import datetime
 
 import PIL
 
@@ -857,3 +858,31 @@ def problems_radius(type_id):
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6], 'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/statisticPieChar', methods=['GET'])
+def statistic_problems():
+    """This method retrieves all user's comments with special nickname from db.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's problem represented with next objects:
+    ``[{"id": 2,
+        "content": "Awesome comment.",
+        "problem_id": 12,
+        "problem_title": "Forest Problem",
+        "created_date": "2015-02-24T14:27:22.000Z",
+        "nickname": 'Pomidor',
+        "first_name": 'Ivan',
+        'last_name': 'Kozak',
+        'sub_count': 15}]``
+    """
+    posted_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    count_problem_types = db.count_problem_types()[0]
+    static_list = [{'type': db.count_type(problem_types, posted_date)[1],
+                    'count': db.count_type(problem_types, posted_date)[0]}
+                   for problem_types in range(1, count_problem_types+1)]
+    return Response(json.dumps(static_list), mimetype='application/json')
+
+
+

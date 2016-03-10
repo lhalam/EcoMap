@@ -116,6 +116,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
+  .state('statistic', {
+    url: '/statistic',
+    templateUrl: '/templates/statistic.html',
+    controller: 'statisticCtrl'
+  })
   .state('addProblem', {
     url: '/addProblem',
     views:{

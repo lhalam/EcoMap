@@ -545,6 +545,28 @@ def get_all_subscriptions():
                     mimetype='application/json')
 
 
+@app.route('/api/countSubscriptions', methods=['GET'])
+def get_count_subscriptions():
+    """Function retrieves all user's subscriptions from db and shows them in 
+    `top 10 of the most popular subscriptions` tab.
+    :param count: count of subscriptions to every problem (int)
+    :param title: title of problem (str)
+    :type: JSON
+    """
+    subscription_tuple = db.count_subscriptions_by_problem_id()
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'count': subscription[0],
+                                   'title': subscription[1]})
+    sorted_json = sorted(subscriptions_list,
+                     key=lambda k: (k['count']),
+                     reverse=True)[:9]
+    return Response(json.dumps([sorted_json]),
+                    mimetype='application/json')
+
+
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
     """Function adds data about subscription into DB.

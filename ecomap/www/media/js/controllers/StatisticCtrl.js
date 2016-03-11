@@ -27,6 +27,15 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       })
     }
     $scope.loadStatisticPieChart()
-
+    $scope.loadCountSubs = function() {
+        $http({
+            method: 'GET',
+            url: '/api/countSubscriptions',
+        }).then(function successCallback(response) {
+            $scope.subscriptions = response.data[0];
+        })
+    };
+    $scope.loadCountSubs();
 }]);
     
+

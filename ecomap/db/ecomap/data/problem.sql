@@ -12,3 +12,4 @@ insert into problem (title, content, proposal, severity, status, latitude, longi
 insert into problem (title, content, proposal, severity, status, latitude, longitude, is_enabled, created_date, problem_type_id, user_id) values ('title12', 'content', 'none', '4', 'unsolved', 51.55, 28.45, 1, 1437706860, 5, 1);
 insert into problem (title, content, proposal, severity, status, latitude, longitude, is_enabled, created_date, problem_type_id, user_id) values ('title13', 'content', 'none', '2', 'unsolved', 51.44, 28.45, 1, 1157706860, 2, 1);
 insert into problem (title, content, proposal, severity, status, latitude, longitude, is_enabled, created_date, problem_type_id, user_id) values ('title14', 'content', 'none', '3', 'unsolved', 49.34, 32.45, 1, 1457706860, 1, 1);
+

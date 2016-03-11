@@ -43,6 +43,10 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             $scope.severities = response.data;
         })
     };
+    $scope.triggerDetailModal = function(problem_id) {
+      var url = '/#/detailedProblem/' + problem_id;
+      window.open(url, '_blank');
+    };
     $scope.loadCountSubs();
     $scope.loadSeverityStat();
 }]);

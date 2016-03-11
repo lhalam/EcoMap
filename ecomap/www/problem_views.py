@@ -559,7 +559,8 @@ def get_count_subscriptions():
     logger.info(subscription_tuple)
     for subscription in subscription_tuple:
         subscriptions_list.append({'count': subscription[0],
-                                   'title': subscription[1]})
+                                   'id': subscription[1],
+                                   'title': subscription[2]})
     sorted_json = sorted(subscriptions_list,
                      key=lambda k: (k['count']),
                      reverse=True)[:9]

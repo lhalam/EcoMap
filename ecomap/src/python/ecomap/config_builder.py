@@ -72,7 +72,7 @@ def input_user_data(confvar_dict):
     """
     user_dict = {}
     logging.info('Function collects data from user input.')
-    for key, value in confvar_dict.iteritems():
+    for key, value in sorted(confvar_dict.iteritems()):
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
                                        % (key, value['help'],

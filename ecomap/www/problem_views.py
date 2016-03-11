@@ -4,6 +4,7 @@ import os
 import json
 import time
 import hashlib
+import datetime
 
 import PIL
 
@@ -879,3 +880,34 @@ def problems_radius(type_id):
                 'problem_type_Id': problem[4], 'status': problem[5],
                 'date': problem[6], 'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/statisticPieChar', methods=['GET'])
+def statistic_problems():
+    """This method returns statisctic for some period from db.
+    Statistic include type of problem and its count for this period.
+    :period: int which define time period. default is 0. Can have such values:
+    (0 - period of all time, 1 - only for one day, 2 - for a week, 
+    3 -for a month, 4 - for a year).
+    :rtype: JSON.
+    :return: list of statisctic ecomap's problem with next objects:
+    ``[{"type": "Forest Problem",
+        "count": 12}]``
+    """
+    period = int(request.args.get('date')) or 0
+    count = db.count_problem_types()[0]
+    if period:
+        date_format = ('', '%Y-%m-%d', '%U', '%Y-%m', '%Y')[period]
+        posted_date = datetime.datetime.now().strftime(date_format)
+        statics = [{'type': db.count_type(problem_types, date_format,
+                                          posted_date)[1],
+                    'count': db.count_type(problem_types, date_format,
+                                           posted_date)[0]}
+                   for problem_types in range(1, count+1)]
+    else:
+        statics = [{'type': db.count_all_type(problem_types)[1],
+                    'count': db.count_all_type(problem_types)[0]}
+                   for problem_types in range(1, count+1)]
+    return Response(json.dumps(statics), mimetype='application/json')
+
+

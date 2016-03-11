@@ -16,10 +16,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
         return null;
       }
       $auth.login(credentials).then(function successCallback(responce) {
-/*        $cookies.put('name', responce.data.name);
-        $cookies.put('surname', responce.data.surname);
-        $cookies.put('id', responce.data.id);
-        $cookies.put('role', responce.data.role);*/
+        $rootScope.UserCredentials = responce.data.name + ' ' + responce.data.surname ;
         $state.go('map');
       }, function errorCallback(responce) {
         if (responce.status == 401) {
@@ -34,10 +31,7 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
         $rootScope.isFetching=false;
       }, 20000);
       $auth.authenticate(provider).then(function successCallback(responce) {
-        // $cookies.put('name', responce.data.name);
-        // $cookies.put('surname', responce.data.surname);
-        // $cookies.put('id', responce.data.id);
-        // $cookies.put('role', responce.data.role);
+        $rootScope.UserCredentials = responce.data.name + ' ' + responce.data.surname ;
         $state.go('map');
         $rootScope.isFetching=false;
       })

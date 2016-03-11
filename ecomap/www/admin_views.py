@@ -1067,12 +1067,13 @@ def get_tempdata():
         "creation_date": 14334353432,
         "type": 'password','delete'}]``.
     '''
-
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
 
+    count = db.count_all_user_operations()
     tempdata_tuple = db.get_all_user_operations(offset, per_page)
     tempdata_list = []
+    total_count = {}
     if tempdata_tuple:
         for tempdata in tempdata_tuple:
             tempdata_list.append({'id': tempdata[0],
@@ -1080,9 +1081,10 @@ def get_tempdata():
                                   'last_name': tempdata[2],
                                   'nickname': tempdata[3],
                                   'creation_date': tempdata[4],
-                                  'type': tempdata[5],
-                                 })
-    response = Response(json.dumps(tempdata_list),
+                                  'type': tempdata[5]})
+    if count:
+        total_count = {'total_tempdata_count': count[0]}
+    response = Response(json.dumps([tempdata_list, [total_count]]),
                         mimetype='application/json')
     return response
 

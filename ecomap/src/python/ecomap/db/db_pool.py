@@ -88,8 +88,7 @@ class DBPool(object):
 
     def __del__(self):
         for conn in self._connection_pool:
-            self._close_conn(conn)
-   
+            self._close_conn(conn)  
 
     def _create_conn(self):
         """Method _create_conn creates connection object.
@@ -187,5 +186,5 @@ def pool_manager(pool_name):
                             host=_CONFIG['db.%s.host' % pool_name],
                             port=_CONFIG['db.%s.port' % pool_name] ,
                             ttl=_CONFIG['db.connection_lifetime'],
-                            pool_size=_CONFIG['db.%s.pool_size'  % pool_name])
+                            pool_size=_CONFIG['db.%s.pool_size' % pool_name])
     return DB_POOL[pool_name]

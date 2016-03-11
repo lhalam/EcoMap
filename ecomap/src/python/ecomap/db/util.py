@@ -1895,3 +1895,16 @@ def count_problem_types():
         cursor.execute(query)
         return cursor.fetchone()
 
+
+@retry_query(tries=3, delay=1)
+def get_all_problems_severity_for_stats():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT id, title, problem_type_id, status, created_date, title,
+                           severity FROM problem;
+                      """
+        cursor.execute(query)
+        return cursor.fetchall()

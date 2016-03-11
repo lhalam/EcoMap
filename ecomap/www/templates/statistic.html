@@ -17,11 +17,11 @@
 			<div class='col-md-4'>
 				<h2>ТОП 10 важливих проблем</h2>
 				<br>
-				<ul class="topItem">
+				<ul class="topItem" ng-repeat='severity in severities'>
 					<a href="">
-						<li>1. Хотиславський кар`єр 
+						<li>{{severity.title}}
 							<p>
-								<i class="fa fa-star"></i>20000
+								<i class="fa fa-star"></i>{{severity.severity}}
 							</p>
 						</li>
 					</a>

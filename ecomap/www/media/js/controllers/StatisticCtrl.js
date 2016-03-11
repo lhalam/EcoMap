@@ -40,7 +40,16 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             $scope.subscriptions = response.data[0];
         })
     };
+    $scope.loadSeverityStat = function() {
+        $http({
+            method: 'GET',
+            url: '/api/problems_severity_stats',
+        }).then(function successCallback(response) {
+            $scope.severities = response.data;
+        })
+    };
     $scope.loadCountSubs();
+    $scope.loadSeverityStat();
 }]);
     
 

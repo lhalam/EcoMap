@@ -911,3 +911,30 @@ def statistic_problems():
     return Response(json.dumps(statics), mimetype='application/json')
 
 
+@app.route('/api/problems_severity_stats')
+def problems_severity_stats():
+    """Handler for sending short data about all problem stored in db.
+    Used by Google Map instance.
+
+    :rtype: JSON
+    :return:
+        - If problems list not empty:
+            ``[{"id": "1", "date": 1450735578,
+            "title": "problem 1","severity": 1}]``
+        - If problem list is empty:
+            ``{}``
+
+    :statuscode 200: no errors
+
+    """
+    problem_tuple = db.get_all_problems_severity_for_stats()
+    parsed_json = []
+    if problem_tuple:
+        for problem in problem_tuple:
+            parsed_json.append({'id': problem[0], 'date': problem[4],
+                                'title': problem[5],
+                                'severity': problem[6]})
+    sorted_json = sorted(parsed_json,
+                         key=lambda k: (k['severity'], k['date']),
+                         reverse=True)[:10]
+    return Response(json.dumps(sorted_json), mimetype='application/json')

@@ -4,11 +4,11 @@
 			<div class='col-md-4'>
 				<h2>ТОП 10 популярних проблем</h2>
 				<br>
-				<ul class="topItem">
-					<a href="">
-						<li>1. Забруднення водойм
+				<ul class="topItem" ng-repeat='subscription in subscriptions'>
+					<a href="" ng-click="triggerDetailModal(subscription.id)">
+						<li>{{subscription.title}}
 							<p>
-								<i class="fa fa-eye"></i>10000
+								<i class="fa fa-eye"></i>{{subscription.count}}
 							</p>
 						</li>
 					</a>
@@ -17,11 +17,11 @@
 			<div class='col-md-4'>
 				<h2>ТОП 10 важливих проблем</h2>
 				<br>
-				<ul class="topItem">
-					<a href="">
-						<li>1. Хотиславський кар`єр 
+				<ul class="topItem" ng-repeat='severity in severities'>
+					<a href="" ng-click="triggerDetailModal(severity.id)">
+						<li>{{severity.title}}
 							<p>
-								<i class="fa fa-star"></i>20000
+								<i class="fa fa-star"></i>{{severity.severity}}
 							</p>
 						</li>
 					</a>

@@ -1144,6 +1144,9 @@ select.form-comments{
   font-size: 34px;
   font-weight: bold;
 }
+.topItem{
+  margin-bottom: 0px;
+}
 .topItem>a {
   padding: 5px;
   border: rgba(0,0,0,.1) solid;
@@ -1151,6 +1154,10 @@ select.form-comments{
   display: inline-block;
   width: 100%;
   font-family: arial;
+}
+.topItem>a:hover{
+  background: linear-gradient(to bottom,#ecebe1 10%,#e6e3d0);
+  box-shadow: 0 0 10px rgba(0,0,0,.3);
 }
 .topItem>a >li {
   font-size: 18px;
@@ -1182,7 +1189,10 @@ select.form-comments{
   font-family: "LatoBold";
 }
 label.checked{
-  border-bottom: 1px solid rgb(51, 51, 51);;
+  text-decoration: underline;
+}
+.period{
+  color: #428bca;
 }
 .period input{
   display: none;

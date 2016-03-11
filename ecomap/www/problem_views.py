@@ -545,6 +545,29 @@ def get_all_subscriptions():
                     mimetype='application/json')
 
 
+@app.route('/api/countSubscriptions', methods=['GET'])
+def get_count_subscriptions():
+    """Function retrieves all user's subscriptions from db and shows them in 
+    `top 10 of the most popular subscriptions` tab.
+    :param count: count of subscriptions to every problem (int)
+    :param title: title of problem (str)
+    :type: JSON
+    """
+    subscription_tuple = db.count_subscriptions_by_problem_id()
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'count': subscription[0],
+                                   'id': subscription[1],
+                                   'title': subscription[2]})
+    sorted_json = sorted(subscriptions_list,
+                     key=lambda k: (k['count']),
+                     reverse=True)[:9]
+    return Response(json.dumps([sorted_json]),
+                    mimetype='application/json')
+
+
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
     """Function adds data about subscription into DB.
@@ -864,27 +887,73 @@ def problems_radius(type_id):
 def statistic_problems():
     """This method returns statisctic for some period from db.
     Statistic include type of problem and its count for this period.
-    :period: return int which define time period. default is 0.
+    :period: int which define time period. default is 0. Can have such values:
+    (0 - period of all time, 1 - only for one day, 2 - for a week, 
+    3 -for a month, 4 - for a year).
     :rtype: JSON.
     :return: list of statisctic ecomap's problem with next objects:
     ``[{"type": "Forest Problem",
         "count": 12}]``
     """
     period = int(request.args.get('date')) or 0
-    count_problem_types = db.count_problem_types()[0]
-    if not period:
-        static_list = [{'type': db.count_all_type(problem_types)[1],
-                        'count': db.count_all_type(problem_types)[0]}
-                       for problem_types in range(1, count_problem_types+1)]
-    else:
-        date_format = '%Y-%m-%d' if period == 1 else '%U' if period == 2 \
-                                    else '%Y-%m' if period == 3 else '%Y'
+    count = db.count_problem_types()[0]
+    if period:
+        date_format = ('', '%Y-%m-%d', '%U', '%Y-%m', '%Y')[period]
         posted_date = datetime.datetime.now().strftime(date_format)
-        static_list = [{'type': db.count_type(problem_types, date_format,
-                                              posted_date)[1],
-                        'count': db.count_type(problem_types, date_format,
-                                               posted_date)[0]}
-                       for problem_types in range(1, count_problem_types+1)]
-    return Response(json.dumps(static_list), mimetype='application/json')
+        statics = [{'type': db.count_type(problem_types, date_format,
+                                          posted_date)[1],
+                    'count': db.count_type(problem_types, date_format,
+                                           posted_date)[0]}
+                   for problem_types in range(1, count+1)]
+    else:
+        statics = [{'type': db.count_all_type(problem_types)[1],
+                    'count': db.count_all_type(problem_types)[0]}
+                   for problem_types in range(1, count+1)]
+    return Response(json.dumps(statics), mimetype='application/json')
 
 
+@app.route('/api/problems_severity_stats')
+def problems_severity_stats():
+    """Handler for sending short data about all problem stored in db.
+    Used by Google Map instance.
+
+    :rtype: JSON
+    :return:
+        - If problems list not empty:
+            ``[{"id": "1", "date": 1450735578,
+            "title": "problem 1","severity": 1}]``
+        - If problem list is empty:
+            ``{}``
+
+    :statuscode 200: no errors
+
+    """
+    problem_tuple = db.get_all_problems_severity_for_stats()
+    parsed_json = []
+    if problem_tuple:
+        for problem in problem_tuple:
+            parsed_json.append({'id': problem[0], 'date': problem[4],
+                                'title': problem[5],
+                                'severity': problem[6]})
+    sorted_json = sorted(parsed_json,
+                         key=lambda k: (k['severity'], k['date']),
+                         reverse=True)[:10]
+    return Response(json.dumps(sorted_json), mimetype='application/json')
+
+
+@app.route('/api/statistic_all', methods=['GET'])
+def statistic_all():
+    """This method returns statisctic for all problems, subscriptions,
+    comments, photos from db.
+    :rtype: JSON.
+    :return: list of all statisctics with next objects:
+    ``[{'problems': 4,
+        'subscriptions': 12,
+        'comments': 34,
+        'photo': 5}]``
+    """
+    statistics = [{'problems': db.count_problems()[0],
+                   'subscriptions': db.count_all_subscriptions()[0],
+                   'comments': db.count_comment()[0],
+                   'photo': db.count_photo()[0]}]
+    return Response(json.dumps(statistics), mimetype='application/json')

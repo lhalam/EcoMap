@@ -2,9 +2,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
   function($scope, $http, $state, $cookies, $window) {
     $scope.period = 0;
     $scope.chartObject = {};
-    $scope.chartObject.options = {
-        colors: ['rgb(9, 91, 15)', 'rgb(35, 31, 32)', 'rgb(152, 68, 43)', 'rgb(27, 154, 214)', 'rgb(113, 191, 68)', 'rgb(255, 171, 9)', 'rgb(80, 9, 91)']
-};
     $scope.chartObject.type = "PieChart";
     $scope.chartObject.data = {"cols": [
         {id: "t", label: "Topping", type: "string"},
@@ -30,6 +27,28 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       })
     }
     $scope.loadStatisticPieChart()
-
+    $scope.loadCountSubs = function() {
+        $http({
+            method: 'GET',
+            url: '/api/countSubscriptions',
+        }).then(function successCallback(response) {
+            $scope.subscriptions = response.data[0];
+        })
+    };
+    $scope.loadSeverityStat = function() {
+        $http({
+            method: 'GET',
+            url: '/api/problems_severity_stats',
+        }).then(function successCallback(response) {
+            $scope.severities = response.data;
+        })
+    };
+    $scope.triggerDetailModal = function(problem_id) {
+      var url = '/#/detailedProblem/' + problem_id;
+      window.open(url, '_blank');
+    };
+    $scope.loadCountSubs();
+    $scope.loadSeverityStat();
 }]);
     
+

@@ -1152,9 +1152,8 @@ def get_all_users_problems(offset, per_page):
 
 @retry_query(tries=3, delay=1)
 def count_problems():
-    """
-
-    :return:
+    """Count all problems from db.
+    :return: count.
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
@@ -1166,7 +1165,7 @@ def count_problems():
 
 @retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
-    """Count of user's problem
+    """Count of user's problem.
     :return: count
     """
     with pool_manager(READ_ONLY).manager() as conn:
@@ -1838,6 +1837,20 @@ def get_problems_title(problem_ids):
         return dict(cursor.fetchall())
 
 @retry_query(tries=3, delay=1)
+def count_subscriptions_by_problem_id():
+    """Count of subsriptions.
+    :return: count of problems.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(s.problem_id), p.id, p.title 
+                   FROM `subscription` AS s 
+                   INNER JOIN `problem` AS p ON s.problem_id = p.id 
+                   GROUP BY s.problem_id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
+
 def count_all_type(problem_type_id):
     """Get dictionary with problem id as key and
         problem title as value.
@@ -1881,3 +1894,37 @@ def count_problem_types():
         cursor.execute(query)
         return cursor.fetchone()
 
+
+@retry_query(tries=3, delay=1)
+def get_all_problems_severity_for_stats():
+    """Return all problems in db.
+    :return: tuple, containing all problems
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT id, title, problem_type_id, status, created_date, title,
+                           severity FROM problem;
+                      """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def count_photo():
+    """Count of all photos in db.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(photo.id) FROM `photo`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def count_comment():
+    """Count of all comments in db.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`;"""
+        cursor.execute(query)
+        return cursor.fetchone()

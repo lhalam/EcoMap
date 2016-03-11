@@ -4,11 +4,11 @@
 			<div class='col-md-4'>
 				<h2>ТОП 10 популярних проблем</h2>
 				<br>
-				<ul class="topItem">
+				<ul class="topItem" ng-repeat='subscription in subscriptions'>
 					<a href="">
-						<li>1. Забруднення водойм
+						<li>{{subscription.title}}
 							<p>
-								<i class="fa fa-eye"></i>10000
+								<i class="fa fa-eye"></i>{{subscription.count}}
 							</p>
 						</li>
 					</a>

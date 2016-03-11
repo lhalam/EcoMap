@@ -546,15 +546,10 @@ def get_all_subscriptions():
 
 @app.route('/api/countSubscriptions', methods=['GET'])
 def get_count_subscriptions():
-    """Function retrieves all user's subscriptions from db and shows it in user
-    profile page on `my subscriptions` tab.
-    :param id: id of subscription (int)
+    """Function retrieves all user's subscriptions from db and shows them in 
+    `top 10 of the most popular subscriptions` tab.
+    :param count: count of subscriptions to every problem (int)
     :param title: title of problem (str)
-    :param problem_type_id: id of problem type (int)
-    :param status: status of problem (solved or unsolved)
-    :param date: date when problem was creared
-    :param date_subscription: date when user subscribed to a problem
-    :param name: name of problem type
     :type: JSON
     """
     subscription_tuple = db.count_subscriptions_by_problem_id()
@@ -562,9 +557,12 @@ def get_count_subscriptions():
     total_count = {}
     logger.info(subscription_tuple)
     for subscription in subscription_tuple:
-        subscriptions_list.append({'id': subscription[0],
+        subscriptions_list.append({'count': subscription[0],
                                    'title': subscription[1]})
-    return Response(json.dumps([subscriptions_list]),
+    sorted_json = sorted(subscriptions_list,
+                     key=lambda k: (k['count']),
+                     reverse=True)[:9]
+    return Response(json.dumps([sorted_json]),
                     mimetype='application/json')
 
 

@@ -34,4 +34,5 @@ INSERT INTO `resource` VALUES (1,'/'),(8,'/api/addResource'),
 (53, 'api/user_comments/:idUser'),
 (54, '/api/change_comment'),
 (55, '/api/tempdata'),
-(56, '/api/problems_radius/:idType');
+(56, '/api/problems_radius/:idType'),
+(58, '/api/countSubscriptions');

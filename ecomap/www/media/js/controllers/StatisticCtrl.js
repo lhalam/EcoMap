@@ -1,6 +1,8 @@
 app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
   function($scope, $http, $state, $cookies, $window) {
     $scope.chartObject = {};
+
+    $scope.count = 1;
     
     $scope.chartObject.type = "PieChart";
     
@@ -35,13 +37,13 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     $scope.chartObject.options = {
         'title': 'How Much Pizza I Ate Last Night'
     };
-
-    $http({
-        method: 'GET',
-        url: '/api/countSubscriptions',
-    }).then(function successCallback(response) {
-        $scope.subscriptions = response.data[0];
-        console.log($scope.subscriptions);
-    })
-
+    $scope.loadCountSubs = function() {
+        $http({
+            method: 'GET',
+            url: '/api/countSubscriptions',
+        }).then(function successCallback(response) {
+            $scope.subscriptions = response.data[0];
+        })
+    };
+    $scope.loadCountSubs();
 }])

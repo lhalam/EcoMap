@@ -862,29 +862,23 @@ def problems_radius(type_id):
 
 @app.route('/api/statisticPieChar', methods=['GET'])
 def statistic_problems():
-    """This method retrieves all user's comments with special nickname from db.
-    :query per_page: limit number. default is 5.
-    :query offset: offset number. default is 0.
+    """This method returns statisctic for some period from db.
+    Statistic include type of problem and its count for this period.
+    :period: return int which define time period. default is 0.
     :rtype: JSON.
-    :return: list of user's problem represented with next objects:
-    ``[{"id": 2,
-        "content": "Awesome comment.",
-        "problem_id": 12,
-        "problem_title": "Forest Problem",
-        "created_date": "2015-02-24T14:27:22.000Z",
-        "nickname": 'Pomidor',
-        "first_name": 'Ivan',
-        'last_name': 'Kozak',
-        'sub_count': 15}]``
+    :return: list of statisctic ecomap's problem with next objects:
+    ``[{"type": "Forest Problem",
+        "count": 12}]``
     """
-    period = int(request.args.get('date'))
+    period = int(request.args.get('date')) or 0
     count_problem_types = db.count_problem_types()[0]
     if not period:
         static_list = [{'type': db.count_all_type(problem_types)[1],
                         'count': db.count_all_type(problem_types)[0]}
                        for problem_types in range(1, count_problem_types+1)]
     else:
-        date_format = '%Y-%m-%d' if period == 1 else '%U' if period == 2 else '%Y-%m' if period == 3 else '%Y'
+        date_format = '%Y-%m-%d' if period == 1 else '%U' if period == 2 \
+                                    else '%Y-%m' if period == 3 else '%Y'
         posted_date = datetime.datetime.now().strftime(date_format)
         static_list = [{'type': db.count_type(problem_types, date_format,
                                               posted_date)[1],

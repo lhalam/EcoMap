@@ -14,7 +14,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     $scope.loadStatisticPieChart = function() {
       $scope.$watch('period', function(newValue){
           $scope.chartObject.data["rows"] = [];
-          console.log(newValue)
           $http({
             method: 'GET',
             url: '/api/statisticPieChar',
@@ -23,10 +22,10 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
                   }
           }).then(function successCallback(data) {
             $scope.statistic = data.data;
-            for(var i=0; i<$scope.statistic.length; i++){
-              $scope.chartObject.data["rows"].push({c: [{v: $scope.statistic[i]['type']},
-                                                        {v: $scope.statistic[i]['count']}]})
-            }                                  
+            $scope.statistic.forEach(function(item){
+              $scope.chartObject.data["rows"].push({c: [{v: item['type']},
+                                                        {v: item['count']}]})
+            });                                
           }, function errorCallback(response) {})
       })
     }

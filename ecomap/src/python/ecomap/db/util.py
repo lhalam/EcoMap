@@ -1784,7 +1784,7 @@ def get_all_user_operations(offset, per_page):
                    INNER JOIN `user_operation` as uoper ON u.id=uoper.user_id
                    LIMIT %s,%s;
                 """
-        cursor.execute(query, (offset, per_page))
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
 
 

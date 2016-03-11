@@ -152,8 +152,12 @@ def hash_pass(password, secret_key):
 
 def insert_user(user_id, first_name, last_name, nickname, email, password,
                 host, db_user, db_pasword, db_name):
-    """Function creates connection to db and execute query.
-    :param query: query to database.
+    """Function creates connection to db and adds or update user into it.
+    :param user_id: id of user.
+    :param first_name: first name of user.
+    :param last_name: last name of user.
+    :param email: email of user.
+    :param password: hashed password of user.
     :param host: database host name.
     :param db_user: database user.
     :param db_pasword: database password.
@@ -180,11 +184,10 @@ def insert_user(user_id, first_name, last_name, nickname, email, password,
                                 nickname, email, password))
         mysql.commit()
         mysql.close()
-        logging.info('User added or update in db.')
+        logging.info('User added or updated in db.')
     except MySQLdb.Error as mysql_error:
         logging.error('Error adding a user into database!', exc_info=True)
         raise ConfigBuilderMysqlError(mysql_error)
-
 
 
 def main():

@@ -97,21 +97,11 @@ app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
       }, function errorCallback(response) {})
     }
 
-    $scope.loadTempData = function() {
-      $http({
-        method: 'GET',
-        url: '/api/tempdata',
-      }).then(function successCallback(data) {
-        $scope.Tempdata = data.data;
-      }, function errorCallback(response) {})
-    }
-
     $scope.loadData = function() {
       $scope.loadRole()
       $scope.loadRes()
       $scope.loadPerm()
       $scope.loadProblemType()
-      $scope.loadTempData()
     }
     $scope.loadData()
   }]);

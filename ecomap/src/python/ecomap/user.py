@@ -271,7 +271,7 @@ def delete_user(user):
     message = generate_email('delete_user',
                              _CONFIG['email.from_address'],
                              user.email,
-                             (user.first_name, user.last_name, hex_hash))
+                             (user.first_name, user.last_name, request.url_root, hex_hash))
     send_email(_CONFIG['email.server_name'],
                _CONFIG['email.user_name'],
                _CONFIG['email.server_password'],

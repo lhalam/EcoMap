@@ -952,8 +952,6 @@ def statistic_all():
         'comments': 34,
         'photo': 5}]``
     """
-    statistics = [{'problems': db.count_problems()[0],
-                   'subscriptions': db.count_all_subscriptions()[0],
-                   'comments': db.count_comment()[0],
-                   'photo': db.count_photo()[0]}]
+    statistics = [db.count_problems()[0], db.count_all_subscriptions()[0],
+                  db.count_comment()[0], db.count_photo()[0]]
     return Response(json.dumps(statistics), mimetype='application/json')

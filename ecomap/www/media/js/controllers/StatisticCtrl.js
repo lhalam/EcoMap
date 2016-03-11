@@ -7,7 +7,10 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
         {id: "t", label: "Topping", type: "string"},
         {id: "s", label: "Slices", type: "number"}
     ]};
-    
+    $scope.all_statistic = [{title: 'Проблем', count: ''},
+                            {title: 'Підписок', count: ''},
+                            {title: 'Коментарів', count: ''},
+                            {title: 'Фотографій', count: ''}];
     $scope.loadStatisticPieChart = function() {
       $scope.$watch('period', function(newValue){
           $scope.chartObject.data["rows"] = [];
@@ -43,12 +46,23 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             $scope.severities = response.data;
         })
     };
+    $scope.loadAllStatistic = function() {
+        $http({
+            method: 'GET',
+            url: '/api/statistic_all',
+        }).then(function successCallback(response) {
+            for(var i=0; i<response.data.length; i++){
+              $scope.all_statistic[i].count = response.data[i];
+            }
+        })
+    };
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
     };
     $scope.loadCountSubs();
     $scope.loadSeverityStat();
+    $scope.loadAllStatistic();
 }]);
     
 

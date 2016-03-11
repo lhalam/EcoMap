@@ -1197,3 +1197,16 @@ label.checked{
 .period input{
   display: none;
 }
+.all-statistic{
+  list-style: none;
+  color: #33374E;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+.all-statistic li:first-child{
+  font-size: 106px;
+  line-height: 0.8;
+}
+.all-statistic li:last-child{
+  font-size: 21px;
+}

@@ -30,7 +30,7 @@ app.controller('TempDataCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
     }
     $scope.loadPagination();
 
-    $scope.deleteAllTempData = function(id) {
+    $scope.deleteAllTempData = function() {
       $http({
         method: 'DELETE',
         headers: {
@@ -38,7 +38,7 @@ app.controller('TempDataCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
         },
         url: '/api/tempdata',
       }).then(function successCallback(data) {
-        $scope.loadTempData();
+        $scope.loadPagination();
         $scope.msg.deleteSuccess('тимчасових даних');
       }), function errorCallback(response) {
         $scope.msg.editError('тимчасових даних', arguments[0]['data']['msg']);
@@ -57,7 +57,7 @@ app.controller('TempDataCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
           'user_operation_id': id
         }
       }).then(function successCallback(data) {
-        $scope.loadTempData();
+        $scope.loadPagination();
         $scope.msg.deleteSuccess('тимчасових даних');
       }), function errorCallback(response) {
         $scope.msg.editError('', arguments[0]['data']['msg']);

@@ -32,9 +32,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       })
     }
     $scope.loadStatisticPieChart()
-    $scope.chartObject.options = {
-        'title': 'How Much Pizza I Ate Last Night'
-    };
     $scope.loadCountSubs = function() {
         $http({
             method: 'GET',

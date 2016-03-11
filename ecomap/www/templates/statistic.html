@@ -5,7 +5,7 @@
 				<h2>ТОП 10 популярних проблем</h2>
 				<br>
 				<ul class="topItem" ng-repeat='subscription in subscriptions'>
-					<a href="">
+					<a href="" ng-click="triggerDetailModal(subscription.id)">
 						<li>{{subscription.title}}
 							<p>
 								<i class="fa fa-eye"></i>{{subscription.count}}
@@ -18,7 +18,7 @@
 				<h2>ТОП 10 важливих проблем</h2>
 				<br>
 				<ul class="topItem" ng-repeat='severity in severities'>
-					<a href="">
+					<a href="" ng-click="triggerDetailModal(severity.id)">
 						<li>{{severity.title}}
 							<p>
 								<i class="fa fa-star"></i>{{severity.severity}}

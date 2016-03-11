@@ -1144,6 +1144,9 @@ select.form-comments{
   font-size: 34px;
   font-weight: bold;
 }
+.topItem{
+  margin-bottom: 0px;
+}
 .topItem>a {
   padding: 5px;
   border: rgba(0,0,0,.1) solid;

@@ -1896,10 +1896,20 @@ def count_problem_types():
 
 @retry_query(tries=3, delay=1)
 def count_photo():
-    """Count of all problem types
+    """Count of all photos in db.
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT COUNT(photo.id) FROM `photo`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def count_comment():
+    """Count of all comments in db.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`;"""
         cursor.execute(query)
         return cursor.fetchone()

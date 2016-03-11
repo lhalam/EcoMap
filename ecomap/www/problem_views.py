@@ -911,3 +911,21 @@ def statistic_problems():
     return Response(json.dumps(statics), mimetype='application/json')
 
 
+@app.route('/api/statistic_all', methods=['GET'])
+def statistic_all():
+    """This method returns statisctic for all problems, subscriptions,
+    comments, photos from db.
+    :rtype: JSON.
+    :return: list of all statisctics with next objects:
+    ``[{'problems': 4,
+        'subscriptions': 12,
+        'comments': 34,
+        'photo': 5}]``
+    """
+    statistics = [{'problems': db.count_problems()[0],
+                   'subscriptions': db.count_all_subscriptions()[0],
+                   'comments': db.count_comment()[0],
+                   'photo': db.count_photo()[0]}]
+    return Response(json.dumps(statistics), mimetype='application/json')
+
+

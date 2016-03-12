@@ -31,6 +31,13 @@ def load_users():
     logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
 
 
+@app.after_request
+def clear_cookie(responce):
+    if not db.get_user_by_id(current_user.get_id()):
+        for i in ['id', 'role', 'remember_token']:
+            responce.delete_cookie(i)
+    return responce
+
 @app.before_request
 def check_access():
     """Global decorator for each view.

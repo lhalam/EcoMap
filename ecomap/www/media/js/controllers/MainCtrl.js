@@ -29,7 +29,6 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     }).success(function(resp) {
       $scope.faqTitles = resp;
     });
-    console.log($auth.isAuthenticated());
     
     if ($cookies.get("id")) {
       $http({

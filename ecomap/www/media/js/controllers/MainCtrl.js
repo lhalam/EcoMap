@@ -2,7 +2,14 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     $rootScope.isFetching=false;
 
     $scope.isAuthenticated = function() {
-      return $auth.isAuthenticated();
+      var authenticated;
+      if (!$cookies.get('id')) {
+        authenticated =  false;
+      }
+      else {
+        authenticated = $auth.isAuthenticated();
+      }
+      return authenticated;
     };
     
     $scope.isAdmin = function() {
@@ -22,7 +29,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     }).success(function(resp) {
       $scope.faqTitles = resp;
     });
-
+    console.log($auth.isAuthenticated());
     
     if ($cookies.get("id")) {
       $http({

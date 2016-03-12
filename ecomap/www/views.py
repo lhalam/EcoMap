@@ -3,8 +3,8 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import abort, render_template, session, url_for, request, Response, g
-from flask_login import current_user
+from flask import abort, render_template, session, url_for, request, Response, g, redirect
+from flask_login import current_user, logout_user
 
 from ecomap.app import app, logger, auto, _CONFIG
 from authorize_views import *
@@ -30,6 +30,13 @@ def load_users():
         g.user = anon
     logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
 
+
+@app.after_request
+def clear_cookie(responce):
+    if not db.get_user_by_id(current_user.get_id()):
+        for i in ['id', 'role', 'remember_token']:
+            responce.delete_cookie(i)
+    return responce
 
 @app.before_request
 def check_access():

@@ -62,7 +62,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             url: '/api/problems_comments_stats',
         }).then(function successCallback(response) {
             $scope.problCommStats = response.data
-            console.log($scope.problCommStats);
         }, function errorCallback (response){
             toaster.pop('error', 'Відправлення' , 'Сталась помилка');
         });

@@ -1933,10 +1933,10 @@ def get_problems_comments_stats():
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, COUNT(c.problem_id) as comments_count
+        query = """SELECT p.id, p.title, COUNT(c.problem_id) AS comments_count
                    FROM comment AS c INNER JOIN problem AS p
-                   ON c.problem_id = p.id where c.parent_id=0 
-                   group by c.problem_id 
+                   ON c.problem_id = p.id WHERE c.parent_id=0 
+                   GROUP BY c.problem_id 
                    ORDER BY comments_count DESC LIMIT 10;"""
         cursor.execute(query)
         return cursor.fetchall()

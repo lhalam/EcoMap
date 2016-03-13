@@ -165,6 +165,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
                 'content': comment.content,
               }
             }).then(function successCallback(response) {
+                comment.updated_date = response.data.updated_date
+                console.log(comment.updated_date);
                 $scope.msg.editSuccess('коментаря');
             } ,function errorCallback(response) {
                   $scope.msg.editError('коментаря', '')

@@ -119,8 +119,9 @@ def detailed_problem(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
@@ -341,11 +342,12 @@ def change_comment_by_id():
     """
     response = jsonify(), 400
     data = request.get_json()
+    updated_date = int(time.time())
     if data:
         valid = validator.change_comment(data)
         if valid['status']:
-            db.change_comment_by_id(data['id'], data['content'])
-            response = jsonify(), 200
+            db.change_comment_by_id(data['id'], data['content'], updated_date)
+            response = jsonify({'updated_date': updated_date * 1000}), 200
     return response
 
 
@@ -421,8 +423,9 @@ def get_comments(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
@@ -463,10 +466,11 @@ def get_subcomments(parent_id):
                              'problem_id': comment[2],
                              'parent_id': comment[3],
                              'created_date': comment[4] * 1000,
-                             'user_id': comment[5],
-                             'nickname': comment[6],
-                             'first_name': comment[7],
-                             'last_name': comment[8]})
+                             'updated_date': comment[5] * 1000 if comment[5] else None,
+                             'user_id': comment[6],
+                             'nickname': comment[7],
+                             'first_name': comment[8],
+                             'last_name': comment[9]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response

@@ -757,7 +757,7 @@ def get_user_subscriptions_nickname():
     :nickname: user nickname.
     :type: JSON
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
     subscription_tuple = db.get_subscriptions_by_nickname(nickname,
@@ -798,7 +798,7 @@ def search_users_comments():
         'last_name': 'Kozak',
         'sub_count': 15}]``
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     comments_count = db.get_count_comments_by_nickname(nickname)
@@ -947,10 +947,9 @@ def statistic_all():
     comments, photos from db.
     :rtype: JSON.
     :return: list of all statisctics with next objects:
-    ``[{'problems': 4,
-        'subscriptions': 12,
-        'comments': 34,
-        'photo': 5}]``
+    statistics[0] - count of all problems, statistics[1] - count of all
+    subscriptions, statistics[2] - count of all comments,
+    tatistics[3] - count of all photos
     """
     statistics = [db.count_problems()[0], db.count_all_subscriptions()[0],
                   db.count_comment()[0], db.count_photo()[0]]

@@ -1,5 +1,5 @@
-app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
-  function($scope, $http, $state, $cookies, $window) {
+app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$window','toaster',
+  function($scope, $http, $state, $cookies, $window, toaster) {
     $scope.period = 0;
     $scope.chartObject = {};
     $scope.chartObject.type = "PieChart";
@@ -56,6 +56,17 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             }
         })
     };
+    $scope.loadProbCommStats = function() {
+        $http({
+            method: 'GET',
+            url: '/api/problems_comments_stats',
+        }).then(function successCallback(response) {
+            $scope.problCommStats = response.data
+        }, function errorCallback (response){
+            toaster.pop('error', 'Відправлення' , 'Сталась помилка');
+        });
+    };
+
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
@@ -63,6 +74,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     $scope.loadCountSubs();
     $scope.loadSeverityStat();
     $scope.loadAllStatistic();
+    $scope.loadProbCommStats();
 }]);
     
 

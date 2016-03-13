@@ -201,8 +201,8 @@ def facebook_register(first_name, last_name, nickname, email, provider, uid):
             user = get_user_by_oauth_id(uid)
 
         message = generate_email('registration', _CONFIG['email.from_address'],
-                                 email,
-                                 (first_name, last_name, email, password))
+                                 email,(first_name, last_name,
+                                 email, password, request.url_root))
         send_email(_CONFIG['email.server_name'],
                    _CONFIG['email.user_name'],
                    _CONFIG['email.server_password'],

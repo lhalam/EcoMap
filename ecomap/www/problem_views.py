@@ -954,3 +954,21 @@ def statistic_all():
     statistics = [db.count_problems()[0], db.count_all_subscriptions()[0],
                   db.count_comment()[0], db.count_photo()[0]]
     return Response(json.dumps(statistics), mimetype='application/json')
+
+@app.route('/api/problems_comments_stats', methods=['GET'])
+def problems_comments_stats():
+    """This method returns top 10 discussed problems.
+    :rtype: JSON.
+    :return: list of top 10 discussed problems with next objects:
+    ``[{'problems_id': 4,
+        'problem_title': Big problem,
+        'comments_count': 34}]``
+    """
+    problems_comments = db.get_problems_comments_stats()
+    parsed_json = []
+    if problems_comments:
+        for problem in problems_comments:
+            parsed_json.append({'id': problem[0],
+                                'title': problem[1],
+                                'comments_count': problem[2]})     
+    return Response(json.dumps(parsed_json), mimetype='application/json')

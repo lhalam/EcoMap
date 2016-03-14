@@ -119,8 +119,9 @@ def detailed_problem(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
@@ -341,11 +342,12 @@ def change_comment_by_id():
     """
     response = jsonify(), 400
     data = request.get_json()
+    updated_date = int(time.time())
     if data:
         valid = validator.change_comment(data)
         if valid['status']:
-            db.change_comment_by_id(data['id'], data['content'])
-            response = jsonify(), 200
+            db.change_comment_by_id(data['id'], data['content'], updated_date)
+            response = jsonify({'updated_date': updated_date * 1000}), 200
     return response
 
 
@@ -421,8 +423,9 @@ def get_comments(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
@@ -463,10 +466,11 @@ def get_subcomments(parent_id):
                              'problem_id': comment[2],
                              'parent_id': comment[3],
                              'created_date': comment[4] * 1000,
-                             'user_id': comment[5],
-                             'nickname': comment[6],
-                             'first_name': comment[7],
-                             'last_name': comment[8]})
+                             'updated_date': comment[5] * 1000 if comment[5] else None,
+                             'user_id': comment[6],
+                             'nickname': comment[7],
+                             'first_name': comment[8],
+                             'last_name': comment[9]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response
@@ -563,7 +567,7 @@ def get_count_subscriptions():
                                    'title': subscription[2]})
     sorted_json = sorted(subscriptions_list,
                      key=lambda k: (k['count']),
-                     reverse=True)[:9]
+                     reverse=True)[:10]
     return Response(json.dumps([sorted_json]),
                     mimetype='application/json')
 
@@ -852,25 +856,20 @@ def get_problem_type_for_filtration():
 @app.route('/api/problems_radius/<int:type_id>')
 @login_required
 def problems_radius(type_id):
-    """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance.
-
+    """Handler for sending short data for about probles for 
+         radius functionality.
     :rtype: JSON
     :return:
         - If problems list not empty:
             ``[{"status": "Unsolved", "problem_type_Id": 2,
             "title": "problem 1","longitude": 25.9717, "date": 1450735578,
-            "latitude": 50.2893, "problem_id": 75},
-            {"status": "Unsolved", "problem_type_Id": 3,
-            "title": "problem 2", "longitude": 24.7852, "date": 1450738061,
-            "latitude": 49.205, "problem_id": 76}]``
+            "latitude": 50.2893, "problem_id": 75}]``
         - If problem list is empty:
             ``{}``
 
     :statuscode 200: no errors
 
     """
-    # data = request.get_json()
     problem_tuple = db.get_problems_by_type(type_id)
     parsed_json = []
     if problem_tuple:
@@ -878,8 +877,8 @@ def problems_radius(type_id):
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6], 'radius': problem[10]})
+                'problem_type_Id': problem[4], 'name': problem[9],
+                'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -914,9 +913,7 @@ def statistic_problems():
 
 @app.route('/api/problems_severity_stats')
 def problems_severity_stats():
-    """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance.
-
+    """This method returns top 10 important problems.
     :rtype: JSON
     :return:
         - If problems list not empty:

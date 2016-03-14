@@ -19,8 +19,8 @@ app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactor
           $scope.Types[String(problemTypes[i]['id'])] = [problemTypes[i]['picture'], problemTypes[i]['name']];
         }
     $scope.Status = {
-      'Unsolved': 'Нова',
-      'Resolved': 'Вирішена'
+      'Unsolved': 'Не вирішена',
+      'Solved': 'Вирішена'
     };
     $scope.selectedType = [];
     $scope.selectedStatus = [];

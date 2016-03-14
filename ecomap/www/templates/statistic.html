@@ -1,6 +1,6 @@
 <div ng-controller="StatisticCtrl">
 	<div class='statistic'>
-		<div class="topProblems row">			
+		<div class="topProblems row">
 			<div class='col-md-4'>
 				<h2>ТОП 10 популярних проблем</h2>
 				<br>
@@ -61,26 +61,26 @@
 			<div class="col-lg-12 col-md-12 col-sm-12">
 				<p>Кількість доданих проблем за останній
 					<label class="period" ng-class="{checked: period==1}">
-							<input type="radio" ng-value="1" name="period" ng-model="period" 
+							<input type="radio" ng-value="1" name="period" ng-model="period"
 										 ng-change="change(period)">день
-					</label> | 
+					</label> |
 					<label class="period" ng-class="{checked: period==2}">
-							<input type="radio" ng-value="2" name="period" ng-model="period" 
+							<input type="radio" ng-value="2" name="period" ng-model="period"
 										 ng-change="change(period)">тиждень
-					</label> | 
+					</label> |
 					<label class="period" ng-class="{checked: period==3}">
-							<input type="radio" ng-value="3" name="period" ng-model="period" 
+							<input type="radio" ng-value="3" name="period" ng-model="period"
 										 ng-change="change(period)">місяць
 					</label> |
 					<label class="period" ng-class="{checked: period==4}">
-							<input type="radio" ng-value="4" name="period" ng-model="period" 
+							<input type="radio" ng-value="4" name="period" ng-model="period"
 										 ng-change="change(period)">рік
 					</label>
 				</p>
 			</div>
 		</div>
 		<p><label class="period" ng-class="{checked: !period}">
-					<input type="radio" ng-value="0" name="period" ng-model="period" 
+					<input type="radio" ng-value="0" name="period" ng-model="period"
 								 ng-change="change(period)">за весь час
 			</label>
 		</p>
@@ -89,5 +89,12 @@
 				<div google-chart chart="chartObject" style="height:500px; width:100%;"></div>
 			</div>
 		</div>
+	</div>
+	<div class="timeline statistic" style="width:100%">
+		 <h2>Хронологія публікацій</h2>
+		 <div class="legend">
+		 	<svg width="5" height="15"><rect width="5" height="15" style="fill:#f00; opacity: 0.2"></rect></svg> -Додано проблему
+		 </div>
+    		<div id="visualization"></div>
 	</div>
 </div>

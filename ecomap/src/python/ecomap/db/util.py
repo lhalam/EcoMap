@@ -1208,7 +1208,7 @@ def get_comments_by_problem_id(problem_id):
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
-                          c.user_id, u.nickname
+                          c.updated_date, c.user_id, u.nickname
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.problem_id=%s AND c.parent_id=0;
@@ -1227,8 +1227,8 @@ def get_subcomments_by_parent_id(parent_id):
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT c.id, c.content, c.problem_id,
-                          c.parent_id, c.created_date, c.user_id,
+        query = """SELECT c.id, c.content, c.problem_id, c.parent_id,
+                          c.created_date, c.updated_date, c.user_id,
                           u.nickname, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
@@ -1301,12 +1301,12 @@ def change_comments_to_anon(user_id):
 
 
 @retry_query(tries=3, delay=1)
-def change_comment_by_id(comment_id, content):
+def change_comment_by_id(comment_id, content, updated_date):
     """Query for change content in comment table.
     """
     with pool_manager(READ_WRITE).transaction() as conn:
-        query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
-        conn.execute(query, (content, comment_id))
+        query = """UPDATE `comment` SET `content`=%s, `updated_date`=%s WHERE `id`=%s;"""
+        conn.execute(query, (content, updated_date, comment_id))
 
 
 @retry_query(tries=3, delay=1)

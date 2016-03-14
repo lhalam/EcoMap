@@ -1,5 +1,5 @@
-<div class="map-toogle hideMe" ng-click="toogleFilter()">
-  карта
+<div class="map-toogle hideMe" ng-init="changeToogleMap='карта'" ng-click="toogleMap()">
+  {{changeToogleMap}}
 </div>
 <div class="flex-item-1 flex-container flex-column addProblemBlock" ng-if="showSidebarProblem==false">
   <uib-tabset justified="true">

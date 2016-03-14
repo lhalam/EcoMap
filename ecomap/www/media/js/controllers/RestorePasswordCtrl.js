@@ -1,19 +1,23 @@
-app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$location', 'msg', 'toaster',
-  function($scope, $state, $http, $location, msg, toaster) {
+app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope', '$location', 'msg', 'toaster',
+  function($scope, $state, $http, $rootScope, $location, msg, toaster) {
     $scope.restore = {};
     $scope.msg = msg;
+    $rootScope.isFetching=false;
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){
             return;
         }
-
+        $rootScope.isFetching=true;
         $http({
             method: 'POST',
             url: '/api/restore_password',
             data: $scope.restore
         }).then(function successCallback(response){
-            $scope.msg.sendSuccess('імейлу')
+            window.location.href = 'http://ecomap.new/#/login'
+            $scope.msg.sendSuccess('імейлу');
+            $rootScope.isFetching=false;
         }, function errorCallback(){
+            $rootScope.isFetching=false;
             $scope.msg.sendError('імейлу')
         })
     };

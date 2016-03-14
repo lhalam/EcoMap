@@ -1,9 +1,8 @@
 """This module contains functions for interacting with Database."""
-from ecomap.db.db_pool import retry_query, pool_manager
+
+from ecomap.db.db_pool import retry_query, pool_manager, READ_ONLY, READ_WRITE
 
 ANONYMOUS_ID = "2"
-READ_ONLY = 'ro'
-READ_WRITE = 'rw'
 
 
 @retry_query(tries=3, delay=1)
@@ -687,7 +686,7 @@ def edit_page(page_id, title, alias, descr, content,
                    WHERE `id`=%s;
                 """
         conn.execute(query, (title, alias, descr, content,
-                               meta_key, meta_descr, is_enabled, page_id))
+                             meta_key, meta_descr, is_enabled, page_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -832,6 +831,7 @@ def get_user_problems(user_id, offset, per_page):
         cursor.execute(query, (user_id, offset, per_page))
         return cursor.fetchall()
 
+
 @retry_query(tries=3, delay=1)
 def get_problem_by_id(problem_id):
     """Return problem, found by id.
@@ -885,8 +885,8 @@ def problem_post(title, content, proposal, latitude, longitude,
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                 """
         conn.execute(query, (title, content, proposal, latitude,
-                               longitude, problem_type_id, created_date,
-                               user_id))
+                             longitude, problem_type_id, created_date,
+                             user_id))
         last_id = conn.lastrowid
         return last_id
 
@@ -1152,9 +1152,8 @@ def get_all_users_problems(offset, per_page):
 
 @retry_query(tries=3, delay=1)
 def count_problems():
-    """
-
-    :return:
+    """Count all problems from db.
+    :return: count.
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
@@ -1166,7 +1165,7 @@ def count_problems():
 
 @retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
-    """Count of user's problem
+    """Count of user's problem.
     :return: count
     """
     with pool_manager(READ_ONLY).manager() as conn:
@@ -1193,7 +1192,7 @@ def add_comment(user_id, problem_id, parent_id, content, created_date):
                    VALUES (%s, %s, %s, %s, %s);
                 """
         conn.execute(query, (user_id, problem_id, parent_id,
-                               content, created_date))
+                             content, created_date))
 
 
 @retry_query(tries=3, delay=1)
@@ -1207,13 +1206,14 @@ def get_comments_by_problem_id(problem_id):
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
-                          c.user_id, u.nickname
+                          c.updated_date, c.user_id, u.nickname
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.problem_id=%s AND c.parent_id=0;
                 """
         cursor.execute(query, (problem_id,))
         return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def get_subcomments_by_parent_id(parent_id):
@@ -1225,8 +1225,8 @@ def get_subcomments_by_parent_id(parent_id):
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT c.id, c.content, c.problem_id,
-                          c.parent_id, c.created_date, c.user_id,
+        query = """SELECT c.id, c.content, c.problem_id, c.parent_id,
+                          c.created_date, c.updated_date, c.user_id,
                           u.nickname, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
@@ -1234,6 +1234,7 @@ def get_subcomments_by_parent_id(parent_id):
                 """
         cursor.execute(query, (parent_id,))
         return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def get_count_of_parent_subcomments(parent_id):
@@ -1248,6 +1249,7 @@ def get_count_of_parent_subcomments(parent_id):
                 """
         cursor.execute(query, (parent_id,))
         return cursor.fetchone()
+
 
 @retry_query(tries=3, delay=1)
 def get_user_comments_count(user_id):
@@ -1293,26 +1295,16 @@ def change_comments_to_anon(user_id):
     """
     with pool_manager(READ_WRITE).transaction() as conn:
         query = """UPDATE `comment` SET `user_id`=%s WHERE `user_id`=%s;"""
-        conn.execute(query, (ANONYMOUS_ID, user_id))\
+        conn.execute(query, (ANONYMOUS_ID, user_id))
 
 
 @retry_query(tries=3, delay=1)
-def change_comment_by_id(comment_id, content):
+def change_comment_by_id(comment_id, content, updated_date):
     """Query for change content in comment table.
     """
     with pool_manager(READ_WRITE).transaction() as conn:
-        query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
-        conn.execute(query, (content, comment_id))
-
-
-
-@retry_query(tries=3, delay=1)
-def change_comment_by_id(comment_id, content):
-    """Query for change content in comment table.
-    """
-    with pool_manager(READ_WRITE).transaction() as conn:
-        query = """UPDATE `comment` SET `content`=%s WHERE `id`=%s;"""
-        conn.execute(query, (content, comment_id))
+        query = """UPDATE `comment` SET `content`=%s, `updated_date`=%s WHERE `id`=%s;"""
+        conn.execute(query, (content, updated_date, comment_id))
 
 
 @retry_query(tries=3, delay=1)
@@ -1479,7 +1471,7 @@ def get_subscription_by_user_id(user_id, problem_id):
 def check_exist_subscriptions(user_id, problem_id):
     """Function checks if there is some user's subscription into db.
     :return: true or false.
-    """ 
+    """
     return bool(get_subscription_by_user_id(user_id, problem_id))
 
 
@@ -1740,28 +1732,6 @@ def get_comments_by_nickname(nickname, offset, per_page):
         cursor.execute(query.format(nickname, offset, per_page))
         return cursor.fetchall()
 
-@retry_query(tries=3, delay=1)
-def get_subscriptions(user_id, offset, per_page):
-    """Function retrieves all user's subscriptions from db.
-    :param id: id of problem (int)
-    :param title: title of problem ('problem with rivers')
-    :param problem_type_id: id of problem type (int)
-    :param status: status of problem (solved or unsolved)
-    :param created_date: date when problem was creared
-    :param date_subscriptions: date when user subscribed to a problem
-    :return: tuples with user info.
-    """
-    with pool_manager(READ_ONLY).manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
-                   pr.created_date, sub.date_subscriptions, pt.name
-                   FROM  `subscription` as sub
-                   INNER JOIN `problem` as pr ON sub.problem_id=pr.id
-                   INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
-                   WHERE sub.user_id=%s LIMIT %s,%s;
-                """
-        cursor.execute(query, (user_id, offset, per_page))
-        return cursor.fetchall()
 
 @retry_query(tries=3, delay=1)
 def get_all_user_operations(offset, per_page):
@@ -1777,14 +1747,15 @@ def get_all_user_operations(offset, per_page):
     """
     with pool_manager(READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT uoper.id, u.first_name, u.last_name, u.nickname, 
+        query = """SELECT uoper.id, u.first_name, u.last_name, u.nickname,
                    uoper.creation_date, uoper.type
                    FROM  `user` as u
                    INNER JOIN `user_operation` as uoper ON u.id=uoper.user_id
                    LIMIT %s,%s;
                 """
-        cursor.execute(query, (offset, per_page))
+        cursor.execute(query % (offset, per_page))
         return cursor.fetchall()
+
 
 @retry_query(tries=3, delay=1)
 def delete_user_operation(user_operation_id):
@@ -1797,12 +1768,12 @@ def delete_user_operation(user_operation_id):
                 """
         conn.execute(query, (user_operation_id))
 
+
 @retry_query(tries=3, delay=1)
 def delete_all_users_operations():
     """Delete all data from table user_operation.
     """
     with pool_manager(READ_WRITE).transaction() as conn:
-        #cursor = conn.cursor()
         query = """DELETE FROM `user_operation`;
                 """
         conn.execute(query)
@@ -1839,16 +1810,132 @@ def get_problems_title(problem_ids):
 
 
 @retry_query(tries=3, delay=1)
-def write_method(query):
-    """Delete all data from table user_operation.
+def count_subscriptions_by_problem_id():
+    """Count of subsriptions.
+    :return: count of problems.
     """
-    with pool_manager(READ_WRITE).transaction() as conn:
-        conn.execute(query)
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(s.problem_id), p.id, p.title
+                   FROM `subscription` AS s
+                   INNER JOIN `problem` AS p ON s.problem_id = p.id
+                   GROUP BY s.problem_id;
+                """
+        cursor.execute(query)
+        return cursor.fetchall()
 
 
 @retry_query(tries=3, delay=1)
-def read_method(query):
-    """Delete all data from table user_operation.
+def count_all_type(problem_type_id):
+    """Count all problems of some type of problem.
+    :params problem_type_id: id of problem type.
+    :return: tuple with problem_type name and count problems with this type.
     """
-    with pool_manager(READ_ONLY).transaction() as conn:
-        conn.execute(query)
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
+                                INNER JOIN `problem_type`
+                                ON problem.problem_type_id = problem_type.id
+                WHERE problem_type_id = {};
+                """).format(problem_type_id)
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_type(problem_type_id, date_format, posted_date):
+    """Count problems of some type of problem.
+    :params problem_type_id: id of problem type.
+    :params date_format: format of data (day: %Y-%m-%d, year: %Y and other).
+    :params posted_date: data of period that we need.
+    :return: tuple with problem_type name and count problems with this type
+    for period which define posted data.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
+                                INNER JOIN `problem_type`
+                                ON problem.problem_type_id = problem_type.id
+                WHERE problem_type_id = '{}' AND
+                FROM_UNIXTIME(created_date, '{}') = '{}';
+                """).format(problem_type_id, date_format, posted_date)
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_problem_types():
+    """Count of all problem types.
+    :return: count.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `problem_type`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def get_all_problems_severity_for_stats():
+    """Return all problems id, title, date and severity.
+    :return: tuple.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT id, title, problem_type_id, status, created_date, title,
+                           severity FROM problem;
+                      """
+        cursor.execute(query)
+        return cursor.fetchall()
+
+
+@retry_query(tries=3, delay=1)
+def count_photo():
+    """Count of all photos in db.
+    :return: count.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(photo.id) FROM `photo`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_comment():
+    """Count of all comments in db.
+    :return: count.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `comment`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@retry_query(tries=3, delay=1)
+def count_all_user_operations():
+    """Function counts user's operations.
+    :return: count.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `user_operation`;"""
+        cursor.execute(query)
+        return cursor.fetchone()
+
+@retry_query(tries=3, delay=1)
+def get_problems_comments_stats():
+    """Function counts problems comments for top10 statistic.
+    :return: tuple with problems and they counted comments.
+    """
+    with pool_manager(READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, COUNT(c.problem_id) AS comments_count
+                   FROM comment AS c INNER JOIN problem AS p
+                   ON c.problem_id = p.id WHERE c.parent_id=0 
+                   GROUP BY c.problem_id 
+                   ORDER BY comments_count DESC LIMIT 10;"""
+        cursor.execute(query)
+        return cursor.fetchall()
+      

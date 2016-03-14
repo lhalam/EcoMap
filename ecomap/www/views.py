@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 This module holds all views controls for
 ecomap project.
@@ -28,8 +28,15 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
+    logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
 
+
+@app.after_request
+def clear_cookie(responce):
+    if not db.get_user_by_id(current_user.get_id()):
+        for i in ['id', 'role', 'remember_token']:
+            responce.delete_cookie(i)
+    return responce
 
 @app.before_request
 def check_access():

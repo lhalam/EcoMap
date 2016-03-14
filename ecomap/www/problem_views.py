@@ -4,6 +4,7 @@ import os
 import json
 import time
 import hashlib
+import datetime
 
 import PIL
 
@@ -118,8 +119,9 @@ def detailed_problem(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
@@ -340,11 +342,12 @@ def change_comment_by_id():
     """
     response = jsonify(), 400
     data = request.get_json()
+    updated_date = int(time.time())
     if data:
         valid = validator.change_comment(data)
         if valid['status']:
-            db.change_comment_by_id(data['id'], data['content'])
-            response = jsonify(), 200
+            db.change_comment_by_id(data['id'], data['content'], updated_date)
+            response = jsonify({'updated_date': updated_date * 1000}), 200
     return response
 
 
@@ -420,8 +423,9 @@ def get_comments(problem_id):
                              'content': comment[1],
                              'problem_id': comment[2],
                              'created_date': comment[3] * 1000,
-                             'user_id': comment[4],
-                             'name': comment[5],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id': comment[5],
+                             'name': comment[6],
                              'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
@@ -462,10 +466,11 @@ def get_subcomments(parent_id):
                              'problem_id': comment[2],
                              'parent_id': comment[3],
                              'created_date': comment[4] * 1000,
-                             'user_id': comment[5],
-                             'nickname': comment[6],
-                             'first_name': comment[7],
-                             'last_name': comment[8]})
+                             'updated_date': comment[5] * 1000 if comment[5] else None,
+                             'user_id': comment[6],
+                             'nickname': comment[7],
+                             'first_name': comment[8],
+                             'last_name': comment[9]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response
@@ -544,6 +549,29 @@ def get_all_subscriptions():
                     mimetype='application/json')
 
 
+@app.route('/api/countSubscriptions', methods=['GET'])
+def get_count_subscriptions():
+    """Function retrieves all user's subscriptions from db and shows them in 
+    `top 10 of the most popular subscriptions` tab.
+    :param count: count of subscriptions to every problem (int)
+    :param title: title of problem (str)
+    :type: JSON
+    """
+    subscription_tuple = db.count_subscriptions_by_problem_id()
+    subscriptions_list = []
+    total_count = {}
+    logger.info(subscription_tuple)
+    for subscription in subscription_tuple:
+        subscriptions_list.append({'count': subscription[0],
+                                   'id': subscription[1],
+                                   'title': subscription[2]})
+    sorted_json = sorted(subscriptions_list,
+                     key=lambda k: (k['count']),
+                     reverse=True)[:10]
+    return Response(json.dumps([sorted_json]),
+                    mimetype='application/json')
+
+
 @app.route('/api/subscription_post', methods=['POST'])
 def subscription_post():
     """Function adds data about subscription into DB.
@@ -601,7 +629,7 @@ def get_search_users_problems():
         'first_name': 'surname',
         'nickname': 'nick'}]``
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     count = db.count_user_by_nickname(nickname)
@@ -733,7 +761,7 @@ def get_user_subscriptions_nickname():
     :nickname: user nickname.
     :type: JSON
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
     subscription_tuple = db.get_subscriptions_by_nickname(nickname,
@@ -774,7 +802,7 @@ def search_users_comments():
         'last_name': 'Kozak',
         'sub_count': 15}]``
     """
-    nickname = request.args.get('nickname')
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
     comments_count = db.get_count_comments_by_nickname(nickname)
@@ -828,25 +856,20 @@ def get_problem_type_for_filtration():
 @app.route('/api/problems_radius/<int:type_id>')
 @login_required
 def problems_radius(type_id):
-    """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance.
-
+    """Handler for sending short data for about probles for 
+         radius functionality.
     :rtype: JSON
     :return:
         - If problems list not empty:
             ``[{"status": "Unsolved", "problem_type_Id": 2,
             "title": "problem 1","longitude": 25.9717, "date": 1450735578,
-            "latitude": 50.2893, "problem_id": 75},
-            {"status": "Unsolved", "problem_type_Id": 3,
-            "title": "problem 2", "longitude": 24.7852, "date": 1450738061,
-            "latitude": 49.205, "problem_id": 76}]``
+            "latitude": 50.2893, "problem_id": 75}]``
         - If problem list is empty:
             ``{}``
 
     :statuscode 200: no errors
 
     """
-    # data = request.get_json()
     problem_tuple = db.get_problems_by_type(type_id)
     parsed_json = []
     if problem_tuple:
@@ -854,6 +877,95 @@ def problems_radius(type_id):
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6], 'radius': problem[10]})
+                'problem_type_Id': problem[4], 'name': problem[9],
+                'radius': problem[10]})
+    return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/statisticPieChar', methods=['GET'])
+def statistic_problems():
+    """This method returns statisctic for some period from db.
+    Statistic include type of problem and its count for this period.
+    :period: int which define time period. default is 0. Can have such values:
+    (0 - period of all time, 1 - only for one day, 2 - for a week, 
+    3 -for a month, 4 - for a year).
+    :rtype: JSON.
+    :return: list of statisctic ecomap's problem with next objects:
+    ``[{"type": "Forest Problem",
+        "count": 12}]``
+    """
+    period = int(request.args.get('date')) or 0
+    count = db.count_problem_types()[0]
+    if period:
+        date_format = ('', '%Y-%m-%d', '%U', '%Y-%m', '%Y')[period]
+        posted_date = datetime.datetime.now().strftime(date_format)
+        statics = [{'type': db.count_type(problem_types, date_format,
+                                          posted_date)[1],
+                    'count': db.count_type(problem_types, date_format,
+                                           posted_date)[0]}
+                   for problem_types in range(1, count+1)]
+    else:
+        statics = [{'type': db.count_all_type(problem_types)[1],
+                    'count': db.count_all_type(problem_types)[0]}
+                   for problem_types in range(1, count+1)]
+    return Response(json.dumps(statics), mimetype='application/json')
+
+
+@app.route('/api/problems_severity_stats')
+def problems_severity_stats():
+    """This method returns top 10 important problems.
+    :rtype: JSON
+    :return:
+        - If problems list not empty:
+            ``[{"id": "1", "date": 1450735578,
+            "title": "problem 1","severity": 1}]``
+        - If problem list is empty:
+            ``{}``
+
+    :statuscode 200: no errors
+
+    """
+    problem_tuple = db.get_all_problems_severity_for_stats()
+    parsed_json = []
+    if problem_tuple:
+        for problem in problem_tuple:
+            parsed_json.append({'id': problem[0], 'date': problem[4],
+                                'title': problem[5],
+                                'severity': problem[6]})
+    sorted_json = sorted(parsed_json,
+                         key=lambda k: (k['severity'], k['date']),
+                         reverse=True)[:10]
+    return Response(json.dumps(sorted_json), mimetype='application/json')
+
+
+@app.route('/api/statistic_all', methods=['GET'])
+def statistic_all():
+    """This method returns statisctic for all problems, subscriptions,
+    comments, photos from db.
+    :rtype: JSON.
+    :return: list of all statisctics with next objects:
+    statistics[0] - count of all problems, statistics[1] - count of all
+    subscriptions, statistics[2] - count of all comments,
+    tatistics[3] - count of all photos
+    """
+    statistics = [db.count_problems()[0], db.count_all_subscriptions()[0],
+                  db.count_comment()[0], db.count_photo()[0]]
+    return Response(json.dumps(statistics), mimetype='application/json')
+
+@app.route('/api/problems_comments_stats', methods=['GET'])
+def problems_comments_stats():
+    """This method returns top 10 discussed problems.
+    :rtype: JSON.
+    :return: list of top 10 discussed problems with next objects:
+    ``[{'problems_id': 4,
+        'problem_title': Big problem,
+        'comments_count': 34}]``
+    """
+    problems_comments = db.get_problems_comments_stats()
+    parsed_json = []
+    if problems_comments:
+        for problem in problems_comments:
+            parsed_json.append({'id': problem[0],
+                                'title': problem[1],
+                                'comments_count': problem[2]})     
     return Response(json.dumps(parsed_json), mimetype='application/json')

@@ -13,6 +13,7 @@ app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$rootScope', '$a
           credentials.email = $scope.newUser.email;
           credentials.password = $scope.newUser.password;
           $auth.login(credentials).then(function(responce) {
+            $rootScope.UserCredentials = responce.data.name + ' ' + responce.data.surname ;
             $state.go('map');
             $rootScope.isFetching = false;
           });

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module contains routes for user authorization,
    registering and logout.
 """
@@ -149,15 +150,9 @@ def login():
                                    role=user.role, iat="???",
                                    token=user.get_auth_token(),
                                    email=user.email)
-
+                
                 response.set_cookie('id',
                                     bytes(user.uid),
-                                    max_age=COOKIE_MAX_AGE)
-                response.set_cookie('name',
-                                    bytes(user.first_name),
-                                    max_age=COOKIE_MAX_AGE)
-                response.set_cookie('surname',
-                                    bytes(user.last_name),
                                     max_age=COOKIE_MAX_AGE)
                 response.set_cookie('role',
                                     bytes(user.role),
@@ -226,16 +221,12 @@ def oauth_login(provider):
 
     response = jsonify(iat="???",
                        token=user.get_auth_token(),
-                       email=user.email)
+                       email=user.email,
+                       name=user.first_name,
+                       surname=user.last_name)
 
     response.set_cookie('id',
                         bytes(user.uid),
-                        max_age=COOKIE_MAX_AGE)
-    response.set_cookie('name',
-                        bytes(user.first_name),
-                        max_age=COOKIE_MAX_AGE)
-    response.set_cookie('surname',
-                        bytes(user.last_name),
                         max_age=COOKIE_MAX_AGE)
     response.set_cookie('role',
                         bytes(user.role),

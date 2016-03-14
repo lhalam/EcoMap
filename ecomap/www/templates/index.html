@@ -25,6 +25,7 @@
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-Wwj3Nk7crgNakQ424rCJCykh0YZYfs&libraries=geometry">
   </script>
   <script src="/js/libs/markerclusterer_compiled.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <!-- AngularJS modules -->
   <script src="/js/libs/angular.min.js"></script>
@@ -46,6 +47,7 @@
   <script src="/js/libs/ng-img-crop.js"></script>
   <script src="/js/libs/ng-file-upload.min.js"></script>
   <script src="/js/libs/ng-file-upload-shim.min.js"></script>
+  <script src="/js/libs/ng-google-chart.js"></script>
 
   <!-- AngularJS app -->
   <script src="/js/App.js"></script>
@@ -93,6 +95,7 @@
     <script src='/js/controllers/RestorePasswordCtrl.js'></script>
     <script src='/js/controllers/userDeleteConfirmation.js'></script>
     <script src='/js/controllers/UserCommentsTableCtrl.js'></script>
+    <script src='/js/controllers/StatisticCtrl.js'></script>
 
 </head>
 <body ng-controller="MainCtrl">
@@ -122,14 +125,14 @@
               </li>
             </ul>
           </li>
-          <li><a href="/#/map">статистика</a></li>
+          <li><a href="/#/statistic">статистика</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li id="loginField" ng-if="!isAuthenticated()">
             <a href="/#/login">Увійти</a>
           </li>
           <li ng-if="isAuthenticated()">
-            <a href="/#/user_profile/info" ng-bind="getUsername()" ></a>
+            <a href="/#/user_profile/info" ng-bind="UserCredentials"></a>
           </li>
           <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
             <a href="" ng-click="Logout()">Вихід</a>

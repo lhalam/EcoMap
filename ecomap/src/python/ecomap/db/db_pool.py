@@ -12,15 +12,15 @@ from contextlib import contextmanager
 
 import MySQLdb
 
-import ecomap.utils
-
 from ecomap.config import Config
 
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
-DB_POOL = {'ro': None, 'rw': None}
-DB_POOL_LOCK = {'ro': threading.RLock(), 'rw': threading.RLock()}
+READ_ONLY = 'ro'
+READ_WRITE = 'rw'
+DB_POOL = dict.fromkeys([READ_ONLY, READ_WRITE])
+DB_POOL_LOCK = dict.fromkeys([READ_ONLY, READ_WRITE], threading.RLock())
 
 
 class MySQLPoolSizeError(MySQLdb.DatabaseError):
@@ -88,8 +88,7 @@ class DBPool(object):
 
     def __del__(self):
         for conn in self._connection_pool:
-            self._close_conn(conn)
-   
+            self._close_conn(conn)  
 
     def _create_conn(self):
         """Method _create_conn creates connection object.
@@ -142,6 +141,9 @@ class DBPool(object):
 
     @contextmanager
     def transaction(self):
+	"""Method manages work with connections
+            for update database.
+        """
         with self.lock:
             conn = self._get_conn()
             cursor = conn['connection'].cursor()
@@ -178,14 +180,18 @@ class DBPool(object):
 
 
 def pool_manager(pool_name):
+    """Pool_manager manages work with connections for 
+    read or update database
+    """
     if DB_POOL[pool_name] is None:
         with DB_POOL_LOCK[pool_name]:
             if DB_POOL[pool_name] is None:
-                DB_POOL[pool_name] = DBPool(user=_CONFIG['db.%s.user' % pool_name],
+                DB_POOL[pool_name] = DBPool(
+			    user=_CONFIG['db.%s.user' % pool_name],
                             passwd=_CONFIG['db.%s.password' % pool_name],
                             db_name=_CONFIG['db.db'],
                             host=_CONFIG['db.%s.host' % pool_name],
                             port=_CONFIG['db.%s.port' % pool_name] ,
                             ttl=_CONFIG['db.connection_lifetime'],
-                            pool_size=_CONFIG['db.%s.pool_size'  % pool_name])
+                            pool_size=_CONFIG['db.%s.pool_size' % pool_name])
     return DB_POOL[pool_name]

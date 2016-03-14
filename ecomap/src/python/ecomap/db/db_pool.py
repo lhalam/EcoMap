@@ -180,9 +180,9 @@ class DBPool(object):
 
 
 def pool_manager(pool_name):
-"""Pool_manager manages work with connections for
-   read or update database
-"""
+    """Pool_manager manages work with connections for 
+    read or update database
+    """
     if DB_POOL[pool_name] is None:
         with DB_POOL_LOCK[pool_name]:
             if DB_POOL[pool_name] is None:

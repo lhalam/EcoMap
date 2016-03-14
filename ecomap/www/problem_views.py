@@ -567,7 +567,7 @@ def get_count_subscriptions():
                                    'title': subscription[2]})
     sorted_json = sorted(subscriptions_list,
                      key=lambda k: (k['count']),
-                     reverse=True)[:9]
+                     reverse=True)[:10]
     return Response(json.dumps([sorted_json]),
                     mimetype='application/json')
 

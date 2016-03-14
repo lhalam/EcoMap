@@ -61,12 +61,12 @@
       </div>
     </uib-tab>
     <uib-tab heading="Коментарі">
-      <div class="row">
+      <div class="row" ng-class="styleInput">
         <form name="newComment" ng-submit="post_comment(comment)"
-              class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
-          <div class="checkbox pull-right" ng-show="showAnonymCheckBox">
-            <label class="changeUser">
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="showInputForm" ng-class="{ 'has-error': newComment.comment.$invalid}">
+          <textarea ng-model="comment.text" class="comment-input" ng-class="{'form-control': focused}" name='comment' placeholder='Ваш коментар' rows='4' cols='80' type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" ng-disabled="editMode" required></textarea>
+          <div class="checkbox pull-right">
+            <label class="changeUser" ng-show="showInputForm">
               <input type="checkbox" 
                      ng-model="comment.changeUser" 
                      ng-true-value="true" 
@@ -88,7 +88,7 @@
               <div class="panel-body comment-block" ng-show="!editMode || editCommentid != comment.id" ng-bind="comment.content">{{comment.content}}</div>
               <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
                 <div class="pull-left">
-                  <a role="button" ng-click="getSubComments(comment.id)">відповісти</a>
+                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="showInputForm">відповісти</a>
                   <span role="button" ng-show="comment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(comment)" tooltip></span>
                 </div>
                 <div class="pull-right">
@@ -96,7 +96,7 @@
                 </div> 
               </div>
 
-              <div ng-form name="editComment" ng-show="editMode && editCommentid == comment.id" ng-class="{ 'has-error': editComment.newcomment.$invalid || hasError }">
+              <div ng-form name="editComment" ng-show="editMode && editCommentid == comment.id" ng-class="{ 'has-error': editComment.newcomment.$invalid}">
                 <textarea name="newcomment" ng-class="{'form-control': editMode}" type="text" ng-model="comment.content" ng-maxlength="255" value="{{comment.content}}" ng-enter="changeComment(comment)" class="comment-input" ng-esc="cancelComment(comment)" required></textarea>
               </div>
               <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == comment.id">
@@ -112,8 +112,6 @@
                 <div class="panel panel-default">
                   <div class="panel-heading clearfix">
                     <strong class="pull-left">{{subcomment.nickname}}</strong> 
-                    <span class="text-muted pull-right" ng-hide="subcomment.updated_date">{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-                    <span class="text-muted pull-right" ng-show="subcomment.updated_date">Ред · {{subcomment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
                   </div>
                    <div class="clearfix comment-reply subcomment-reply" ng-show="!editMode || editCommentid != subcomment.id">
                     <div class="pull-left">
@@ -123,10 +121,17 @@
                   <div class="panel-body comment-block" ng-show="!editMode || editCommentid != subcomment.id" ng-bind="subcomment.content">
                     {{subcomment.content}}
                   </div>
-                
+                  <div ng-hide="editMode && editCommentid == subcomment.id">
+                    <div class="clearfix comment-reply cancel-comment" ng-show="subcomment.updated_date">
+                      <span>Редаговано · {{subcomment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                    </div>
+                    <div class="clearfix comment-reply cancel-comment" ng-show="!subcomment.updated_date">
+                      <span>{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                    </div>
+                  </div>
 
-                  <div ng-form name="changeSubcomment" ng-show="editMode && editCommentid == subcomment.id" ng-class="{ 'has-error': changeSubcomment.newsubcomment.$invalid || hasError }">
-                    <textarea name="newsubcomment" ng-class="{'form-control': editMode}" type="text" ng-model="subcomment.content" ng-maxlength="255" value="{{subcomment.content}}" ng-enter="changeComment(subcomment)" class="comment-input" ng-esc="cancelComment(subcomment)" required></textarea>
+                  <div ng-form name="changeSubcomment" ng-show="editMode && editCommentid == subcomment.id" ng-class="{ 'has-error': changeSubcomment.newsubcomment.$invalid}">
+                    <textarea name="newsubcomment" ng-class="{'form-control': editMode}" type="text" ng-model="subcomment.content" ng-maxlength="255" value="{{subcomment.content}}" ng-enter="changeComment(subcomment)" class="comment-input" ng-esc="cancelComment(subcomment)" style="margin:0px auto;" required></textarea>
                   </div>
                   <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == subcomment.id">
                     <span>Натисніть ESC, щоб </span>
@@ -135,10 +140,11 @@
                 </div>
               </div>  
           </div>
-          <div class="row">
-          <form class="col-lg-9 col-md-9 col-sm-9 col-xs-9 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
-            <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38'></textarea>
-            <div class="subcomment checkbox" ng-show="showAnonymCheckBox">
+          <div class="row" ng-hide="editMode || 
+          !showInputForm">
+          <form name="addSubcomment" ng-class="{ 'has-error': addSubcomment.subcomment.$invalid || hasError }" class="col-lg-9 col-md-9 col-sm-9 col-xs-9 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
+            <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38' ng-class="{'form-control': focused}" ng-maxlength="255" type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" required></textarea>
+            <div class="subcomment checkbox">
             <label class="changeUser">
               <input type="checkbox" 
                      ng-model="comment.changeUser" 

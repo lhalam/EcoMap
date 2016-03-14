@@ -886,6 +886,8 @@ table .form-control{
 .comment-input, .wrapping{
   width: 100%;
   word-wrap : break-word;
+  padding: 0px;
+  display: inline;
 }
 
 textarea{
@@ -1209,4 +1211,8 @@ label.checked{
 }
 .all-statistic li:last-child{
   font-size: 21px;
+}
+
+.hidden-style{
+  margin: 10px 0px;
 }

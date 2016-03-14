@@ -93,8 +93,13 @@
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="form-group delete-account">
-      <button class="btn btn-danger " ng-click="userDelete()">Видалити аккаунт</button>
-      <p>*вам буде надіслано лист на електронну пошту із подальшими інструкціями.</p>
+      <button class="btn btn-danger col-lg-2 col-xs-5 col-sm-3 col-md-2 text-center" 
+              ng-class=" {wait: waiting}" 
+              ng-click="!userDelete()">
+        <span ng-if="!waiting">Видалити аккаунт</span>
+        <span ng-if="waiting"><img src="/image/swipebox/712small.gif"></span>
+      </button>
     </div>
   </div>
+  <p class="col-xs-12 col-sm-12 col-md-12 col-lg-12 info-del">*вам буде надіслано лист на електронну пошту із подальшими інструкціями.</p>
 </div>

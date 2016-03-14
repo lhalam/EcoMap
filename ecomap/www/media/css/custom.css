@@ -909,6 +909,16 @@ table.UserProblemTable select{
 .delete-account{
   padding: 18px;
 }
+.delete-account .wait{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.delete-account span img{
+  float: none;
+}
+.info-del{
+  margin-left:15px;
+}
 
 .avatar{
   width:150px;

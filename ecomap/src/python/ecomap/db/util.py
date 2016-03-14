@@ -1,10 +1,8 @@
 """This module contains functions for interacting with Database."""
 
-from ecomap.db.db_pool import retry_query, pool_manager
+from ecomap.db.db_pool import retry_query, pool_manager, READ_ONLY, READ_WRITE
 
 ANONYMOUS_ID = "2"
-READ_ONLY = 'ro'
-READ_WRITE = 'rw'
 
 
 @retry_query(tries=3, delay=1)

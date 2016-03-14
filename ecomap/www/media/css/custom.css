@@ -1226,3 +1226,24 @@ label.checked{
 .hidden-style{
   margin: 10px 0px;
 }
+.vis-group .vis-item{
+background-color: #f00 ;
+border-color: #f00 ;
+opacity: 0.2;
+}
+.vis-item-content{
+  width:5px;
+  background-color: #f00;
+  opacity: 0.2;
+  height: 40px;
+}
+
+.vis-background .vis-group .vis-line, .vis-dot{
+  display: none !important;
+}
+
+.legend{
+  text-align: left;
+  padding-left: 10px;
+margin-bottom: 10px;
+}

@@ -36,7 +36,7 @@ RES_HASH = "ff9830c42660c1dd1942844f8069b74a"
 
 USER_NAME = "root"
 
-PASSWORD = "root"
+PASSWORD_DB = "root"
 
 KEY = "123"
 
@@ -45,6 +45,16 @@ HOST = "localhost"
 VALID_USER_ID = "2"
 
 INVALID_USER_ID = "e"
+
+FIRST_NAME = "ABC"
+
+LAST_NAME = "DEF"
+
+NICKNAME = "ABCDEF"
+
+EMAIL = "admin@mail.ua"
+
+USER_PASSWORD = "12345678"
 
 
 class ContextStringIO(StringIO):
@@ -82,6 +92,9 @@ class ConnectionMock(MySQLdbMock):
     def cursor(self):
         return CursorMock()
 
+    def commit(self):
+        pass
+
     def close(self):
         pass
 
@@ -90,16 +103,9 @@ class CursorMock(object):
 
     """Creating class for mock Cursor."""
 
-    def execute(self, query, user_id):
-        if user_id == INVALID_USER_ID:
+    def execute(query, user_id):
+        if user_id != VALID_USER_ID:
             raise MySQLError("Error")
-    
-    def fetchone(user_id):
-        if user_id == INVALID_USER_ID:
-            result = False
-        else:
-            result = True
-        return result
 
 
 def open_mock(fpath):
@@ -156,14 +162,14 @@ class ConfigBuilderTestCase(unittest2.TestCase):
 
     def test_hash_pass(self):
         """Tests if hash function returns correct value."""
-        self.assertEqual(config_builder.hash_pass(PASSWORD, KEY), RES_HASH)
+        self.assertEqual(config_builder.hash_pass(PASSWORD_DB, KEY), RES_HASH)
 
-    def test_check_exist_id(self):
-        """Tests if user_id exists."""
-        self.assertTrue(config_builder.check_exist_id(VALID_USER_ID, 
-                               HOST, USER_NAME, PASSWORD, USER_DATA))
-        self.assertRaises(MySQLError,config_builder.check_exist_id,
-               INVALID_USER_ID, HOST, USER_NAME, PASSWORD, USER_DATA)
+    def test_insert_user_raise_error(self):
+        """Tests if insert_user raises error."""
+        self.assertRaises(MySQLError,config_builder.insert_user, 
+                         INVALID_USER_ID, FIRST_NAME, LAST_NAME, 
+                           NICKNAME, EMAIL, USER_PASSWORD, HOST,
+                              USER_NAME, PASSWORD_DB, USER_DATA)
 
 
 if __name__ == "__main__":

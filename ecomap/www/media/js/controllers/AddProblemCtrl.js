@@ -44,8 +44,8 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }
          $scope.chosen = $scope.problemTypes[0];
          $scope.newProblem.type = $scope.chosen['id'];
-         $('.selected-items-box').click(function(){
-         $('.multiple-select-wrapper .list').slideToggle();
+         $('.selected-item-box').click(function(){
+         $('.select-wrapper .list').slideToggle();
          });
       }, function errorCallback(response) {})
     };
@@ -268,8 +268,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     }
    }
    $scope.getSelectedItemOnly();
-    $('.multiple-select-wrapper .list').slideUp();
-  // $scope.loadProblem($scope.newProblem['type']);
+    $('.select-wrapper .list').slideUp();
   }
 }
 ]);

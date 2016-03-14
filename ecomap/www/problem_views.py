@@ -852,25 +852,20 @@ def get_problem_type_for_filtration():
 @app.route('/api/problems_radius/<int:type_id>')
 @login_required
 def problems_radius(type_id):
-    """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance.
-
+    """Handler for sending short data for about probles for 
+         radius functionality.
     :rtype: JSON
     :return:
         - If problems list not empty:
             ``[{"status": "Unsolved", "problem_type_Id": 2,
             "title": "problem 1","longitude": 25.9717, "date": 1450735578,
-            "latitude": 50.2893, "problem_id": 75},
-            {"status": "Unsolved", "problem_type_Id": 3,
-            "title": "problem 2", "longitude": 24.7852, "date": 1450738061,
-            "latitude": 49.205, "problem_id": 76}]``
+            "latitude": 50.2893, "problem_id": 75}]``
         - If problem list is empty:
             ``{}``
 
     :statuscode 200: no errors
 
     """
-    # data = request.get_json()
     problem_tuple = db.get_problems_by_type(type_id)
     parsed_json = []
     if problem_tuple:
@@ -878,8 +873,8 @@ def problems_radius(type_id):
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6], 'radius': problem[10]})
+                'problem_type_Id': problem[4], 'name': problem[9],
+                'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -914,9 +909,7 @@ def statistic_problems():
 
 @app.route('/api/problems_severity_stats')
 def problems_severity_stats():
-    """Handler for sending short data about all problem stored in db.
-    Used by Google Map instance.
-
+    """This method returns top 10 important problems.
     :rtype: JSON
     :return:
         - If problems list not empty:

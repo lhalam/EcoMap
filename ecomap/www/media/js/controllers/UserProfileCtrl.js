@@ -61,8 +61,10 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
         }
       });
     };  
+    $scope.waiting = false;
     $scope.userDelete = function() {
       if (confirm("Ви бажаєте видалити користувача?")) {
+      $scope.waiting = true;
       var data = {}
       $scope.msg = msg;
       data.id = $cookies.get('id');
@@ -76,8 +78,10 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
           'user_id': data.id
         }
       }).then(function successCallback(response) {
-            $scope.msg.sendSuccess('імейлу')
+            $scope.msg.sendSuccess('імейлу');
+            $scope.waiting = false;
         }, function errorCallback() {
+            $scope.waiting = false;
             $scope.msg.sendError('імейлу')
         })
        

@@ -13,7 +13,6 @@ from ecomap import validator
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
-# from admin_views_model import ProblemType
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 MARKERS_PATH = '/media/image/markers'
@@ -879,9 +878,6 @@ def get_problem_type():
         "name": "sevens problem type",
         "radius": 20]``.
     '''
-    # get_type = ProblemType(request)
-    # response = get_type.get()
-
     problem_type_tuple = db.get_problem_type()
     problem_type_list = []
     if problem_type_tuple:
@@ -912,8 +908,6 @@ def delete_problem_type():
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     '''
-    # del_type = ProblemType(request)
-    # response = del_type.delete()
     data = request.get_json()
     valid = validator.problem_type_delete(data)
     if valid['status']:
@@ -951,8 +945,6 @@ def add_problem_type():
     :statuscode 200: if no errors.
 
     """
-    # add_type = ProblemType(request)
-    # response = add_type.post()
     data = request.form
     file_to_save = request.files
     valid = validator.problem_type_post(data)
@@ -990,8 +982,6 @@ def edit_problem_type():
     :statuscode 200: if no errors.
 
     """
-    # edit_type = ProblemType(request)
-    # response = edit_type.update()
     data = request.form
     valid = validator.problem_type_post(data)
     f_path = os.environ['STATICROOT'] + MARKERS_PATH

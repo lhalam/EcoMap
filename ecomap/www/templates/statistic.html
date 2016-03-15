@@ -1,8 +1,8 @@
 <div ng-controller="StatisticCtrl">
 	<div class='statistic'>
 		<div class="topProblems row">
-			<div class='col-md-4'>
-				<h2>ТОП 10 популярних проблем</h2>
+			<div class='col-lg-4 col-md-4'>
+				<h2>ТОП 10 популярних<br>проблем</h2>
 				<br>
 				<ul class="topItem" ng-repeat='subscription in subscriptions'>
 					<a href="" ng-click="triggerDetailModal(subscription.id)">
@@ -14,8 +14,8 @@
 					</a>
 				</ul>
 			</div>
-			<div class='col-md-4'>
-				<h2>ТОП 10 важливих проблем</h2>
+			<div class='col-lg-4 col-md-4'>
+				<h2>ТОП 10 важливих<br>проблем</h2>
 				<br>
 				<ul class="topItem" ng-repeat='severity in severities'>
 					<a href="" ng-click="triggerDetailModal(severity.id)">
@@ -27,7 +27,7 @@
 					</a>
 				</ul>
 			</div>
-			<div class='col-md-4'>
+			<div class='col-lg-4 col-md-4'>
 				<h2>ТОП 10 обговорюваних проблем</h2>
 				<br>
 				<ul class="topItem" ng-repeat="problemcomm in problCommStats">

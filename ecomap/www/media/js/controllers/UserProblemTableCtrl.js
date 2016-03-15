@@ -23,11 +23,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     };
     $scope.filterTable = {
       'param': '',
-      'order': 0
+      'order': 1
     }
     $scope.sortFilter = function(filtr){
           $scope.filterTable.param = filtr;
-          $scope.filterTable.order = $scope.filterTable.order?0:1;
+          var par = "order_"+$scope.filterTable.param;
+          $scope.filterTable[par] = $scope.filterTable[par]?0:1;
           $scope.loadProblems();
         }
     $scope.showTable = false;
@@ -65,7 +66,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             url: '/api/search_byFilter_usersProblem',
             params: {
               filtr: $scope.filterTable.param,
-              order: $scope.filterTable.order,
+              order: $scope.filterTable["order_"+$scope.filterTable.param],
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }

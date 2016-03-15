@@ -172,13 +172,13 @@ def insert_user(user_id, first_name, last_name, nickname, email, password,
                                        last_name,
                                        nickname,
                                        email,
-                                       password
+                                       password)
                    VALUES (%s, %s, %s, %s, %s, %s)
-                   ON DUPLICATE KEY UPDATE 'first_name' = %s,
-                                           'last_name' = %s,
-                                           'nickname' = %s,
-                                           'email' = %s,
-                                           'password' = %s;
+                   ON DUPLICATE KEY UPDATE first_name = %s,
+                                           last_name = %s,
+                                           nickname = %s,
+                                           email = %s,
+                                           password = %s;
                 """
         cursor.execute(query, (user_id, first_name, last_name, nickname,
                                email, password, first_name, last_name,

@@ -12,7 +12,7 @@
                placeholder="Пошук по нікнейму" />
       </form>
     </div>
-    <div class="col-lg-offset-5 col-lg-1 col-md-offset-5 col-md-1 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
+    <div class="col-lg-offset-5 col-lg-2 col-md-offset-6 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
         <select ng-model="selectCount.selected" 
                 class="form-control form-problems" 
                 data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 
@@ -25,6 +25,8 @@
   <table class="table table-stripped UserProblemTable">
     <thead>
       <tr>
+        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
+            ng-show='showTable == true'><strong></strong></td>
         <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
             ng-show='showTable == true'><strong>Користувач</strong>
           <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
@@ -59,10 +61,12 @@
         </td>
         <td><strong>Детальне інфо</strong> 
         </td>
+        <td ng-show='showTable == true'><strong>Редагування</strong></td>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="problem in problems | orderBy:sortType:sortReverse">
+        <td ng-show='showTable == true'><i class="fa fa-circle" ng-class="{circleTrue: problem.is_enabled, circleFalse: !problem.is_enabled}"></i></td>
         <td ng-model="problem.last_name" ng-show='showTable == true'>
           {{problem.first_name}} {{problem.last_name}}</td>
         <td ng-model="problem.nickname" ng-show='showTable == true || nickname==true'>
@@ -73,6 +77,10 @@
         <td ng-model="problem.status">{{getStatus(problem.status)}}</td>
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
+        <td ng-show='showTable == true'>
+          <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
+          <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
+        </td>
       </tr>
     </tbody>
   </table>

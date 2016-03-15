@@ -343,6 +343,10 @@ form {
   height: 100%;
 }
 
+.map-div>div{
+  width: 100%;
+}
+
 /*UserProfile styles*/
 @media screen and (max-width: 960px) {
   .panel-body .profile {
@@ -1144,20 +1148,21 @@ select.form-comments{
 }
 
 .statistic {
-    margin: 10px 0;
-    text-align: center;
+  margin: 10px 0px;
+  text-align: center;
 }
 .topProblems {
   display: inline-block;
-  margin: 15px 5px;
-  margin-right: 4%;
+  margin: 15px 0px;
 }
 .statistic h2{
   font-size: 34px;
   font-weight: bold;
+  height: 50px;
 }
 .topItem{
   margin-bottom: 0px;
+  padding-left: 0px;
 }
 .topItem>a {
   padding: 5px;
@@ -1222,6 +1227,10 @@ label.checked{
 .all-statistic li:last-child{
   font-size: 21px;
 }
+#piechar{
+  height:500px; 
+  width:100%;
+}
 
 .hidden-style{
   margin: 10px 0px;
@@ -1250,4 +1259,10 @@ opacity: 0.2;
   text-align: left;
   padding-left: 10px;
 margin-bottom: 10px;
+}
+.circleTrue{
+  color: #8eb01e;
+}
+.circleFalse{
+  color: red;
 }

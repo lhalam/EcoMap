@@ -87,7 +87,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
-        console.log(instance.cluster.getMaxZoom())
       }, function errorCallback() {})
     })
     instance.markers = markers;

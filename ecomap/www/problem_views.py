@@ -969,3 +969,48 @@ def problems_comments_stats():
                                 'title': problem[1],
                                 'comments_count': problem[2]})     
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/search_byFilter_usersProblem', methods=['GET'])
+def get_search_problems_by_filter():
+    """This method retrieves all user's problem by special filter name from db.
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's problem represented with next objects:
+        ``[{"id": 190,
+        "title": "name",
+        "status": 0,
+        "date": "2015-02-24T14:27:22.000Z",
+        "severity": '3',
+        "is_enabled": 1,
+        'last_name': 'name',
+        'first_name': 'surname',
+        'nickname': 'nick',
+        'name': 'forests_problem'}]``
+    """
+    filtr = request.args.get('filtr')
+    order = int(request.args.get('order')) or 0
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    order_desc = 'desc' if order else 'asc'
+    count = db.count_problems()
+    problem_tuple = db.get_user_by_filter(order_desc, filtr, offset, per_page)
+    problems_list = [{'id': problem[0],
+                      'title': problem[1],
+                      'status': problem[2],
+                      'date': problem[3] * 1000,
+                      'is_enabled': problem[4],
+                      'severity': problem[5],
+                      'nickname': problem[6],
+                      'last_name': problem[7],
+                      'first_name': problem[8],
+                      'name': problem[9]}
+                     for problem in problem_tuple] if problem_tuple else []
+    total_count = {'total_problem_count': count[0]} if count else {}
+    return Response(json.dumps([problems_list, [total_count]]),
+                    mimetype='application/json')
+
+

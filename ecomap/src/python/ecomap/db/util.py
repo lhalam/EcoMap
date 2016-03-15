@@ -1638,8 +1638,8 @@ def get_all_users_comments(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.id, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 LIMIT {},{};
                 """
@@ -1657,8 +1657,8 @@ def get_user_comments(offset, per_page, user_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id ,us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND cm.user_id={} LIMIT {},{};
                 """
@@ -1723,8 +1723,8 @@ def get_comments_by_nickname(nickname, offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    INNER JOIN `user` AS us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
                    LIMIT {},{};

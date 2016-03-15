@@ -73,9 +73,11 @@
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
         <td>
           <a href="/#/editProblem/{{page.alias}}" 
-             ng-show='user_id==problem.user_id && !problem.is_enabled'>редагувати</a> &nbsp; &nbsp;
+             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
+          </a> &nbsp; &nbsp;
           <a href="" class="del" ng-click="deleteProblem(problem.id)"
-             ng-show='user_id==problem.user_id && !problem.is_enabled'>видалити</a>
+             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>видалити
+          </a>
         </td>
       </tr>
     </tbody>

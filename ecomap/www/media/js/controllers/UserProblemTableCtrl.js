@@ -43,7 +43,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
         var stepCount = $scope.selectCount['selected']
         if ($scope.searchNick){
-            $scope.showTable = ($cookies.get('role')=='admin')?true:false;
+            $scope.showTable = ($cookies.get('role')!=='user');
             $scope.nickname = true;
             $http({
               method: 'GET',

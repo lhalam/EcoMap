@@ -1127,22 +1127,23 @@ def delete_problem():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    if request.method == 'DELETE':
-        # valid = validator.problem_type_delete(data)
-        # if valid['status']:
-        folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-        f_path = os.environ['STATICROOT'] + folder_to_del
-        if db.get_problem_photo_by_id(data['problem_id']):
-            db.delete_problem_photo_by_id(data['problem_id'])
-            if os.path.exists(f_path):
-                shutil.rmtree(f_path, ignore_errors=True)
-        db.delete_problem_by_id(data['problem_id'])
-        response = jsonify(msg='Дані видалено успішно!'), 200
-        # else:
-        # response = jsonify(msg='Некоректні дані!'), 400
-    elif request.method == 'PUT':
-        db.change_user_problem_to_anonymous(data['problem_id'])
-        response = jsonify(msg='Дані видалено успішно!'), 200
+    valid = validator.problem_delete(data)
+    if valid['status']:
+        if request.method == 'DELETE':
+            folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
+            f_path = os.environ['STATICROOT'] + folder_to_del
+            if db.get_problem_photo_by_id(data['problem_id']):
+                db.delete_problem_photo_by_id(data['problem_id'])
+                if os.path.exists(f_path):
+                    shutil.rmtree(f_path, ignore_errors=True)
+            db.delete_problem_by_id(data['problem_id'])
+            response = jsonify(msg='Дані видалено успішно!'), 200
+        elif request.method == 'PUT':
+            db.change_user_problem_to_anonymous(data['problem_id'])
+            db.change_activity_to_anon(data['problem_id'])
+            response = jsonify(msg='Дані видалено успішно!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 

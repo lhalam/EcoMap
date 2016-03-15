@@ -1962,7 +1962,11 @@ def delete_problem_by_id(problem_id):
         query = """DELETE FROM `problem`
                           WHERE `id`=%s;
                       """
+        query2 = """DELETE FROM `problem_activity`
+                          WHERE `problem_id`=%s;
+                        """
         conn.execute(query, (problem_id,))
+        conn.execute(query2, (problem_id,))
 
 
 @db.retry_query(tries=3, delay=1)

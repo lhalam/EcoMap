@@ -28,6 +28,7 @@ LENGTHS = {'email': [5, 100],
            'description': [2, 255],
            'title': [2, 255],
            'content': [1, 255],
+           'problem_id': [1, 255],
            'problem_type_id': [1, 255],
            'problem_type_name': [2, 50],
            'problem_type_radius': [1, 10],
@@ -690,6 +691,26 @@ def problem_post(data):
     if status['error']:
         status['status'] = False
 
+    return status
+
+
+def problem_delete(data):
+    """Validates problem type delete form. Checks: id of problem type.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'problem_id'
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty']
+                                % keyname})
+    if status['error']:
+        status['status'] = False
     return status
 
 

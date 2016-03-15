@@ -3,8 +3,10 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';
+    $scope.user_id = $cookies.get('id');
     $scope.showFullUserInfo = false;
     $scope.showSubComments = false;
+    $scope.showDeleteButton = true;
     $scope.searchNick = null;
     $scope.selectCountObj = {
       '1': '5',
@@ -25,7 +27,6 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     };
 
     $scope.loadComments = function() {
-      var user_id = $cookies.get('id');
       $scope.msg = msg;
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
@@ -34,7 +35,8 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
       var stepCount = $scope.selectCount['selected']
       if ($scope.searchNick){
-          showFullUserInfo = ($cookies.get('role')=='admin') ? true: false;;
+          $scope.showFullUserInfo = ($cookies.get('role')!=='user');
+          $scope.showDeleteButton = ($cookies.get('role')!=='user');
           $http({
           method: 'GET',
           url: '/api/search_users_comments',
@@ -44,12 +46,12 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             offset: $scope.selectCount['selected'] * newValue - stepCount
           }
           }).then(function successCallback(response) {
-         $scope.comments = response.data[0];
-         $scope.commentsCount = response.data[1][0]['total_comments_count'];
-         $scope.commentsLength = response.data[1][0]['total_comments_count'];
-         $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+            $scope.comments = response.data[0];
+            $scope.commentsCount = response.data[1][0]['total_comments_count'];
+            $scope.commentsLength = response.data[1][0]['total_comments_count'];
+            $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if ($cookies.get('role')=='admin'){
+        } else if ($cookies.get('role')!=='user'){
           $http({
             method: 'GET',
             url: 'api/all_users_comments',
@@ -67,16 +69,16 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
         } else {
           $http({
             method: 'GET',
-            url: 'api/user_comments/' + user_id,
+            url: 'api/user_comments/' + $scope.user_id,
             params: {
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
             }).then(function successCallback(response) {
-               $scope.comments = response.data[0];
-               $scope.commentsCount = response.data[1][0]['total_comments_count'];
-               $scope.commentsLength = response.data[1][0]['total_comments_count'];
-               $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+              $scope.comments = response.data[0];
+              $scope.commentsCount = response.data[1][0]['total_comments_count'];
+              $scope.commentsLength = response.data[1][0]['total_comments_count'];
+              $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
             })
         }
       })
@@ -84,6 +86,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
 
     $scope.loadComments();
     $scope.loadSubComments = function(parent_id) {
+       $scope.showDeleteButton = ($cookies.get('role')!=='user');
        $http({
         method: 'GET',
         url: '/api/problem_subcomments/' + parent_id

@@ -806,7 +806,7 @@ def get_all_problems():
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT problem.id, title, latitude, longitude,
+        query = """SELECT problem.id, title, latitude, longitude, is_enabled,
                    problem_type_id, status, created_date, problem_type.radius,
                    problem_type.picture
                    FROM `problem` INNER JOIN `problem_type`
@@ -1308,6 +1308,19 @@ def change_comment_by_id(comment_id, content, updated_date):
 
 
 @db.retry_query(tries=3, delay=1)
+def delete_comment_by_id(comment_id):
+    """Deletes comment from comment table by comment_id.
+    If parent comment - delete all subcomments.
+    :params: comment_id - id of comment
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """DELETE `comment` FROM `comment`
+                   WHERE `id`=%s OR `parent_id`=%s;
+                """
+        conn.execute(query, (comment_id, comment_id))
+
+
+@db.retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):
     """Query for change user_id in problem_activity
     table to id of Anonimus User,
@@ -1500,7 +1513,7 @@ def subscription_delete(user_id, problem_id):
     :param problem_id: id of problem (int).
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """DELETE FROM `subscription`                   
+        query = """DELETE FROM `subscription`
                    WHERE `user_id`=%s AND `problem_id`=%s;
                 """
         conn.execute(query, (user_id, problem_id))
@@ -1638,8 +1651,8 @@ def get_all_users_comments(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 LIMIT {},{};
                 """
@@ -1657,8 +1670,8 @@ def get_user_comments(offset, per_page, user_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id ,us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND cm.user_id={} LIMIT {},{};
                 """
@@ -1723,8 +1736,8 @@ def get_comments_by_nickname(nickname, offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    INNER JOIN `user` AS us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
                    LIMIT {},{};
@@ -1933,8 +1946,8 @@ def get_problems_comments_stats():
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, COUNT(c.problem_id) AS comments_count
                    FROM comment AS c INNER JOIN problem AS p
-                   ON c.problem_id = p.id WHERE c.parent_id=0 
-                   GROUP BY c.problem_id 
+                   ON c.problem_id = p.id WHERE c.parent_id=0
+                   GROUP BY c.problem_id
                    ORDER BY comments_count DESC LIMIT 10;"""
         cursor.execute(query)
         return cursor.fetchall()
@@ -2010,3 +2023,67 @@ def edit_problem(problem_id, title, content, proposal,
         conn.execute(query, (title, content, proposal,
                              severity, status, is_enabled,
                              updated_date, problem_id))
+
+
+def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
+    """Search problems by special filter.
+    :order:  order asc or desc.
+    :filtr: name of filter column.
+    :offset: pagination option.
+    :per_page: pagination option
+    :retrun: tuple with filter problems.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   WHERE `user_id`={}
+                   ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(user_id, filtr, order, offset, per_page))
+        return cursor.fetchall()
+
+
+def get_user_by_filter(order, filtr, offset, per_page):
+    """Search problems by special filter.
+    :order:  order asc or desc.
+    :filtr: name of filter column.
+    :offset: pagination option.
+    :per_page: pagination option
+    :retrun: tuple with filter problems.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, u.last_name, u.first_name, u.nickname, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(filtr, order, offset, per_page))
+        return cursor.fetchall()
+
+
+def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
+    """Return information about creation problem by user, found by nickname.
+    :params nickname: user nickname.
+    :retrun: tuple with user and problem info.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.status,
+                   p.created_date, p.is_enabled,
+                   p.severity, u.nickname,
+                   u.last_name, u.first_name, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%' ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, filtr, order, offset, per_page))
+        return cursor.fetchall()

@@ -48,9 +48,9 @@ def problems():
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6], 'radius': problem[7],
-                'picture': problem[8]})
+                'is_enabled': problem[4], 'status': problem[6],
+                'date': problem[7], 'radius': problem[8],
+                'picture': problem[9]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -187,10 +187,12 @@ def post_problem():
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
-    :rtype: JSON.
     :param  user_id: id of user (int).
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
     :query limit: limit number. default is 5.
     :query offset: offset number. default is 0.
+    :rtype: JSON.
     :return:
         - If user has problems:
             ``[{'id': 190, 'title': 'name',
@@ -207,9 +209,16 @@ def get_user_problems(user_id):
             ``{}``
         :statuscode 200: no errors.
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
-    problem_tuple = db.get_user_problems(user_id, offset, per_page)
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_problem_by_filter(user_id, order_desc,
+                                                      filtr, offset, per_page)
+    else:
+        problem_tuple = db.get_user_problems(user_id, offset, per_page)
     count = db.count_user_problems(user_id)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
@@ -250,10 +259,17 @@ def get_all_users_problems():
         'name': 'problem with forests'}]``
 
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_by_filter(order_desc, filtr, offset,
+                                              per_page)
+    else:
+        problem_tuple = db.get_all_users_problems(offset, per_page)
     count = db.count_problems()
-    problem_tuple = db.get_all_users_problems(offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'latitude': problem[2],
@@ -348,6 +364,20 @@ def change_comment_by_id():
         if valid['status']:
             db.change_comment_by_id(data['id'], data['content'], updated_date)
             response = jsonify({'updated_date': updated_date * 1000}), 200
+    return response
+
+
+@app.route('/api/delete_comment', methods=['DELETE'])
+def delete_comment_by_id():
+    """Function deletes comment from DB.
+    :type: JSON
+    :return: response
+    """
+    comment_id = int(request.args.get('comment_id'))
+    db.delete_comment_by_id(comment_id)
+    logger.debug('Comment and all subcomments (if any) was deleted with id %s',
+                 comment_id)
+    response = jsonify(message='Comment successfully added.'), 200
     return response
 
 
@@ -551,7 +581,7 @@ def get_all_subscriptions():
 
 @app.route('/api/countSubscriptions', methods=['GET'])
 def get_count_subscriptions():
-    """Function retrieves all user's subscriptions from db and shows them in 
+    """Function retrieves all user's subscriptions from db and shows them in
     `top 10 of the most popular subscriptions` tab.
     :param count: count of subscriptions to every problem (int)
     :param title: title of problem (str)
@@ -629,11 +659,19 @@ def get_search_users_problems():
         'first_name': 'surname',
         'nickname': 'nick'}]``
     """
+    filtr = request.args.get('filtr')
+    order = int(request.args.get('order')) or 0
     nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
+    order_desc = 'desc' if order else 'asc'
+    if filtr:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+    else:
+        problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     count = db.count_user_by_nickname(nickname)
-    problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'status': problem[2],
@@ -685,9 +723,10 @@ def all_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name': comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name': comment[7],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -732,9 +771,10 @@ def user_comments(user_id):
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name' : comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name' : comment[7],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -818,9 +858,10 @@ def search_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name': comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name': comment[7],
                              'sub_count': subcomments_count[0]})
     if comments_count:
         total_count = {'total_comments_count': comments_count[0]}
@@ -856,7 +897,7 @@ def get_problem_type_for_filtration():
 @app.route('/api/problems_radius/<int:type_id>')
 @login_required
 def problems_radius(type_id):
-    """Handler for sending short data for about probles for 
+    """Handler for sending short data for about probles for
          radius functionality.
     :rtype: JSON
     :return:
@@ -887,7 +928,7 @@ def statistic_problems():
     """This method returns statisctic for some period from db.
     Statistic include type of problem and its count for this period.
     :period: int which define time period. default is 0. Can have such values:
-    (0 - period of all time, 1 - only for one day, 2 - for a week, 
+    (0 - period of all time, 1 - only for one day, 2 - for a week,
     3 -for a month, 4 - for a year).
     :rtype: JSON.
     :return: list of statisctic ecomap's problem with next objects:
@@ -967,5 +1008,49 @@ def problems_comments_stats():
         for problem in problems_comments:
             parsed_json.append({'id': problem[0],
                                 'title': problem[1],
-                                'comments_count': problem[2]})     
+                                'comments_count': problem[2]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
+
+
+@app.route('/api/search_byFilter_usersProblem', methods=['GET'])
+def get_search_problems_by_filter():
+    """This method retrieves all user's problem by special filter name from db.
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
+    :query per_page: limit number. default is 5.
+    :query offset: offset number. default is 0.
+    :rtype: JSON.
+    :return: list of user's problem represented with next objects:
+        ``[{"id": 190,
+        "title": "name",
+        "status": 0,
+        "date": "2015-02-24T14:27:22.000Z",
+        "severity": '3',
+        "is_enabled": 1,
+        'last_name': 'name',
+        'first_name': 'surname',
+        'nickname': 'nick',
+        'name': 'forests_problem'}]``
+    """
+    filtr = request.args.get('filtr')
+    order = int(request.args.get('order')) or 0
+    offset = int(request.args.get('offset')) or 0
+    per_page = int(request.args.get('per_page')) or 5
+    order_desc = 'desc' if order else 'asc'
+    count = db.count_problems()
+    problem_tuple = db.get_user_by_filter(order_desc, filtr, offset, per_page)
+    problems_list = [{'id': problem[0],
+                      'title': problem[1],
+                      'status': problem[2],
+                      'date': problem[3] * 1000,
+                      'is_enabled': problem[4],
+                      'severity': problem[5],
+                      'nickname': problem[6],
+                      'last_name': problem[7],
+                      'first_name': problem[8],
+                      'name': problem[9]}
+                     for problem in problem_tuple] if problem_tuple else []
+    total_count = {'total_problem_count': count[0]} if count else {}
+    return Response(json.dumps([problems_list, [total_count]]),
+                    mimetype='application/json')
+

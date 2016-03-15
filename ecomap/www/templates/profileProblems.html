@@ -25,39 +25,33 @@
   <table class="table table-stripped UserProblemTable">
     <thead>
       <tr>
-        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
+        <td ng-click="sortFilter('is_enabled')" 
             ng-show='showTable == true'><strong></strong></td>
-        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
+        <td ng-click="sortFilter('last_name')"
             ng-show='showTable == true'><strong>Користувач</strong>
-          <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'last_name' && sortReverse" class="fa fa-caret-up">
-          </span>
+          <span ng-show="filterTable.order_last_name" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_last_name" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
-            ng-show='showTable == true || nickname == true'><strong>Нікнейм</strong>
-          <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'last_name' && sortReverse" class="fa fa-caret-up">
-          </span>
+        <td ng-click="sortFilter('nickname')"
+            ng-show='showTable == true || nickname == true'><strong>Псевдонім</strong>
+          <span ng-show="filterTable.order_nickname" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_nickname" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'title';sortReverse = !sortReverse"><strong>Заголовок</strong>
-          <span ng-show="sortType == 'title' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'title' && sortReverse" class="fa fa-caret-up">
-          </span>
+        <td ng-click="sortFilter('title')"><strong>Заголовок</strong>
+          <span ng-show="filterTable.order_title" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_title" class="fa fa-caret-up"></span>
         </td>
-        <td><strong ng-click="sortType = 'type';sortReverse = !sortReverse">Тип проблеми</strong>
-          <span ng-show="sortType == 'type' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'type' && sortReverse" class="fa fa-caret-up"></span>
+        <td><strong ng-click="sortFilter('name')">Тип проблеми</strong>
+          <span ng-show="filterTable.order_name" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_name" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'status';sortReverse = !sortReverse"><strong>Статус</strong>
-          <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span>
+        <td ng-click="sortFilter('status')"><strong>Статус</strong>
+          <span ng-show="filterTable.order_status" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_status" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'date';sortReverse = !sortReverse"><strong>Дата створення</strong>
-          <span ng-show="sortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
+        <td ng-click="sortFilter('created_date')"><strong>Дата створення</strong>
+          <span ng-show="filterTable.order_created_date" class="fa fa-caret-down"></span>
+          <span ng-show="!filterTable.order_created_date" class="fa fa-caret-up"></span>
         </td>
         <td><strong>Детальне інфо</strong> 
         </td>
@@ -65,7 +59,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="problem in problems | orderBy:sortType:sortReverse">
+      <tr ng-repeat="problem in problems">
         <td ng-show='showTable == true'><i class="fa fa-circle" ng-class="{circleTrue: problem.is_enabled, circleFalse: !problem.is_enabled}"></i></td>
         <td ng-model="problem.last_name" ng-show='showTable == true'>
           {{problem.first_name}} {{problem.last_name}}</td>
@@ -78,7 +72,7 @@
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
         <td ng-show='showTable == true'>
-          <a href="/#/editFaq/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
+          <a href="/#/editProblem/{{page.alias}}" >редагувати</a> &nbsp; &nbsp;
           <a href="" class="del" ng-click="deleteProblem(problem.id)">видалити</a>
         </td>
       </tr>

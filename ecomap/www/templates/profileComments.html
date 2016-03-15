@@ -39,7 +39,7 @@
                     <span>{{comment.created_date | date : "dd/MM/yyyy"}}</span>
                 </div>
             </div>
-            <div class="form-control no-float col-lg-8 col-xs-8">
+            <div class="form-control no-float col-lg-7 col-xs-7">
                 <span>{{comment.content}}</span>
             </div>
 
@@ -49,6 +49,10 @@
 
             <div class="input-group-addon no-float col-lg-1 col-xs-1">
                 <i class="fa fa-link" ng-click="triggerDetailModal(comment.problem_id)" role='button' data-toggle="tooltip" data-placement="top" title="Перейти до проблеми" tooltip></i>
+            </div>
+
+            <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (comment.user_id==user_id) ">
+                <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
             </div>
         </div>
     </div>
@@ -62,9 +66,12 @@
                     <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
                 </div>
             </div>
-                <div class="form-control no-float col-lg-8 col-xs-8">
-                    <span>{{subcomment.content}}</span>
-                </div>
+            <div class="form-control no-float col-lg-7 col-xs-7">
+                <span>{{subcomment.content}}</span>
+            </div>
+             <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (comment.user_id==user_id)">
+                <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
+            </div>
         </div>
         <div class="input-group col-lg-11 col-xs-11 col-lg-offset-1 col-xs-offset-1" ng-show="!showFullUserInfo">
             <div class="input-group-addon  no-float col-lg-2 col-xs-2" data-toggle="tooltip" data-placement="top" title="Псевдонім: {{subcomment.nickname}}&#010;Час: {{subcomment.created_date | date : 'dd/MM/yyyy HH:mm:ss'}}" tooltip>
@@ -75,9 +82,12 @@
                     <span>{{subcomment.created_date | date : "dd/MM/yyyy "}}</span>
                 </div>
             </div>
-                <div class="form-control no-float col-lg-8 col-xs-8">
-                    <span>{{subcomment.content}}</span>
-                </div>
+            <div class="form-control no-float col-lg-7 col-xs-7">
+                <span>{{subcomment.content}}</span>
+            </div>
+            <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (subcomment.user_id==user_id)">
+                <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
+            </div>
         </div>
     </div>
     <p ng-hide="commentsCount == 0">

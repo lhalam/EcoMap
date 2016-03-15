@@ -21,7 +21,16 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       };
       return statuses[status];
     };
-
+    $scope.filterTable = {
+      'param': '',
+      'order': 1
+    }
+    $scope.sortFilter = function(filtr){
+          $scope.filterTable.param = filtr;
+          var par = "order_"+$scope.filterTable.param;
+          $scope.filterTable[par] = $scope.filterTable[par]?0:1;
+          $scope.loadProblems();
+        }
     $scope.showTable = false;
     $scope.nickname = false;
     $scope.searchNick = null;
@@ -42,6 +51,8 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               url: '/api/search_usersProblem',
               params: {
                 nickname: $scope.searchNick, 
+                filtr: $scope.filterTable.param || undefined,
+                order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
                 per_page: $scope.selectCount['selected'],
                 offset: $scope.selectCount['selected'] * newValue - stepCount
               }
@@ -57,6 +68,8 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             method: 'GET',
             url: 'api/all_usersProblem',
             params: {
+              filtr: $scope.filterTable.param || undefined,
+              order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
@@ -66,12 +79,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             $scope.count = response.data[1][0]['total_problem_count'];
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
           })
-        } else {
+        } else{
           $scope.nickname = false;
           $http({
             method: 'GET',
             url: 'api/usersProblem/' + user_id,
             params: {
+              filtr: $scope.filterTable.param || undefined,
+              order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
@@ -123,7 +138,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       };
 
     $scope.loadProblems();
-
+    
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');

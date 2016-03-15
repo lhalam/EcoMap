@@ -63,7 +63,10 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
+      console.log(response);
       angular.forEach(response.data, function (marker, key) {
+        if (marker.is_enabled == 0)
+          return;
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,
@@ -84,7 +87,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
-        console.log(instance.cluster.getMaxZoom())
       }, function errorCallback() {})
     })
     instance.markers = markers;

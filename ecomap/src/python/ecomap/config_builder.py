@@ -76,7 +76,8 @@ def input_user_data(confvar_dict):
         while True:
             user_dict[key] = raw_input('[%s] %s [default:%s]: '
                                        % (key, value['help'],
-                                          value['default']))or value['default']
+                                          value['default'])) or \
+                                          value['default']
             if user_dict[key]:
                 type_value = CONFIG_TYPES[value['type']]
                 if value.get('validate_re') and \
@@ -166,22 +167,22 @@ def insert_user(user_id, first_name, last_name, nickname, email, password,
     try:
         mysql = MySQLdb.connect(host, db_user, db_pasword, db_name)
         cursor = mysql.cursor()
-        query = """INSERT INTO `user` (`id`,
-                                       `first_name`,
-                                       `last_name`,
-                                       `nickname`,
-                                       `email`,
-                                       `password`)
-               VALUES ('%s', '%s', '%s', '%s', '%s', '%s')
-               ON DUPLICATE KEY UPDATE `first_name` = '%s',
-                                       `last_name` = '%s',
-                                       `nickname` = '%s',
-                                       `email` = '%s',
-                                       `password` = '%s';
-            """
-        cursor.execute(query % (user_id, first_name, last_name, nickname,
-                                email, password, first_name, last_name,
-                                nickname, email, password))
+        query = """INSERT INTO `user` (id,
+                                       first_name,
+                                       last_name,
+                                       nickname,
+                                       email,
+                                       password
+                   VALUES (%s, %s, %s, %s, %s, %s)
+                   ON DUPLICATE KEY UPDATE 'first_name' = %s,
+                                           'last_name' = %s,
+                                           'nickname' = %s,
+                                           'email' = %s,
+                                           'password' = %s;
+                """
+        cursor.execute(query, (user_id, first_name, last_name, nickname,
+                               email, password, first_name, last_name,
+                               nickname, email, password))
         mysql.commit()
         mysql.close()
         logging.info('User added or updated in db.')

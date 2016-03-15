@@ -1220,3 +1220,7 @@ label.checked{
 .all-statistic li:last-child{
   font-size: 21px;
 }
+#piechar{
+  height:500px; 
+  width:100%;
+}

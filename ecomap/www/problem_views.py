@@ -48,9 +48,9 @@ def problems():
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'status': problem[5],
-                'date': problem[6], 'radius': problem[7],
-                'picture': problem[8]})
+                'is_enabled': problem[4], 'status': problem[6],
+                'date': problem[7], 'radius': problem[8],
+                'picture': problem[9]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -551,7 +551,7 @@ def get_all_subscriptions():
 
 @app.route('/api/countSubscriptions', methods=['GET'])
 def get_count_subscriptions():
-    """Function retrieves all user's subscriptions from db and shows them in 
+    """Function retrieves all user's subscriptions from db and shows them in
     `top 10 of the most popular subscriptions` tab.
     :param count: count of subscriptions to every problem (int)
     :param title: title of problem (str)
@@ -856,7 +856,7 @@ def get_problem_type_for_filtration():
 @app.route('/api/problems_radius/<int:type_id>')
 @login_required
 def problems_radius(type_id):
-    """Handler for sending short data for about probles for 
+    """Handler for sending short data for about probles for
          radius functionality.
     :rtype: JSON
     :return:
@@ -887,7 +887,7 @@ def statistic_problems():
     """This method returns statisctic for some period from db.
     Statistic include type of problem and its count for this period.
     :period: int which define time period. default is 0. Can have such values:
-    (0 - period of all time, 1 - only for one day, 2 - for a week, 
+    (0 - period of all time, 1 - only for one day, 2 - for a week,
     3 -for a month, 4 - for a year).
     :rtype: JSON.
     :return: list of statisctic ecomap's problem with next objects:
@@ -967,5 +967,5 @@ def problems_comments_stats():
         for problem in problems_comments:
             parsed_json.append({'id': problem[0],
                                 'title': problem[1],
-                                'comments_count': problem[2]})     
+                                'comments_count': problem[2]})
     return Response(json.dumps(parsed_json), mimetype='application/json')

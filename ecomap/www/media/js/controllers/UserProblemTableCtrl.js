@@ -85,6 +85,43 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       })
     };
 
+    $scope.deleteProblem = function(id) {
+      if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
+        $http({
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          url: '/api/problem_delete',
+          data: {
+            'problem_id': id
+          }
+        }).then(function successCallback(data) {
+          $scope.loadProblems();
+          $scope.msg.deleteSuccess('проблема');
+        }, function errorCallback(response) {
+          $scope.msg.deleteError('проблема', arguments[0]['data']['msg']);
+        })
+      }
+      else{
+        $http({
+        url: '/api/problem_delete',
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+        data: {
+          'problem_id': id
+        }
+        }).then(function successCallback(data){
+          $scope.loadProblems();
+          $scope.msg.deleteError('типу проблеми');
+        }, function errorCallback(response) {
+          $scope.msg.deleteError('типу проблеми', arguments[0]['data']['msg']);
+        })
+        }
+      };
+
     $scope.loadProblems();
 
     $scope.triggerDetailModal = function(problem_id) {

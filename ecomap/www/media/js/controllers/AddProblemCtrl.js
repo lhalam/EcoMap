@@ -45,8 +45,8 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }
          $scope.chosen = $scope.problemTypes[0];
          $scope.newProblem.type = $scope.chosen['id'];
-         $('.selected-items-box').click(function(){
-         $('.multiple-select-wrapper .list').slideToggle();
+         $('.selected-item-box').click(function(){
+         $('.select-wrapper .list').slideToggle();
          });
       }, function errorCallback(response) {})
     };
@@ -152,12 +152,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
           $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
             toaster.pop({type: 'info',
-              title: 'Тип проблеми', 
+              title: 'Тип проблеми',
               body: 'Проблема типу '+ $scope.allProblems[i]['name'] + ' в радіусі '+$scope.allProblems[i]['radius']+' метрів вже існує. Ви можете переглянути цю проблему натиснувши на це повідомлення.',
               clickHandler: function (toast, isCloseButton) {
                 if(isCloseButton){
                     return true;}
-                else{$scope.triggerDetailModal($scope.allProblems[i]['problem_id']); 
+                else{$scope.triggerDetailModal($scope.allProblems[i]['problem_id']);
                   return true;}
               }
             });
@@ -286,7 +286,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     }
    }
    $scope.getSelectedItemOnly();
-    $('.multiple-select-wrapper .list').slideUp();
+    $('.select-wrapper .list').slideUp();
   }
 }
 ]);

@@ -10,7 +10,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.showSubComments = false;
     $scope.editMode = false;
     $scope.editCommentid = null;
-    $scope.showAnonymCheckBox = $cookies.get('id') ? true: false;
+    $scope.showInputForm = $cookies.get('id') ? true: false;
+    $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
+
     $scope.user_id = $cookies.get('id');
     $http({
       'method': 'GET',
@@ -68,6 +70,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }, function errorCallback(response) {
             if (response.status===405) {
               $scope.msg.addCommentAnonimError('коментаря');
+            } else if($scope.editMode) {
+            $scope.msg.editError('коментаря', ' Потрібно завершити редагування!')
             } else {
               $scope.msg.addCommentError('коментаря');
             }

@@ -141,8 +141,8 @@ class DBPool(object):
 
     @contextmanager
     def transaction(self):
-	"""Method manages work with connections
-            for update database.
+        """Method manages work with connections
+        for update database.
         """
         with self.lock:
             conn = self._get_conn()

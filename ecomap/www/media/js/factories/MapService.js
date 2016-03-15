@@ -57,7 +57,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
   }
   instance.loadProblems = function() {
     var markers = [];
-    var mcOptions = {gridSize: 80};
+    var mcOptions = {gridSize: 80, maxZoom: 13};
     instance.cluster = new MarkerClusterer(instance.getInst(), [], mcOptions);
     $http({
       method: 'GET',
@@ -84,7 +84,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
         });
         instance.cluster.addMarker(new_marker);
         markers.push(new_marker);
-
+        console.log(instance.cluster.getMaxZoom())
       }, function errorCallback() {})
     })
     instance.markers = markers;

@@ -27,9 +27,6 @@ class ConnectionMock(MySQLdbMock):
     def connect(self, user, host, port, passwd, db, charset, init_command):
         return 'mocked connection'
 
-    def close(self):
-        pass
-
 
 class TestCase(unittest2.TestCase):
 
@@ -60,9 +57,9 @@ class TestCase(unittest2.TestCase):
         """Tests check if connection was created."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        self.assertEqual(db_pool.DBPool()._create_conn()['connection'],
-                                                    CONN['connection'])
-        self.assertIsInstance(db_pool.DBPool()._create_conn(), dict)
+        self.assertEqual(POOL._create_conn()['connection'],
+                                        CONN['connection'])
+        self.assertIsInstance(POOL._create_conn(), dict)
 
     def test_get_conn_add(self):
         """Tests get conn to add conn."""
@@ -85,7 +82,7 @@ class TestCase(unittest2.TestCase):
                                    'localhost', 3306, 5, 0)
         POOL._connection_pool = []
         POOL.connection_pointer = 5
-        self.assertRaises(TypeError, lambda: POOL._get_conn(),
+        self.assertRaises(TypeError, POOL._get_conn,
             POOL.connection_pointer, POOL._connection_pool)
 
     def test_push_conn(self):
@@ -106,6 +103,19 @@ class TestCase(unittest2.TestCase):
 
     def test_manager_close_conn(self):
         """Tests manager for close conn."""
+        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
+                                   'localhost', 3306, 1, 1)
+        POOL._connection_pool = [CONN]
+        POOL.connection_pointer = 0
+        try:
+            with POOL.manager():
+                time.sleep(2)
+        except:
+            raise
+        self.assertListEqual([CONN], POOL._connection_pool)
+    
+    def test_transaction_close_conn(self):
+        """Tests transaction for close conn."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 1, 1)
         POOL._connection_pool = [CONN]

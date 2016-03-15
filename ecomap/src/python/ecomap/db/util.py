@@ -806,7 +806,7 @@ def get_all_problems():
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT problem.id, title, latitude, longitude,
+        query = """SELECT problem.id, title, latitude, longitude, is_enabled,
                    problem_type_id, status, created_date, problem_type.radius,
                    problem_type.picture
                    FROM `problem` INNER JOIN `problem_type`
@@ -1500,7 +1500,7 @@ def subscription_delete(user_id, problem_id):
     :param problem_id: id of problem (int).
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """DELETE FROM `subscription`                   
+        query = """DELETE FROM `subscription`
                    WHERE `user_id`=%s AND `problem_id`=%s;
                 """
         conn.execute(query, (user_id, problem_id))
@@ -1933,8 +1933,8 @@ def get_problems_comments_stats():
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, COUNT(c.problem_id) AS comments_count
                    FROM comment AS c INNER JOIN problem AS p
-                   ON c.problem_id = p.id WHERE c.parent_id=0 
-                   GROUP BY c.problem_id 
+                   ON c.problem_id = p.id WHERE c.parent_id=0
+                   GROUP BY c.problem_id
                    ORDER BY comments_count DESC LIMIT 10;"""
         cursor.execute(query)
         return cursor.fetchall()
@@ -1961,3 +1961,4 @@ def get_user_by_filter(order, filtr, offset, per_page):
                 """
         cursor.execute(query.format(filtr, order, offset, per_page))
         return cursor.fetchall()
+

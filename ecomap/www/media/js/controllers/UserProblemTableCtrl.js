@@ -21,7 +21,15 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       };
       return statuses[status];
     };
-
+    $scope.filterTable = {
+      'param': '',
+      'order': 0
+    }
+    $scope.sortFilter = function(filtr){
+          $scope.filterTable.param = filtr;
+          $scope.filterTable.order = $scope.filterTable.order?0:1;
+          $scope.loadProblems();
+        }
     $scope.showTable = false;
     $scope.nickname = false;
     $scope.searchNick = null;
@@ -51,7 +59,23 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
+        } else if($scope.filterTable.param){
+          $http({
+            method: 'GET',
+            url: '/api/search_byFilter_usersProblem',
+            params: {
+              filtr: $scope.filterTable.param,
+              order: $scope.filterTable.order,
+              per_page: $scope.selectCount['selected'],
+              offset: $scope.selectCount['selected'] * newValue - stepCount,
+            }
+          }).then(function successCallback(response) {
+            $scope.problems = response.data[0];
+            $scope.problemsLength = response.data[1][0]['total_problem_count'];
+            $scope.count = response.data[1][0]['total_problem_count'];
+            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+          })
+        }else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
           $scope.showTable = true;
           $http({
             method: 'GET',
@@ -86,7 +110,22 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     };
 
     $scope.loadProblems();
-
+    // $scope.sortFilter = function(filtr){
+    //   console.log(filtr)
+    //   $http({
+    //         method: 'GET',
+    //         url: 'api/usersProblem/',
+    //         params: {
+    //           per_page: $scope.selectCount['selected'],
+    //           offset: $scope.selectCount['selected'] * newValue - stepCount,
+    //         }
+    //       }).then(function successCallback(response) {
+    //        $scope.problems = response.data[0];
+    //        $scope.problemsLength = response.data[1][0]['total_problem_count'];
+    //        $scope.count = response.data[1][0]['total_problem_count'];
+    //        $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+    //      })
+    // }
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');

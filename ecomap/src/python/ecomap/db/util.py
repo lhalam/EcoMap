@@ -1953,6 +1953,78 @@ def get_problems_comments_stats():
         return cursor.fetchall()
 
 
+@db.retry_query(tries=3, delay=1)
+def delete_problem_by_id(problem_id):
+    """Delete problem.
+       :params: problem_type_id - id of problem.
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """DELETE FROM `problem`
+                          WHERE `id`=%s;
+                      """
+        conn.execute(query, (problem_id,))
+
+
+@db.retry_query(tries=3, delay=1)
+def delete_problem_photo_by_id(problem_id):
+    """Delete problem photo.
+       :params: problem_id - id of problem.
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """DELETE FROM `photo`
+                          WHERE `problem_id`=%s;
+                      """
+        conn.execute(query, (problem_id,))
+
+
+@db.retry_query(tries=3, delay=1)
+def change_user_problem_to_anonymous(problem_id):
+    """Update problem to anonymous.
+       :params: problem_id: id of problem.
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """UPDATE `problem` SET `user_id`=%s
+                          WHERE `id`=%s;
+                      """
+        conn.execute(query, (ANONYMOUS_ID, problem_id))
+
+
+@db.retry_query(tries=3, delay=1)
+def get_problem_photo_by_id(problem_id):
+    """Get problem photo by id."""
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `name` FROM `photo`
+                          WHERE `problem_id`=%s;
+                      """
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
+def edit_problem(problem_id, title, content, proposal,
+                 severity, status, is_enabled, updated_date):
+    """Update problem.
+       :params: problem_id: id of problem.
+                    title: title of the problem.
+                    content: discription of the problem.
+                    proposal: propositions to solve problem.
+                    severity: importance of problem.
+                    status: status of the problem.
+                    is_enabled: enabled or disabled status.
+                    update_date: time of problem update.
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """UPDATE `problem` SET `title`=%s, content`=%s,
+                           proposal`=%s,  severity`=%s, status`=%s,
+                           is_enabled`=%s,  update_date`=%s,
+                          WHERE `id`=%s;
+                      """
+        conn.execute(query, (title, content, proposal,
+                             severity, status, is_enabled,
+                             updated_date, problem_id))
+
+
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
     """Search problems by special filter.
     :order:  order asc or desc.
@@ -1994,4 +2066,24 @@ def get_user_by_filter(order, filtr, offset, per_page):
                    ORDER BY {} {} LIMIT {},{};
                 """
         cursor.execute(query.format(filtr, order, offset, per_page))
+        return cursor.fetchall()
+
+
+def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
+    """Return information about creation problem by user, found by nickname.
+    :params nickname: user nickname.
+    :retrun: tuple with user and problem info.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.status,
+                   p.created_date, p.is_enabled,
+                   p.severity, u.nickname,
+                   u.last_name, u.first_name, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%' ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, filtr, order, offset, per_page))
         return cursor.fetchall()

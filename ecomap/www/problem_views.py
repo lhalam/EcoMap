@@ -229,7 +229,8 @@ def get_user_problems(user_id):
                       'date': problem[6] * 1000,
                       'severity': problem[8],
                       'is_enabled': problem[7],
-                      'name': problem[9]}
+                      'user_id': problem[9],
+                      'name': problem[10]}
                      for problem in problem_tuple] if problem_tuple else []
     logger.info(problem_tuple)
     total_count = {'total_problem_count': count[0]} if count else {}
@@ -679,9 +680,10 @@ def get_search_users_problems():
                       'is_enabled': problem[4],
                       'severity': problem[5],
                       'nickname': problem[6],
-                      'last_name': problem[7],
-                      'first_name': problem[8],
-                      'name': problem[9]}
+                      'user_id': problem[7],
+                      'last_name': problem[8],
+                      'first_name': problem[9],
+                      'name': problem[10]}
                      for problem in problem_tuple] if problem_tuple else []
     total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),

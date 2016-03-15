@@ -62,7 +62,7 @@ def get_user_by_nickname(nickname, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.status,
                    p.created_date, p.is_enabled,
-                   p.severity, u.nickname,
+                   p.severity, u.nickname, p.user_id,
                    u.last_name, u.first_name, pt.name
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
@@ -823,7 +823,7 @@ def get_user_problems(user_id, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
-                   p.severity, pt.name
+                   p.severity, p.user_id, pt.name
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    WHERE `user_id`=%s LIMIT %s,%s;
@@ -2037,7 +2037,7 @@ def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
-                   p.severity, pt.name
+                   p.severity, p.user_id, pt.name
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    WHERE `user_id`={}
@@ -2078,7 +2078,7 @@ def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.status,
                    p.created_date, p.is_enabled,
-                   p.severity, u.nickname,
+                   p.severity, u.nickname, p.user_id,
                    u.last_name, u.first_name, pt.name
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id

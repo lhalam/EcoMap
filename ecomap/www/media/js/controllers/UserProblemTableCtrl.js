@@ -1,8 +1,10 @@
 app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
   function($scope, $http, $state, $cookies, $window) {
-    $scope.sortType = 'id'; // set the default sort type
-    $scope.sortReverse = false;  // set the default sort order
-    $scope.searchFish = '';
+    $scope.showTable = false;
+    $scope.nickname = false;
+    $scope.searchNick = null;
+    $scope.user_id = $cookies.get('id');
+
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -30,12 +32,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
           var par = "order_"+$scope.filterTable.param;
           $scope.filterTable[par] = $scope.filterTable[par]?0:1;
           $scope.loadProblems();
-        }
-    $scope.showTable = false;
-    $scope.nickname = false;
-    $scope.searchNick = null;
+    }
+
     $scope.loadProblems = function() {
-      var user_id = $cookies.get('id');
       $scope.msg = msg;
       $scope.fromPage = 1;
       $scope.bigCurrentPage = 1;
@@ -62,7 +61,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
+        } else if($cookies.get('role')!=='user'){
           $scope.showTable = true;
           $http({
             method: 'GET',
@@ -83,7 +82,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
           $scope.nickname = false;
           $http({
             method: 'GET',
-            url: 'api/usersProblem/' + user_id,
+            url: 'api/usersProblem/' + $scope.user_id,
             params: {
               filtr: $scope.filterTable.param || undefined,
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,

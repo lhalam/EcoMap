@@ -645,11 +645,19 @@ def get_search_users_problems():
         'first_name': 'surname',
         'nickname': 'nick'}]``
     """
+    filtr = request.args.get('filtr')
+    order = int(request.args.get('order')) or 0
     nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
+    order_desc = 'desc' if order else 'asc'
+    if filtr:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+    else:
+        problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     count = db.count_user_by_nickname(nickname)
-    problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'status': problem[2],

@@ -1982,3 +1982,23 @@ def get_user_by_filter(order, filtr, offset, per_page):
                 """
         cursor.execute(query.format(filtr, order, offset, per_page))
         return cursor.fetchall()
+
+
+def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
+    """Return information about creation problem by user, found by nickname.
+    :params nickname: user nickname.
+    :retrun: tuple with user and problem info.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.status,
+                   p.created_date, p.is_enabled,
+                   p.severity, u.nickname,
+                   u.last_name, u.first_name, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%' ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(nickname, filtr, order, offset, per_page))
+        return cursor.fetchall()

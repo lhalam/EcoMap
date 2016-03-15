@@ -343,6 +343,10 @@ form {
   height: 100%;
 }
 
+.map-div>div{
+  width: 100%;
+}
+
 /*UserProfile styles*/
 @media screen and (max-width: 960px) {
   .panel-body .profile {
@@ -1144,20 +1148,21 @@ select.form-comments{
 }
 
 .statistic {
-    margin: 10px 0;
-    text-align: center;
+  margin: 10px 0px;
+  text-align: center;
 }
 .topProblems {
   display: inline-block;
-  margin: 15px 5px;
-  margin-right: 4%;
+  margin: 15px 0px;
 }
 .statistic h2{
   font-size: 34px;
   font-weight: bold;
+  height: 50px;
 }
 .topItem{
   margin-bottom: 0px;
+  padding-left: 0px;
 }
 .topItem>a {
   padding: 5px;

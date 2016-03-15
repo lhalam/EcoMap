@@ -147,36 +147,33 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.radiusFunc();
       }, function errorCallback(response) {})
     }
+$scope.problemsList =[]
+
     $scope.radiusFunc = function(){
+      var problemsRefs = '';
+      var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
           if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
           $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
-            toaster.pop({type: 'info',
-              title: 'Тип проблеми', 
-              body: 'Проблема типу '+ $scope.allProblems[i]['name'] + ' в радіусі '+$scope.allProblems[i]['radius']+' метрів вже існує. Ви можете переглянути цю проблему натиснувши на це повідомлення.',
-              clickHandler: function (toast, isCloseButton) {
-                if(isCloseButton){
-                    return true;}
-                else{$scope.triggerDetailModal($scope.allProblems[i]['problem_id']); 
-                  return true;}
-              }
-            });
-            // var map = MapFactory.getInst();
-            // map.setCenter(new google.maps.LatLng($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude']));
-            break;
-            }
+            var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
+            problemsRefs = problemsRefs.concat(ref);
+            problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);
+            }    
+      }
+      if(problemsRefs){
+         toaster.pop({type: 'info',
+              timeout: 10000,
+              title: 'Проблема даного типу вже існує!' , 
+              bodyOutputType: 'trustedHtml',
+              body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянутин проблеми:</br><ul>' + problemsRefs + '</ul>',
+              });
       }
     }
-    $scope.triggerDetailModal = function(problem_id) {
-      var url = '/#/detailedProblem/' + problem_id;
-      window.open(url, '_blank');
-    };
     $scope.addProblemTab = true;
     $scope.addPhotosTab = false;
     $scope.goToPhotos = function(form) {
       if (!form.$invalid) {
         $scope.addProblemTab = false;
-        // $scope.loadProblem($scope.newProblem['type']);
         $scope.addPhotosTab = true;
       }
     };

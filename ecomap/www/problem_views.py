@@ -187,10 +187,12 @@ def post_problem():
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
-    :rtype: JSON.
     :param  user_id: id of user (int).
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
     :query limit: limit number. default is 5.
     :query offset: offset number. default is 0.
+    :rtype: JSON.
     :return:
         - If user has problems:
             ``[{'id': 190, 'title': 'name',
@@ -207,9 +209,16 @@ def get_user_problems(user_id):
             ``{}``
         :statuscode 200: no errors.
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
-    problem_tuple = db.get_user_problems(user_id, offset, per_page)
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_problem_by_filter(user_id, order_desc,
+                                                      filtr, offset, per_page)
+    else:
+        problem_tuple = db.get_user_problems(user_id, offset, per_page)
     count = db.count_user_problems(user_id)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
@@ -250,10 +259,17 @@ def get_all_users_problems():
         'name': 'problem with forests'}]``
 
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_by_filter(order_desc, filtr, offset,
+                                              per_page)
+    else:
+        problem_tuple = db.get_all_users_problems(offset, per_page)
     count = db.count_problems()
-    problem_tuple = db.get_all_users_problems(offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'latitude': problem[2],
@@ -1015,5 +1031,4 @@ def get_search_problems_by_filter():
     total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
                     mimetype='application/json')
-
 

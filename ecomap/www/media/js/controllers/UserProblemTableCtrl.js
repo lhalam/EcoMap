@@ -60,28 +60,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if($scope.filterTable.param){
-          $http({
-            method: 'GET',
-            url: '/api/search_byFilter_usersProblem',
-            params: {
-              filtr: $scope.filterTable.param,
-              order: $scope.filterTable["order_"+$scope.filterTable.param],
-              per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount,
-            }
-          }).then(function successCallback(response) {
-            $scope.problems = response.data[0];
-            $scope.problemsLength = response.data[1][0]['total_problem_count'];
-            $scope.count = response.data[1][0]['total_problem_count'];
-            $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-          })
-        }else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
+        } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
           $scope.showTable = true;
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',
             params: {
+              filtr: $scope.filterTable.param || undefined,
+              order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
@@ -91,12 +77,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             $scope.count = response.data[1][0]['total_problem_count'];
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
           })
-        } else {
+        } else{
           $scope.nickname = false;
           $http({
             method: 'GET',
             url: 'api/usersProblem/' + user_id,
             params: {
+              filtr: $scope.filterTable.param || undefined,
+              order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
@@ -111,22 +99,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     };
 
     $scope.loadProblems();
-    // $scope.sortFilter = function(filtr){
-    //   console.log(filtr)
-    //   $http({
-    //         method: 'GET',
-    //         url: 'api/usersProblem/',
-    //         params: {
-    //           per_page: $scope.selectCount['selected'],
-    //           offset: $scope.selectCount['selected'] * newValue - stepCount,
-    //         }
-    //       }).then(function successCallback(response) {
-    //        $scope.problems = response.data[0];
-    //        $scope.problemsLength = response.data[1][0]['total_problem_count'];
-    //        $scope.count = response.data[1][0]['total_problem_count'];
-    //        $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-    //      })
-    // }
+    
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');

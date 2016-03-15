@@ -351,6 +351,20 @@ def change_comment_by_id():
     return response
 
 
+@app.route('/api/delete_comment', method=['DELETE'])
+def delete_comment_by_id():
+    """Function deletes comment from DB.
+    :type: JSON
+    :return: response
+    """
+    comment_id = int(request.args.get('comment_id'))
+    db.delete_comment_by_id(comment_id)
+    logger.debug('Comment and all subcomments (if any) was deleted with id %s',
+                 comment_id)
+    response = jsonify(message='Comment successfully added.'), 200
+    return response
+
+
 @app.route('/api/problem/add_comment', methods=['POST'])
 @login_required
 def post_comment():

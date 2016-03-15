@@ -1308,6 +1308,19 @@ def change_comment_by_id(comment_id, content, updated_date):
 
 
 @db.retry_query(tries=3, delay=1)
+def delete_comment_by_id(comment_id):
+    """Deletes comment from comment table by comment_id.
+    If parent comment - delete all subcomments.
+    :params: comment_id - id of comment
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """DELETE `comment` FROM `comment`
+                   WHERE `id`=%s OR `parent_id`=%s;
+                """
+        conn.execute(query, (comment_id, comment_id))
+
+
+@db.retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):
     """Query for change user_id in problem_activity
     table to id of Anonimus User,

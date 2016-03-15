@@ -1227,6 +1227,10 @@ label.checked{
 .all-statistic li:last-child{
   font-size: 21px;
 }
+#piechar{
+  height:500px; 
+  width:100%;
+}
 
 .hidden-style{
   margin: 10px 0px;
@@ -1252,3 +1256,4 @@ opacity: 0.2;
   padding-left: 10px;
 margin-bottom: 10px;
 }
+>>>>>>> 2ef11dbd116d0b1d84989c393b30172f63e4ce34

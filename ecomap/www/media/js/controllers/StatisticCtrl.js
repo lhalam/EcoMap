@@ -25,7 +25,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
             $scope.statistic.forEach(function(item){
               $scope.chartObject.data["rows"].push({c: [{v: item['type']},
                                                         {v: item['count']}]})
-            });                                
+            });
           }, function errorCallback(response) {})
       })
     }
@@ -71,10 +71,75 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
     };
+    // $scope.loadProblems = function() {
+    // $scope.problems = [];
+    // $http({
+    //   method: 'GET',
+    //   url: '/api/problems'
+    // }).then(function successCallback(response) {
+    //   for (var i = 0; i < response.data.length; i++){
+    //       $scope.problems.push(response.data[i]);
+    //     }
+    //   // console.log($scope.problems);
+    //   }, function errorCallback() {})
+    // };
+
+    $scope.loadProblemType = function() {
+      $scope.problemTypes =  [];
+      $http({
+        method: 'GET',
+        url: '/api/problem_type',
+      }).then(function successCallback(data) {
+         for (var i = 0; i < data.data.length; i++){
+          $scope.problemTypes.push(data.data[i]);
+          $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
+        }
+          $scope.createGroups();
+      }, function errorCallback(response) {})
+    };
+  $scope.loadProblemType();
+    $scope.createGroups = function(){
+      $scope.groups_list = [];
+      for(var i = 0; i < $scope.problemTypes.length; i++){
+        var group = {id:$scope.problemTypes [i]['id'], content:'<img src="' + $scope.problemTypes [i]['picture'] +'\"' +  ' style="width: 25px; height: 50px;'+'\">'};
+        $scope.groups_list.push(group);
+      }
+    $http({
+      method: 'GET',
+      url: '/api/problems'
+    }).then(function successCallback(response) {
+        console.log(response);
+        $scope.problems = [];
+      for (var i = 0; i < response.data.length; i++){
+        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']*1000.0), group:response.data[i]['problem_type_Id']};
+          $scope.problems.push(item);
+        }
+        $scope.createPlot($scope.groups_list, $scope.problems);
+      }, function errorCallback() {})
+    };
+  $scope.createPlot = function(groups_content, items_content){
+    var container = document.getElementById('visualization');
+    var groups = new vis.DataSet(groups_content);
+    var items = new vis.DataSet(items_content);
+      // Configuration for the Timeline
+      var options = {
+        stack:false,
+        min:'2015-04-14T12:00:00',
+        max: '2017-04-14T12:00:00',
+        zoomMin: 1000*60*60*24*31,
+        zoomMax:1000*60*60*24*31*12,
+        orientation: 'top',
+        showCurrentTime:false
+      };
+
+      // Create a Timeline
+      var timeline = new vis.Timeline(container, items, options);
+      timeline.setGroups(groups);
+    };
     $scope.loadCountSubs();
     $scope.loadSeverityStat();
     $scope.loadAllStatistic();
     $scope.loadProbCommStats();
 }]);
-    
+
 

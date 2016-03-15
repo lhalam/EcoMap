@@ -1,4 +1,4 @@
-"""Module which contains Test of Utils functions. """
+"""Module which contains Test of Utils functions."""
 
 import unittest2
 
@@ -6,14 +6,13 @@ from ecomap import utils
 from urlparse import urlparse
 
 
-#input data
 PASSWORD_LENGTH = 20
 URL = "path/to/string/to/test"
 
 
 class TestUtils(unittest2.TestCase):
 
-    """ Class for test utils.py"""
+    """ Class for test utils.py."""
 
     def setUp(self):
         """Setting up for the test."""

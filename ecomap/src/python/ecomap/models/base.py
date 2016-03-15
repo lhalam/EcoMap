@@ -9,7 +9,7 @@ class BaseModel(object):
         '''Method to retrieves data.'''
         pass
 
-    def add(self):
+    def save(self):
         '''Method to add data.'''
         pass
 

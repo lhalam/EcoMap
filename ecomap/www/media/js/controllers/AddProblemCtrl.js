@@ -45,8 +45,8 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         }
          $scope.chosen = $scope.problemTypes[0];
          $scope.newProblem.type = $scope.chosen['id'];
-         $('.selected-items-box').click(function(){
-         $('.multiple-select-wrapper .list').slideToggle();
+         $('.selected-item-box').click(function(){
+         $('.select-wrapper .list').slideToggle();
          });
       }, function errorCallback(response) {})
     };
@@ -165,7 +165,7 @@ $scope.problemsList =[]
               timeout: 10000,
               title: 'Проблема даного типу вже існує!' , 
               bodyOutputType: 'trustedHtml',
-              body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянутин проблеми:</br><ul>' + problemsRefs + '</ul>',
+              body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянути проблеми:</br><ul>' + problemsRefs + '</ul>',
               });
       }
     }
@@ -283,7 +283,7 @@ $scope.problemsList =[]
     }
    }
    $scope.getSelectedItemOnly();
-    $('.multiple-select-wrapper .list').slideUp();
+    $('.select-wrapper .list').slideUp();
   }
 }
 ]);

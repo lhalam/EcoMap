@@ -367,7 +367,7 @@ def change_comment_by_id():
     return response
 
 
-@app.route('/api/delete_comment', method=['DELETE'])
+@app.route('/api/delete_comment', methods=['DELETE'])
 def delete_comment_by_id():
     """Function deletes comment from DB.
     :type: JSON

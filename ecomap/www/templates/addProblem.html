@@ -44,25 +44,25 @@
     </div>
      <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
      <div class="dropdown">
-    <div class="select-wrapper">
-    <label for="problem_type_id" class="control-label">Тип проблеми</label>
-      <div class="selected-item-box" id="problem_type_id">
-      <span class="dropdown-icon"></span>
-          <ul class="items-list">
-              <li>
-                  <img ng-src="{{chosen.picture}}"/> {{chosen.name}}
+      <div class="select-wrapper">
+      <label for="problem_type_id" class="control-label">Тип проблеми</label>
+        <div class="selected-item-box" id="problem_type_id">
+        <span class="dropdown-icon"></span>
+            <ul class="items-list">
+                <li>
+                    <img ng-src="{{chosen.picture}}"/> {{chosen.name}}
+                </li>
+            </ul>
+          </div>
+          <div class="list" >
+            <ul class="items-list">
+              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
+                <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
+                  <span>{{type.name}}</span>
               </li>
-          </ul>
+            </ul>
         </div>
-        <div class="list" >
-          <ul class="items-list">
-            <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
-              <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
-                <span>{{type.name}}</span>
-            </li>
-          </ul>
       </div>
-    </div>
     </div>
      <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="true">
         <div ng-messages-include="/templates/error_msgs.html"></div>

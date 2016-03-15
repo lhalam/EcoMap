@@ -1250,6 +1250,10 @@ opacity: 0.2;
 .vis-background .vis-group .vis-line, .vis-dot{
   display: none !important;
 }
+.timeline #visualization{
+  margin:15px;
+  cursor: move;
+}
 
 .legend{
   text-align: left;

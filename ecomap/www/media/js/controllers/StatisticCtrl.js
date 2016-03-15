@@ -101,7 +101,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     $scope.createGroups = function(){
       $scope.groups_list = [];
       for(var i = 0; i < $scope.problemTypes.length; i++){
-        var group = {id:$scope.problemTypes [i]['id'], content:'<img src="' + $scope.problemTypes [i]['picture'] +'\"' +  ' style="width: 25px; height: 50px;'+'\">'};
+        var group = {id:$scope.problemTypes [i]['id'], content:'<img src="' + $scope.problemTypes [i]['picture'] +'\"' +  ' style="width: 35px; height: 50px;'+'\">'};
         $scope.groups_list.push(group);
       }
     $http({

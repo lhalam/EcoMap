@@ -44,10 +44,11 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             offset: $scope.selectCount['selected'] * newValue - stepCount
           }
           }).then(function successCallback(response) {
-         $scope.comments = response.data[0];
-         $scope.commentsCount = response.data[1][0]['total_comments_count'];
-         $scope.commentsLength = response.data[1][0]['total_comments_count'];
-         $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+            console.log(response)
+            $scope.comments = response.data[0];
+            $scope.commentsCount = response.data[1][0]['total_comments_count'];
+            $scope.commentsLength = response.data[1][0]['total_comments_count'];
+            $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
            })
         } else if ($cookies.get('role')=='admin'){
           $http({
@@ -58,6 +59,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
           }).then(function successCallback(response) {
+            console.log(response)
             $scope.comments = response.data[0];
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.commentsLength = response.data[1][0]['total_comments_count'];
@@ -73,10 +75,11 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
             }).then(function successCallback(response) {
-               $scope.comments = response.data[0];
-               $scope.commentsCount = response.data[1][0]['total_comments_count'];
-               $scope.commentsLength = response.data[1][0]['total_comments_count'];
-               $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
+              console.log(response)
+              $scope.comments = response.data[0];
+              $scope.commentsCount = response.data[1][0]['total_comments_count'];
+              $scope.commentsLength = response.data[1][0]['total_comments_count'];
+              $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
             })
         }
       })
@@ -88,6 +91,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
         method: 'GET',
         url: '/api/problem_subcomments/' + parent_id
         }).then(function successCallback(response) {
+            console.log(response)
             $scope.subcomments = response.data[0];
         })
         if(!$scope.subcomment_parent || $scope.subcomment_parent === parent_id) {

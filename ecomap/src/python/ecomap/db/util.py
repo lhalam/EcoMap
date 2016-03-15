@@ -1638,7 +1638,7 @@ def get_all_users_comments(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
+                   cm.created_date, us.id, us.nickname, us.first_name, us.last_name
                    FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 LIMIT {},{};

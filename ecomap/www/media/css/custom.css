@@ -343,7 +343,7 @@ form {
   height: 100%;
 }
 
-.map-div>div{
+.map-div>.staticTop{
   width: 100%;
 }
 
@@ -1265,4 +1265,11 @@ margin-bottom: 10px;
 }
 .circleFalse{
   color: red;
+}
+.severityLevel{
+  float: right;
+  font-size: 18px;
+  color: #880000;
+  margin-bottom: 10px;
+  font-weight: 700;
 }

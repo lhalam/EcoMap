@@ -343,7 +343,7 @@ form {
   height: 100%;
 }
 
-.map-div>div{
+.map-div>.staticTop{
   width: 100%;
 }
 

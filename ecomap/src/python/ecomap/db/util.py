@@ -1940,6 +1940,28 @@ def get_problems_comments_stats():
         return cursor.fetchall()
 
 
+def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
+    """Search problems by special filter.
+    :order:  order asc or desc.
+    :filtr: name of filter column.
+    :offset: pagination option.
+    :per_page: pagination option
+    :retrun: tuple with filter problems.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, pt.name
+                   FROM `problem` AS p
+                   INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   WHERE `user_id`={}
+                   ORDER BY {} {} LIMIT {},{};
+                """
+        cursor.execute(query.format(user_id, filtr, order, offset, per_page))
+        return cursor.fetchall()
+
+
 def get_user_by_filter(order, filtr, offset, per_page):
     """Search problems by special filter.
     :order:  order asc or desc.
@@ -1950,10 +1972,9 @@ def get_user_by_filter(order, filtr, offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.status,
-                   p.created_date, p.is_enabled,
-                   p.severity, u.nickname,
-                   u.last_name, u.first_name, pt.name
+        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+                   p.problem_type_id, p.status, p.created_date, p.is_enabled,
+                   p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    INNER JOIN `user` AS u ON p.user_id = u.id
@@ -1961,4 +1982,3 @@ def get_user_by_filter(order, filtr, offset, per_page):
                 """
         cursor.execute(query.format(filtr, order, offset, per_page))
         return cursor.fetchall()
-

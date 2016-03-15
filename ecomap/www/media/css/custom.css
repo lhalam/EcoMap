@@ -1251,4 +1251,9 @@ opacity: 0.2;
   padding-left: 10px;
 margin-bottom: 10px;
 }
->>>>>>> 2ef11dbd116d0b1d84989c393b30172f63e4ce34
+.circleTrue{
+  color: #8eb01e;
+}
+.circleFalse{
+  color: red;
+}

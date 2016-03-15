@@ -7,7 +7,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       '1': '5',
       '2': '10',
       '3': '15',
-      '4': '20'
+      '4': '20',
+      '5': '50',
+      '6': '100'
     }
     $scope.selectCount = {
       'selected': '5'
@@ -49,7 +51,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if($cookies.get('role')=='admin'){
+        } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
           $scope.showTable = true;
           $http({
             method: 'GET',

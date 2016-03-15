@@ -1308,6 +1308,19 @@ def change_comment_by_id(comment_id, content, updated_date):
 
 
 @db.retry_query(tries=3, delay=1)
+def delete_comment_by_id(comment_id):
+    """Deletes comment from comment table by comment_id.
+    If parent comment - delete all subcomments.
+    :params: comment_id - id of comment
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """DELETE `comment` FROM `comment`
+                   WHERE `id`=%s OR `parent_id`=%s;
+                """
+        conn.execute(query, (comment_id, comment_id))
+
+
+@db.retry_query(tries=3, delay=1)
 def change_activity_to_anon(problem_id):
     """Query for change user_id in problem_activity
     table to id of Anonimus User,
@@ -1638,8 +1651,8 @@ def get_all_users_comments(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.id, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 LIMIT {},{};
                 """
@@ -1657,8 +1670,8 @@ def get_user_comments(offset, per_page, user_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id ,us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND cm.user_id={} LIMIT {},{};
                 """
@@ -1723,8 +1736,8 @@ def get_comments_by_nickname(nickname, offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.nickname, us.first_name, us.last_name
-                   FROM  `comment` as cm
+                   cm.created_date, us.id, us.nickname, us.first_name,
+                   us.last_name FROM  `comment` as cm
                    INNER JOIN `user` AS us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
                    LIMIT {},{};

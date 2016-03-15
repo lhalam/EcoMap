@@ -51,7 +51,7 @@
                 <i class="fa fa-link" ng-click="triggerDetailModal(comment.problem_id)" role='button' data-toggle="tooltip" data-placement="top" title="Перейти до проблеми" tooltip></i>
             </div>
 
-            <div class="input-group-addon no-float col-lg-1 col-xs-1">
+            <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (comment.user_id==user_id) ">
                 <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
             </div>
         </div>
@@ -69,7 +69,7 @@
             <div class="form-control no-float col-lg-7 col-xs-7">
                 <span>{{subcomment.content}}</span>
             </div>
-             <div class="input-group-addon no-float col-lg-1 col-xs-1">
+             <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (comment.user_id==user_id)">
                 <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
             </div>
         </div>
@@ -85,7 +85,7 @@
             <div class="form-control no-float col-lg-7 col-xs-7">
                 <span>{{subcomment.content}}</span>
             </div>
-            <div class="input-group-addon no-float col-lg-1 col-xs-1">
+            <div class="input-group-addon no-float col-lg-1 col-xs-1" ng-show="showDeleteButton || (subcomment.user_id==user_id)">
                 <a role="button" ng-click="" data-toggle="tooltip" data-placement="top" title="Видалити коментар" tooltip><i class="fa fa-trash-o"></i></a> 
             </div>
         </div>

@@ -367,6 +367,20 @@ def change_comment_by_id():
     return response
 
 
+@app.route('/api/delete_comment', methods=['DELETE'])
+def delete_comment_by_id():
+    """Function deletes comment from DB.
+    :type: JSON
+    :return: response
+    """
+    comment_id = int(request.args.get('comment_id'))
+    db.delete_comment_by_id(comment_id)
+    logger.debug('Comment and all subcomments (if any) was deleted with id %s',
+                 comment_id)
+    response = jsonify(message='Comment successfully added.'), 200
+    return response
+
+
 @app.route('/api/problem/add_comment', methods=['POST'])
 @login_required
 def post_comment():
@@ -757,9 +771,10 @@ def user_comments(user_id):
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name' : comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name' : comment[7],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -843,9 +858,10 @@ def search_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name': comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name': comment[7],
                              'sub_count': subcomments_count[0]})
     if comments_count:
         total_count = {'total_comments_count': comments_count[0]}

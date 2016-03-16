@@ -3,7 +3,6 @@
 import os
 import json
 import time
-import shutil
 import hashlib
 
 from PIL import Image
@@ -17,7 +16,6 @@ from ecomap.permission import permission_control
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 MARKERS_PATH = '/media/image/markers'
-UPLOADS_PROBLEM_PATH = '/uploads/problems/'
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -1107,83 +1105,4 @@ def tempdata_delete():
     else:
         db.delete_all_users_operations()
         response = jsonify(msg='success')
-    return response
-
-
-@app.route('/api/problem_delete', methods=['DELETE', 'PUT'])
-@auto.doc()
-@login_required
-def delete_problem():
-    """The method deletes problem by id.
-       :rtype: JSON.
-       :request args: `{problem_id: 5}`.
-       :return: confirmation object.
-       :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
-       or
-       ``{'msg': 'Cannot delete'}``.
-
-       :statuscode 400: if request is invalid.
-       :statuscode 200: if no errors.
-    """
-    data = request.get_json()
-    valid = validator.problem_delete(data)
-    if valid['status']:
-        if request.method == 'DELETE':
-            folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-            f_path = os.environ['STATICROOT'] + folder_to_del
-            if db.get_problem_photo_by_id(data['problem_id']):
-                db.delete_problem_photo_by_id(data['problem_id'])
-                if os.path.exists(f_path):
-                    shutil.rmtree(f_path, ignore_errors=True)
-            db.delete_problem_by_id(data['problem_id'])
-            response = jsonify(msg='Дані видалено успішно!'), 200
-        elif request.method == 'PUT':
-            db.change_user_problem_to_anonymous(data['problem_id'])
-            db.change_activity_to_anon(data['problem_id'])
-            response = jsonify(msg='Дані видалено успішно!'), 200
-    else:
-        response = jsonify(msg='Некоректні дані!'), 400
-    return response
-
-
-@app.route('/api/problem_edit', methods=['PUT'])
-@auto.doc()
-@login_required
-def edit_problem():
-    """The method deletes problem by id.
-       :rtype: JSON.
-       :request args: `{problem_id: 5,
-                                    title: name,
-                                    content: 'message',
-                                    proposal: 'message 2',
-                                    severity: '3',
-                                    status: 'Solved',
-                                    is_enabled 0}`.
-       :return: confirmation object.
-       :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
-       or
-       ``{'msg': 'Cannot delete'}``.
-
-       :statuscode 400: if request is invalid.
-       :statuscode 200: if no errors.
-    """
-    data = request.get_json()
-    # valid = validator.problem_type_delete(data)
-    # if valid['status']:
-    # folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-    # f_path = os.environ['STATICROOT'] + folder_to_del
-    # if db.get_problem_photo_by_id(data['problem_id']):
-    #     db.delete_problem_photo_by_id(data['problem_id'])
-    #     if os.path.exists(f_path):
-    #         shutil.rmtree(f_path, ignore_errors=True)
-    update_time = int(time.time())
-    db.edit_problem(data['problem_id'], data['title'],
-                    data['content'], data['proposal'],
-                    data['severity'], data['status'],
-                    data['is_enabled'], update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    # else:
-    # response = jsonify(msg='Некоректні дані!'), 400
     return response

@@ -1261,7 +1261,7 @@ def get_user_comments_count(user_id):
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
             where `user_id` =%s;"""
-        cursor.execute(query, (user_id,))
+        cursor.execute(query % user_id)
         return cursor.fetchone()
 
 

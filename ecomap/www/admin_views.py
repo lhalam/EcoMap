@@ -917,10 +917,7 @@ def delete_problem_type():
             if os.path.exists(os.path.join(f_path, file_name[0])):
                 os.remove(os.path.join(f_path, file_name[0]))
             db.delete_problem_type(data['problem_type_id'])
-            if not db.get_problem_type_by_id(data['problem_type_id']):
-                response = jsonify(msg='Дані видалено успішно!'), 200
-            else:
-                response = jsonify(msg='Дані не видалено!'), 400
+            response = jsonify(msg='Дані видалено успішно!'), 200
         else:
             response = jsonify(msg='Так як дані прив\'язані!'), 400
     else:

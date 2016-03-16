@@ -1998,7 +1998,7 @@ def get_problem_photo_by_id(problem_id):
 
 
 @db.retry_query(tries=3, delay=1)
-def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
+def problem_confirmation(problem_id, severity, status, is_enabled, update_date):
     """Update problem.
        :params: problem_id: id of problem.
                     severity: importance of problem.
@@ -2008,16 +2008,15 @@ def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
-                           `is_enabled`=%s, `problem_type_id`=%s,
+                           `is_enabled`=%s,
                             `update_date`=%s WHERE `id`=%s;
                       """
-        conn.execute(query, (severity, status, is_enabled,
-                             upd_date, problem_id))
+        conn.execute(query, (problem_id, severity, status, is_enabled, update_date))
 
 
 
 @db.retry_query(tries=3, delay=1)
-def edit_problem(problem_id, title, content, proposal, problem_type, upd_date):
+def edit_problem(problem_id, title, content, proposal, severity, status, update_time):
     """Update problem.
        :params: problem_id: id of problem.
                     title: title of the problem.
@@ -2030,10 +2029,11 @@ def edit_problem(problem_id, title, content, proposal, problem_type, upd_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET `title`=%s, `content`=%s,
-                           `proposal`=%s, `problem_type_id`=%s,
+                           `proposal`=%s, 'severity'=%s,
+                           'status'=%s,
                             `update_date`=%s WHERE `id`=%s;
                       """
-        conn.execute(query, (title, content, proposal, upd_date, problem_id))
+        conn.execute(query, (problem_id, title, content, proposal, severity, status, update_time))
 
 
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):

@@ -1163,7 +1163,9 @@ def edit_problem():
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     """
+    logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     data = request.get_json()
+    logger.info("datadatadatadatadatadatadata")
     # valid = validator.problem_type_delete(data)
     # if valid['status']:
     # folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
@@ -1173,11 +1175,13 @@ def edit_problem():
     #     if os.path.exists(f_path):
     #         shutil.rmtree(f_path, ignore_errors=True)
     update_time = int(time.time())
+    logger.info(update_time)
     db.edit_problem(data['problem_id'], data['title'],
                     data['content'], data['proposal'],
                     data['severity'], data['status'],
-                    data['is_enabled'], update_time)
+                    update_time)
     response = jsonify(msg='Дані успішно змінено!'), 200
+    logger.info('sssssssssssssssssssssssssssssssssssssss')
     # else:
     # response = jsonify(msg='Некоректні дані!'), 400
     return response

@@ -1,8 +1,7 @@
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $rootScope.showSidebarProblem = false;
-    $scope.photos = [];
-    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    $scope.photos = [];    
     $scope.comments = [];
     $scope.msg = msg;
     $scope.comment={}
@@ -12,16 +11,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
-    if ($cookies.get('role')=='user') {
-      $scope.showSeverityForUser = true;
-    }  else  $scope.showSeverityForUser = false;
+   
     $scope.user_id = $cookies.get('id');
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
-      console.log($scope.selectProblem);
       $scope.isSubscripted = response.data[0][0]['is_subscripted'];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];

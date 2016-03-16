@@ -1266,10 +1266,4 @@ margin-bottom: 10px;
 .circleFalse{
   color: red;
 }
-.severityLevel{
-  float: right;
-  font-size: 18px;
-  color: #880000;
-  margin-bottom: 10px;
-  font-weight: 700;
-}
+

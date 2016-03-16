@@ -20,7 +20,6 @@ app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$s
       }).then(function successCallback(response) {
         $scope.page.title = response.data[0].title;
         $scope.page.alias = response.data[0].alias;
-        console.log(response.data[0]);
         $scope.page.description = response.data[0].description;
         $scope.page.content = response.data[0].content;
         $scope.page.meta_keywords = response.data[0].meta_keywords;

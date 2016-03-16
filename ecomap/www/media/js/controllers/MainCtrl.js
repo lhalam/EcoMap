@@ -20,6 +20,14 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
         return false;
       }
     };
+    $scope.isModer = function() {
+      var role = $cookies.get('role');
+      if (role == 'moderator') {
+        return true;
+      } else {
+        return false;
+      }
+    };
     $scope.checkState = function(state) {
       return $state.is(state);
     };

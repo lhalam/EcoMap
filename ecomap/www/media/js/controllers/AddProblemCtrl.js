@@ -196,7 +196,7 @@ $scope.problemsList =[]
         },
         data: newProblem
       }).then(function successCallback(response) {
-        toaster.pop('success', 'Додавання проблеми', 'Проблему було успішно додано!');
+        toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
         $scope.createdProblemId = response.data.problem_id;
         $scope.arrayUpload(photos);
         $rootScope.mapParams = {

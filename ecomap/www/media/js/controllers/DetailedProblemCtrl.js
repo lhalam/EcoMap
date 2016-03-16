@@ -1,8 +1,7 @@
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
     $rootScope.showSidebarProblem = false;
-    $scope.photos = [];
-    $scope.maxSeverity = [1, 2, 3, 4, 5];
+    $scope.photos = [];    
     $scope.comments = [];
     $scope.msg = msg;
     $scope.comment={}
@@ -12,7 +11,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
-
+   
     $scope.user_id = $cookies.get('id');
     $http({
       'method': 'GET',

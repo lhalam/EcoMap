@@ -846,7 +846,7 @@ def get_all_users_info():
 
     if query:
         for user_data in query:
-            users.append({'id': user_data[0],
+            users.append({'id': user_data[0], 
                           'first_name': user_data[1],
                           'last_name': user_data[2],
                           'nickname': user_data[3],
@@ -861,6 +861,7 @@ def get_all_users_info():
 
 @app.route('/api/problem_type', methods=['GET'])
 @auto.doc()
+@login_required
 def get_problem_type():
     '''The method retrieves all probleme types.
        :rtype: JSON.
@@ -895,7 +896,7 @@ def get_problem_type():
 @auto.doc()
 @login_required
 def delete_problem_type():
-    '''The method retrieves all probleme types.
+    """The method deletes problem type.
        :rtype: JSON.
        :request args: `{problem_type_id: 5}`.
        :return: confirmation object.
@@ -906,7 +907,7 @@ def delete_problem_type():
 
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
-    '''
+    """
     data = request.get_json()
     valid = validator.problem_type_delete(data)
     if valid['status']:
@@ -916,10 +917,7 @@ def delete_problem_type():
             if os.path.exists(os.path.join(f_path, file_name[0])):
                 os.remove(os.path.join(f_path, file_name[0]))
             db.delete_problem_type(data['problem_type_id'])
-            if not db.get_problem_type_by_id(data['problem_type_id']):
-                response = jsonify(msg='Дані видалено успішно!'), 200
-            else:
-                response = jsonify(msg='Дані не видалено!'), 400
+            response = jsonify(msg='Дані видалено успішно!'), 200
         else:
             response = jsonify(msg='Так як дані прив\'язані!'), 400
     else:

@@ -8,7 +8,7 @@
                      heading="{{tab.heading}}"
                      select="go(tab.route)"
                      active="tab.active"
-                     ng-if="isAdmin() || tab.showToUser">
+                     ng-if="isAdmin() || isModer || tab.showToUser">
             </uib-tab>
             <uib-tab select="go('admin.resources')" active="false" ng-if="isAdmin()">
               <uib-tab-heading>

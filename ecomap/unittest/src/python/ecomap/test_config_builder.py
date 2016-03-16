@@ -103,7 +103,7 @@ class CursorMock(object):
 
     """Creating class for mock Cursor."""
 
-    def execute(query, user_id):
+    def execute(self, query, user_id):
         if user_id != VALID_USER_ID:
             raise MySQLError("Error")
 

@@ -50,9 +50,9 @@ def problems():
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'is_enabled': problem[4], 'status': problem[6],
-                'date': problem[7], 'radius': problem[8],
-                'picture': problem[9]})
+                'is_enabled': problem[4], 'problem_type_id': problem[5],
+                'status': problem[6], 'date': problem[7],
+                'radius': problem[8], 'picture': problem[9]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -1090,8 +1090,7 @@ def delete_problem():
             db.delete_problem_by_id(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200
         elif request.method == 'PUT':
-            db.change_user_problem_to_anonymous(data['problem_id'])
-            db.change_activity_to_anon(data['problem_id'])
+            db.change_problem_to_anon(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400

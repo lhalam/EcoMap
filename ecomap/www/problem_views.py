@@ -1090,8 +1090,7 @@ def delete_problem():
             db.delete_problem_by_id(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200
         elif request.method == 'PUT':
-            db.change_user_problem_to_anonymous(data['problem_id'])
-            db.change_activity_to_anon(data['problem_id'])
+            db.change_problem_to_anon(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400

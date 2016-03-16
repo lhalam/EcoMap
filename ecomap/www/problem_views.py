@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module contains routes, used for problem table."""
 import os
+import re
 import json
 import time
 import shutil
@@ -21,6 +22,7 @@ from ecomap.app import app, logger, auto, _CONFIG
 
 ANONYMUS_USER_ID = 2
 UPLOADS_PROBLEM_PATH = '/uploads/problems/'
+MIN_SIZE = 'min.png'
 
 
 @app.route('/api/problems')
@@ -1085,10 +1087,8 @@ def delete_problem():
         if request.method == 'DELETE':
             folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
             f_path = os.environ['STATICROOT'] + folder_to_del
-            if db.get_problem_photo_by_id(data['problem_id']):
-                db.delete_problem_photo_by_id(data['problem_id'])
-                if os.path.exists(f_path):
-                    shutil.rmtree(f_path, ignore_errors=True)
+            if os.path.exists(f_path):
+                shutil.rmtree(f_path, ignore_errors=True)
             db.delete_problem_by_id(data['problem_id'])
             email_tuple = db.get_user_by_id(data['user_id'])
             message = generate_email('delete_problem',
@@ -1112,6 +1112,38 @@ def delete_problem():
     return response
 
 
+@app.route('/api/problem_confirmation', methods=['PUT'])
+@auto.doc()
+@login_required
+def problem_confirmation():
+    """The method deletes problem by id.
+       :rtype: JSON.
+       :request args: `{problem_id: 5,
+                                    severity: '3',
+                                    status: 'Solved',
+                                    is_enabled 0}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    # valid = validator.problem_type_delete(data)
+    # if valid['status']:
+    update_time = int(time.time())
+    db.problem_confirmation(data['problem_id'], data['severity'],
+                            data['status'], data['is_enabled'],
+                            update_time)
+    response = jsonify(msg='Дані успішно змінено!'), 200
+    # else:
+    # response = jsonify(msg='Некоректні дані!'), 400
+    return response
+
+
 @app.route('/api/problem_edit', methods=['PUT'])
 @auto.doc()
 @login_required
@@ -1121,10 +1153,7 @@ def edit_problem():
        :request args: `{problem_id: 5,
                                     title: name,
                                     content: 'message',
-                                    proposal: 'message 2',
-                                    severity: '3',
-                                    status: 'Solved',
-                                    is_enabled 0}`.
+                                    proposal: 'message 2'}`.
        :return: confirmation object.
        :JSON sample:
        ``{'msg': 'Problem type was deleted successfully!'}``
@@ -1151,4 +1180,39 @@ def edit_problem():
     response = jsonify(msg='Дані успішно змінено!'), 200
     # else:
     # response = jsonify(msg='Некоректні дані!'), 400
+    return response
+
+
+# @app.route('/api/photo_delete', methods=['DELETE'])
+# @auto.doc()
+# @login_required
+def delete_photo():
+    """The method deletes min photo and photos by photo id.
+       :rtype: JSON.
+       :request args: `{photo_id: 5}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    uploads_path = 'uploads/problems/%s/' % data['photo_id']
+    photo_origin = str(db.get_problem_photo_by_id(data['photo_id']))
+    # min photo path
+    f_min_path = os.environ['STATICROOT'] + uploads_path
+    # photo path
+    f_path = os.environ['STATICROOT'] + photo_origin
+    photo_min = re.search('\w+[\.]', photo_origin).group() + MIN_SIZE
+    if os.path.exists(f_path):
+        os.remove(f_path)
+        db.delete_photo_by_id(data['photo_id'])
+        if os.path.exists(os.path.join(f_min_path, photo_min)):
+            os.remove(os.path.join(f_min_path, photo_min))
+        response = jsonify(msg='Дані успішно видалено!'), 200
+    else:
+        response = jsonify(msg='Такого файлу не існує!'), 200
     return response

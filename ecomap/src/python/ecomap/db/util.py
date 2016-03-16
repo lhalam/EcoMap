@@ -1261,7 +1261,7 @@ def get_user_comments_count(user_id):
         cursor = conn.cursor()
         query = """SELECT COUNT(id) FROM `comment`
             where `user_id` =%s;"""
-        cursor.execute(query, (user_id,))
+        cursor.execute(query % user_id)
         return cursor.fetchone()
 
 
@@ -1273,8 +1273,8 @@ def get_problem_id_for_del(user_id):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id` FROM `problem` WHERE (`user_id`=%s);"""
-        cursor.execute(query, (user_id,))
+        query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
+        cursor.execute(query % user_id)
         return cursor.fetchall()
 
 
@@ -1959,18 +1959,18 @@ def delete_problem_by_id(problem_id):
        :params: problem_type_id - id of problem.
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query_problem = """DELETE FROM `problem`
+        query = """DELETE FROM `problem`
                           WHERE `id`=%s;
                       """
-        query_activity = """DELETE FROM `problem_activity`
+        conn.execute(query, (problem_id,))
+        query = """DELETE FROM `problem_activity`
                           WHERE `problem_id`=%s;
                         """
-        query_activity = """DELETE FROM `comment`
+        conn.execute(query, (problem_id,))
+        query = """DELETE FROM `comment`
                                         WHERE `problem_id`=%s;
                                     """
-        conn.execute(query_problem, (problem_id,))
-        conn.execute(query_activity, (problem_id,))
-        conn.execute(query_activity, (problem_id,))
+        conn.execute(query, (problem_id,))
 
 
 @db.retry_query(tries=3, delay=1)
@@ -2011,10 +2011,10 @@ def edit_problem(problem_id, title, content, proposal,
                     update_date: time of problem update.
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """UPDATE `problem` SET `title`=%s, content`=%s,
-                           proposal`=%s,  severity`=%s, status`=%s,
-                           is_enabled`=%s,  update_date`=%s,
-                          WHERE `id`=%s;
+        query = """UPDATE `problem` SET `title`=%s, `content`=%s,
+                           `proposal`=%s,  `severity`=%s, `status`=%s,
+                           `is_enabled`=%s, `problem_type_id`=%s,
+                            `update_date`=%s WHERE `id`=%s;
                       """
         conn.execute(query, (title, content, proposal,
                              severity, status, is_enabled,

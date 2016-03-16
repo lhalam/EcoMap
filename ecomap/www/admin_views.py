@@ -846,7 +846,7 @@ def get_all_users_info():
 
     if query:
         for user_data in query:
-            users.append({'id': user_data[0], 
+            users.append({'id': user_data[0],
                           'first_name': user_data[1],
                           'last_name': user_data[2],
                           'nickname': user_data[3],
@@ -861,7 +861,6 @@ def get_all_users_info():
 
 @app.route('/api/problem_type', methods=['GET'])
 @auto.doc()
-@login_required
 def get_problem_type():
     '''The method retrieves all probleme types.
        :rtype: JSON.

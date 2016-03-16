@@ -1267,6 +1267,17 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
+.fa.search{
+  color: grey;
+  margin-right: 3px;
+}
+a.one_button{
+  margin-right: 7px;
+}
+.disable_button, .disable_button:hover, .disable_button:link{
+  color:grey;
+  text-decoration: none;
+}
 .severityForm fieldset:first-child select{
   width: 10%;
 }

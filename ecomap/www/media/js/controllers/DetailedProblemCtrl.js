@@ -12,9 +12,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
-    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    $scope.statuses = ['Не вирішено', 'Вирішено'];
-    $scope.enableds = ['Не підтверджено', 'Підтверджено'];
+    
     $scope.detail = ($cookies.get('role')!=='user')?true:false;
     $scope.hideSeverityForUser = ($cookies.get('role')!=='user') ? false : true;
    
@@ -211,34 +209,33 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+    $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
+    $scope.statuses = {
+        'Unsolved': 'Не вирішено',
+        'Solved': 'Вирішено'
+      };
+    $scope.severities = ['1', '2', '3', '4', '5'];
     $scope.moder = {
-      'severity': 1,
-      'status': $scope.statuses[0],
-      'enabled': $scope.enableds[0]
+      'severity': $scope.severities[0],
+      'status': 'Unsolved',
+      'enabled': '0'
     }
-    $scope.getSeverity = function(object){
-      console.log($scope.moder)
+    console.log($scope.moder)
+    $scope.changeStatus = function(mod){
+      console.log(mod)
       $http({
-      url: '/api/problem_type',
+      url: '/api/problem_confirmation',
       method: 'PUT',
-      cache: false,
-      headers: {
-        'Cache-Control': 'no-cache'
-      },
       data: {
-        'severity': $scope.moder.severity,
-        problem_type_name: editProblemTypeObj.name,
-        problem_type_radius: editProblemTypeObj.radius,
-        problem_type_id: editProblemTypeObj.id,
-
+        'problem_id': $scope.user_id,
+        'severity': mod.severity,
+        'status': mod.status,
+        'is_enabled': mod.enabled
       }
       }).then(function successCallback(data) {
-        $scope.loadProblemType();
-        $scope.editProblemTypeModal = false;
-        $scope.msg.editSuccess('типу проблеми');
+        console.log(data)
       }, function errorCallback(response) {
-        $scope.editProblemTypeModal = false;
-        $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
+        
       })
     }
   }

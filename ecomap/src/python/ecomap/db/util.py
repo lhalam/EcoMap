@@ -1273,10 +1273,10 @@ def get_problem_id_for_del(user_id):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `id` FROM `problem` WHERE (`user_id`=%s);"""
+        query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
         cursor.execute(query, (user_id,))
         return cursor.fetchall()
-
+        
 
 @db.retry_query(tries=3, delay=1)
 def change_problem_to_anon(problem_id):

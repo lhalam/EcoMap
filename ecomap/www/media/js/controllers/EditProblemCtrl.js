@@ -14,8 +14,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     MapFactory.getInst().addListener('click', function(event) {
         var lat = event.latLng.lat();
         var lon = event.latLng.lng();
-        $scope.newProblem.latitude = lat;
-        $scope.newProblem.longitude = lon;
+        $scope.selectProblem.latitude = lat;
+        $scope.selectProblem.longitude = lon;
         $scope.latlng = latlng;
         var latlng = new google.maps.LatLng(lat, lon);
         if (!$scope.marker) {
@@ -56,6 +56,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      console.log($scope.selectProblem);
       /*$scope.photos = response.data[2];*/
       $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
@@ -85,8 +86,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       $scope.dynamicMoveCtr = 0;
       $scope.marker = new google.maps.Marker({
         position: {
-          lat: $scope.newProblem.latitude,
-          lng: $scope.newProblem.longitude
+          lat: $scope.selectProblem.latitude,
+          lng: $scope.selectProblem.longitude
         },
         map: MapFactory.getInst(),
         id: Date.now(),
@@ -99,11 +100,11 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         },
       })
       $scope.marker.addListener('drag', function(event) {
-          $scope.newProblem.latitude = this.getPosition().lat();
-          $scope.newProblem.longitude = this.getPosition().lng();
+          $scope.selectProblem.latitude = this.getPosition().lat();
+          $scope.selectProblem.longitude = this.getPosition().lng();
           $scope.$apply();
         })
-      $scope.$watch($scope.newProblem, function(newVal, oldVal) {
+      $scope.$watch($scope.selectProblem, function(newVal, oldVal) {
         if (_.isEqual(newVal, oldVal)) {
           return;
         }
@@ -111,7 +112,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       });
     };
     $scope.reloadPos = function() {
-      var latlng = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
+      var latlng = new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude);
       MapFactory.setCenter(latlng, 14);
       if (!$scope.marker) {
         $scope.createMarker();
@@ -132,9 +133,9 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var width = window.innerWidth;
 
       function getUserPosition(position) {
-        $scope.newProblem.latitude = position.coords.latitude;
-        $scope.newProblem.longitude = position.coords.longitude;
-        var mapCenter = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
+        $scope.selectProblem.latitude = position.coords.latitude;
+        $scope.selectProblem.longitude = position.coords.longitude;
+        var mapCenter = new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude);
         if (width < 1000) {
           MapFactory.setCenter(mapCenter, 10);
         } else {
@@ -204,33 +205,42 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       $scope.addProblemTab = true;
       $scope.addPhotosTab = false;
     };
-    $scope.addProblem = function(newProblem, form, photos) {
+    $scope.editProblem = function(selectProblem, form, photos) {
       $scope.submitted = true;
       if (form.$invalid) {
         toaster.pop('error', 'Помилка при додаванні', 'Форма не відповідає вимогам!')
         return;
       }
-      Upload.upload({
+       $http({
         url: '/api/problem_edit',
         method: 'PUT',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'
         },
-        data: newProblem
+        data: {
+          'problem_id': selectProblem.problem_id,
+          'title': selectProblem.title,
+          'content': selectProblem.content,
+          'proposal': selectProblem.proposal,
+          'latitude': selectProblem.latitude,
+          'longitude': selectProblem.longitude,          
+          'severity': selectProblem.severity,
+          'type': selectProblem.name/*,
+          'is_enabled': selectProblem.is_enabled*/
+        }
       }).then(function successCallback(response) {
         toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
         $scope.createdProblemId = response.data.problem_id;
         $scope.arrayUpload(photos);
         $rootScope.mapParams = {
           center: {
-            latitude: newProblem.latitude,
-            longitude: newProblem.longitude
+            latitude: selectProblem.latitude,
+            longitude: selectProblem.longitude
           },
           zoom: 14
         };
       }, function errorCallback(response) {
-        console.log(response);
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };

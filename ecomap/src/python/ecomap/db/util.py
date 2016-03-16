@@ -1998,7 +1998,7 @@ def get_problem_photo_by_id(problem_id):
 
 
 @db.retry_query(tries=3, delay=1)
-def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
+def problem_confirmation(problem_id, severity, status, is_enabled, update_date):
     """Update problem.
        :params: problem_id: id of problem.
                     severity: importance of problem.
@@ -2012,8 +2012,7 @@ def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
                           `update_date`=%s
                            WHERE `id`=%s;
                       """
-        conn.execute(query, (severity, status, is_enabled,
-                             upd_date, problem_id))
+        conn.execute(query, (problem_id, severity, status, is_enabled, update_date))
 
 @db.retry_query(tries=3, delay=1)
 def edit_problem(problem_id, title, content, proposal, latitude, longitude,
@@ -2031,11 +2030,13 @@ def edit_problem(problem_id, title, content, proposal, latitude, longitude,
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET `title`=%s, `content`=%s,
                            `proposal`=%s, `latitude`=%s, `longitude`=%s,
+                           'severity'=%s,
                             `problem_type_id`=%s,`update_date`=%s
                             WHERE `id`=%s;
                       """
-        conn.execute(query, (title, content, proposal, latitude,
+        conn.execute(query, (title, content, proposal, latitude, severity,
                              longitude, upd_date, problem_id))
+
 
 
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):

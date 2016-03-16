@@ -1297,4 +1297,20 @@ a.one_button{
   font-size: 18px;
   color: #880000;
   font-weight: 700;
+}
+.moderEditOption{
+  padding: 0;
+}
+.moderEditOption .form-inline{
+  margin-top: 3px;
+}
+.moderEditOption label{
+  color: #333;
+  font-size: 14px;
+  font-weight: normal;
+}
+.btn-sev{
+  float: right;
+  margin-right: 5px;
+}
 

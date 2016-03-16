@@ -1,5 +1,6 @@
 app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
   function($scope, $http, $state, $cookies, $window) {
+    /*$rootScope.editProblem = true;*/
     $scope.showTable = false;
     $scope.nickname = false;
     $scope.searchNick = null;
@@ -144,6 +145,10 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     
     $scope.triggerDetailModal = function(problem_id) {
       var url = '/#/detailedProblem/' + problem_id;
+      window.open(url, '_blank');
+    }
+    $scope.triggerEditModal = function(problem_id) {
+      var url = '/#/editProblem/' + problem_id;
       window.open(url, '_blank');
     }
   }

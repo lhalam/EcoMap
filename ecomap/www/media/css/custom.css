@@ -417,6 +417,7 @@ form {
 
 .page-edit-form {
   background-color: #fff;
+  padding: 0% 4%;
 }
 
 .page-edit-form input {
@@ -1266,4 +1267,24 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
-
+.severityForm fieldset:first-child select{
+  width: 10%;
+}
+.severityForm{
+  margin-top: 15px;
+  padding: 0% 4%;
+  height: 37px;
+}
+.severityForm fieldset{
+  padding: 0px;
+}
+.severityForm label{
+  margin-right: 1%;
+}
+.severityLevel{
+  float: right;
+  font-size: 18px;
+  color: #880000;
+  margin-bottom: 10px;
+  font-weight: 700;
+}

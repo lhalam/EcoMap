@@ -243,6 +243,8 @@ def get_user_problems(user_id):
 @app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
     :query limit: limit number. default is 5.
     :query offset: offset number. default is 0.
     :rtype: JSON.

@@ -1267,17 +1267,34 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
+<<<<<<< HEAD
+.fa.search{
+  color: grey;
+  margin-right: 3px;
+}
+a.one_button{
+  margin-right: 7px;
+}
+.disable_button, .disable_button:hover, .disable_button:link{
+  color:grey;
+  text-decoration: none;
+}
+.severityForm fieldset:first-child select{
+  width: 10%;
+}
+.severityForm{
+  margin-top: 15px;
+  padding: 0% 4%;
+  height: 37px;
+}
+.severityForm fieldset{
+  padding: 0px;
+}
+.severityForm label{
+  margin-right: 1%;
+}
 .severityLevel{
   font-size: 18px;
   color: #880000;
   font-weight: 700;
- }
-.moderEditOption select{
-  height: 23px;
-  font-weight: 700;
- }
-.moderEditOption{
-  padding-left: 0px;
-  padding-top: 0px;
 
-}

@@ -2074,9 +2074,13 @@ def get_user_by_filter(order, filtr, offset, per_page):
 
 
 def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
-    """Return information about creation problem by user, found by nickname.
-    :params nickname: user nickname.
-    :retrun: tuple with user and problem info.
+    """Search problems by special filter and nickname.
+    :nickname: nickname of user.
+    :order:  order asc or desc.
+    :filtr: name of filter column.
+    :offset: pagination option.
+    :per_page: pagination option
+    :retrun: tuple with filter problems.
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()

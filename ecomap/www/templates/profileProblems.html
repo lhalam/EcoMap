@@ -5,11 +5,12 @@
   <div class="row">
     <div class="col-md-5 col-sm-6 col-xs-6">
       <form class="form-inline form-search" name="search">
+        <i class="fa fa-search search"></i>
         <input type="text" ng-model="searchNick" 
                class="form-control"
                ng-init="showSearch" 
                ng-change="loadProblems()"
-               placeholder="Пошук по псевдоніму" />
+               placeholder="Пошук по псевдоніму"/>
       </form>
     </div>
     <div class="col-lg-offset-5 col-lg-2 col-md-offset-6 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
@@ -60,7 +61,10 @@
     </thead>
     <tbody>
       <tr ng-repeat="problem in problems">
-        <td ng-show='showTable == true'><i class="fa fa-circle" ng-class="{circleTrue: problem.is_enabled, circleFalse: !problem.is_enabled}"></i></td>
+        <td ng-show='showTable'>
+          <i class="fa fa-circle circleTrue" ng-show="problem.is_enabled" toggle="tooltip" data-placement="top" title="Проблема підтвержена" tooltip></i>
+          <i class="fa fa-circle circleFalse" ng-show="!problem.is_enabled" toggle="tooltip" data-placement="top" title="Проблема не підтвержена" tooltip></i>
+        </td>
         <td ng-model="problem.last_name" ng-show='showTable == true'>
           {{problem.first_name}} {{problem.last_name}}</td>
         <td ng-model="problem.nickname" ng-show='showTable == true || nickname==true'>
@@ -72,12 +76,18 @@
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
         <td>
-          <a href="" ng-click="triggerDetailModal(problem.id)"
+          <a href="/#/editProblem/{{problem.id}}" class="one_button"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
-          </a> &nbsp; &nbsp;
-          <a href="" class="del" ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
-             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>видалити
           </a>
+          <a href="" class="del" ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
+             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled' >видалити
+          </a>
+          <span href="" class="del disable_button" class="one_button"
+             ng-hide='showTable || user_id==problem.user_id && !problem.is_enabled' disable toggle="tooltip" data-placement="top" title="Редагувати можна тільки &#010; до підтвердження модератора &#010;і тільки своі проблеми" tooltip>редагувати &nbsp;
+          </span> 
+          <span href="" class="del disable_button"
+             ng-hide='showTable || user_id==problem.user_id && !problem.is_enabled' disable toggle="tooltip" data-placement="top" title="Видалити можна тільки &#010;до підтвердження модератора &#010;і тільки своі проблеми" tooltip>видалити
+          </span>
         </td>
       </tr>
     </tbody>

@@ -106,11 +106,24 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-/*  .state('editProblem', {
+  .state('editProblem', {
     url: '/editProblem/:id',
-    templateUrl: '/templates/editProblem.html',
-    controller: 'EditProblemCtrl'
-  })*/
+    views:{
+      'sidebar': {
+        'templateUrl': '/templates/editProblem.html',
+        'controller': 'EditProblemCtrl'
+      },
+      '': {
+        'templateUrl': '/templates/map.html',
+        'controller': 'MapCtrl'
+      }
+    },
+    resolve: {
+      admin: function(grant) {
+        return grant.only({test: 'authenticated', state: 'error403'});
+      }
+    }
+  })
   .state('editFaq', {
     url: '/editFaq/:alias',
     templateUrl: '/templates/editFaq.html',

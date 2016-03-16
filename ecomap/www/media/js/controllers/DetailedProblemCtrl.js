@@ -209,7 +209,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
-    $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
+    $scope.enableds = {0: 'Не підтверджено', 1: 'Підтверджено'};
     $scope.statuses = {
         'Unsolved': 'Не вирішено',
         'Solved': 'Вирішено'
@@ -226,6 +226,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       $http({
       url: '/api/problem_confirmation',
       method: 'PUT',
+      headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
       data: {
         'problem_id': $scope.user_id,
         'severity': mod.severity,

@@ -1959,14 +1959,18 @@ def delete_problem_by_id(problem_id):
        :params: problem_type_id - id of problem.
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """DELETE FROM `problem`
+        query_problem = """DELETE FROM `problem`
                           WHERE `id`=%s;
                       """
-        query2 = """DELETE FROM `problem_activity`
+        query_activity = """DELETE FROM `problem_activity`
                           WHERE `problem_id`=%s;
                         """
-        conn.execute(query, (problem_id,))
-        conn.execute(query2, (problem_id,))
+        query_activity = """DELETE FROM `comment`
+                                        WHERE `problem_id`=%s;
+                                    """
+        conn.execute(query_problem, (problem_id,))
+        conn.execute(query_activity, (problem_id,))
+        conn.execute(query_activity, (problem_id,))
 
 
 @db.retry_query(tries=3, delay=1)

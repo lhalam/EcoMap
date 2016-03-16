@@ -129,7 +129,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         }
         }).then(function successCallback(data){
           $scope.loadProblems();
-          $scope.msg.deleteError('типу проблеми');
+          $scope.msg.deleteSuccess('типу проблеми');
         }, function errorCallback(response) {
           $scope.msg.deleteError('типу проблеми', arguments[0]['data']['msg']);
         })

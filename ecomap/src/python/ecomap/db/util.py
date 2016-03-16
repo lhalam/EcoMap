@@ -1138,7 +1138,7 @@ def get_all_users_problems(offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.user_id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p
@@ -2070,7 +2070,7 @@ def get_user_by_filter(order, filtr, offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.user_id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p

@@ -267,7 +267,7 @@ def get_all_users_problems():
         'name': 'problem with forests'}]``
 
     """
-    filtr = request.args.get('filtr') or None
+    filtr = request.args.get('filtr')
     order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5

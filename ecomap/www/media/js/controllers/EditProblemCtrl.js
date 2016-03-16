@@ -56,6 +56,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      console.log($scope.selectProblem);
       /*$scope.photos = response.data[2];*/
       $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
@@ -222,8 +223,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'title': selectProblem.title,
           'content': selectProblem.content,
           'proposal': selectProblem.proposal,
+          'latitude': selectProblem.latitude,
+          'longitude': selectProblem.longitude,          
           'severity': selectProblem.severity,
-          'status': selectProblem.status/*,
+          'type': selectProblem.name/*,
           'is_enabled': selectProblem.is_enabled*/
         }
       }).then(function successCallback(response) {

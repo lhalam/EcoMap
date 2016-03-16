@@ -50,27 +50,26 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
          });
       }, function errorCallback(response) {})
     };
+
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      /*$scope.photos = response.data[2];*/
       $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
          if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
-         $scope.chosen.picture =  $scope.problemTypes[i].picture;
-        $scope.chosen.name = $scope.problemTypes[i].name;
-      }/*
-      $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];*/
-      console.log('sdfsdfsdfsd');
-      console.log($scope.selectProblem);
-      $scope.isSubscripted = response.data[0][0]['is_subscripted'];
-      $scope.photos = response.data[2];
-      $scope.comments = response.data[3];
+          $scope.chosen = $scope.problemTypes[i];
+      }
+      $('.selected-item-box').click(function(){
+        $('.select-wrapper .list').slideToggle();
+      });
+      //$scope.photos = response.data[2];
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
-      if($scope.isSubscripted === false) {
+      /*if($scope.isSubscripted === false) {
         $scope.cls_eye_subs = "fa fa-eye-slash";
-      } else $scope.cls_eye_subs = "fa fa-eye";
+      } else $scope.cls_eye_subs = "fa fa-eye";*/
     }, function errorCallback(error) {
       $state.go('error404');
     });
@@ -171,7 +170,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         $scope.radiusFunc();
       }, function errorCallback(response) {})
     }
-$scope.problemsList =[]
+    $scope.problemsList =[]
 
     $scope.radiusFunc = function(){
       var problemsRefs = '';
@@ -213,7 +212,7 @@ $scope.problemsList =[]
       }
       Upload.upload({
         url: '/api/problem_post',
-        method: 'POST',
+        method: 'PUT',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'

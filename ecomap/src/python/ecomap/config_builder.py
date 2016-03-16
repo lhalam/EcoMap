@@ -48,7 +48,7 @@ def configvars_parser():
     config = SafeConfigParser()
     config.readfp(open(os.path.join(ROOT_PATH, '_configvars.conf')))
     logging.info("Parse _configvars.conf")
-    template_config = {section: {key: value or None
+    template_config = {section: {key: value
                                  for (key, value) in config.items(section)}
                        for section in config.sections()}
     logging.debug('Dictionary with dictionary of variables was created.')
@@ -172,13 +172,13 @@ def insert_user(user_id, first_name, last_name, nickname, email, password,
                                        last_name,
                                        nickname,
                                        email,
-                                       password
+                                       password)
                    VALUES (%s, %s, %s, %s, %s, %s)
-                   ON DUPLICATE KEY UPDATE 'first_name' = %s,
-                                           'last_name' = %s,
-                                           'nickname' = %s,
-                                           'email' = %s,
-                                           'password' = %s;
+                   ON DUPLICATE KEY UPDATE first_name = %s,
+                                           last_name = %s,
+                                           nickname = %s,
+                                           email = %s,
+                                           password = %s;
                 """
         cursor.execute(query, (user_id, first_name, last_name, nickname,
                                email, password, first_name, last_name,

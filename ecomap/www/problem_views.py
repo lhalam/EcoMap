@@ -3,6 +3,7 @@
 import os
 import json
 import time
+import shutil
 import hashlib
 import datetime
 
@@ -18,6 +19,7 @@ from ecomap.app import app, logger, auto, _CONFIG
 
 
 ANONYMUS_USER_ID = 2
+UPLOADS_PROBLEM_PATH = '/uploads/problems/'
 
 
 @app.route('/api/problems')
@@ -187,10 +189,12 @@ def post_problem():
 def get_user_problems(user_id):
     """This method retrieves all user's problem from db and shows it in user
     profile page on `my problems` tab.
-    :rtype: JSON.
     :param  user_id: id of user (int).
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
     :query limit: limit number. default is 5.
     :query offset: offset number. default is 0.
+    :rtype: JSON.
     :return:
         - If user has problems:
             ``[{'id': 190, 'title': 'name',
@@ -207,9 +211,16 @@ def get_user_problems(user_id):
             ``{}``
         :statuscode 200: no errors.
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
-    problem_tuple = db.get_user_problems(user_id, offset, per_page)
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_problem_by_filter(user_id, order_desc,
+                                                      filtr, offset, per_page)
+    else:
+        problem_tuple = db.get_user_problems(user_id, offset, per_page)
     count = db.count_user_problems(user_id)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
@@ -220,7 +231,8 @@ def get_user_problems(user_id):
                       'date': problem[6] * 1000,
                       'severity': problem[8],
                       'is_enabled': problem[7],
-                      'name': problem[9]}
+                      'user_id': problem[9],
+                      'name': problem[10]}
                      for problem in problem_tuple] if problem_tuple else []
     logger.info(problem_tuple)
     total_count = {'total_problem_count': count[0]} if count else {}
@@ -231,6 +243,8 @@ def get_user_problems(user_id):
 @app.route('/api/all_usersProblem', methods=['GET'])
 def get_all_users_problems():
     """This method retrieves all user's problem from db.
+    :query filtr: name of column for filtration.
+    :query order: 0 or 1. 0 - asc and 1 - desc.
     :query limit: limit number. default is 5.
     :query offset: offset number. default is 0.
     :rtype: JSON.
@@ -250,10 +264,17 @@ def get_all_users_problems():
         'name': 'problem with forests'}]``
 
     """
+    filtr = request.args.get('filtr') or None
+    order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
+    if filtr:
+        order_desc = 'asc' if order else 'desc'
+        problem_tuple = db.get_user_by_filter(order_desc, filtr, offset,
+                                              per_page)
+    else:
+        problem_tuple = db.get_all_users_problems(offset, per_page)
     count = db.count_problems()
-    problem_tuple = db.get_all_users_problems(offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'latitude': problem[2],
@@ -348,6 +369,20 @@ def change_comment_by_id():
         if valid['status']:
             db.change_comment_by_id(data['id'], data['content'], updated_date)
             response = jsonify({'updated_date': updated_date * 1000}), 200
+    return response
+
+
+@app.route('/api/delete_comment', methods=['DELETE'])
+def delete_comment_by_id():
+    """Function deletes comment from DB.
+    :type: JSON
+    :return: response
+    """
+    comment_id = int(request.args.get('comment_id'))
+    db.delete_comment_by_id(comment_id)
+    logger.debug('Comment and all subcomments (if any) was deleted with id %s',
+                 comment_id)
+    response = jsonify(message='Comment successfully added.'), 200
     return response
 
 
@@ -629,11 +664,19 @@ def get_search_users_problems():
         'first_name': 'surname',
         'nickname': 'nick'}]``
     """
+    filtr = request.args.get('filtr')
+    order = int(request.args.get('order')) or 0
     nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
+    order_desc = 'desc' if order else 'asc'
+    if filtr:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+    else:
+        problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     count = db.count_user_by_nickname(nickname)
-    problem_tuple = db.get_user_by_nickname(nickname, offset, per_page)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'status': problem[2],
@@ -641,9 +684,10 @@ def get_search_users_problems():
                       'is_enabled': problem[4],
                       'severity': problem[5],
                       'nickname': problem[6],
-                      'last_name': problem[7],
-                      'first_name': problem[8],
-                      'name': problem[9]}
+                      'user_id': problem[7],
+                      'last_name': problem[8],
+                      'first_name': problem[9],
+                      'name': problem[10]}
                      for problem in problem_tuple] if problem_tuple else []
     total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
@@ -685,9 +729,10 @@ def all_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name': comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name': comment[7],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -732,9 +777,10 @@ def user_comments(user_id):
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name' : comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name' : comment[7],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -818,9 +864,10 @@ def search_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'nickname': comment[4],
-                             'first_name': comment[5],
-                             'last_name': comment[6],
+                             'user_id' : comment[4],
+                             'nickname': comment[5],
+                             'first_name': comment[6],
+                             'last_name': comment[7],
                              'sub_count': subcomments_count[0]})
     if comments_count:
         total_count = {'total_comments_count': comments_count[0]}
@@ -1014,3 +1061,80 @@ def get_search_problems_by_filter():
                     mimetype='application/json')
 
 
+@app.route('/api/problem_delete', methods=['DELETE', 'PUT'])
+@auto.doc()
+@login_required
+def delete_problem():
+    """The method deletes problem by id.
+       :rtype: JSON.
+       :request args: `{problem_id: 5}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    valid = validator.problem_delete(data)
+    if valid['status']:
+        if request.method == 'DELETE':
+            folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
+            f_path = os.environ['STATICROOT'] + folder_to_del
+            if db.get_problem_photo_by_id(data['problem_id']):
+                db.delete_problem_photo_by_id(data['problem_id'])
+                if os.path.exists(f_path):
+                    shutil.rmtree(f_path, ignore_errors=True)
+            db.delete_problem_by_id(data['problem_id'])
+            response = jsonify(msg='Дані видалено успішно!'), 200
+        else:
+            db.change_user_problem_to_anonymous(data['problem_id'])
+            db.change_activity_to_anon(data['problem_id'])
+            response = jsonify(msg='Дані видалено успішно!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
+    return response
+
+
+@app.route('/api/problem_edit', methods=['PUT'])
+@auto.doc()
+@login_required
+def edit_problem():
+    """The method deletes problem by id.
+       :rtype: JSON.
+       :request args: `{problem_id: 5,
+                                    title: name,
+                                    content: 'message',
+                                    proposal: 'message 2',
+                                    severity: '3',
+                                    status: 'Solved',
+                                    is_enabled 0}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    # valid = validator.problem_type_delete(data)
+    # if valid['status']:
+    # folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
+    # f_path = os.environ['STATICROOT'] + folder_to_del
+    # if db.get_problem_photo_by_id(data['problem_id']):
+    #     db.delete_problem_photo_by_id(data['problem_id'])
+    #     if os.path.exists(f_path):
+    #         shutil.rmtree(f_path, ignore_errors=True)
+    update_time = int(time.time())
+    db.edit_problem(data['problem_id'], data['title'],
+                    data['content'], data['proposal'],
+                    data['severity'], data['status'],
+                    data['is_enabled'], update_time)
+    response = jsonify(msg='Дані успішно змінено!'), 200
+    # else:
+    # response = jsonify(msg='Некоректні дані!'), 400
+    return response

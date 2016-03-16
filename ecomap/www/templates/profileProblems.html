@@ -9,7 +9,7 @@
                class="form-control"
                ng-init="showSearch" 
                ng-change="loadProblems()"
-               placeholder="Пошук по нікнейму" />
+               placeholder="Пошук по псевдоніму" />
       </form>
     </div>
     <div class="col-lg-offset-5 col-lg-2 col-md-offset-6 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2">
@@ -55,7 +55,7 @@
         </td>
         <td><strong>Детальне інфо</strong> 
         </td>
-        <td ng-show='showTable == true'><strong>Редагування</strong></td>
+        <td><strong>Редагування</strong></td>
       </tr>
     </thead>
     <tbody>
@@ -71,9 +71,13 @@
         <td ng-model="problem.status">{{getStatus(problem.status)}}</td>
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
-        <td ng-show='showTable == true'>
-          <a href="/#/editProblem/{{problem.id}}">редагувати</a> &nbsp; &nbsp;
-          <a href="" class="del" ng-click="deletePage(page.id)">видалити</a>
+        <td>
+          <a href="/#/editProblem/{{problem.id}}" 
+             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
+          </a> &nbsp; &nbsp;
+          <a href="" class="del" ng-click="deleteProblem(problem.id)"
+             ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>видалити
+          </a>
         </td>
       </tr>
     </tbody>

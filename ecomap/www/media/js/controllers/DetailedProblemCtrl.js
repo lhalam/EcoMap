@@ -11,6 +11,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
+    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    $scope.statuses = ['Не вирішено', 'Вирішено'];    
+    $scope.hideSeverityForUser = $cookies.get('role')=='user' ? true : false;
    
     $scope.user_id = $cookies.get('id');
     $http({

@@ -106,11 +106,11 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state('editProblem', {
+/*  .state('editProblem', {
     url: '/editProblem/:id',
     templateUrl: '/templates/editProblem.html',
     controller: 'EditProblemCtrl'
-  })
+  })*/
   .state('editFaq', {
     url: '/editFaq/:alias',
     templateUrl: '/templates/editFaq.html',

@@ -1138,7 +1138,7 @@ def get_all_users_problems(offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, u.id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p
@@ -1276,7 +1276,7 @@ def get_problem_id_for_del(user_id):
         query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
         cursor.execute(query, (user_id,))
         return cursor.fetchall()
-
+        
 
 @db.retry_query(tries=3, delay=1)
 def change_problem_to_anon(problem_id):
@@ -2053,7 +2053,7 @@ def get_user_by_filter(order, filtr, offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, u.id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p

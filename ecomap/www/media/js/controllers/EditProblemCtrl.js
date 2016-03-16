@@ -211,7 +211,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         return;
       }
       Upload.upload({
-        url: '/api/problem_post',
+        url: '/api/problem_edit',
         method: 'PUT',
         cache: false,
         headers: {

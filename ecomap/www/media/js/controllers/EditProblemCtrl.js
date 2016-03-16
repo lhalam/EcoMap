@@ -1,6 +1,10 @@
-app.controller('EditProblemCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$state',
-  function($scope, $stateParams, $http, toaster, $state) {
-    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+app.controller('EditProblemCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$state',  '$cookies',
+  function($scope, $stateParams, $http, toaster, $state, $cookies) {
+    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];    
+/*   if ($cookies.get('role')=='user') {
+      $scope.hideSeverityForUser = false;
+    }  else  $scope.hideSeverityForUser = true;*/
+    $scope.hideSeverityForUser = $cookies.get('role')=='user' ? false : true;
     $scope.statuses = ['Не вирішено', 'Вирішено'];
     $scope.page = {};
     $scope.editPage = function(page) {
@@ -35,7 +39,3 @@ app.controller('EditProblemCtrl', ['$scope', '$stateParams', '$http', 'toaster',
     $scope.loadPage($stateParams.alias);*/
   }
 ]);
-/*
- if ($cookies.get('role')=='user') {
-      $scope.showSeverityForUser = true;
-    }  else  $scope.showSeverityForUser = false;*/

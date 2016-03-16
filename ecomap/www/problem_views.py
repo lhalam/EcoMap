@@ -1089,7 +1089,7 @@ def delete_problem():
                     shutil.rmtree(f_path, ignore_errors=True)
             db.delete_problem_by_id(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200
-        else:
+        elif request.method == 'PUT':
             db.change_user_problem_to_anonymous(data['problem_id'])
             db.change_activity_to_anon(data['problem_id'])
             response = jsonify(msg='Дані видалено успішно!'), 200

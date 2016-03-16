@@ -67,7 +67,7 @@
               class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="showInputForm" ng-class="{ 'has-error': newComment.comment.$invalid}">
           <textarea ng-model="comment.text" class="comment-input" ng-class="{'form-control': focused}" name='comment' placeholder='Ваш коментар' rows='4' cols='80' type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" ng-disabled="editMode" required></textarea>
           <div class="checkbox pull-right">
-            <label class="changeUser" ng-show="showInputForm">
+            <label class="changeUser" ng-show="!editMode">
               <input type="checkbox" 
                      ng-model="comment.changeUser" 
                      ng-true-value="true" 

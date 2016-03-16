@@ -1986,18 +1986,6 @@ def delete_problem_photo_by_id(problem_id):
 
 
 @db.retry_query(tries=3, delay=1)
-def change_user_problem_to_anonymous(problem_id):
-    """Update problem to anonymous.
-       :params: problem_id: id of problem.
-    """
-    with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """UPDATE `problem` SET `user_id`=%s
-                          WHERE `id`=%s;
-                      """
-        conn.execute(query, (ANONYMOUS_ID, problem_id))
-
-
-@db.retry_query(tries=3, delay=1)
 def get_problem_photo_by_id(problem_id):
     """Get problem photo by id."""
     with db.pool_manager(db.READ_ONLY).manager() as conn:

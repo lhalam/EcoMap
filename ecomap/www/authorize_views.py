@@ -290,7 +290,6 @@ def restore_password_page(hashed):
 def restore_password():
     """Updates user password.
 
-
     """
     data = request.get_json()
     valid = validator.change_password(data)
@@ -348,6 +347,7 @@ def delete_user():
     """
     data = request.get_json()
     valid = validator.hash_check(data['hash_sum'])
+    logger.info('Valid %s' % valid)
     if valid['status']:
         user_id = db.get_user_id_by_hash(data['hash_sum'])
         logger.warning(user_id)

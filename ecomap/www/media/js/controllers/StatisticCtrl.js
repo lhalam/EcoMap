@@ -108,10 +108,9 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-        console.log(response);
         $scope.problems = [];
       for (var i = 0; i < response.data.length; i++){
-        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']*1000.0), group:response.data[i]['problem_type_Id']};
+        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']*1000.0), group:response.data[i]['problem_type_id']};
           $scope.problems.push(item);
         }
         $scope.createPlot($scope.groups_list, $scope.problems);
@@ -121,20 +120,23 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     var container = document.getElementById('visualization');
     var groups = new vis.DataSet(groups_content);
     var items = new vis.DataSet(items_content);
-      // Configuration for the Timeline
+    //   // Configuration for the Timeline
+    var date = new Date();
+    date.setDate(date.getDate() + 4);
       var options = {
         stack:false,
         min:'2015-04-14T12:00:00',
-        max: '2017-04-14T12:00:00',
+        max: date,
         zoomMin: 1000*60*60*24*31,
         zoomMax:1000*60*60*24*31*12,
         orientation: 'top',
-        showCurrentTime:false
+        showCurrentTime:false,
+        locale: 'nl'
       };
 
-      // Create a Timeline
-      var timeline = new vis.Timeline(container, items, options);
-      timeline.setGroups(groups);
+  // Create a Timeline
+  var timeline = new vis.Timeline(container, items, options);
+   timeline.setGroups(groups);
     };
     $scope.loadCountSubs();
     $scope.loadSeverityStat();

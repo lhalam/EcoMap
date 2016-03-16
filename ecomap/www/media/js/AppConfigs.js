@@ -41,7 +41,7 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     templateUrl: '/templates/profileFaqEdit.html',
     resolve: {
       admin: function(grant) {
-        return grant.only({test: 'admin', state: 'error403'});
+        return grant.only({test: 'authenticated', state: 'error403'});
       }
     }
   })

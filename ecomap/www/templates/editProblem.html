@@ -9,7 +9,22 @@
       <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
-    
+    </form>
+    <form ng-hide='showSeverityForUser' class='severityForm '>  
+      <fieldset class="form-group col-md-6">
+        <label for="problem_type_id" class="control-label">Важливість</label>
+        <select required> 
+          <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
+        </select>           
+      </fieldset>
+      <fieldset class="form-group col-md-6">
+        <label for="problem_type_id" class="control-label">Статус</label>
+        <select required> 
+          <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
+        </select>
+      </fieldset>
+    </form>
+    <form class="page-edit-form">    
       <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
         <div class="dropdown">
           <div class="select-wrapper">
@@ -52,6 +67,7 @@
           <div ng-messages-include="/templates/error_msgs.html"></div>
         </div>
       </div>
+
       <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
         ngf-pattern="'image/*'" accept="image/*"
         ngf-max-size="5MB" ngf-keep="'distinct'"
@@ -79,20 +95,6 @@
           class="thumb-descr">
           </textarea>
         </div>
-      </div>
-      <div ng-hide='showSeverityForUser'>        
-        <form>
-          <label for="problem_type_id" class="control-label">Важливість</label>
-          <select required> 
-            <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
-          </select>           
-        </form>  
-        <form>
-          <label for="problem_type_id" class="control-label">Статус</label>
-          <select required> 
-            <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
-          </select>           
-        </form>
       </div>
       <button class="btn btn-primary fl-right" type="submit">Редагувати сторінку</button>
       <div class="clear"></div>

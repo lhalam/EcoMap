@@ -1274,7 +1274,7 @@ def get_problem_id_for_del(user_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `id` FROM `problem` WHERE `user_id`=%s;"""
-        cursor.execute(query, (user_id,))
+        cursor.execute(query % user_id)
         return cursor.fetchall()
 
 

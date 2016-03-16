@@ -37,7 +37,7 @@
     </div>
     <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
       <label for="title" class="control-label">Заголовок проблеми</label>
-      <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-maxlength="255" ng-minlength="2" required>
+      <input type="text" class="form-control" name="title" id="title" ng-bind="newProblem.title" ng-maxlength="255" ng-minlength="2" required value="{{selectProblem.title}}">
       <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
@@ -75,14 +75,14 @@
       <label for="problemContent" class="control-label">Опис проблеми</label>
       <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control"
       ng-maxlength="255" ng-minlength="2"
-      ng-model="newProblem.content" required></textarea>
+      ng-bind="newProblem.content" required>{{selectProblem.content}}</textarea>
       <div class="help-block" ng-messages="addProblemForm.content.$error" ng-show="addProblemForm.content.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
     </div>
     <div class="form-group " ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
       <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
-      <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-model="newProblem.proposal" required></textarea>
+      <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-bind="newProblem.proposal" required>{{selectProblem.proposal}}</textarea>
       <div class="help-block" ng-messages="addProblemForm.proposal.$error" ng-show="addProblemForm.proposal.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>

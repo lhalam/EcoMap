@@ -35,6 +35,9 @@ app.factory('msg', function(toaster) {
     },
     editNicknameError: function(msg, type) {
       toaster.pop('error', 'Редагування', 'Виникла помилка при редагуванні '+ msg +' даний псевдонім вже зайнятий');
+    },
+    restoreError: function(msg) {
+      toaster.pop('error', 'Відновлення', 'При відновленні' + msg + ' виникла помилка!')
     }
   };
 });

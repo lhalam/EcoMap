@@ -2,6 +2,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
   function($scope, $state, $http, $rootScope, $location, msg, toaster) {
     $scope.restore = {};
     $scope.msg = msg;
+    console.log("sdddddddddd");
     $rootScope.isFetching=false;
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){
@@ -22,28 +23,12 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
         })
     };
 
-    // $scope.checkHashSum = function(){
-    //     $http({
-    //         method: 'GET',
-    //         url: '/api/url' + $state.params['hash_sum']
-    //     }).then(function successCallback(response){
-    //         //do what you need here
-    //     }, function errorCallback(){
-    //         //error callback if you need
-    //     })
-    // }
-
-    // if($state.params['hash_sum']){
-    //     $scope.checkHashSum();        
-    // }
-
     $scope.newPass = {};
     $scope.updatePass = function(pass){
       hash_sum = window.location.href.split('/')[5];
       if(!pass.pass || !pass.confirmPass){
           return;
       }
-
       $http({
         method: 'PUT',
         url: '/api/restore_password',
@@ -57,7 +42,6 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
         //$state.go('login');
         window.location.href = 'http://ecomap.new/#/login'
       }, function errorCallback(){
-        //error callback if you need
       })
     }
   }

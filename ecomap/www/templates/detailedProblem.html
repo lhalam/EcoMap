@@ -8,19 +8,40 @@
     <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <div class="rate">
-         <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel" class="severityLevel">{{selectProblem.severity}} із 10</div>        
+           <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel" ng-show='hideSeverityForUser'>{{selectProblem.severity}} із 10</div>
+          
+           <div ng-hide='hideSeverityForUser'>
+              <div class='severityLevel'>Важливість</div>
+              <form class='moderEditOption'>            
+                <p>
+                 <select required> 
+                     <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
+                  </select>
+                </p>           
+              </form>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
-        <div class="solution unsolved hidden-xs hidden-sm" >
-          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
+          <div ng-show='hideSeverityForUser' class="solution unsolved hidden-xs hidden-sm" >
+            <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
+          </div>
+          <div ng-hide='hideSeverityForUser'>
+            <div class='severityLevel'>Статус</div>
+            <form class='moderEditOption'>            
+              <p>
+                <select required> 
+                  <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
+                </select>
+              </p>           
+            </form>
+          </div>
         </div>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription hidden-xs hidden-sm'>
-          <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
+          <div class='eye_subscription hidden-xs hidden-sm'>
+            <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
+          </div>
         </div>
-      </div>
     </div>
     <div class="row hidden-md hidden-lg">
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">

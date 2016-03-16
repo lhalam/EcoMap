@@ -1,5 +1,5 @@
 
-app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $state) {
+app.factory('MapFactory', ['$window', '$http', '$state', '$cookies', '$auth', function(win, $http, $state, $cookies, $auth) {
   instance = {};
   instance.lat = 49.468077;
   instance.lng = 30.521018;
@@ -65,8 +65,10 @@ app.factory('MapFactory', ['$window', '$http', '$state', function(win, $http, $s
     }).then(function successCallback(response) {
       console.log(response);
       angular.forEach(response.data, function (marker, key) {
-        if (marker.is_enabled == 0)
+        if ((!$auth.isAuthenticated() && marker.is_enabled == 0) || 
+          ($cookies.get('role') == 'user' && marker.is_enabled == 0)) 
           return;
+        
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,

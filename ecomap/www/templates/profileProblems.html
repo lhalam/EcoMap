@@ -75,7 +75,7 @@
           <a href="/#/editProblem/{{problem.id}}" 
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
           </a> &nbsp; &nbsp;
-          <a href="" class="del" ng-click="deleteProblem(problem.id)"
+          <a href="" class="del" ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>видалити
           </a>
         </td>

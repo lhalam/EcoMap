@@ -15,6 +15,7 @@ from PIL import Image
 
 from ecomap import validator
 from ecomap.db import util as db
+from ecomap.utils import generate_email, send_email
 from ecomap.app import app, logger, auto, _CONFIG
 
 
@@ -279,15 +280,16 @@ def get_all_users_problems():
                       'title': problem[1],
                       'latitude': problem[2],
                       'longitude': problem[3],
-                      'problem_type_id': problem[4],
-                      'status': problem[5],
-                      'date': problem[6] * 1000,
-                      'severity': problem[8],
-                      'is_enabled': problem[7],
-                      'last_name': problem[9],
-                      'first_name': problem[10],
-                      'nickname': problem[11],
-                      'name': problem[12]}
+                      'user_id': problem[4],
+                      'problem_type_id': problem[5],
+                      'status': problem[6],
+                      'date': problem[7] * 1000,
+                      'severity': problem[9],
+                      'is_enabled': problem[8],
+                      'last_name': problem[10],
+                      'first_name': problem[11],
+                      'nickname': problem[12],
+                      'name': problem[13]}
                      for problem in problem_tuple] if problem_tuple else []
     total_count = {'total_problem_count': count[0]} if count else {}
     return Response(json.dumps([problems_list, [total_count]]),
@@ -1088,6 +1090,19 @@ def delete_problem():
                 if os.path.exists(f_path):
                     shutil.rmtree(f_path, ignore_errors=True)
             db.delete_problem_by_id(data['problem_id'])
+            email_tuple = db.get_user_by_id(data['user_id'])
+            message = generate_email('delete_problem',
+                                     _CONFIG['email.from_address'],
+                                     email_tuple[4], (email_tuple[1],
+                                                      email_tuple[2],
+                                                      data['problem_title'],
+                                                      request.url_root))
+            send_email(_CONFIG['email.server_name'],
+                       _CONFIG['email.user_name'],
+                       _CONFIG['email.server_password'],
+                       _CONFIG['email.from_address'],
+                       email_tuple[4],
+                       message)
             response = jsonify(msg='Дані видалено успішно!'), 200
         elif request.method == 'PUT':
             db.change_problem_to_anon(data['problem_id'])

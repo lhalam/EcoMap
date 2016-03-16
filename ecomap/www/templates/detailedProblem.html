@@ -8,36 +8,47 @@
     <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <div class="rate">
-           <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel" ng-show='hideSeverityForUser'>{{selectProblem.severity}} із 10</div>
-          
-           <div ng-hide='hideSeverityForUser'>              
-            <form class='moderEditOption'>
-              <label class='severityLevel'>Важливість</label>                 
-               <select required> 
-                   <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
-                </select>           
-              </form>
-            </div>
-          </div>
+           <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel">{{selectProblem.severity}} із 10
+           </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
-          <div ng-show='hideSeverityForUser' class="solution unsolved hidden-xs hidden-sm" >
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
+        <div class="solution unsolved hidden-xs hidden-sm" >
             <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
-          </div>
-          <div ng-hide='hideSeverityForUser'>            
-            <form class='moderEditOption'>
-              <label class='severityLevel'>Статус</label>         
-              <select required> 
-                <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
-              </select>                  
-            </form>
-          </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
-          <div class='eye_subscription hidden-xs hidden-sm'>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription hidden-xs hidden-sm'>
             <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
-          </div>
         </div>
+      </div>
+    </div>
+    <div ng-hide='hideSeverityForUser'>              
+      <form class='moderEditOption' ng-submit="changeStatus(moder)">
+        <div class="form-inline">
+        <label class='severityLevel'>Важливість</label>                 
+        <select required ng-model="moder.severity"
+                class="form-control input-sm"
+                ng-options='severity for severity in severities'
+                >
+        </select>    
+        </div>
+        <div class="form-inline">
+          <label class='severityLevel'>Статус</label>         
+          <select required ng-model="moder.status"
+                  class="form-control input-sm"
+                  ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
+          </select>  
+        </div>
+        <div class="form-inline">
+          <label class='severityLevel'>Підтвердження</label>         
+          <select required ng-model="moder.enabled"
+                  class="form-control input-sm"
+                  ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
+          </select> 
+          <input type="submit" value="Змінити" class="btn btn-primary btn-sm btn-sev" />
+        </div>      
+      </form>
     </div>
     <div class="row hidden-md hidden-lg">
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">

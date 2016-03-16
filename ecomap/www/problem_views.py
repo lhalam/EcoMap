@@ -1106,7 +1106,7 @@ def delete_problem():
             response = jsonify(msg='Дані видалено успішно!'), 200
         elif request.method == 'PUT':
             db.change_problem_to_anon(data['problem_id'])
-            response = jsonify(msg='Дані видалено успішно!'), 200
+            response = jsonify(msg='Дані привязані на анонімного юзера!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400
     return response
@@ -1121,7 +1121,7 @@ def problem_confirmation():
        :request args: `{problem_id: 5,
                                     severity: '3',
                                     status: 'Solved',
-                                    is_enabled 0}`.
+                                    is_enabled: 0}`.
        :return: confirmation object.
        :JSON sample:
        ``{'msg': 'Problem type was deleted successfully!'}``
@@ -1132,15 +1132,15 @@ def problem_confirmation():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    # valid = validator.problem_type_delete(data)
-    # if valid['status']:
-    update_time = int(time.time())
-    db.problem_confirmation(data['problem_id'], data['severity'],
-                            data['status'], data['is_enabled'],
-                            update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    # else:
-    # response = jsonify(msg='Некоректні дані!'), 400
+    valid = validator.problem_confirmation(data)
+    if valid['status']:
+        update_time = int(time.time())
+        db.problem_confirmation(data['problem_id'], data['severity'],
+                                data['status'], data['is_enabled'],
+                                update_time)
+        response = jsonify(msg='Дані успішно змінено!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
@@ -1163,27 +1163,17 @@ def edit_problem():
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     """
-    logger.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    data = request.get_json()
-    logger.info("datadatadatadatadatadatadata")
-    # valid = validator.problem_type_delete(data)
-    # if valid['status']:
-    # folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-    # f_path = os.environ['STATICROOT'] + folder_to_del
-    # if db.get_problem_photo_by_id(data['problem_id']):
-    #     db.delete_problem_photo_by_id(data['problem_id'])
-    #     if os.path.exists(f_path):
-    #         shutil.rmtree(f_path, ignore_errors=True)
-    update_time = int(time.time())
-    logger.info(update_time)
-    db.edit_problem(data['problem_id'], data['title'],
-                    data['content'], data['proposal'],
-                    data['severity'], data['status'],
-                    update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    logger.info('sssssssssssssssssssssssssssssssssssssss')
-    # else:
-    # response = jsonify(msg='Некоректні дані!'), 400
+    data = request.form()
+    valid = validator.problem_put(data)
+    if valid['status']:
+        update_time = int(time.time())
+        db.edit_problem(data['problem_id'], data['title'],
+                        data['content'], data['proposal'],
+                        data['latitude'], data['longitude'],
+                        data['severity'], data['type'], update_time)
+        response = jsonify(msg='Дані успішно змінено!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 

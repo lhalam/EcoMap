@@ -2008,15 +2008,15 @@ def problem_confirmation(problem_id, severity, status, is_enabled, update_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
-                           `is_enabled`=%s,
-                            `update_date`=%s WHERE `id`=%s;
+                           `is_enabled`=%s,`update_date`=%s WHERE `id`=%s;
                       """
         conn.execute(query, (problem_id, severity, status, is_enabled, update_date))
 
 
 
 @db.retry_query(tries=3, delay=1)
-def edit_problem(problem_id, title, content, proposal, severity, status, update_time):
+def edit_problem(problem_id, title, content, proposal, latitude, longitude,
+                 problem_type, upd_date):
     """Update problem.
        :params: problem_id: id of problem.
                     title: title of the problem.
@@ -2029,11 +2029,14 @@ def edit_problem(problem_id, title, content, proposal, severity, status, update_
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET `title`=%s, `content`=%s,
-                           `proposal`=%s, 'severity'=%s,
-                           'status'=%s,
-                            `update_date`=%s WHERE `id`=%s;
+                           `proposal`=%s, `latitude`=%s, `longitude`=%s,
+                           'severity'=%s,
+                            `problem_type_id`=%s,`update_date`=%s
+                            WHERE `id`=%s;
                       """
-        conn.execute(query, (problem_id, title, content, proposal, severity, status, update_time))
+        conn.execute(query, (title, content, proposal, latitude, severity,
+                             longitude, upd_date, problem_id))
+
 
 
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):

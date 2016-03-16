@@ -12,10 +12,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
-    $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    $scope.statuses = ['Не вирішено', 'Вирішено'];
-    $scope.showEditProblem = ($cookies.get('role')=='user' && $scope.editProblem == true) ? true : false;
-    $scope.hideSeverityForUser = ($cookies.get('role')=='admin' || $cookies.get('role')=='admin') ? false : true;
+    
+    $scope.detail = ($cookies.get('role')!=='user')?true:false;
+    $scope.hideSeverityForUser = ($cookies.get('role')!=='user') ? false : true;
    
     $scope.user_id = $cookies.get('id');
     $http({
@@ -23,6 +22,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      console.log($scope.selectProblem)
       $scope.isSubscripted = response.data[0][0]['is_subscripted'];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
@@ -209,5 +209,37 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+    $scope.enableds = {0: 'Не підтверджено', 1: 'Підтверджено'};
+    $scope.statuses = {
+        'Unsolved': 'Не вирішено',
+        'Solved': 'Вирішено'
+      };
+    $scope.severities = ['1', '2', '3', '4', '5'];
+    $scope.moder = {
+      'severity': $scope.severities[0],
+      'status': 'Unsolved',
+      'enabled': '0'
+    }
+    console.log($scope.moder)
+    $scope.changeStatus = function(mod){
+      console.log(mod)
+      $http({
+      url: '/api/problem_confirmation',
+      method: 'PUT',
+      headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+      data: {
+        'problem_id': $scope.user_id,
+        'severity': mod.severity,
+        'status': mod.status,
+        'is_enabled': mod.enabled
+      }
+      }).then(function successCallback(data) {
+        console.log(data)
+      }, function errorCallback(response) {
+        
+      })
+    }
   }
 ]);

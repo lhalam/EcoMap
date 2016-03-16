@@ -417,7 +417,7 @@ form {
 
 .page-edit-form {
   background-color: #fff;
-  padding: 0% 4%;
+  padding: 6% 4%;
 }
 
 .page-edit-form input {
@@ -1267,6 +1267,7 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
+<<<<<<< HEAD
 .fa.search{
   color: grey;
   margin-right: 3px;
@@ -1293,9 +1294,7 @@ a.one_button{
   margin-right: 1%;
 }
 .severityLevel{
-  float: right;
   font-size: 18px;
   color: #880000;
-  margin-bottom: 10px;
   font-weight: 700;
-}
+

@@ -1,79 +1,105 @@
-<div class="container">
-  <div class="row">
-    <h3>Редагування проблеми</h3>
-    <hr>
-
-    <form name="editPageForm" ng-submit="editPage(page)" class="page-edit-form" novalidate>
+<div class="map-toogle hideMe" ng-init="changeToogleMap='карта'" ng-click="toogleMap()">
+  {{changeToogleMap}}
+</div>
+<div class="flex-item-1 flex-container flex-column addProblemBlock" ng-if="showSidebarProblem==false">
+  <uib-tabset justified="true">
+  <uib-tab heading="Опис" active="addProblemTab" >
+  <form name="addProblemForm"
+    class="page-edit-form" novalidate enctype="multipart/form-data" ng-show="!createdProblemId">
+    <div class="row">
+      <div class="form-group col-lg-12">
+        <label for="" class="control-label">Пошук за координатами</label>
+      </div>
+      <div class="form-group col-lg-4" ng-class="{ 'has-error': (addProblemForm.latitude.$touched || submitted) && addProblemForm.latitude.$invalid}">
+        <input type="text" placeholder='Довгота' class="form-control" name="latitude" id="latitude"
+        ng-model="newProblem.latitude" ng-maxlength="255"  required>
+        <div class="help-block" ng-messages="addProblemForm.latitude.$error"
+          ng-show="addProblemForm.latitude.$touched || submitted">
+          <p ng-messages-include="/templates/error_msgs.html"></p>
+        </div>
+      </div>
+      <div class="form-group col-lg-4" ng-class="{ 'has-error': (addProblemForm.longitude.$touched || submitted) && addProblemForm.longitude.$invalid}">
+        <input type="text" placeholder='Широта' class="form-control" name="longitude" id="longitude"
+        ng-model="newProblem.longitude" ng-max-length="255" required>
+        <div class="help-block" ng-messages="addProblemForm.longitude.$error"
+          ng-show="addProblemForm.longitude.$touched || submitted">
+          <p ng-messages-include="/templates/error_msgs.html"></p>
+        </div>
+      </div>
+      <div class="form-group col-lg-4">
+        <input type='button' ng-click="reloadPos()" value='Пошук' class="btn btn-default form-control">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-lg-6">
+        <button type="button" class="btn btn-default form-control" ng-click="locateUser()"><i class="fa fa-map-marker"></i> Знайти мене</button>
+      </div>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.title.$touched || submitted) && addProblemForm.title.$invalid}">
       <label for="title" class="control-label">Заголовок проблеми</label>
       <input type="text" class="form-control" name="title" id="title" ng-model="newProblem.title" ng-maxlength="255" ng-minlength="2" required>
       <div class="help-block" ng-messages="addProblemForm.title.$error" ng-show="addProblemForm.title.$touched || submitted">
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
-    </form>
-    <form ng-hide='showSeverityForUser' class='severityForm '>  
-      <fieldset class="form-group col-md-6">
-        <label for="problem_type_id" class="control-label">Важливість</label>
-        <select required> 
-          <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
-        </select>           
-      </fieldset>
-      <fieldset class="form-group col-md-6">
-        <label for="problem_type_id" class="control-label">Статус</label>
-        <select required> 
-          <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
-        </select>
-      </fieldset>
-    </form>
-    <form class="page-edit-form">    
-      <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
-        <div class="dropdown">
-          <div class="select-wrapper">
-            <label for="problem_type_id" class="control-label">Тип проблеми</label>
-            <div class="selected-item-box" id="problem_type_id">
-              <span class="dropdown-icon"></span>
-              <ul class="items-list">
+    </div>
+     <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
+     <div class="dropdown">
+      <div class="select-wrapper">
+      <label for="problem_type_id" class="control-label">Тип проблеми</label>
+        <div class="selected-item-box" id="problem_type_id">
+        <span class="dropdown-icon"></span>
+            <ul class="items-list">
                 <li>
                     <img ng-src="{{chosen.picture}}"/> {{chosen.name}}
                 </li>
-              </ul>
-            </div>
-            <div class="list" >
-              <ul class="items-list">
-                <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
-                  <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
-                    <span>{{type.name}}</span>
-                </li>
-              </ul>
-            </div>
+            </ul>
           </div>
-        </div>
-        <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="true">
-          <div ng-messages-include="/templates/error_msgs.html"></div>
-        </div>
-      </div>
-      <div class="form-group " ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
-        <label for="problemContent" class="control-label">Опис проблеми</label>
-        <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control"
-        ng-maxlength="255" ng-minlength="2"
-        ng-model="newProblem.content" required></textarea>
-        <div class="help-block" ng-messages="addProblemForm.content.$error" ng-show="addProblemForm.content.$touched || submitted">
-          <div ng-messages-include="/templates/error_msgs.html"></div>
+          <div class="list" >
+            <ul class="items-list">
+              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
+                <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
+                  <span>{{type.name}}</span>
+              </li>
+            </ul>
         </div>
       </div>
-      <div class="form-group " ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
-        <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
-        <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-model="newProblem.proposal" required></textarea>
-        <div class="help-block" ng-messages="addProblemForm.proposal.$error" ng-show="addProblemForm.proposal.$touched || submitted">
-          <div ng-messages-include="/templates/error_msgs.html"></div>
-        </div>
+    </div>
+     <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="true">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
+  </div>
 
+
+
+    <div class="form-group " ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
+      <label for="problemContent" class="control-label">Опис проблеми</label>
+      <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control"
+      ng-maxlength="255" ng-minlength="2"
+      ng-model="newProblem.content" required></textarea>
+      <div class="help-block" ng-messages="addProblemForm.content.$error" ng-show="addProblemForm.content.$touched || submitted">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
+      </div>
+    </div>
+    <div class="form-group " ng-class="{ 'has-error': (addProblemForm.proposal.$touched || submitted) && addProblemForm.proposal.$invalid}">
+      <label for="proposal" class="control-label">Пропозиції щодо вирішення</label>
+      <textarea name="proposal"  id="proposal" cols="30" rows="5"  ng-maxlength="255" ng-minlength="2" class="form-control" ng-model="newProblem.proposal" required></textarea>
+      <div class="help-block" ng-messages="addProblemForm.proposal.$error" ng-show="addProblemForm.proposal.$touched || submitted">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
+      </div>
+    </div>
+    <button class="btn btn-primary fl-right" type="button"
+    ng-click="submitted=true; goToPhotos(addProblemForm)" >Далі</button>
+  </form>
+  </uib-tab>
+  <uib-tab heading="Додати фото" active="addPhotosTab" deselect="goToProblems()">
+  <div class="add-photo">
+    <form name="uploadProblemPhoto" class="uploadPhoto" ng-submit="addProblem(newProblem, addProblemForm, photos)">
       <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
         ngf-pattern="'image/*'" accept="image/*"
         ngf-max-size="5MB" ngf-keep="'distinct'"
         ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
         ngf-multiple="true" ngf-capture="'camera'"
-        ngf-change="check(uploadProblemPhoto)"><i class="fa fa-plus"></i> Додати фото</div>
+      ngf-change="check(uploadProblemPhoto)"><i class="fa fa-plus"></i> Додати фото</div>
       <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
       <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
       <div class="thumbs"
@@ -96,8 +122,9 @@
           </textarea>
         </div>
       </div>
-      <button class="btn btn-primary fl-right" type="submit">Редагувати сторінку</button>
-      <div class="clear"></div>
+      <button type="submit" class="btn btn-success">Опублікувати проблему</button>
     </form>
   </div>
+  </uib-tab>
+  </uib-tabset>
 </div>

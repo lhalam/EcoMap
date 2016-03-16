@@ -145,5 +145,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
     }
+    $scope.triggerEditModal = function(problem_id) {
+      var url = '/#/editProblem/' + problem_id;
+      window.open(url, '_blank');
+    }
   }
 ]);

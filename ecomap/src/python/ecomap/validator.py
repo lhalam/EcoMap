@@ -768,12 +768,13 @@ def problem_confirmation(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keyname = ['problem_id', 'severity', 'status', 'is_enabled']
-    if not has_key(data, keyname):
-        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
-    elif not data[keyname]:
-        status['error'].append({keyname: ERROR_MSG['check_empty']
-                                % keyname})
+    keys = ['problem_id', 'severity', 'status', 'is_enabled']
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
     if status['error']:
         status['status'] = False
     return status

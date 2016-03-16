@@ -18,7 +18,9 @@ def random_password(length):
        :param length: length of string
        :return: string
     """
-    return ''.join(random.choice(string.ascii_letters) for i in range(length))
+
+    return ''.join(random.choice(string.ascii_letters + string.digits
+                                + string.punctuation) for i in range(length))
 
 
 class Singleton(type):

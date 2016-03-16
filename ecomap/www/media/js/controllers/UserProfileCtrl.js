@@ -1,5 +1,4 @@
-app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster',
-  function($scope, $state, $cookies, $http, msg, toaster, $auth) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster', '$rootScope', function($scope, $state, $cookies, $http, msg, toaster, $auth, $rootScope) {
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
     $scope.msg = msg;

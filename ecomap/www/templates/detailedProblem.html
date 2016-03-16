@@ -3,21 +3,19 @@
 
 <div class="flex-item-5 flex-container flex-column problemBlock">
   <i class="fa fa-times fa-2x close" ng-click="close()"></i>
-  <h3 class="detailedTitle show_problem">{{selectProblem.title}}</h3>
+  <h3 class="detailedTitle show_problem" >{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <div class="rate">
            <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel" ng-show='hideSeverityForUser'>{{selectProblem.severity}} із 10</div>
           
-           <div ng-hide='hideSeverityForUser'>
-              <div class='severityLevel'>Важливість</div>
-              <form class='moderEditOption'>            
-                <p>
-                 <select required> 
-                     <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
-                  </select>
-                </p>           
+           <div ng-hide='hideSeverityForUser'>              
+            <form class='moderEditOption'>
+              <label class='severityLevel'>Важливість</label>                 
+               <select required> 
+                   <option ng-repeat='severity in severities' value="{{severity}}">{{severity}}</option>
+                </select>           
               </form>
             </div>
           </div>
@@ -26,14 +24,12 @@
           <div ng-show='hideSeverityForUser' class="solution unsolved hidden-xs hidden-sm" >
             <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
           </div>
-          <div ng-hide='hideSeverityForUser'>
-            <div class='severityLevel'>Статус</div>
-            <form class='moderEditOption'>            
-              <p>
-                <select required> 
-                  <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
-                </select>
-              </p>           
+          <div ng-hide='hideSeverityForUser'>            
+            <form class='moderEditOption'>
+              <label class='severityLevel'>Статус</label>         
+              <select required> 
+                <option ng-repeat='status in statuses' value="{{status}}">{{status}}</option>
+              </select>                  
             </form>
           </div>
         </div>

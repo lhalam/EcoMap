@@ -27,6 +27,9 @@ class ConnectionMock(MySQLdbMock):
     def connect(self, user, host, port, passwd, db, charset, init_command):
         return 'mocked connection'
 
+    def close():
+        pass
+
 
 class TestCase(unittest2.TestCase):
 
@@ -65,22 +68,21 @@ class TestCase(unittest2.TestCase):
         """Tests get conn to add conn."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        POOL._connection_pool = []
-        POOL.connection_pointer = 0
-        self.assertTrue(POOL._get_conn)
+        POOL._get_conn()
+        self.assertEqual(POOL.connection_pointer, 1)
+        self.assertTrue(POOL._get_conn())
 
     def test_get_conn_pop(self):
         """Tests get conn to pop conn."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
         POOL._connection_pool = [CONN]
-        self.assertTrue(POOL._get_conn())
+        self.assertEqual(POOL._get_conn(), CONN)
 
     def test_get_conn_error(self):
         """Tests get_conn error."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 0)
-        POOL._connection_pool = []
         POOL.connection_pointer = 5
         self.assertRaises(TypeError, POOL._get_conn,
             POOL.connection_pointer, POOL._connection_pool)
@@ -89,33 +91,11 @@ class TestCase(unittest2.TestCase):
         """Tests push_conn."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 5, 3)
-        POOL._connection_pool = []
-        conn = POOL._create_conn()
-        POOL._push_conn(conn)
-        self.assertTrue(POOL._connection_pool)
-
-    def test_close_conn(self):
-        """Tests close_conn."""
-        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
-                                   'localhost', 3306, 5, 0)
-        POOL.connection_pointer = 0
-        self.assertTrue(POOL._close_conn)
+        POOL._push_conn(CONN)
+        self.assertListEqual(POOL._connection_pool, [CONN])
 
     def test_manager_close_conn(self):
         """Tests manager for close conn."""
-        POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
-                                   'localhost', 3306, 1, 1)
-        POOL._connection_pool = [CONN]
-        POOL.connection_pointer = 0
-        try:
-            with POOL.manager():
-                time.sleep(2)
-        except:
-            raise
-        self.assertListEqual([CONN], POOL._connection_pool)
-    
-    def test_transaction_close_conn(self):
-        """Tests transaction for close conn."""
         POOL = db_pool.DBPool('root', 'root', 'ecomap_db',
                                    'localhost', 3306, 1, 1)
         POOL._connection_pool = [CONN]

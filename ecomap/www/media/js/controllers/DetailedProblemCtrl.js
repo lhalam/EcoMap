@@ -14,8 +14,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
     $scope.severities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     $scope.statuses = ['Не вирішено', 'Вирішено'];
-    $scope.showEditProblem = ($cookies.get('role')=='user' && $scope.editProblem == true) ? true : false;
-    $scope.hideSeverityForUser = ($cookies.get('role')=='admin' || $cookies.get('role')=='admin') ? false : true;
+    $scope.enableds = ['Не підтверджено', 'Підтверджено'];
+    $scope.detail = ($cookies.get('role')!=='user')?true:false;
+    $scope.hideSeverityForUser = ($cookies.get('role')!=='user') ? false : true;
    
     $scope.user_id = $cookies.get('id');
     $http({
@@ -23,6 +24,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
+      console.log($scope.selectProblem)
       $scope.isSubscripted = response.data[0][0]['is_subscripted'];
       $scope.photos = response.data[2];
       $scope.comments = response.data[3];
@@ -209,5 +211,35 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+    $scope.moder = {
+      'severity': 1,
+      'status': $scope.statuses[0],
+      'enabled': $scope.enableds[0]
+    }
+    $scope.getSeverity = function(object){
+      console.log($scope.moder)
+      $http({
+      url: '/api/problem_type',
+      method: 'PUT',
+      cache: false,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
+      data: {
+        'severity': $scope.moder.severity,
+        problem_type_name: editProblemTypeObj.name,
+        problem_type_radius: editProblemTypeObj.radius,
+        problem_type_id: editProblemTypeObj.id,
+
+      }
+      }).then(function successCallback(data) {
+        $scope.loadProblemType();
+        $scope.editProblemTypeModal = false;
+        $scope.msg.editSuccess('типу проблеми');
+      }, function errorCallback(response) {
+        $scope.editProblemTypeModal = false;
+        $scope.msg.editError('типу проблеми', arguments[0]['data']['msg']);
+      })
+    }
   }
 ]);

@@ -99,7 +99,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       })
     };
 
-    $scope.deleteProblem = function(id) {
+    $scope.deleteProblem = function(id, title, user_id) {
       if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
         $http({
           method: 'DELETE',
@@ -108,7 +108,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
           },
           url: '/api/problem_delete',
           data: {
-            'problem_id': id
+            'problem_id': id, 
+            'problem_title': title,
+            'user_id': user_id
           }
         }).then(function successCallback(data) {
           $scope.loadProblems();
@@ -125,7 +127,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             'Content-Type': 'application/json;charset=utf-8'
           },
         data: {
-          'problem_id': id
+          'problem_id': id, 
+          'problem_title': title,
+          'user_id': user_id
         }
         }).then(function successCallback(data){
           $scope.loadProblems();

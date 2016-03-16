@@ -68,7 +68,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               filtr: $scope.filterTable.param || undefined,
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount,
+              offset: $scope.selectCount['selected'] * newValue - stepCount
             }
           }).then(function successCallback(response) {
             $scope.problems = response.data[0];

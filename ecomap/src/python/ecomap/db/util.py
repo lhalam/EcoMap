@@ -842,7 +842,7 @@ def get_problem_by_id(problem_id):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.content, p.proposal,
                    p.severity, p.status, p.latitude,p.longitude,
-                   p.problem_type_id, p.created_date, t.name
+                   p.problem_type_id, p.created_date, t.name, p.is_enabled
                    FROM `problem` AS p INNER JOIN `problem_type` AS t
                    ON p.problem_type_id=t.id
                    WHERE p.id=%s;
@@ -2008,12 +2008,12 @@ def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
-                           `is_enabled`=%s,`update_date`=%s WHERE `id`=%s;
+                          `is_enabled`=IF(`is_enabled`=0, %s,`is_enabled`),
+                          `update_date`=%s
+                           WHERE `id`=%s;
                       """
         conn.execute(query, (severity, status, is_enabled,
                              upd_date, problem_id))
-
-
 
 @db.retry_query(tries=3, delay=1)
 def edit_problem(problem_id, title, content, proposal, latitude, longitude,

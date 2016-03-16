@@ -11,32 +11,32 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editMode = false;
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
-    $scope.styleInput = $scope.showInputForm ? "": "hidden-style";
     
-    $scope.detail = ($cookies.get('role')!=='user')?true:false;
     $scope.hideSeverityForUser = ($cookies.get('role')!=='user') ? false : true;
    
     $scope.user_id = $cookies.get('id');
-    $http({
-      'method': 'GET',
-      'url': '/api/problem_detailed_info/' + $state.params['id']
-    }).then(function successCallback(response) {
-      $scope.selectProblem = response.data[0][0];
-      console.log($scope.selectProblem)
-      $scope.isSubscripted = response.data[0][0]['is_subscripted'];
-      $scope.photos = response.data[2];
-      $scope.comments = response.data[3];
-      MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
-      if($scope.isSubscripted === false) {
-        $scope.cls_eye_subs = "fa fa-eye-slash";
-      } else $scope.cls_eye_subs = "fa fa-eye";
-    }, function errorCallback(error) {
-      $state.go('error404');
-    });
-    $scope.close = function() {
-      $state.go('map')
-    };
-
+    $scope.dataLoader = function(){
+      $http({
+        'method': 'GET',
+        'url': '/api/problem_detailed_info/' + $state.params['id']
+      }).then(function successCallback(response) {
+        $scope.selectProblem = response.data[0][0];
+        console.log($scope.selectProblem )
+        $scope.isSubscripted = response.data[0][0]['is_subscripted'];
+        $scope.photos = response.data[2];
+        $scope.comments = response.data[3];
+        MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
+        if($scope.isSubscripted === false) {
+          $scope.cls_eye_subs = "fa fa-eye-slash";
+        } else $scope.cls_eye_subs = "fa fa-eye";
+      }, function errorCallback(error) {
+        $state.go('error404');
+      });
+      $scope.close = function() {
+        $state.go('map')
+      };
+    }
+    $scope.dataLoader()
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -209,6 +209,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+
     $scope.enableds = {0: 'Не підтверджено', 1: 'Підтверджено'};
     $scope.statuses = {
         'Unsolved': 'Не вирішено',
@@ -220,9 +221,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       'status': 'Unsolved',
       'enabled': '0'
     }
-    console.log($scope.moder)
     $scope.changeStatus = function(mod){
-      console.log(mod)
       $http({
       url: '/api/problem_confirmation',
       method: 'PUT',
@@ -230,15 +229,16 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
             'Content-Type': 'application/json;charset=utf-8'
           },
       data: {
-        'problem_id': $scope.user_id,
+        'problem_id': $state.params['id'],
         'severity': mod.severity,
         'status': mod.status,
         'is_enabled': mod.enabled
       }
       }).then(function successCallback(data) {
-        console.log(data)
+        $scope.dataLoader()
+        $scope.msg.editSuccess('статусів');
       }, function errorCallback(response) {
-        
+        $scope.msg.editError('статусів');
       })
     }
   }

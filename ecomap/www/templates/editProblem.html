@@ -98,13 +98,18 @@
       <div class="row photos">
         <div class="col-md-12"><strong>Фото:</strong></div> 
         <div class="photo_box" ng-repeat="photo in selectPhotos" >  
-        <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i> 
-        <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}">
+        <!-- <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i>  -->
+
           <img src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
-               class="img-responsive"/>
-        </a>
+               class="img-responsive img-rounded"/>
+          <div class="hover_photo img-rounded">
+              <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"><span>переглянути</span>
+              </a>
+                      <span class="delete_photo" ng-click="deletePhoto(photo.id)">видалити</span>
+
+          </div>
         </div>
       </div>
       <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
@@ -123,7 +128,7 @@
         ngf-multiple="true"
         ngf-change="check(uploadProblemPhoto)">
         <div ng-repeat="f in photos" class="thumb-box">
-          <div class="thumb">
+          <div class="thumb edit_thumbs">
             <img ngf-thumbnail="f">
             <span class="text-content" ng-click="removePhoto(f, photos)">
             <span>видалити</span>
@@ -131,7 +136,7 @@
           </div>
           <textarea ng-model="f.description" cols="15" rows="3" name="description"
           value="f.description" placeholder="Додати опис до фотографії"
-          class="thumb-descr">
+          class="thumb-descr edit_thumbs">
           </textarea>
         </div>
       </div>

@@ -260,8 +260,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       angular.forEach(photos, function(value, key) {
         $scope.uploadPic(value);
       });
-      var url = '/#/detailedProblem/' + $state.params['id'];
-        $state.go(url);
+      $state.go('map');
+      window.open('/#/detailedProblem/' + $state.params['id'], '_blank');
     };
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({

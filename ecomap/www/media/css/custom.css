@@ -1402,6 +1402,38 @@ a.one_button{
 .comment-header{
   padding: 8px 15px;
 }
-#piechar g g{
-  display: inline-block;
+.photo_box{
+  position: relative;
+  padding:0;
 }
+.hover_photo span, .hover_photo a {
+  opacity: 0;
+}
+.hover_photo:hover span, .hover_photo:hover a {
+  opacity: 1;
+}
+.hover_photo{
+  display: block;
+  margin: 10px;
+  text-align: center;
+  width: 100px;
+  height:100px;
+  background: transparent;
+  position: absolute;
+  left:0;
+  top:0;
+}
+.hover_photo:hover{
+  background: rgba(159, 39, 39, 0.91);
+}
+.hover_photo:hover span{
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 20px;
+  text-shadow: 1px 1px 1px rgb(95, 94, 94);
+  color: #fff;
+  cursor:pointer;
+}
+
+

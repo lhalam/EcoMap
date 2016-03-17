@@ -161,6 +161,10 @@ span.image-err{
     -o-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
 }
+.thumb.edit_thumbs{
+  width:100px;
+  height: 100px;
+}
 .thumbPhoto{
   overflow: hidden;
     z-index: 2;
@@ -194,6 +198,10 @@ span.image-err{
     -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.thumb-descr.edit_thumbs{
+  width:150px;
+  height: 100px;
 }
 
 

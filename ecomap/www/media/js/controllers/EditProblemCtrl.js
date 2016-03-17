@@ -24,14 +24,14 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       $scope.marker.setPosition(latlng);
       $scope.$apply();
     })
-    $scope.newProblem = {
+    $scope.selectProblem = {
       'title': '',
-      'type': '',
+      'problem_type_id': '',
       'latitude': '',
-      'longitude': '',
+      'longitude':'',
       'content': '',
       'proposal': ''
-    };
+    }
     $scope.loadProblemType = function() {
       $scope.problemTypes = [];
       $http({
@@ -43,11 +43,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
           $scope.problemTypes[i]['selected'] = false;
         }
-        $scope.chosen = $scope.problemTypes[0];
-        $scope.selectProblem.type = $scope.chosen['id'];
-        $('.selected-item-box').click(function(){
-        $('.select-wrapper .list').slideToggle();
-        });
+        $scope.chosen = $scope.problemTypes[0];       
       }, function errorCallback(response) {})
     };
 
@@ -56,7 +52,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
-      $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
         if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
           $scope.chosen = $scope.problemTypes[i];
@@ -68,7 +63,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
-
+   
     $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -148,11 +143,12 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       return google.maps.geometry.spherical.computeDistanceBetween(
         new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
     }
-    $scope.$watch('selectProblem.type+selectProblem.latitude+selectProblem.longitude', function(newValue, oldValue){
-      if ($scope.selectProblem['type']){
-        $scope.loadProblem($scope.selectProblem['type']);
+    $scope.$watch('selectProblem.problem_type_id+selectProblem.latitude+selectProblem.longitude', function(newValue, oldValue){
+      if ($scope.selectProblem['problem_type_id']){
+        $scope.loadProblem($scope.selectProblem['problem_type_id']);
       }
     });
+
     $scope.loadProblem = function(id){
       $scope.allProblems = [];
       $http({

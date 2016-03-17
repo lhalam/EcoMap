@@ -5,7 +5,6 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
       var authenticated;
       if (!$cookies.get('id')) {
         authenticated =  false;
-        $state.go('map');
       }
       else {
         authenticated = $auth.isAuthenticated();

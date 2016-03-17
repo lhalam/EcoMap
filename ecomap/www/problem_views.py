@@ -127,7 +127,8 @@ def detailed_problem(problem_id):
                              'created_date': comment[3] * 1000,
                              'updated_date': comment[4] * 1000 if comment[4] else None,
                              'user_id': comment[5],
-                             'name': comment[6],
+                             'nickname': comment[6],
+                             'avatar': comment[7],
                              'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
@@ -465,7 +466,8 @@ def get_comments(problem_id):
                              'created_date': comment[3] * 1000,
                              'updated_date': comment[4] * 1000 if comment[4] else None,
                              'user_id': comment[5],
-                             'name': comment[6],
+                             'nickname': comment[6],
+                             'avatar': comment[7],
                              'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
@@ -509,8 +511,9 @@ def get_subcomments(parent_id):
                              'updated_date': comment[5] * 1000 if comment[5] else None,
                              'user_id': comment[6],
                              'nickname': comment[7],
-                             'first_name': comment[8],
-                             'last_name': comment[9]})
+                             'avatar': comment[8],
+                             'first_name': comment[9],
+                             'last_name': comment[10]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response
@@ -1091,6 +1094,21 @@ def problem_confirmation():
         db.problem_confirmation(data['problem_id'], data['severity'],
                                 data['status'], data['is_enabled'],
                                 update_time)
+        email_user_data = db.get_user_id_problem_by_id(data['problem_id'])
+        email_tuple = db.get_user_by_id(email_user_data[5])
+        message = generate_email('update_problem',
+                                 _CONFIG['email.from_address'],
+                                 email_tuple[4], (email_tuple[1],
+                                                  email_tuple[2],
+                                                  email_user_data[1],
+                                                  data['content'],
+                                                  request.url_root))
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
+                   _CONFIG['email.from_address'],
+                   email_tuple[4],
+                   message)
         response = jsonify(msg='Дані успішно змінено!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400

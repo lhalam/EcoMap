@@ -768,7 +768,7 @@ input[type="checkbox"] {
       margin-bottom:10px;
     }
     .statusSelect{
-      width: 30%;
+      width: 45%;
     }
     .moderEditOption .statusSel{
       width: 50%;
@@ -984,6 +984,11 @@ table.UserProblemTable select{
   height: 150px;
 }
 
+.small-avatar{
+  width:35px;
+  height:35px;
+}
+
 hr.problems{
   margin-top:5px;
 }
@@ -1001,7 +1006,7 @@ h3.title{
 .subcomment-reply{
   position: absolute;
   right: 8px;
-  top: 45px;
+  top: 60px;
 }
 
 .subcomment-reply+.comment-block{
@@ -1330,17 +1335,18 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
-
 .fa.search{
   color: grey;
   margin-right: 3px;
 }
 a.one_button{
   margin-right: 7px;
+  cursor: pointer;
 }
 .disable_button, .disable_button:hover, .disable_button:link{
   color:grey;
   text-decoration: none;
+  cursor: pointer;
 }
 .severityForm fieldset:first-child select{
   width: 10%;
@@ -1361,6 +1367,7 @@ a.one_button{
   color: #880000;
   font-weight: 700;
 }
+
 .moderEditOption{
   padding: 0;
   width: 80%;
@@ -1375,4 +1382,13 @@ a.one_button{
   font-weight: normal;
 }
 
-
+.comment-nickname{
+  line-height: 2.3;
+  margin-left: 8px;
+}
+.comment-date{
+  line-height: 2.3;
+}
+.comment-header{
+  padding: 8px 15px;
+}

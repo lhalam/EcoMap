@@ -233,7 +233,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'severity': mod.severity,
         'status': mod.status,
         'is_enabled': mod.enabled, 
-        'comment': ''
+        'comment': mod.comment
       }
       }).then(function successCallback(data) {
         $scope.dataLoader()

@@ -166,7 +166,12 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       '': {
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
+      }, 
+    resolve: {
+      admin: function(grant) {
+        return grant.only({test: 'authenticated', state: 'error403'});
       }
+    }
     }
     })
     .state('login', {

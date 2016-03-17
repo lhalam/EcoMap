@@ -2,7 +2,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
   function($scope, $http, $state, $cookies, $window) {
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
-    $scope.searchNick = ($cookies.get('role')=='user')?$scope.old_nick:null;
     $scope.user_id = $cookies.get('id');
     $scope.selectCountObj = {
       '1': '5',
@@ -26,7 +25,17 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       'param': '',
       'order': 1
     }
-
+    if ($cookies.get('role')=='user' && $cookies.get('id')!=2) {
+      $http({
+        url: '/api/user_detailed_info/' + $cookies.get('id'),
+        method: 'GET'
+      }).success(function(response) {
+        $scope.old_nick = response.nickname;
+        $scope.searchNick = $scope.old_nick;
+        $scope.loadProblems();
+      });
+    }
+    $scope.searchNick = ($cookies.get('role')=='user')?$scope.old_nick:null;
     $scope.sortFilter = function(filtr){
           $scope.filterTable.param = filtr;
           var par = "order_"+$scope.filterTable.param;

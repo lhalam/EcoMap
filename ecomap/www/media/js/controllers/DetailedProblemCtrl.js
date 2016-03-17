@@ -29,7 +29,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,
-          'enabled': String($scope.selectProblem.is_enabled)
+          'enabled': String($scope.selectProblem.is_enabled),
+          'comment': ''
         }
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
@@ -46,6 +47,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
     }
     $scope.dataLoader()
+    
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -230,7 +232,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'problem_id': $state.params['id'],
         'severity': mod.severity,
         'status': mod.status,
-        'is_enabled': mod.enabled
+        'is_enabled': mod.enabled, 
+        'comment': ''
       }
       }).then(function successCallback(data) {
         $scope.dataLoader()

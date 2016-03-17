@@ -6,19 +6,19 @@
   <h3 class="detailedTitle show_problem" >{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <div class="rate">
            <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel">{{selectProblem.severity}} із 5
            </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
-        <div class="solution unsolved hidden-xs hidden-sm" >
+      <div class="col-lg-4 col-md-4 col-sm-4 col-md-4 col-xs-4 clearfix">
+        <div class="solution unsolved" >
             <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription hidden-xs hidden-sm'>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription'>
             <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
@@ -26,35 +26,41 @@
     <div ng-show='hideSeverityForUser==true'>              
       <form class='moderEditOption' ng-submit="changeStatus(moder)">
         <div class="form-inline">
-        <label class='severityLevel'>Важливість</label>                 
+        <label class='statusSelect'>Важливість</label>                 
         <select required ng-model="moder.severity"
-                class="form-control input-sm"
+                class="form-control input-sm statusSel"
                 ng-options='severity for severity in severities'
                 >
         </select>    
         </div>
         <div class="form-inline">
-          <label class='severityLevel'>Статус</label>         
+          <label class='statusSelect'>Статус</label>         
           <select required ng-model="moder.status"
-                  class="form-control input-sm"
+                  class="form-control input-sm statusSel"
                   ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
           </select>  
           <input type="submit" value="Змінити" 
                  class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled"/>
         </div>
-        <div class="form-inline">
-          <label class='severityLevel' ng-hide="selectProblem.is_enabled">Підтвердження</label>         
+        <div class="form-inline" ng-show="!selectProblem.is_enabled">
+          <label class='statusSelect'>Підтвердження</label>         
           <select required ng-model="moder.enabled"
-                  ng-show="!selectProblem.is_enabled"
-                  class="form-control input-sm"
+                  class="form-control input-sm statusSel"
                   ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
           </select> 
+        </div>
+        <div class="form-inline" ng-if="!selectProblem.is_enabled">
+          <label class='statusSelect'>Комментар</label>         
+          <textarea ng-model="moder.comment"
+                    class="form-control input-sm statusSel"></textarea>
+        </div>
+        <div style="display: block">
           <input type="submit" value="Змінити" 
-                 class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled"/>
-        </div>      
+                 class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled"/>   
+        </div>   
       </form>
     </div>
-    <div class="row hidden-md hidden-lg">
+    <!-- <div class="row hidden-md hidden-lg hidden-sm">
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">
         <div class="solution unsolved forSmall pull-left" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
@@ -65,7 +71,7 @@
           <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
   <uib-tabset justified="true" class="col-xs-12 col-sm-12 tabs">
     <uib-tab heading="Детально">

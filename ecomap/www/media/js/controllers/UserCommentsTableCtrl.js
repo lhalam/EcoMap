@@ -6,7 +6,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $scope.user_id = $cookies.get('id');
     $scope.ShowAdminInfo = false;
     $scope.showSubComments = false;
-    $scope.searchNick = null;
+    $scope.searchNick = ($cookies.get('role')=='user')?$scope.old_nick:null;
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -34,7 +34,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
       var stepCount = $scope.selectCount['selected']
       if ($scope.searchNick){
-          $scope.ShowAdminInfo = ($cookies.get('role')!=='user');
+          $scope.ShowAdminInfo = ~['moder','admin'].indexOf($cookies.get('role'))
           $http({
           method: 'GET',
           url: '/api/search_users_comments',
@@ -49,7 +49,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             $scope.commentsLength = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
            })
-        } else if ($cookies.get('role')!=='user'){
+        } else {
           $http({
             method: 'GET',
             url: 'api/all_users_comments',
@@ -62,29 +62,15 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.commentsLength = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
-            $scope.ShowAdminInfo = true;
+            $scope.ShowAdminInfo = ~['moder','admin'].indexOf($cookies.get('role'));
           })
-        } else {
-          $http({
-            method: 'GET',
-            url: 'api/user_comments/' + $scope.user_id,
-            params: {
-              per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount,
-            }
-            }).then(function successCallback(response) {
-              $scope.comments = response.data[0];
-              $scope.commentsCount = response.data[1][0]['total_comments_count'];
-              $scope.commentsLength = response.data[1][0]['total_comments_count'];
-              $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
-            })
-        }
+        } 
       })
     };
 
     $scope.loadComments();
     $scope.loadSubComments = function(parent_id) {
-       $scope.ShowAdminInfo = ($cookies.get('role')!=='user');
+       $scope.ShowAdminInfo = (~['moder','admin'].indexOf($cookies.get('role')));
        $http({
         method: 'GET',
         url: '/api/problem_subcomments/' + parent_id
@@ -106,50 +92,51 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
           url: '/api/delete_comment',
           params: {
             'comment_id': comment_id
-          }
+            }
           }).then(function successCallback(response) {
               $scope.msg.deleteSuccess('коментаря');
         })
-
         $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
-        var stepCount = $scope.selectCount['selected']
-        if($cookies.get('role')!=='user') {
-          $http({
+          var stepCount = $scope.selectCount['selected']
+          if ($scope.searchNick){
+            $http({
+              method: 'GET',
+              url: '/api/search_users_comments',
+              params: {
+                nickname: $scope.searchNick, 
+                per_page: $scope.selectCount['selected'],
+                offset: $scope.selectCount['selected'] * newValue - stepCount
+                }
+              }).then(function successCallback(response) {
+                if (parent_id) {
+                  $scope.showSubComments = false;
+                  $scope.loadSubComments(parent_id);
+                }
+                $scope.comments = response.data[0];
+                $scope.commentsCount = response.data[1][0]['total_comments_count'];
+                $scope.commentsLength = response.data[1][0]['total_comments_count'];
+                $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;  
+            })
+            }
+            else {
+            $http({
             method: 'GET',
             url: 'api/all_users_comments',
             params: {
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
-            }
-            }).then(function successCallback(response) {
-              if (parent_id) {
-                $scope.showSubComments = false;
-                $scope.loadSubComments(parent_id);
               }
-              $scope.comments = response.data[0];
-              $scope.commentsCount = response.data[1][0]['total_comments_count'];
-              $scope.commentsLength = response.data[1][0]['total_comments_count'];
-              $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;  
-          })
-        } else {
-          $http({
-            method: 'GET',
-            url: 'api/user_comments/' + $scope.user_id,
-            params: {
-              per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount,
-            }
             }).then(function successCallback(response) {
-              if (parent_id) {
-                $scope.showSubComments = false;
-                $scope.loadSubComments(parent_id);
-              }
-              $scope.comments = response.data[0];
-              $scope.commentsCount = response.data[1][0]['total_comments_count'];
-              $scope.commentsLength = response.data[1][0]['total_comments_count'];
-              $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;         
-          })
-        }
+                if (parent_id) {
+                  $scope.showSubComments = false;
+                  $scope.loadSubComments(parent_id);
+                }
+                $scope.comments = response.data[0];
+                $scope.commentsCount = response.data[1][0]['total_comments_count'];
+                $scope.commentsLength = response.data[1][0]['total_comments_count'];
+                $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;  
+            })
+          }   
       })
     }
 

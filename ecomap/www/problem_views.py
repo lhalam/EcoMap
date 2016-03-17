@@ -746,54 +746,6 @@ def all_users_comments():
     return response
 
 
-@app.route('/api/user_comments/<int:user_id>', methods=['GET'])
-@login_required
-def user_comments(user_id):
-    """Function gets all user comments from DB.
-    :type: JSON
-    :user_id: id of user.
-    :query per_page: limit number. default is 5.
-    :query offset: offset number. default is 0.
-    :rtype: JSON.
-    :return: list of user's comments and total_count:
-    ``[{"id": 2,
-        "content": "Awesome comment.",
-        "problem_id": 12,
-        "problem_title": "Forest Problem",
-        "created_date": "2015-02-24T14:27:22.000Z",
-        "nickname": 'Pomidor',
-        "first_name": 'Ivan',
-        'last_name': 'Kozak',
-        'sub_count': 15}]``
-    """
-    offset = request.args.get('offset') or 0
-    per_page = request.args.get('per_page') or 5
-    comments_data = db.get_user_comments(offset, per_page,user_id)
-    count = db.get_count_user_comments(user_id)
-    comments = []
-    total_count = {}
-    if comments_data:
-        problems_id = [comment[2] for comment in comments_data]
-        problems_title = db.get_problems_title(problems_id)
-        for comment in comments_data:
-            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
-            comments.append({'id': comment[0],
-                             'content': comment[1],
-                             'problem_id': comment[2],
-                             'problem_title': problems_title.get(comment[2]),
-                             'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name' : comment[7],
-                             'sub_count': subcomments_count[0]})
-    if count:
-        total_count = {'total_comments_count': count[0]}
-    response = Response(json.dumps([comments,[total_count]]),
-                        mimetype='application/json')
-    return response
-
-
 @app.route('/api/nickname_subscriptions', methods=['GET'])
 def get_user_subscriptions_nickname():
     """Function retrieves all user's subscriptions by nickname from db and

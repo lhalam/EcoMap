@@ -30,7 +30,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,
           'enabled': String($scope.selectProblem.is_enabled),
-          'comment': ''
+          'comment': '',
+          'title': $scope.selectProblem.title
         }
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
@@ -233,7 +234,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'severity': mod.severity,
         'status': mod.status,
         'is_enabled': mod.enabled, 
-        'comment': mod.comment
+        'comment': mod.comment 
       }
       }).then(function successCallback(data) {
         $scope.dataLoader()

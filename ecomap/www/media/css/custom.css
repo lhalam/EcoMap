@@ -1364,5 +1364,14 @@ a.one_button{
   font-size: 14px;
   font-weight: normal;
 }
+.photo_box{
+  display: inline-block;
+  position:relative;
+}
+.delete_photo{
+  position: absolute;
+  left: 90%;
+  color: grey;
+}
 
 

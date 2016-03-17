@@ -719,6 +719,23 @@ input[type="checkbox"] {
 .subcomment.checkbox{
       margin: 0;
     }
+.moderEditOption{
+  padding: 0;
+  width: 80%;
+  box-sizing: content-box;
+}
+.btn-sev{
+  margin-top:5px;
+  margin-right: 6%;
+  margin-bottom:10px;
+  float:right;
+}
+.statusSelect{
+  width: 33%;
+}
+.moderEditOption .statusSel{
+  width: 60%;
+}
 @media screen and (min-width: 300px) and (max-width: 760px){
     .flex-item-5{
       flex-basis:100%;
@@ -737,6 +754,25 @@ input[type="checkbox"] {
     form {
       padding: 6% 7%;
     }
+    .moderEditOption{
+      padding: 0;
+      width: 100%;
+      box-sizing: content-box;
+    }
+    .moderEditOption .form-control{
+      display: inline-block;
+    }
+    .btn-sev{
+      float:none;
+      margin-top: 0;
+      margin-bottom:10px;
+    }
+    .statusSelect{
+      width: 45%;
+    }
+    .moderEditOption .statusSel{
+      width: 50%;
+    }
   }
 @media screen and (min-width: 761px) and (max-width: 992px){
     .flex-item-5{
@@ -748,6 +784,21 @@ input[type="checkbox"] {
     }
     .hideMe{
       display: none;
+    }
+    .moderEditOption{
+      padding: 0;
+      width: 90%;
+      box-sizing: content-box;
+    }
+    .btn-sev{
+      margin-right: 6%;
+      float:none;
+    }
+    .statusSelect{
+      width: 33%;
+    }
+    .moderEditOption .statusSel{
+      width: 60%;
     }
   }
 @media screen and (min-width: 993px) and (max-width: 1200px){
@@ -932,6 +983,11 @@ table.UserProblemTable select{
   height: 150px;
 }
 
+.small-avatar{
+  width:35px;
+  height:35px;
+}
+
 hr.problems{
   margin-top:5px;
 }
@@ -949,7 +1005,7 @@ h3.title{
 .subcomment-reply{
   position: absolute;
   right: 8px;
-  top: 45px;
+  top: 60px;
 }
 
 .subcomment-reply+.comment-block{
@@ -1267,17 +1323,18 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
-<<<<<<< HEAD
 .fa.search{
   color: grey;
   margin-right: 3px;
 }
 a.one_button{
   margin-right: 7px;
+  cursor: pointer;
 }
 .disable_button, .disable_button:hover, .disable_button:link{
   color:grey;
   text-decoration: none;
+  cursor: pointer;
 }
 .severityForm fieldset:first-child select{
   width: 10%;
@@ -1298,8 +1355,11 @@ a.one_button{
   color: #880000;
   font-weight: 700;
 }
+
 .moderEditOption{
   padding: 0;
+  width: 80%;
+  box-sizing: content-box;
 }
 .moderEditOption .form-inline{
   margin-top: 3px;
@@ -1309,8 +1369,14 @@ a.one_button{
   font-size: 14px;
   font-weight: normal;
 }
-.btn-sev{
-  float: right;
-  margin-right: 5px;
-}
 
+.comment-nickname{
+  line-height: 2.3;
+  margin-left: 8px;
+}
+.comment-date{
+  line-height: 2.3;
+}
+.comment-header{
+  padding: 8px 15px;
+}

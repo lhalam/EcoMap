@@ -6,52 +6,61 @@
   <h3 class="detailedTitle show_problem" >{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <div class="rate">
            <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel">{{selectProblem.severity}} із 5
            </div>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-md-4 col-xs-6 clearfix">
-        <div class="solution unsolved hidden-xs hidden-sm" >
+      <div class="col-lg-4 col-md-4 col-sm-4 col-md-4 col-xs-4 clearfix">
+        <div class="solution unsolved" >
             <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
         </div>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription hidden-xs hidden-sm'>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription'>
             <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
     </div>
-    <div ng-hide='hideSeverityForUser'>              
+    <div ng-show='hideSeverityForUser==true'>              
       <form class='moderEditOption' ng-submit="changeStatus(moder)">
         <div class="form-inline">
-        <label class='severityLevel'>Важливість</label>                 
+        <label class='statusSelect'>Важливість</label>                 
         <select required ng-model="moder.severity"
-                class="form-control input-sm"
+                class="form-control input-sm statusSel"
                 ng-options='severity for severity in severities'
                 >
         </select>    
         </div>
         <div class="form-inline">
-          <label class='severityLevel'>Статус</label>         
+          <label class='statusSelect'>Статус</label>         
           <select required ng-model="moder.status"
-                  class="form-control input-sm"
+                  class="form-control input-sm statusSel"
                   ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
           </select>  
+          <input type="submit" value="Змінити" 
+                 class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled"/>
         </div>
-        <div class="form-inline">
-          <label class='severityLevel'>Підтвердження</label>         
+        <div class="form-inline" ng-show="!selectProblem.is_enabled">
+          <label class='statusSelect'>Підтвердження</label>         
           <select required ng-model="moder.enabled"
-                  class="form-control input-sm"
+                  class="form-control input-sm statusSel"
                   ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
           </select> 
+        </div>
+        <div class="form-inline" ng-if="!selectProblem.is_enabled">
+          <label class='statusSelect'>Комментар</label>         
+          <textarea ng-model="moder.comment"
+                    class="form-control input-sm statusSel"></textarea>
+        </div>
+        <div style="display: block">
           <input type="submit" value="Змінити" 
-                 class="btn btn-primary btn-sm btn-sev"/>
-        </div>      
+                 class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled"/>   
+        </div>   
       </form>
     </div>
-    <div class="row hidden-md hidden-lg">
+    <!-- <div class="row hidden-md hidden-lg hidden-sm">
       <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">
         <div class="solution unsolved forSmall pull-left" >
           <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
@@ -62,7 +71,7 @@
           <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
   <uib-tabset justified="true" class="col-xs-12 col-sm-12 tabs">
     <uib-tab heading="Детально">
@@ -82,7 +91,7 @@
         <div class="col-md-12"><strong>Фото:</strong></div>     
         <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"
            ng-repeat="photo in photos">
-          <img src="{{getMinPhoto(photo.url)}}" 
+          <img ng-src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
                class="img-responsive"/>
@@ -109,10 +118,12 @@
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="panel panel-default">
-              <div class="panel-heading clearfix">
-                <strong class="pull-left">{{comment.name}}</strong>
-                <span class="text-muted pull-right" ng-hide="comment.updated_date">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-                <span class="text-muted pull-right" ng-show="comment.updated_date">Редаговано · {{comment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              <div class="panel-heading clearfix comment-header">
+                <img ng-if="comment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ comment.avatar }}">
+                <img ng-if="!comment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                <strong class="pull-left comment-nickname">{{comment.nickname}}</strong>
+                <span class="text-muted pull-right comment-date" ng-hide="comment.updated_date">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                <span class="text-muted pull-right comment-date"ng-show="comment.updated_date">Редаговано · {{comment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
               </div>
               <div class="panel-body comment-block" ng-show="!editMode || editCommentid != comment.id" ng-bind="comment.content">{{comment.content}}</div>
               <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
@@ -140,7 +151,9 @@
               <div class="col-lg-offset-3 col-lg-9 col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9">
                 <div class="panel panel-default">
                   <div class="panel-heading clearfix">
-                    <strong class="pull-left">{{subcomment.nickname}}</strong> 
+                    <img ng-if="subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ subcomment.avatar }}">
+                    <img ng-if="!subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                    <strong class="pull-left comment-nickname">{{subcomment.nickname}}</strong>
                   </div>
                    <div class="clearfix comment-reply subcomment-reply" ng-show="!editMode || editCommentid != subcomment.id">
                     <div class="pull-left">

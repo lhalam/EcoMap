@@ -154,7 +154,7 @@ $scope.problemsList =[]
       var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
           if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
-          $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
+          $scope.newProblem['longitude']) < $scope.allProblems[i]['radius'] && $scope.allProblems[i]['is_enabled'] != 0){
             var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
             problemsRefs = problemsRefs.concat(ref);
             problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);

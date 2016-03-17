@@ -127,7 +127,8 @@ def detailed_problem(problem_id):
                              'created_date': comment[3] * 1000,
                              'updated_date': comment[4] * 1000 if comment[4] else None,
                              'user_id': comment[5],
-                             'name': comment[6],
+                             'nickname': comment[6],
+                             'avatar': comment[7],
                              'sub_count': subcomments_count[0]})
 
     response = Response(json.dumps([[problems], [activities],
@@ -465,7 +466,8 @@ def get_comments(problem_id):
                              'created_date': comment[3] * 1000,
                              'updated_date': comment[4] * 1000 if comment[4] else None,
                              'user_id': comment[5],
-                             'name': comment[6],
+                             'nickname': comment[6],
+                             'avatar': comment[7],
                              'sub_count': subcomments_count[0]})
     response = Response(json.dumps(comments),
                         mimetype='application/json')
@@ -509,8 +511,9 @@ def get_subcomments(parent_id):
                              'updated_date': comment[5] * 1000 if comment[5] else None,
                              'user_id': comment[6],
                              'nickname': comment[7],
-                             'first_name': comment[8],
-                             'last_name': comment[9]})
+                             'avatar': comment[8],
+                             'first_name': comment[9],
+                             'last_name': comment[10]})
     response = Response(json.dumps([comments, sub_count[0]]),
                         mimetype='application/json')
     return response
@@ -881,7 +884,9 @@ def problems_radius(type_id):
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'name': problem[9],
+                'problem_type_Id': problem[4],
+                'is_enabled': problem[7],
+                'name': problem[9],
                 'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
@@ -1091,6 +1096,21 @@ def problem_confirmation():
         db.problem_confirmation(data['problem_id'], data['severity'],
                                 data['status'], data['is_enabled'],
                                 update_time)
+        email_user_data = db.get_user_id_problem_by_id(data['problem_id'])
+        email_tuple = db.get_user_by_id(email_user_data[5])
+        message = generate_email('update_problem',
+                                 _CONFIG['email.from_address'],
+                                 email_tuple[4], (email_tuple[1],
+                                                  email_tuple[2],
+                                                  email_user_data[1],
+                                                  data['comment'],
+                                                  request.url_root))
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
+                   _CONFIG['email.from_address'],
+                   email_tuple[4],
+                   message)
         response = jsonify(msg='Дані успішно змінено!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400
@@ -1117,22 +1137,22 @@ def edit_problem():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    # valid = validator.problem_put(data)
-    # if valid['status']:
-    update_time = int(time.time())
-    db.edit_problem(data['problem_id'], data['title'],
-                    data['content'], data['proposal'],
-                    data['latitude'], data['longitude'],
-                    data['type'], update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    # else:
-    #     response = jsonify(msg='Некоректні дані!'), 400
+    valid = validator.problem_put(data)
+    if valid['status']:
+        update_time = int(time.time())
+        db.edit_problem(data['problem_id'], data['title'],
+                        data['content'], data['proposal'],
+                        data['latitude'], data['longitude'],
+                        data['type'], update_time)
+        response = jsonify(msg='Дані успішно змінено!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
-# @app.route('/api/photo_delete', methods=['DELETE'])
-# @auto.doc()
-# @login_required
+@app.route('/api/photo_delete', methods=['DELETE'])
+@auto.doc()
+@login_required
 def delete_photo():
     """The method deletes min photo and photos by photo id.
        :rtype: JSON.

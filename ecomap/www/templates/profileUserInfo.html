@@ -88,9 +88,9 @@
 </div>
 
 <br>
-<h3>Видалення аккаунта</h3>
+<h3 ng-hide="isSuperAdmin">Видалення аккаунта</h3>
 <hr>
-<div class="row">
+<div class="row" ng-hide="isSuperAdmin">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
     <div class="form-group delete-account">
       <button class="btn btn-danger col-lg-2 col-xs-5 col-sm-3 col-md-2 text-center" 

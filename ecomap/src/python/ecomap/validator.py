@@ -722,15 +722,6 @@ def problem_put(data):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_maximum_length']
                                         % keyname})
-        elif keyname in ['latitude', 'longitude']:
-            if not check_coordinates(data[keyname]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_coordinates']
-                                        % data[keyname]})
-            if not check_coordinates_length(data[keyname], LENGTHS[keyname]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_coordinates_length']
-                                        % data[keyname]})
 
     if status['error']:
         status['status'] = False

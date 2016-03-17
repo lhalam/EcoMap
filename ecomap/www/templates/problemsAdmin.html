@@ -65,7 +65,9 @@
                      class="form-control"
                      name="radius"
                      ng-model="newProblemType.radius"
+                     min="1"
                      ng-minlength="1"
+                     ng-maxlength="5"
                      required>
               <div class="help-block"
                    ng-messages="newProblemTypeForm.radius.$error"
@@ -121,6 +123,7 @@
                        class="form-control"
                        name="problem_type"
                        ng-model="editProblemTypeObj.name"
+                       ng-minlength="1"
                        ng-maxlength="255"
                        required/>
               <div class="help-block"

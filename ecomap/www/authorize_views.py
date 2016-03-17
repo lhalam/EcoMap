@@ -206,7 +206,7 @@ def oauth_login(provider):
     access_token = dict(parse_qsl(resource.text))
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
-    nickname = profile['last_name'] + str(time.time())
+    nickname = '{}{}'.format(profile['last_name'], int(time.time()))
     logger.info(profile['picture']['data']['url'])
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
@@ -347,7 +347,6 @@ def delete_user():
     """
     data = request.get_json()
     valid = validator.hash_check(data['hash_sum'])
-    logger.info('Valid %s' % valid)
     if valid['status']:
         user_id = db.get_user_id_by_hash(data['hash_sum'])
         logger.warning(user_id)

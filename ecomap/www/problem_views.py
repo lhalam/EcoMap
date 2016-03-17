@@ -22,6 +22,7 @@ from ecomap.app import app, logger, auto, _CONFIG
 
 ANONYMUS_USER_ID = 2
 UPLOADS_PROBLEM_PATH = '/uploads/problems/'
+UPLOADS_PROBLEM_ID_PATH = '/uploads/problems/%s' 
 MIN_SIZE = 'min.png'
 
 
@@ -1168,19 +1169,21 @@ def delete_photo():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    uploads_path = 'uploads/problems/%s/' % data['photo_id']
-    photo_origin = str(db.get_problem_photo_by_id(data['photo_id']))
+    photo_origin_path = db.get_problem_photo_by_id(data['photo_id'])
+    uploads_path = UPLOADS_PROBLEM_ID_PATH % photo_origin_path[3]
     # min photo path
-    f_min_path = os.environ['STATICROOT'] + uploads_path
-    # photo path
-    f_path = os.environ['STATICROOT'] + photo_origin
-    photo_min = re.search('\w+[\.]', photo_origin).group() + MIN_SIZE
-    if os.path.exists(f_path):
-        os.remove(f_path)
+    photo_min_path = os.environ['STATICROOT'] + uploads_path
+    # original photo
+    original_photo = os.environ['STATICROOT'] + str(photo_origin_path[1])
+    # min photo
+    photo_min = re.search('\w+[\.]', photo_origin_path[1]).group() + MIN_SIZE
+    if os.path.exists(original_photo):
+        os.remove(original_photo)
         db.delete_photo_by_id(data['photo_id'])
-        if os.path.exists(os.path.join(f_min_path, photo_min)):
-            os.remove(os.path.join(f_min_path, photo_min))
-        response = jsonify(msg='Дані успішно видалено!'), 200
+        if os.path.exists(os.path.join(photo_min_path, photo_min)):
+            db.delete_photo_by_id(data['photo_id'])
+            os.remove(os.path.join(photo_min_path, photo_min))
+            response = jsonify(msg='Дані успішно видалено!'), 200
     else:
         response = jsonify(msg='Такого файлу не існує!'), 200
     return response

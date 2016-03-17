@@ -46,7 +46,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         $scope.chosen = $scope.problemTypes[0];       
       }, function errorCallback(response) {})
     };
-
+    $scope.pageLoader = function(){
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
@@ -64,6 +64,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
+  }
+   $scope.pageLoader()
    $scope.getMinPhoto = function(url){
       var parts = url.split('.');
       var min_url = parts[0] + '.min.' + parts[1];
@@ -172,7 +174,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var problemsRefs = '';
       var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
-        console.log($scope.allProblems[i]['is_enabled']);
         if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.selectProblem['latitude'],
         $scope.selectProblem['longitude']) < $scope.allProblems[i]['radius'] && $scope.allProblems[i]['is_enabled'] != 0){
           var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
@@ -234,9 +235,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           zoom: 14
         };
         $scope.arrayUpload(photos);
-        var url = '/#/detailedProblem/' + $state.params['id'];
-      console.log(url)
-      window.open(url, '_blank');
       }, function errorCallback(response) {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
@@ -262,6 +260,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       angular.forEach(photos, function(value, key) {
         $scope.uploadPic(value);
       });
+      var url = '/#/detailedProblem/' + $state.params['id'];
+        $state.go(url);
     };
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({
@@ -304,9 +304,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'photo_id': id
         }
       }).then(function successCallback(data) {
-        toaster.pop('info', 'jhvj', 'juhvlj');
+         $scope.pageLoader()
+        toaster.pop('info', 'Фото', 'Фото видалено.');
       }, function errorCallback(response) {
-        $scope.msg.deleteError('фотографіі', arguments[0]['data']['msg']);
+        toaster.pop('error', 'помилка', 'помилка видалення фото');
       })
     }
     $scope.getSelectedItemOnly = function(){

@@ -99,6 +99,17 @@
         ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
         ngf-multiple="true" ngf-capture="'camera'"
       ngf-change="check(uploadProblemPhoto)"><i class="fa fa-plus"></i> Додати фото</div>
+      <div class="row photos">
+        <div class="col-md-12"><strong>Фото:</strong></div>     
+        <a href="{{photo.url}}" class="swipebox photo_box" title="{{selectProblem.title}}"
+           ng-repeat="photo in selectPhotos">
+          <i class="fa fa-times delete_photo"></i>
+          <img src="{{getMinPhoto(photo.url)}}" 
+               alt="{{photo.description}}" 
+               height="100" width="100"
+               class="img-responsive"/>
+        </a>
+      </div>
       <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
       <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
       <div class="thumbs"

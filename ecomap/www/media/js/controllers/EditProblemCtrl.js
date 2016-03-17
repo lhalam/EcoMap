@@ -51,6 +51,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
+      $scope.selectPhotos = response.data[2]
       $scope.selectProblem = response.data[0][0];
       for(var i=0; i<$scope.problemTypes.length; i++){
         if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
@@ -63,7 +64,11 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
-   
+   $scope.getMinPhoto = function(url){
+      var parts = url.split('.');
+      var min_url = parts[0] + '.min.' + parts[1];
+      return min_url;
+    };
     $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -220,6 +225,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         }
       }).then(function successCallback(response) {
         toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
+        $scope.createdProblemId = selectProblem.problem_id;
         $rootScope.mapParams = {
           center: {
             latitude: selectProblem.latitude,
@@ -227,11 +233,14 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           },
           zoom: 14
         };
+        $scope.arrayUpload(photos);
+        var url = '/#/detailedProblem/' + $state.params['id'];
+      console.log(url)
+      window.open(url, '_blank');
       }, function errorCallback(response) {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };
-
     $scope.photos = [];
     $scope.check = function(formFile) {
       $scope.validationStatus = 0;
@@ -253,7 +262,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       angular.forEach(photos, function(value, key) {
         $scope.uploadPic(value);
       });
-      $state.go('map');
     };
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({

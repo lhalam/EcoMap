@@ -1206,7 +1206,7 @@ def get_comments_by_problem_id(problem_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
-                          c.updated_date, c.user_id, u.nickname
+                          c.updated_date, c.user_id, u.nickname, u.avatar
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.problem_id=%s AND c.parent_id=0;
@@ -1227,7 +1227,7 @@ def get_subcomments_by_parent_id(parent_id):
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.parent_id,
                           c.created_date, c.updated_date, c.user_id,
-                          u.nickname, u.first_name, u.last_name
+                          u.nickname, u.avatar, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.parent_id=%s;

@@ -768,7 +768,7 @@ input[type="checkbox"] {
       margin-bottom:10px;
     }
     .statusSelect{
-      width: 30%;
+      width: 45%;
     }
     .moderEditOption .statusSel{
       width: 50%;
@@ -1325,10 +1325,12 @@ opacity: 0.2;
 }
 a.one_button{
   margin-right: 7px;
+  cursor: pointer;
 }
 .disable_button, .disable_button:hover, .disable_button:link{
   color:grey;
   text-decoration: none;
+  cursor: pointer;
 }
 .severityForm fieldset:first-child select{
   width: 10%;

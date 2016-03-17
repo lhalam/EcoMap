@@ -46,7 +46,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         $scope.chosen = $scope.problemTypes[0];       
       }, function errorCallback(response) {})
     };
-
+    $scope.pageLoader = function(){
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
@@ -64,6 +64,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
+  }
+   $scope.pageLoader()
    $scope.getMinPhoto = function(url){
       var parts = url.split('.');
       var min_url = parts[0] + '.min.' + parts[1];
@@ -302,9 +304,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'photo_id': id
         }
       }).then(function successCallback(data) {
-        toaster.pop('info', 'jhvj', 'juhvlj');
+         $scope.pageLoader()
+        toaster.pop('info', 'Фото', 'Фото видалено.');
       }, function errorCallback(response) {
-        $scope.msg.deleteError('фотографіі', arguments[0]['data']['msg']);
+        toaster.pop('error', 'помилка', 'помилка видалення фото');
       })
     }
     $scope.getSelectedItemOnly = function(){

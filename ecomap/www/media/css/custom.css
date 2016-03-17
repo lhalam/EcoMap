@@ -1385,10 +1385,7 @@ a.one_button{
   display: inline-block;
   position:relative;
 }
-.delete_photo{
-  position: absolute;
-  left: 90%;
-  color: grey;
+.delete_photo{  color: grey;
   z-index: 1000;
 }
 

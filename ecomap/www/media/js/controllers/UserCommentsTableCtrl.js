@@ -11,7 +11,9 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       '1': '5',
       '2': '10',
       '3': '15',
-      '4': '20'
+      '4': '20',
+      '5': '50',
+      '6': '100'
     }
     $scope.selectCount = {
       'selected': '5'

@@ -108,10 +108,16 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
+      console.log(response);
         $scope.problems = [];
+        $scope.start_date = response.data[0]['date']*1000.0;
       for (var i = 0; i < response.data.length; i++){
-        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']*1000.0), group:response.data[i]['problem_type_id']};
+        response.data[i]['date']*=1000.0;
+        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']),
+          group:response.data[i]['problem_type_Id']};
           $scope.problems.push(item);
+          if ($scope.start_date>response.data[i]['date'])
+            $scope.start_date = response.data[i]['date'];
         }
         $scope.createPlot($scope.groups_list, $scope.problems);
       }, function errorCallback() {})
@@ -120,12 +126,13 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     var container = document.getElementById('visualization');
     var groups = new vis.DataSet(groups_content);
     var items = new vis.DataSet(items_content);
+    console.log( new Date($scope.start_date ));
     //   // Configuration for the Timeline
     var date = new Date();
-    date.setDate(date.getDate() + 4);
+    date.setDate(date.getDate() + 3);
       var options = {
         stack:false,
-        min:'2015-04-14T12:00:00',
+        min:new Date($scope.start_date - 60*60*12*2*1000),
         max: date,
         zoomMin: 1000*60*60*24*31,
         zoomMax:1000*60*60*24*31*12,

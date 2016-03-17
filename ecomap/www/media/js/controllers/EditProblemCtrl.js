@@ -46,12 +46,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         $scope.chosen = $scope.problemTypes[0];       
       }, function errorCallback(response) {})
     };
-    $scope.pageLoader = function(){
     $http({
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
-      $scope.selectPhotos = response.data[2]
       $scope.selectProblem = response.data[0][0];
       for(var i=0; i<$scope.problemTypes.length; i++){
         if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
@@ -64,6 +62,15 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
+    $scope.pageLoader = function(){
+      $http({
+        'method': 'GET',
+        'url': '/api/problem_detailed_info/' + $state.params['id']
+      }).then(function successCallback(response) {
+        $scope.selectPhotos = response.data[2]
+      }, function errorCallback(error) {
+        $state.go('error404');
+      });
   }
    $scope.pageLoader()
    $scope.getMinPhoto = function(url){

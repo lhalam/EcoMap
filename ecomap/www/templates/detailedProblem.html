@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div ng-hide='hideSeverityForUser'>              
+    <div ng-show='hideSeverityForUser==true'>              
       <form class='moderEditOption' ng-submit="changeStatus(moder)">
         <div class="form-inline">
         <label class='severityLevel'>Важливість</label>                 
@@ -39,15 +39,18 @@
                   class="form-control input-sm"
                   ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
           </select>  
+          <input type="submit" value="Змінити" 
+                 class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled"/>
         </div>
         <div class="form-inline">
-          <label class='severityLevel'>Підтвердження</label>         
+          <label class='severityLevel' ng-hide="selectProblem.is_enabled">Підтвердження</label>         
           <select required ng-model="moder.enabled"
+                  ng-show="!selectProblem.is_enabled"
                   class="form-control input-sm"
                   ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
           </select> 
           <input type="submit" value="Змінити" 
-                 class="btn btn-primary btn-sm btn-sev"/>
+                 class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled"/>
         </div>      
       </form>
     </div>

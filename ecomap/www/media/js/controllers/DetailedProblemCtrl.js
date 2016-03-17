@@ -11,9 +11,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editMode = false;
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
-    
-    $scope.hideSeverityForUser = ($cookies.get('role')!=='user') ? false : true;
-   
+    $scope.hideSeverityForUser = (~['moder','admin'].indexOf($cookies.get('role'))) ? true : false;
+    $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
+    $scope.statuses = {
+        'Unsolved': 'Не вирішено',
+        'Solved': 'Вирішено'
+      };
+    $scope.severities = ['1', '2', '3', '4', '5'];
     $scope.user_id = $cookies.get('id');
     $scope.dataLoader = function(){
       $http({
@@ -21,7 +25,12 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-        console.log($scope.selectProblem )
+        console.log($scope.selectProblem.is_enabled)
+        $scope.moder = {
+          'severity': $scope.selectProblem.severity,
+          'status': $scope.selectProblem.status,
+          'enabled': String($scope.selectProblem.is_enabled)
+        }
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
         $scope.comments = response.data[3];
@@ -210,17 +219,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     };
 
-    $scope.enableds = {0: 'Не підтверджено', 1: 'Підтверджено'};
-    $scope.statuses = {
-        'Unsolved': 'Не вирішено',
-        'Solved': 'Вирішено'
-      };
-    $scope.severities = ['1', '2', '3', '4', '5'];
-    $scope.moder = {
-      'severity': $scope.severities[0],
-      'status': 'Unsolved',
-      'enabled': '0'
-    }
     $scope.changeStatus = function(mod){
       $http({
       url: '/api/problem_confirmation',

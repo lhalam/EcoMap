@@ -53,7 +53,7 @@ def problems():
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'is_enabled': problem[4], 'problem_type_id': problem[5],
+                'is_enabled': problem[4], 'problem_type_Id': problem[5],
                 'status': problem[6], 'date': problem[7],
                 'radius': problem[8], 'picture': problem[9]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
@@ -742,54 +742,6 @@ def all_users_comments():
     if count:
         total_count = {'total_comments_count': count[0]}
     response = Response(json.dumps([comments, [total_count]]),
-                        mimetype='application/json')
-    return response
-
-
-@app.route('/api/user_comments/<int:user_id>', methods=['GET'])
-@login_required
-def user_comments(user_id):
-    """Function gets all user comments from DB.
-    :type: JSON
-    :user_id: id of user.
-    :query per_page: limit number. default is 5.
-    :query offset: offset number. default is 0.
-    :rtype: JSON.
-    :return: list of user's comments and total_count:
-    ``[{"id": 2,
-        "content": "Awesome comment.",
-        "problem_id": 12,
-        "problem_title": "Forest Problem",
-        "created_date": "2015-02-24T14:27:22.000Z",
-        "nickname": 'Pomidor',
-        "first_name": 'Ivan',
-        'last_name': 'Kozak',
-        'sub_count': 15}]``
-    """
-    offset = request.args.get('offset') or 0
-    per_page = request.args.get('per_page') or 5
-    comments_data = db.get_user_comments(offset, per_page,user_id)
-    count = db.get_count_user_comments(user_id)
-    comments = []
-    total_count = {}
-    if comments_data:
-        problems_id = [comment[2] for comment in comments_data]
-        problems_title = db.get_problems_title(problems_id)
-        for comment in comments_data:
-            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
-            comments.append({'id': comment[0],
-                             'content': comment[1],
-                             'problem_id': comment[2],
-                             'problem_title': problems_title.get(comment[2]),
-                             'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name' : comment[7],
-                             'sub_count': subcomments_count[0]})
-    if count:
-        total_count = {'total_comments_count': count[0]}
-    response = Response(json.dumps([comments,[total_count]]),
                         mimetype='application/json')
     return response
 

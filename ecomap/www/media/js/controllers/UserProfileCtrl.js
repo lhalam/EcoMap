@@ -1,6 +1,7 @@
 app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster', '$rootScope', function($scope, $state, $cookies, $http, msg, toaster, $auth, $rootScope) {
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
+    $scope.isSuperAdmin = $scope.user.id=='1' 
     $scope.msg = msg;
     $scope.tabs = [
       {heading: "Профіль користувача", route: "user_profile.info", active: false, showToUser: true},

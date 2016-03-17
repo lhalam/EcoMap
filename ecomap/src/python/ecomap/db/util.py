@@ -945,7 +945,7 @@ def get_problem_photos(problem_id):
     """Gets all photos posted by user to problem."""
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `name`, `description`, `user_id`
+        query = """SELECT `id`, `name`, `description`, `user_id`
                    FROM `photo` WHERE `problem_id`=%s;
                 """
         cursor.execute(query, (problem_id,))
@@ -1206,7 +1206,7 @@ def get_comments_by_problem_id(problem_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.created_date,
-                          c.updated_date, c.user_id, u.nickname
+                          c.updated_date, c.user_id, u.nickname, u.avatar
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.problem_id=%s AND c.parent_id=0;
@@ -1227,7 +1227,7 @@ def get_subcomments_by_parent_id(parent_id):
         cursor = conn.cursor()
         query = """SELECT c.id, c.content, c.problem_id, c.parent_id,
                           c.created_date, c.updated_date, c.user_id,
-                          u.nickname, u.first_name, u.last_name
+                          u.nickname, u.avatar, u.first_name, u.last_name
                    FROM `comment` AS c LEFT JOIN `user` as u
                    ON c.user_id=u.id
                    WHERE c.parent_id=%s;
@@ -1378,7 +1378,7 @@ def get_problems_by_type(problem_type_id):
                            p.severity, pt.name, pt.radius
                            FROM problem AS p INNER JOIN problem_type AS pt ON
                            pt.id=p.problem_type_id WHERE pt.id=%s;"""
-        cursor.execute(query, (problem_type_id))
+        cursor.execute(query, (problem_type_id,))
         return cursor.fetchall()
 
 
@@ -1391,7 +1391,7 @@ def get_problem_type_by_id(problem_type_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type` WHERE `id`=%s;"""
-        cursor.execute(query, (problem_type_id))
+        cursor.execute(query, (problem_type_id,))
         return cursor.fetchall()
 
 
@@ -1404,7 +1404,7 @@ def get_problem_type_by_name(problem_type_name):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `problem_type` WHERE `name`=%s;"""
-        cursor.execute(query, (problem_type_name))
+        cursor.execute(query, (problem_type_name,))
         return cursor.fetchall()
 
 
@@ -1417,7 +1417,7 @@ def get_problem_type_picture(problem_type_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT `picture` FROM `problem_type` WHERE `id`=%s;"""
-        cursor.execute(query, (problem_type_id))
+        cursor.execute(query, (problem_type_id,))
         return cursor.fetchone()
 
 
@@ -1807,19 +1807,19 @@ def get_problems_title(problem_ids):
         return dict(cursor.fetchall())
 
 
-@db.retry_query(tries=3, delay=1)
-def get_problems_title(problem_ids):
-    """Get dictionary with problem id as key and
-        problem title as value.
-       :params: problems_id - list of problem_ids.
-    """
-    with db.pool_manager(db.READ_ONLY).manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT id, title from `problem`
-                WHERE id IN ({});
-                """
-        cursor.execute(query.format(', '.join(map(str, problem_ids))))
-        return dict(cursor.fetchall())
+# @db.retry_query(tries=3, delay=1)
+# def get_problems_title(problem_ids):
+#     """Get dictionary with problem id as key and
+#         problem title as value.
+#        :params: problems_id - list of problem_ids.
+#     """
+#     with db.pool_manager(db.READ_ONLY).manager() as conn:
+#         cursor = conn.cursor()
+#         query = """SELECT id, title from `problem`
+#                 WHERE id IN ({});
+#                 """
+#         cursor.execute(query.format(', '.join(map(str, problem_ids))))
+#         return dict(cursor.fetchall())
 
 
 @db.retry_query(tries=3, delay=1)
@@ -1937,6 +1937,7 @@ def count_all_user_operations():
         cursor.execute(query)
         return cursor.fetchone()
 
+
 @db.retry_query(tries=3, delay=1)
 def get_problems_comments_stats():
     """Function counts problems comments for top10 statistic.
@@ -2013,21 +2014,20 @@ def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
         conn.execute(query, (severity, status, is_enabled,
                              upd_date, problem_id))
 
+
 @db.retry_query(tries=3, delay=1)
-def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
-    """Update problem.
-       :params: problem_id: id of problem.
-                    severity: importance of problem.
-                    status: status of the problem.
-                    is_enabled: enabled or disabled status.
-                    update_date: time of problem update.
-    """
-    with db.pool_manager(db.READ_WRITE).transaction() as conn:
-        query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
-                           `is_enabled`=%s,`update_date`=%s WHERE `id`=%s;
+def get_user_id_problem_by_id(problem_id):
+    """Get problem photo by id."""
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `title`, `status`,
+                          `is_enabled`, `severity`,
+                          `user_id` FROM `problem`
+                          WHERE `id`=%s;
                       """
-        conn.execute(query, (severity, status, is_enabled,
-                             upd_date, problem_id))
+        cursor.execute(query, (problem_id,))
+        return cursor.fetchone()
+
 
 @db.retry_query(tries=3, delay=1)
 def edit_problem(problem_id, title, content, proposal, latitude, longitude,

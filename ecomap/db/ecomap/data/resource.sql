@@ -42,4 +42,5 @@ INSERT INTO `resource` VALUES (1,'/'),(8,'/api/addResource'),
 (62, '/api/delete_comment'),
 (63, '/api/problem_edit'),
 (64, '/api/problem_delete'),
-(65, '/api/problem_confirmation');
+(65, '/api/problem_confirmation'),
+(66, '/api/photo_delete');

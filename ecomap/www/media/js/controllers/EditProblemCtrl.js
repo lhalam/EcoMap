@@ -24,14 +24,14 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       $scope.marker.setPosition(latlng);
       $scope.$apply();
     })
-    $scope.newProblem = {
+    $scope.selectProblem = {
       'title': '',
-      'type': '',
+      'problem_type_id': '',
       'latitude': '',
-      'longitude': '',
+      'longitude':'',
       'content': '',
       'proposal': ''
-    };
+    }
     $scope.loadProblemType = function() {
       $scope.problemTypes = [];
       $http({
@@ -43,11 +43,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
           $scope.problemTypes[i]['selected'] = false;
         }
-        $scope.chosen = $scope.problemTypes[0];
-        $scope.selectProblem.type = $scope.chosen['id'];
-        $('.selected-item-box').click(function(){
-        $('.select-wrapper .list').slideToggle();
-        });
+        $scope.chosen = $scope.problemTypes[0];       
       }, function errorCallback(response) {})
     };
 
@@ -55,8 +51,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'method': 'GET',
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
+      $scope.selectPhotos = response.data[2]
       $scope.selectProblem = response.data[0][0];
-      $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
         if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
           $scope.chosen = $scope.problemTypes[i];
@@ -68,7 +64,11 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
     }, function errorCallback(error) {
       $state.go('error404');
     });
-
+   $scope.getMinPhoto = function(url){
+      var parts = url.split('.');
+      var min_url = parts[0] + '.min.' + parts[1];
+      return min_url;
+    };
     $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
@@ -148,11 +148,12 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       return google.maps.geometry.spherical.computeDistanceBetween(
         new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
     }
-    $scope.$watch('selectProblem.type+selectProblem.latitude+selectProblem.longitude', function(newValue, oldValue){
-      if ($scope.selectProblem['type']){
-        $scope.loadProblem($scope.selectProblem['type']);
+    $scope.$watch('selectProblem.problem_type_id+selectProblem.latitude+selectProblem.longitude', function(newValue, oldValue){
+      if ($scope.selectProblem['problem_type_id']){
+        $scope.loadProblem($scope.selectProblem['problem_type_id']);
       }
     });
+
     $scope.loadProblem = function(id){
       $scope.allProblems = [];
       $http({
@@ -171,8 +172,9 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var problemsRefs = '';
       var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
+        console.log($scope.allProblems[i]['is_enabled']);
         if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.selectProblem['latitude'],
-        $scope.selectProblem['longitude']) < $scope.allProblems[i]['radius']){
+        $scope.selectProblem['longitude']) < $scope.allProblems[i]['radius'] && $scope.allProblems[i]['is_enabled'] != 0){
           var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
           problemsRefs = problemsRefs.concat(ref);
           problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);
@@ -223,6 +225,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         }
       }).then(function successCallback(response) {
         toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
+        $scope.createdProblemId = selectProblem.problem_id;
         $rootScope.mapParams = {
           center: {
             latitude: selectProblem.latitude,
@@ -230,11 +233,14 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           },
           zoom: 14
         };
+        $scope.arrayUpload(photos);
+        var url = '/#/detailedProblem/' + $state.params['id'];
+      console.log(url)
+      window.open(url, '_blank');
       }, function errorCallback(response) {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };
-
     $scope.photos = [];
     $scope.check = function(formFile) {
       $scope.validationStatus = 0;
@@ -256,7 +262,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       angular.forEach(photos, function(value, key) {
         $scope.uploadPic(value);
       });
-      $state.go('map');
     };
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({
@@ -288,7 +293,22 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
-
+    $scope.deletePhoto = function(id){
+      $http({
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        url: '/api/photo_delete',
+        data: {
+          'photo_id': id
+        }
+      }).then(function successCallback(data) {
+        toaster.pop('info', 'jhvj', 'juhvlj');
+      }, function errorCallback(response) {
+        $scope.msg.deleteError('фотографіі', arguments[0]['data']['msg']);
+      })
+    }
     $scope.getSelectedItemOnly = function(){
       for(var i = 0 ; i < $scope.problemTypes.length;  i++){
         if ($scope.problemTypes[i]['selected']==true)

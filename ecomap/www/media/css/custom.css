@@ -768,7 +768,7 @@ input[type="checkbox"] {
       margin-bottom:10px;
     }
     .statusSelect{
-      width: 30%;
+      width: 45%;
     }
     .moderEditOption .statusSel{
       width: 50%;
@@ -810,6 +810,7 @@ input[type="checkbox"] {
       display: none;
     }
   }
+
 @media screen and (min-width: 1201px){
     .sidebar{
       min-width: 300px;
@@ -983,6 +984,11 @@ table.UserProblemTable select{
   height: 150px;
 }
 
+.small-avatar{
+  width:35px;
+  height:35px;
+}
+
 hr.problems{
   margin-top:5px;
 }
@@ -1000,7 +1006,7 @@ h3.title{
 .subcomment-reply{
   position: absolute;
   right: 8px;
-  top: 45px;
+  top: 60px;
 }
 
 .subcomment-reply+.comment-block{
@@ -1212,6 +1218,17 @@ select.form-comments{
   font-weight: bold;
   height: 50px;
 }
+
+ @media screen and (max-width: 360px){
+    .statistic h2 {    
+      height: 91px;
+    }
+  }
+   @media screen and (min-width: 1024px) and (max-width: 1024px) {
+    .statistic h2 {    
+      height: 91px;
+    }
+  }
 .topItem{
   margin-bottom: 0px;
   padding-left: 0px;
@@ -1318,17 +1335,18 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
-<<<<<<< HEAD
 .fa.search{
   color: grey;
   margin-right: 3px;
 }
 a.one_button{
   margin-right: 7px;
+  cursor: pointer;
 }
 .disable_button, .disable_button:hover, .disable_button:link{
   color:grey;
   text-decoration: none;
+  cursor: pointer;
 }
 .severityForm fieldset:first-child select{
   width: 10%;
@@ -1349,6 +1367,7 @@ a.one_button{
   color: #880000;
   font-weight: 700;
 }
+
 .moderEditOption{
   padding: 0;
   width: 80%;
@@ -1362,5 +1381,24 @@ a.one_button{
   font-size: 14px;
   font-weight: normal;
 }
+.photo_box{
+  display: inline-block;
+  position:relative;
+}
+.delete_photo{
+  position: absolute;
+  left: 90%;
+  color: grey;
+  z-index: 1000;
+}
 
-
+.comment-nickname{
+  line-height: 2.3;
+  margin-left: 8px;
+}
+.comment-date{
+  line-height: 2.3;
+}
+.comment-header{
+  padding: 8px 15px;
+}

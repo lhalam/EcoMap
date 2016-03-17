@@ -56,7 +56,7 @@
           </div>
           <div class="list" >
             <ul class="items-list">
-              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="selectProblem.type=type.id; select(type.id)">
+              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="selectProblem.problem_type_id=type.id; select(type.id)">
                 <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
                   <span>{{type.name}}</span>
               </li>
@@ -93,6 +93,17 @@
   <uib-tab heading="Редагувати фото" active="addPhotosTab" deselect="goToProblems()">
   <div class="add-photo">
     <form name="uploadProblemPhoto" class="uploadPhoto" ng-submit="editProblem(selectProblem, addProblemForm, photos)">
+      <div class="row photos">
+        <div class="col-md-12"><strong>Фото:</strong></div>     
+        <a class="swipebox photo_box" title="{{selectProblem.title}}"
+           ng-repeat="photo in selectPhotos">
+          <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i>
+          <img src="{{getMinPhoto(photo.url)}}" 
+               alt="{{photo.description}}" 
+               height="100" width="100"
+               class="img-responsive"/>
+        </a>
+      </div>
       <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
         ngf-pattern="'image/*'" accept="image/*"
         ngf-max-size="5MB" ngf-keep="'distinct'"

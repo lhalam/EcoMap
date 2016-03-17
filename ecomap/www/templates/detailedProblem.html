@@ -97,10 +97,12 @@
         <div class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="panel panel-default">
-              <div class="panel-heading clearfix">
-                <strong class="pull-left">{{comment.name}}</strong>
-                <span class="text-muted pull-right" ng-hide="comment.updated_date">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
-                <span class="text-muted pull-right" ng-show="comment.updated_date">Редаговано · {{comment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              <div class="panel-heading clearfix comment-header">
+                <img ng-if="comment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ comment.avatar }}">
+                <img ng-if="!comment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                <strong class="pull-left comment-nickname">{{comment.nickname}}</strong>
+                <span class="text-muted pull-right comment-date" ng-hide="comment.updated_date">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                <span class="text-muted pull-right comment-date"ng-show="comment.updated_date">Редаговано · {{comment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
               </div>
               <div class="panel-body comment-block" ng-show="!editMode || editCommentid != comment.id" ng-bind="comment.content">{{comment.content}}</div>
               <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
@@ -128,7 +130,9 @@
               <div class="col-lg-offset-3 col-lg-9 col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9">
                 <div class="panel panel-default">
                   <div class="panel-heading clearfix">
-                    <strong class="pull-left">{{subcomment.nickname}}</strong> 
+                    <img ng-if="subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ subcomment.avatar }}">
+                    <img ng-if="!subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                    <strong class="pull-left comment-nickname">{{subcomment.nickname}}</strong>
                   </div>
                    <div class="clearfix comment-reply subcomment-reply" ng-show="!editMode || editCommentid != subcomment.id">
                     <div class="pull-left">

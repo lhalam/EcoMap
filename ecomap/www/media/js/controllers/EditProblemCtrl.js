@@ -172,7 +172,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var problemsRefs = '';
       var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
-        console.log($scope.allProblems[i]['is_enabled']);
         if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.selectProblem['latitude'],
         $scope.selectProblem['longitude']) < $scope.allProblems[i]['radius'] && $scope.allProblems[i]['is_enabled'] != 0){
           var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
@@ -234,9 +233,6 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           zoom: 14
         };
         $scope.arrayUpload(photos);
-        var url = '/#/detailedProblem/' + $state.params['id'];
-      console.log(url)
-      window.open(url, '_blank');
       }, function errorCallback(response) {
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
@@ -262,6 +258,8 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       angular.forEach(photos, function(value, key) {
         $scope.uploadPic(value);
       });
+      var url = '/#/detailedProblem/' + $state.params['id'];
+        $state.go(url);
     };
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({

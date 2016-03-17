@@ -884,7 +884,9 @@ def problems_radius(type_id):
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'problem_type_Id': problem[4], 'name': problem[9],
+                'problem_type_Id': problem[4],
+                'is_enabled': problem[7],
+                'name': problem[9],
                 'radius': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
@@ -1101,7 +1103,7 @@ def problem_confirmation():
                                  email_tuple[4], (email_tuple[1],
                                                   email_tuple[2],
                                                   email_user_data[1],
-                                                  data['content'],
+                                                  data['comment'],
                                                   request.url_root))
         send_email(_CONFIG['email.server_name'],
                    _CONFIG['email.user_name'],
@@ -1135,22 +1137,22 @@ def edit_problem():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    # valid = validator.problem_put(data)
-    # if valid['status']:
-    update_time = int(time.time())
-    db.edit_problem(data['problem_id'], data['title'],
-                    data['content'], data['proposal'],
-                    data['latitude'], data['longitude'],
-                    data['type'], update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    # else:
-    #     response = jsonify(msg='Некоректні дані!'), 400
+    valid = validator.problem_put(data)
+    if valid['status']:
+        update_time = int(time.time())
+        db.edit_problem(data['problem_id'], data['title'],
+                        data['content'], data['proposal'],
+                        data['latitude'], data['longitude'],
+                        data['type'], update_time)
+        response = jsonify(msg='Дані успішно змінено!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
-# @app.route('/api/photo_delete', methods=['DELETE'])
-# @auto.doc()
-# @login_required
+@app.route('/api/photo_delete', methods=['DELETE'])
+@auto.doc()
+@login_required
 def delete_photo():
     """The method deletes min photo and photos by photo id.
        :rtype: JSON.

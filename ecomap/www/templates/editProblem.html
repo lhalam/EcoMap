@@ -1,3 +1,5 @@
+<script src="/js/libs/jquery.swipebox.min.js"></script>
+<link rel="stylesheet" href="/css/swipebox.min.css">
 <div class="map-toogle hideMe" ng-init="changeToogleMap='карта'" ng-click="toogleMap()">
   {{changeToogleMap}}
 </div>
@@ -94,15 +96,16 @@
   <div class="add-photo">
     <form name="uploadProblemPhoto" class="uploadPhoto" ng-submit="editProblem(selectProblem, addProblemForm, photos)">
       <div class="row photos">
-        <div class="col-md-12"><strong>Фото:</strong></div>     
-        <a class="swipebox photo_box" title="{{selectProblem.title}}"
-           ng-repeat="photo in selectPhotos">
-          <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i>
+        <div class="col-md-12"><strong>Фото:</strong></div> 
+        <div class="photo_box" ng-repeat="photo in selectPhotos" >  
+        <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i> 
+        <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}">
           <img src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
                class="img-responsive"/>
         </a>
+        </div>
       </div>
       <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
         ngf-pattern="'image/*'" accept="image/*"
@@ -138,3 +141,9 @@
   </uib-tab>
   </uib-tabset>
 </div>
+
+<script type="text/javascript">
+  ;(function($){
+    $('.swipebox').swipebox();
+  })(jQuery);
+</script>

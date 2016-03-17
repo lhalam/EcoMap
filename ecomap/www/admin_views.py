@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 """Module contains routes, used for admin page."""
 import os
+import re
 import json
 import time
-import hashlib
+import uuid
+import magic
 
 from PIL import Image
 from flask_login import login_required
@@ -16,6 +18,8 @@ from ecomap.permission import permission_control
 
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
 MARKERS_PATH = '/media/image/markers'
+MARKER_WIDTH = 50
+FILE_PATTERN = re.compile('image/(\w+)')
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -942,20 +946,16 @@ def add_problem_type():
 
     """
     data = request.form
-    file_to_save = request.files
+    marker = request.files
     valid = validator.problem_type_post(data)
-    if valid['status']:
+    if valid['status'] and FILE_PATTERN.match(marker['file'].content_type):
         if db.get_problem_type_by_name(data['problem_type_name']):
             response = jsonify(msg='Дане ім’я вже зарезервоване!'), 400
         else:
-            file_name = save_file(file_to_save, MARKERS_PATH)
-            if file_name:
-                db.add_problem_type(file_name, data['problem_type_name'],
-                                    data['problem_type_radius'])
-                response = jsonify(msg='Тип проблеми успішно додано!'), 200
-            else:
-                response = jsonify(msg='Проблема при додаванні фото.'
-                                   'Спробуйте пізніше!'), 400
+            file_name = save_file(marker)
+            db.add_problem_type(file_name, data['problem_type_name'],
+                                data['problem_type_radius'])
+            response = jsonify(msg='Тип проблеми успішно додано!'), 200
     else:
         response = jsonify(msg='Так як дані невірні!'), 400
 
@@ -979,13 +979,13 @@ def edit_problem_type():
 
     """
     data = request.form
-    valid = validator.problem_type_post(data)
+    marker = request.files
+    valid = validator.problem_type_put(data)
     f_path = os.environ['STATICROOT'] + MARKERS_PATH
     if valid['status']:
         old_name = db.get_problem_type_picture(data['problem_type_id'])
-        file_to_save = request.files
-        file_name = save_file(file_to_save, MARKERS_PATH)
-        if file_name:
+        if request.files and FILE_PATTERN.match(marker['file'].content_type):
+            file_name = save_file(marker)
             if os.path.exists(os.path.join(f_path, old_name[0])):
                 os.remove(os.path.join(f_path, old_name[0]))
             db.update_problem_type(data['problem_type_id'], file_name,
@@ -1003,30 +1003,20 @@ def edit_problem_type():
     return response
 
 
-def save_file(form, static_url='uploads/'):
+def save_file(file_to_save):
     """Method to save a file from a form."""
-    file_to_save = form
-    if file_to_save:
-        extension = form['file'].filename.rsplit('.', 1)[1]
-        if extension in ALLOWED_EXTENSIONS:
-            f_path = os.environ['STATICROOT'] + static_url
-            unique_key = time.time()
-            hashed_name = hashlib.md5(str(unique_key))
-            original_file = '%s.%s' % (hashed_name.hexdigest(), extension)
-            file_to_save['file'].save(os.path.join(f_path, original_file))
-            basewidth = 50
-            img = Image.open(os.path.join(f_path, original_file))
-            wpercent = (basewidth/float(img.size[0]))
-            hsize = int((float(img.size[1])*float(wpercent)))
-            img = img.resize((basewidth, hsize), Image.ANTIALIAS)
-            f_name = '%s%s.%s' % (hashed_name.hexdigest(), '.min', extension)
-            img.save(os.path.join(f_path, f_name))
-            os.remove(os.path.join(f_path, original_file))
-            response = f_name
-        else:
-            response = False
-    else:
-        response = False
+    marker = file_to_save
+    extension = marker['file'].filename.rsplit('.', 1)[1]
+    f_path = os.environ['STATICROOT'] + MARKERS_PATH
+    unique_name = str(uuid.uuid4())
+    basewidth = MARKER_WIDTH
+    img = Image.open(marker['file'])
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = int(img.size[1]*wpercent)
+    img = img.resize((basewidth, hsize), Image.ANTIALIAS)
+    f_name = '%s.%s' % (unique_name, extension)
+    img.save(os.path.join(f_path, f_name))
+    response = f_name
 
     return response
 

@@ -810,6 +810,7 @@ input[type="checkbox"] {
       display: none;
     }
   }
+
 @media screen and (min-width: 1201px){
     .sidebar{
       min-width: 300px;
@@ -1212,6 +1213,17 @@ select.form-comments{
   font-weight: bold;
   height: 50px;
 }
+
+ @media screen and (max-width: 360px){
+    .statistic h2 {    
+      height: 91px;
+    }
+  }
+   @media screen and (min-width: 1024px) and (max-width: 1024px) {
+    .statistic h2 {    
+      height: 91px;
+    }
+  }
 .topItem{
   margin-bottom: 0px;
   padding-left: 0px;
@@ -1318,7 +1330,7 @@ opacity: 0.2;
 .circleFalse{
   color: red;
 }
-<<<<<<< HEAD
+
 .fa.search{
   color: grey;
   margin-right: 3px;

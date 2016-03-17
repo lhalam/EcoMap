@@ -1139,6 +1139,21 @@ def problem_confirmation():
         db.problem_confirmation(data['problem_id'], data['severity'],
                                 data['status'], data['is_enabled'],
                                 update_time)
+        user_id = db.get_user_id_problem_by_id[5]
+        email_tuple = db.get_user_by_id(user_id)
+        message = generate_email('update_problem',
+                                 _CONFIG['email.from_address'],
+                                 email_tuple[4], (email_tuple[1],
+                                                  email_tuple[2],
+                                                  data['problem_title'],
+                                                  data['content'],
+                                                  request.url_root))
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
+                   _CONFIG['email.from_address'],
+                   email_tuple[4],
+                   message)
         response = jsonify(msg='Дані успішно змінено!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400

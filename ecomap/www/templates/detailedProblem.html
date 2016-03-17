@@ -91,7 +91,7 @@
         <div class="col-md-12"><strong>Фото:</strong></div>     
         <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"
            ng-repeat="photo in photos">
-          <img src="{{getMinPhoto(photo.url)}}" 
+          <img ng-src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
                class="img-responsive"/>

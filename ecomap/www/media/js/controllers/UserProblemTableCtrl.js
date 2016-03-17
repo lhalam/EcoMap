@@ -26,6 +26,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       'param': '',
       'order': 1
     }
+
     $scope.sortFilter = function(filtr){
           $scope.filterTable.param = filtr;
           var par = "order_"+$scope.filterTable.param;
@@ -68,7 +69,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               filtr: $scope.filterTable.param || undefined,
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount,
+              offset: $scope.selectCount['selected'] * newValue - stepCount
             }
           }).then(function successCallback(response) {
             $scope.problems = response.data[0];
@@ -146,8 +147,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       window.open(url, '_blank');
     }
     $scope.triggerEditModal = function(problem_id) {
-      var url = '/#/editProblem/' + problem_id;
-      window.open(url, '_blank');
-    }
+      if($cookies.get('role')=='user'){
+        $scope.linkEditProblem = '/#/editProblem/' + problem_id;
+      } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
+        $scope.linkEditProblem = '/#/detailedProblem/' + problem_id;
+      }     
+    };
+
   }
 ]);

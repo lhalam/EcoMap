@@ -76,16 +76,17 @@
         <td>{{problem.date | date : "dd/MM/yyyy "}}</td>
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
         <td>
-          <a href="/#/editProblem/{{problem.id}}" class="one_button"
+          <a href="" ng-href="{{linkEditProblem}}" 
+             ng-click="triggerEditModal(problem.id)" class="one_button"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
           </a>
           <a href="" class="del" ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled' >видалити
           </a>
-          <span href="" class="del disable_button" class="one_button"
+          <span class="del disable_button" class="one_button"
              ng-hide='showTable || user_id==problem.user_id && !problem.is_enabled' disable toggle="tooltip" data-placement="top" title="Редагувати можна тільки &#010; до підтвердження модератора &#010;і тільки своі проблеми" tooltip>редагувати &nbsp;
           </span> 
-          <span href="" class="del disable_button"
+          <span class="del disable_button"
              ng-hide='showTable || user_id==problem.user_id && !problem.is_enabled' disable toggle="tooltip" data-placement="top" title="Видалити можна тільки &#010;до підтвердження модератора &#010;і тільки своі проблеми" tooltip>видалити
           </span>
         </td>

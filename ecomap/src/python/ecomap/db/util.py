@@ -2049,7 +2049,7 @@ def edit_problem(problem_id, title, content, proposal, latitude, longitude,
                             WHERE `id`=%s;
                       """
         conn.execute(query, (title, content, proposal, latitude,
-                             longitude, upd_date, problem_id))
+                             longitude, problem_type, upd_date, problem_id))
 
 
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):

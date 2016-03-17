@@ -1150,9 +1150,9 @@ def edit_problem():
     return response
 
 
-# @app.route('/api/photo_delete', methods=['DELETE'])
-# @auto.doc()
-# @login_required
+@app.route('/api/photo_delete', methods=['DELETE'])
+@auto.doc()
+@login_required
 def delete_photo():
     """The method deletes min photo and photos by photo id.
        :rtype: JSON.

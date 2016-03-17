@@ -93,23 +93,23 @@
   <uib-tab heading="Редагувати фото" active="addPhotosTab" deselect="goToProblems()">
   <div class="add-photo">
     <form name="uploadProblemPhoto" class="uploadPhoto" ng-submit="editProblem(selectProblem, addProblemForm, photos)">
-      <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
-        ngf-pattern="'image/*'" accept="image/*"
-        ngf-max-size="5MB" ngf-keep="'distinct'"
-        ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
-        ngf-multiple="true" ngf-capture="'camera'"
-      ngf-change="check(uploadProblemPhoto)"><i class="fa fa-plus"></i> Додати фото</div>
       <div class="row photos">
         <div class="col-md-12"><strong>Фото:</strong></div>     
-        <a href="{{photo.url}}" class="swipebox photo_box" title="{{selectProblem.title}}"
+        <a class="swipebox photo_box" title="{{selectProblem.title}}"
            ng-repeat="photo in selectPhotos">
-          <i class="fa fa-times delete_photo"></i>
+          <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i>
           <img src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
                class="img-responsive"/>
         </a>
       </div>
+      <div class="btn btn-info photo-btn add" ngf-select="" name="file" ng-model="photos"
+        ngf-pattern="'image/*'" accept="image/*"
+        ngf-max-size="5MB" ngf-keep="'distinct'"
+        ngf-resize="{quality: .8, type: 'image/png', centerCrop: true}"
+        ngf-multiple="true" ngf-capture="'camera'"
+      ngf-change="check(uploadProblemPhoto)"><i class="fa fa-plus"></i> Додати фото</div>
       <div ng-show="photos.length==0">оберіть одне або декілька зображень. максимальний розмір 5мб</div>
       <div ng-show="validationStatus">{{ arrayValidation.len }}</div>
       <div class="thumbs"

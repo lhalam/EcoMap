@@ -945,7 +945,7 @@ def get_problem_photos(problem_id):
     """Gets all photos posted by user to problem."""
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `name`, `description`, `user_id`
+        query = """SELECT `id`, `name`, `description`, `user_id`
                    FROM `photo` WHERE `problem_id`=%s;
                 """
         cursor.execute(query, (problem_id,))

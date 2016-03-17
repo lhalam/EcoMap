@@ -115,9 +115,10 @@ def detailed_problem(problem_id):
             'activity_type': activities_data[3]}
     if photos_data:
         for photo_data in photos_data:
-            photos.append({'url': photo_data[0],
-                           'description': photo_data[1],
-                           'user_id': photo_data[2]})
+            photos.append({'id': photo_data[0],
+                           'url': photo_data[1],
+                           'description': photo_data[2],
+                           'user_id': photo_data[3]})
     if comments_data:
         for comment in comments_data:
             subcomments_count = db.get_count_of_parent_subcomments(comment[0])

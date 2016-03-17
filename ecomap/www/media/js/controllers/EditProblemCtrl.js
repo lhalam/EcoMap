@@ -293,7 +293,22 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
-
+    $scope.deletePhoto = function(id){
+      $http({
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        url: '/api/photo_delete',
+        data: {
+          'photo_id': id
+        }
+      }).then(function successCallback(data) {
+        toaster.pop('info', 'jhvj', 'juhvlj');
+      }, function errorCallback(response) {
+        $scope.msg.deleteError('фотографіі', arguments[0]['data']['msg']);
+      })
+    }
     $scope.getSelectedItemOnly = function(){
       for(var i = 0 ; i < $scope.problemTypes.length;  i++){
         if ($scope.problemTypes[i]['selected']==true)

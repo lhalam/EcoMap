@@ -1389,6 +1389,7 @@ a.one_button{
   position: absolute;
   left: 90%;
   color: grey;
+  z-index: 1000;
 }
 
 .comment-nickname{

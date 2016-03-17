@@ -53,7 +53,7 @@ def problems():
             parsed_json.append({
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
-                'is_enabled': problem[4], 'problem_type_id': problem[5],
+                'is_enabled': problem[4], 'problem_type_Id': problem[5],
                 'status': problem[6], 'date': problem[7],
                 'radius': problem[8], 'picture': problem[9]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
@@ -102,7 +102,8 @@ def detailed_problem(problem_id):
             'severity': problem_data[4], 'status': problem_data[5],
             'latitude': problem_data[6], 'longitude': problem_data[7],
             'problem_type_id': problem_data[8], 'date': problem_data[9],
-            'name': problem_data[10], 'is_subscripted': subscription_data}
+            'name': problem_data[10], 'is_enabled': problem_data[11],
+            'is_subscripted': subscription_data}
     else:
         return jsonify({'message': ' resource not exists'}), 404
 
@@ -267,7 +268,7 @@ def get_all_users_problems():
         'name': 'problem with forests'}]``
 
     """
-    filtr = request.args.get('filtr') or None
+    filtr = request.args.get('filtr')
     order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
@@ -745,54 +746,6 @@ def all_users_comments():
     return response
 
 
-@app.route('/api/user_comments/<int:user_id>', methods=['GET'])
-@login_required
-def user_comments(user_id):
-    """Function gets all user comments from DB.
-    :type: JSON
-    :user_id: id of user.
-    :query per_page: limit number. default is 5.
-    :query offset: offset number. default is 0.
-    :rtype: JSON.
-    :return: list of user's comments and total_count:
-    ``[{"id": 2,
-        "content": "Awesome comment.",
-        "problem_id": 12,
-        "problem_title": "Forest Problem",
-        "created_date": "2015-02-24T14:27:22.000Z",
-        "nickname": 'Pomidor',
-        "first_name": 'Ivan',
-        'last_name': 'Kozak',
-        'sub_count': 15}]``
-    """
-    offset = request.args.get('offset') or 0
-    per_page = request.args.get('per_page') or 5
-    comments_data = db.get_user_comments(offset, per_page,user_id)
-    count = db.get_count_user_comments(user_id)
-    comments = []
-    total_count = {}
-    if comments_data:
-        problems_id = [comment[2] for comment in comments_data]
-        problems_title = db.get_problems_title(problems_id)
-        for comment in comments_data:
-            subcomments_count = db.get_count_of_parent_subcomments(comment[0])
-            comments.append({'id': comment[0],
-                             'content': comment[1],
-                             'problem_id': comment[2],
-                             'problem_title': problems_title.get(comment[2]),
-                             'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name' : comment[7],
-                             'sub_count': subcomments_count[0]})
-    if count:
-        total_count = {'total_comments_count': count[0]}
-    response = Response(json.dumps([comments,[total_count]]),
-                        mimetype='application/json')
-    return response
-
-
 @app.route('/api/nickname_subscriptions', methods=['GET'])
 def get_user_subscriptions_nickname():
     """Function retrieves all user's subscriptions by nickname from db and
@@ -1106,7 +1059,7 @@ def delete_problem():
             response = jsonify(msg='Дані видалено успішно!'), 200
         elif request.method == 'PUT':
             db.change_problem_to_anon(data['problem_id'])
-            response = jsonify(msg='Дані видалено успішно!'), 200
+            response = jsonify(msg='Дані привязані на анонімного юзера!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400
     return response
@@ -1121,7 +1074,7 @@ def problem_confirmation():
        :request args: `{problem_id: 5,
                                     severity: '3',
                                     status: 'Solved',
-                                    is_enabled 0}`.
+                                    is_enabled: 0}`.
        :return: confirmation object.
        :JSON sample:
        ``{'msg': 'Problem type was deleted successfully!'}``
@@ -1132,15 +1085,15 @@ def problem_confirmation():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    # valid = validator.problem_type_delete(data)
-    # if valid['status']:
-    update_time = int(time.time())
-    db.problem_confirmation(data['problem_id'], data['severity'],
-                            data['status'], data['is_enabled'],
-                            update_time)
-    response = jsonify(msg='Дані успішно змінено!'), 200
-    # else:
-    # response = jsonify(msg='Некоректні дані!'), 400
+    valid = validator.problem_confirmation(data)
+    if valid['status']:
+        update_time = int(time.time())
+        db.problem_confirmation(data['problem_id'], data['severity'],
+                                data['status'], data['is_enabled'],
+                                update_time)
+        response = jsonify(msg='Дані успішно змінено!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 
@@ -1164,22 +1117,16 @@ def edit_problem():
        :statuscode 200: if no errors.
     """
     data = request.get_json()
-    # valid = validator.problem_type_delete(data)
+    # valid = validator.problem_put(data)
     # if valid['status']:
-    # folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-    # f_path = os.environ['STATICROOT'] + folder_to_del
-    # if db.get_problem_photo_by_id(data['problem_id']):
-    #     db.delete_problem_photo_by_id(data['problem_id'])
-    #     if os.path.exists(f_path):
-    #         shutil.rmtree(f_path, ignore_errors=True)
     update_time = int(time.time())
     db.edit_problem(data['problem_id'], data['title'],
                     data['content'], data['proposal'],
-                    data['severity'], data['status'],
-                    data['is_enabled'], update_time)
+                    data['latitude'], data['longitude'],
+                    data['type'], update_time)
     response = jsonify(msg='Дані успішно змінено!'), 200
     # else:
-    # response = jsonify(msg='Некоректні дані!'), 400
+    #     response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 

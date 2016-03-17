@@ -842,7 +842,7 @@ def get_problem_by_id(problem_id):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.content, p.proposal,
                    p.severity, p.status, p.latitude,p.longitude,
-                   p.problem_type_id, p.created_date, t.name
+                   p.problem_type_id, p.created_date, t.name, p.is_enabled
                    FROM `problem` AS p INNER JOIN `problem_type` AS t
                    ON p.problem_type_id=t.id
                    WHERE p.id=%s;
@@ -1138,7 +1138,7 @@ def get_all_users_problems(offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.user_id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p
@@ -2008,16 +2008,30 @@ def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
-                           `is_enabled`=%s, `problem_type_id`=%s,
-                            `update_date`=%s WHERE `id`=%s;
+                           `is_enabled`=%s,`update_date`=%s WHERE `id`=%s;
                       """
         conn.execute(query, (severity, status, is_enabled,
                              upd_date, problem_id))
 
-
+@db.retry_query(tries=3, delay=1)
+def problem_confirmation(problem_id, severity, status, is_enabled, upd_date):
+    """Update problem.
+       :params: problem_id: id of problem.
+                    severity: importance of problem.
+                    status: status of the problem.
+                    is_enabled: enabled or disabled status.
+                    update_date: time of problem update.
+    """
+    with db.pool_manager(db.READ_WRITE).transaction() as conn:
+        query = """UPDATE `problem` SET  `severity`=%s, `status`=%s,
+                           `is_enabled`=%s,`update_date`=%s WHERE `id`=%s;
+                      """
+        conn.execute(query, (severity, status, is_enabled,
+                             upd_date, problem_id))
 
 @db.retry_query(tries=3, delay=1)
-def edit_problem(problem_id, title, content, proposal, problem_type, upd_date):
+def edit_problem(problem_id, title, content, proposal, latitude, longitude,
+                 problem_type, upd_date):
     """Update problem.
        :params: problem_id: id of problem.
                     title: title of the problem.
@@ -2030,10 +2044,12 @@ def edit_problem(problem_id, title, content, proposal, problem_type, upd_date):
     """
     with db.pool_manager(db.READ_WRITE).transaction() as conn:
         query = """UPDATE `problem` SET `title`=%s, `content`=%s,
-                           `proposal`=%s, `problem_type_id`=%s,
-                            `update_date`=%s WHERE `id`=%s;
+                           `proposal`=%s, `latitude`=%s, `longitude`=%s,
+                            `problem_type_id`=%s,`update_date`=%s
+                            WHERE `id`=%s;
                       """
-        conn.execute(query, (title, content, proposal, upd_date, problem_id))
+        conn.execute(query, (title, content, proposal, latitude,
+                             longitude, problem_type, upd_date, problem_id))
 
 
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
@@ -2068,7 +2084,7 @@ def get_user_by_filter(order, filtr, offset, per_page):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT p.id, p.title, p.latitude, p.longitude,
+        query = """SELECT p.id, p.title, p.latitude, p.longitude, p.user_id,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
                    p.severity, u.last_name, u.first_name, u.nickname, pt.name
                    FROM `problem` AS p

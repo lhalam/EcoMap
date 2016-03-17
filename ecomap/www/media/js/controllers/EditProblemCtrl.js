@@ -224,15 +224,14 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'content': selectProblem.content,
           'proposal': selectProblem.proposal,
           'latitude': selectProblem.latitude,
-          'longitude': selectProblem.longitude,          
-          'severity': selectProblem.severity,
-          'type': selectProblem.name/*,
+          'longitude': selectProblem.longitude,
+          'type': selectProblem.problem_type_id/*,
           'is_enabled': selectProblem.is_enabled*/
         }
       }).then(function successCallback(response) {
         toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
-        $scope.createdProblemId = response.data.problem_id;
-        $scope.arrayUpload(photos);
+/*        $scope.createdProblemId = response.data.problem_id;
+        $scope.arrayUpload(photos);*/
         $rootScope.mapParams = {
           center: {
             latitude: selectProblem.latitude,

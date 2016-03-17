@@ -1164,17 +1164,17 @@ def edit_problem():
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     """
-    data = request.form()
-    valid = validator.problem_put(data)
-    if valid['status']:
-        update_time = int(time.time())
-        db.edit_problem(data['problem_id'], data['title'],
-                        data['content'], data['proposal'],
-                        data['latitude'], data['longitude'],
-                        data['severity'], data['type'], update_time)
-        response = jsonify(msg='Дані успішно змінено!'), 200
-    else:
-        response = jsonify(msg='Некоректні дані!'), 400
+    data = request.get_json()
+    # valid = validator.problem_put(data)
+    # if valid['status']:
+    update_time = int(time.time())
+    db.edit_problem(data['problem_id'], data['title'],
+                    data['content'], data['proposal'],
+                    data['latitude'], data['longitude'],
+                    data['type'], update_time)
+    response = jsonify(msg='Дані успішно змінено!'), 200
+    # else:
+    #     response = jsonify(msg='Некоректні дані!'), 400
     return response
 
 

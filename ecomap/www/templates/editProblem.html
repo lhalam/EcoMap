@@ -56,7 +56,7 @@
           </div>
           <div class="list" >
             <ul class="items-list">
-              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
+              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="selectProblem.type=type.id; select(type.id)">
                 <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
                   <span>{{type.name}}</span>
               </li>

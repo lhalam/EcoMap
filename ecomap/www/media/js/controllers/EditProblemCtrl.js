@@ -12,18 +12,18 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
     MapFactory.getInst().addListener('click', function(event) {
-        var lat = event.latLng.lat();
-        var lon = event.latLng.lng();
-        $scope.selectProblem.latitude = lat;
-        $scope.selectProblem.longitude = lon;
-        $scope.latlng = latlng;
-        var latlng = new google.maps.LatLng(lat, lon);
-        if (!$scope.marker) {
-          $scope.createMarker()
-        }
-        $scope.marker.setPosition(latlng);
-        $scope.$apply();
-      })
+      var lat = event.latLng.lat();
+      var lon = event.latLng.lng();
+      $scope.selectProblem.latitude = lat;
+      $scope.selectProblem.longitude = lon;
+      $scope.latlng = latlng;
+      var latlng = new google.maps.LatLng(lat, lon);
+      if (!$scope.marker) {
+        $scope.createMarker()
+      }
+      $scope.marker.setPosition(latlng);
+      $scope.$apply();
+    })
     $scope.newProblem = {
       'title': '',
       'type': '',
@@ -32,22 +32,22 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'content': '',
       'proposal': ''
     };
-      $scope.loadProblemType = function() {
+    $scope.loadProblemType = function() {
       $scope.problemTypes = [];
       $http({
         method: 'GET',
         url: '/api/problem_type',
       }).then(function successCallback(data) {
-         for (var i = 0; i < data.data.length; i++){
+        for (var i = 0; i < data.data.length; i++){
           $scope.problemTypes.push(data.data[i]);
           $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
           $scope.problemTypes[i]['selected'] = false;
         }
-         $scope.chosen = $scope.problemTypes[0];
-         $scope.newProblem.type = $scope.chosen['id'];
-         $('.selected-item-box').click(function(){
-         $('.select-wrapper .list').slideToggle();
-         });
+        $scope.chosen = $scope.problemTypes[0];
+        $scope.selectProblem.type = $scope.chosen['id'];
+        $('.selected-item-box').click(function(){
+        $('.select-wrapper .list').slideToggle();
+        });
       }, function errorCallback(response) {})
     };
 
@@ -56,21 +56,15 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       'url': '/api/problem_detailed_info/' + $state.params['id']
     }).then(function successCallback(response) {
       $scope.selectProblem = response.data[0][0];
-      console.log($scope.selectProblem);
-      /*$scope.photos = response.data[2];*/
       $scope.chosen = $scope.problemTypes[$scope.selectProblem.problem_type_id];
       for(var i=0; i<$scope.problemTypes.length; i++){
-         if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
+        if($scope.selectProblem.problem_type_id == $scope.problemTypes[i]['id'])
           $scope.chosen = $scope.problemTypes[i];
       }
       $('.selected-item-box').click(function(){
         $('.select-wrapper .list').slideToggle();
       });
-      //$scope.photos = response.data[2];
       MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
-      /*if($scope.isSubscripted === false) {
-        $scope.cls_eye_subs = "fa fa-eye-slash";
-      } else $scope.cls_eye_subs = "fa fa-eye";*/
     }, function errorCallback(error) {
       $state.go('error404');
     });
@@ -100,10 +94,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         },
       })
       $scope.marker.addListener('drag', function(event) {
-          $scope.selectProblem.latitude = this.getPosition().lat();
-          $scope.selectProblem.longitude = this.getPosition().lng();
-          $scope.$apply();
-        })
+        $scope.selectProblem.latitude = this.getPosition().lat();
+        $scope.selectProblem.longitude = this.getPosition().lng();
+        $scope.$apply();
+      })
       $scope.$watch($scope.selectProblem, function(newVal, oldVal) {
         if (_.isEqual(newVal, oldVal)) {
           return;
@@ -149,24 +143,24 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         $scope.marker.setPosition(latlng)
       }
     };
-    /*End of map & markers section*/
-    /*Problem posting section*/
+  
     $scope.calcDistance  = function (fromLat, fromLng, toLat, toLng) {
       return google.maps.geometry.spherical.computeDistanceBetween(
         new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
-   }
-    $scope.$watch('newProblem.type+newProblem.latitude+newProblem.longitude', function(newValue, oldValue){
-      if ($scope.newProblem['type']){
-      $scope.loadProblem($scope.newProblem['type']);}
+    }
+    $scope.$watch('selectProblem.type+selectProblem.latitude+selectProblem.longitude', function(newValue, oldValue){
+      if ($scope.selectProblem['type']){
+        $scope.loadProblem($scope.selectProblem['type']);
+      }
     });
-      $scope.loadProblem = function(id){
-        $scope.allProblems = [];
-        $http({
-          method: 'GET',
-          url: '/api/problems_radius/' + id,
+    $scope.loadProblem = function(id){
+      $scope.allProblems = [];
+      $http({
+        method: 'GET',
+        url: '/api/problems_radius/' + id,
       }).then(function successCallback(response) {
-          for (var i = 0; i < response.data.length; i++){
-          $scope.allProblems.push(response.data[i]);
+        for (var i = 0; i < response.data.length; i++){
+        $scope.allProblems.push(response.data[i]);
         }
         $scope.radiusFunc();
       }, function errorCallback(response) {})
@@ -177,20 +171,20 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
       var problemsRefs = '';
       var problemsList = [];
       for (var i = 0; i<$scope.allProblems.length; i++){
-          if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
-          $scope.newProblem['longitude']) < $scope.allProblems[i]['radius']){
-            var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
-            problemsRefs = problemsRefs.concat(ref);
-            problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);
-            }    
+        if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.selectProblem['latitude'],
+        $scope.selectProblem['longitude']) < $scope.allProblems[i]['radius']){
+          var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
+          problemsRefs = problemsRefs.concat(ref);
+          problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);
+        }    
       }
       if(problemsRefs){
-         toaster.pop({type: 'info',
-              timeout: 10000,
-              title: 'Проблема даного типу вже існує!' , 
-              bodyOutputType: 'trustedHtml',
-              body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянути проблеми:</br><ul>' + problemsRefs + '</ul>',
-              });
+        toaster.pop({type: 'info',
+          timeout: 10000,
+          title: 'Проблема даного типу вже існує!' , 
+          bodyOutputType: 'trustedHtml',
+          body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянути проблеми:</br><ul>' + problemsRefs + '</ul>',
+        });
       }
     }
     $scope.addProblemTab = true;
@@ -211,7 +205,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         toaster.pop('error', 'Помилка при додаванні', 'Форма не відповідає вимогам!')
         return;
       }
-       $http({
+      $http({
         url: '/api/problem_edit',
         method: 'PUT',
         cache: false,
@@ -225,13 +219,10 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'proposal': selectProblem.proposal,
           'latitude': selectProblem.latitude,
           'longitude': selectProblem.longitude,
-          'type': selectProblem.problem_type_id/*,
-          'is_enabled': selectProblem.is_enabled*/
+          'type': selectProblem.problem_type_id
         }
       }).then(function successCallback(response) {
         toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
-/*        $scope.createdProblemId = response.data.problem_id;
-        $scope.arrayUpload(photos);*/
         $rootScope.mapParams = {
           center: {
             latitude: selectProblem.latitude,
@@ -243,8 +234,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };
-    /*End of problem posting section*/
-    /*Photos section*/
+
     $scope.photos = [];
     $scope.check = function(formFile) {
       $scope.validationStatus = 0;
@@ -293,29 +283,28 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
       });
     };
-    /*End of photos section*/
+
     uiGmapIsReady.promise().then(function(instances) {
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
 
-  $scope.getSelectedItemOnly = function(){
-
-   for(var i = 0 ; i < $scope.problemTypes.length;  i++){
-    if ($scope.problemTypes[i]['selected']==true)
-      $scope.chosen =  $scope.problemTypes[i];
-   }
-  };
-  $scope.select = function(id){
-     for(var i = 0 ; i < $scope.problemTypes.length;  i++){
-    if ($scope.problemTypes[i]['id']==id)
-      $scope.problemTypes[i]['selected']=true;
-    else{
-      $scope.problemTypes[i]['selected']=false;
+    $scope.getSelectedItemOnly = function(){
+      for(var i = 0 ; i < $scope.problemTypes.length;  i++){
+        if ($scope.problemTypes[i]['selected']==true)
+          $scope.chosen =  $scope.problemTypes[i];
+      }
+    };
+    $scope.select = function(id){
+      for(var i = 0 ; i < $scope.problemTypes.length;  i++){
+        if ($scope.problemTypes[i]['id']==id)
+          $scope.problemTypes[i]['selected']=true;
+        else{
+          $scope.problemTypes[i]['selected']=false;
+        }
+      }
+      $scope.getSelectedItemOnly();
+      $('.select-wrapper .list').slideUp();
     }
-   }
-   $scope.getSelectedItemOnly();
-    $('.select-wrapper .list').slideUp();
   }
-}
 ]);

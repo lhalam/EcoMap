@@ -87,24 +87,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
           })
         }
-        // } else{
-        //   $scope.nickname = false;
-        //   $http({
-        //     method: 'GET',
-        //     url: 'api/usersProblem/' + $scope.user_id,
-        //     params: {
-        //       filtr: $scope.filterTable.param || undefined,
-        //       order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
-        //       per_page: $scope.selectCount['selected'],
-        //       offset: $scope.selectCount['selected'] * newValue - stepCount,
-        //     }
-        //   }).then(function successCallback(response) {
-        //    $scope.problems = response.data[0];
-        //    $scope.problemsLength = response.data[1][0]['total_problem_count'];
-        //    $scope.count = response.data[1][0]['total_problem_count'];
-        //    $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-        //  })
-        // }
       })
     };
     $scope.idProblem = 0;

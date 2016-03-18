@@ -36,7 +36,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
       var stepCount = $scope.selectCount['selected']
       if ($scope.searchNick){
-          $scope.ShowAdminInfo = ~['moder','admin'].indexOf($cookies.get('role'))
+          $scope.ShowAdminInfo = ~['moderator','admin'].indexOf($cookies.get('role'))
           $http({
           method: 'GET',
           url: '/api/search_users_comments',
@@ -64,7 +64,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
             $scope.commentsCount = response.data[1][0]['total_comments_count'];
             $scope.commentsLength = response.data[1][0]['total_comments_count'];
             $scope.bigTotalItems = $scope.commentsLength / $scope.selectCount['selected'] * 10;
-            $scope.ShowAdminInfo = ~['moder','admin'].indexOf($cookies.get('role'));
+            $scope.ShowAdminInfo = ~['moderator','admin'].indexOf($cookies.get('role'));
           })
         } 
       })
@@ -72,7 +72,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
 
     $scope.loadComments();
     $scope.loadSubComments = function(parent_id) {
-       $scope.ShowAdminInfo = (~['moder','admin'].indexOf($cookies.get('role')));
+       $scope.ShowAdminInfo = (~['moderator','admin'].indexOf($cookies.get('role')));
        $http({
         method: 'GET',
         url: '/api/problem_subcomments/' + parent_id

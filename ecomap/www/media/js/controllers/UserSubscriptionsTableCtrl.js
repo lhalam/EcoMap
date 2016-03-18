@@ -1,5 +1,6 @@
 app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$cookies', '$window',
   function($scope, $state, $http, $cookies, $window) {
+    $scope.redirectUserAfterDelete();
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';

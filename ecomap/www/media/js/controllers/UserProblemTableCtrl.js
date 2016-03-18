@@ -1,5 +1,6 @@
 app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster',
   function($scope, $http, $state, $cookies, $window, toaster) {
+    $scope.redirectUserAfterDelete();
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
     $scope.user_id = $cookies.get('id');

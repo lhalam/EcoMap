@@ -1,5 +1,6 @@
 app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
   function($scope, $http, $state, $cookies, $window) {
+    $scope.redirectUserAfterDelete();
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';

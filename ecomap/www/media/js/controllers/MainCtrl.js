@@ -1,6 +1,7 @@
 app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
     $rootScope.isFetching=false;
 
+
     $scope.isAuthenticated = function() {
       var authenticated;
       if (!$cookies.get('id')) {
@@ -11,6 +12,12 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
       }
       return authenticated;
     };
+
+    $scope.redirectUserAfterDelete = function() {
+      if(!$scope.isAuthenticated()) {
+        $state.go('map');
+      }
+    }
     
     $scope.isAdmin = function() {
       var role = $cookies.get('role');
@@ -20,6 +27,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
         return false;
       }
     };
+    
     $scope.isModer = function() {
       var role = $cookies.get('role');
       if (role == 'moderator') {
@@ -43,6 +51,7 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
         method: 'GET',
         url: '/api/user_detailed_info/' + $cookies.get("id")
       }).success(function(responce) {
+        $rootScope.Useravatar = responce.avatar;
         $rootScope.UserCredentials = responce.name + ' ' + responce.surname;
       });
     }  

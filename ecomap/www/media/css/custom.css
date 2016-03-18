@@ -1439,5 +1439,18 @@ a.one_button{
   display: inline-block;
   margin:-3px 12px;
 }
+.UserProblemTable thead td{
+  cursor: pointer;
+}
+.del .del_pr_button{
+  float:none;
+  margin-left: 20px;
+}
+.statistic a:visited{
+  text-decoration: none;
+}
+.table-stripped thead td{
+  cursor: pointer;
+}
 
 

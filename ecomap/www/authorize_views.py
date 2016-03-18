@@ -215,7 +215,8 @@ def oauth_login(provider):
                                          provider,
                                          profile['id'])
 
-    db.insert_user_avatar(user.uid, profile['picture']['data']['url'])
+    if not db.get_user_avatar(user.uid)[0]:
+        db.insert_user_avatar(user.uid, profile['picture']['data']['url'])
 
     login_user(user, remember=True)
 

@@ -110,7 +110,6 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     $scope.idProblem = 0;
     $scope.deleteProblem = function(id, title, user_id) {
       $scope.idProblem = id;
-      console.log($scope.idProblem)
       if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
         $http({
           method: 'DELETE',

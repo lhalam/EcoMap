@@ -145,6 +145,8 @@
                      name="radius"
                      ng-model="editProblemTypeObj.radius"
                      min="1"
+                     ng-minlength="1"
+                     ng-maxlength="5"
                      required/>
               <div class="help-block" ng-messages="editProblemForm.radius.$error" ng-show="editProblemForm.radius.$touched || editProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>

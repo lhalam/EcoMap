@@ -3,6 +3,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
     $scope.restore = {};
     $scope.msg = msg;
     console.log("sdddddddddd");
+    console.log(window.location);
     $rootScope.isFetching=false;
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){
@@ -14,7 +15,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
             url: '/api/restore_password',
             data: $scope.restore
         }).then(function successCallback(response){
-            window.location.href = 'http://ecomap.new/#/login'
+            window.location.href += '/#/login';
             $scope.msg.sendSuccess('імейлу');
             $rootScope.isFetching=false;
         }, function errorCallback(){
@@ -40,7 +41,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
       })
       .then(function successCallback(response){
         //$state.go('login');
-        window.location.href = 'http://ecomap.new/#/login'
+        window.location.href += '/#/login';
       }, function errorCallback(){
       })
     }

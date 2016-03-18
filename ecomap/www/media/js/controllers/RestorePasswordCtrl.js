@@ -13,7 +13,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
             url: '/api/restore_password',
             data: $scope.restore
         }).then(function successCallback(response){
-            window.location.href += '/#/login';
+            window.location.href = '/#/map';
             $scope.msg.sendSuccess('імейлу');
             $rootScope.isFetching=false;
         }, function errorCallback(){
@@ -39,7 +39,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
       })
       .then(function successCallback(response){
         //$state.go('login');
-        window.location.href += '/#/login';
+        window.location.href = '/#/login';
       }, function errorCallback(){
       })
     }

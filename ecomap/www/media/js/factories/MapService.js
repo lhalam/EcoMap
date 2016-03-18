@@ -70,11 +70,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', '$cookies', '$auth', fu
      ($cookies.get('id')!= marker.user_id && marker.is_enabled == 0))
           return;
       }
-      console.log($cookies.get('id'))
-      console.log(marker.user_id)
-          
-      
-        
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,

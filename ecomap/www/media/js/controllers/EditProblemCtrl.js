@@ -232,7 +232,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
           'type': selectProblem.problem_type_id
         }
       }).then(function successCallback(response) {
-        toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
+        toaster.pop('info', 'Редагування проблеми', 'Проблема упішно відредагована та проходить модерацію. Очікуйте повідомлення.');
         $scope.createdProblemId = selectProblem.problem_id;
         $rootScope.mapParams = {
           center: {
@@ -311,7 +311,7 @@ app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uplo
         }
       }).then(function successCallback(data) {
          $scope.pageLoader()
-        toaster.pop('info', 'Фото', 'Фото видалено.');
+        toaster.pop('success', 'Фото', 'Фото видалено.');
       }, function errorCallback(response) {
         toaster.pop('error', 'помилка', 'помилка видалення фото');
       })

@@ -1,5 +1,5 @@
-app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
-  function($scope, $http, $state, $cookies, $window) {
+app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster',
+  function($scope, $http, $state, $cookies, $window, toaster) {
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
     $scope.user_id = $cookies.get('id');
@@ -142,9 +142,9 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         }
         }).then(function successCallback(data){
           $scope.loadProblems();
-          $scope.msg.deleteSuccess('типу проблеми');
+          toaster.pop('success','проблема', 'Проблема успішно перенесена на анонімного користувача.');
         }, function errorCallback(response) {
-          $scope.msg.deleteError('типу проблеми', arguments[0]['data']['msg']);
+          $scope.msg.deleteError('проблема', arguments[0]['data']['msg']);
         })
         }
       };

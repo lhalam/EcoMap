@@ -17,7 +17,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'Unsolved': 'Не вирішено',
         'Solved': 'Вирішено'
       };
-    $scope.severities = ['1', '2', '3', '4', '5'];
+    $scope.severities = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     $scope.user_id = $cookies.get('id');
     $scope.dataLoader = function(){
       $http({

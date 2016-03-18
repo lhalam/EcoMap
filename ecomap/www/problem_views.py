@@ -22,7 +22,7 @@ from ecomap.app import app, logger, auto, _CONFIG
 
 ANONYMUS_USER_ID = 2
 UPLOADS_PROBLEM_PATH = '/uploads/problems/'
-UPLOADS_PROBLEM_ID_PATH = '/uploads/problems/%s' 
+UPLOADS_PROBLEM_ID_PATH = '/uploads/problems/%s'
 MIN_SIZE = 'min.png'
 
 
@@ -844,9 +844,11 @@ def get_problem_type_for_filtration():
        :return: json object with problem types.
        :JSON sample:
        ``[{"id": 1,
+        'picture': '1.png'
         "name": "first problem type"},
         ....
-        {"id": 7,
+        {"id": 7,,
+        'picture': '7.png'
         "name": "sevens problem type"]``.
     '''
     problem_type_tuple = db.get_problem_type_for_filtration()
@@ -870,9 +872,10 @@ def problems_radius(type_id):
     :rtype: JSON
     :return:
         - If problems list not empty:
-            ``[{"status": "Unsolved", "problem_type_Id": 2,
-            "title": "problem 1","longitude": 25.9717, "date": 1450735578,
-            "latitude": 50.2893, "problem_id": 75}]``
+            ``[{'problem_type_Id': 2,
+            'title': 'problem 1', 'longitude': 25.9717,
+            'latitude': 50.2893, 'problem_id': 75, is_enbaled: 1,
+            'name': 'type_name', 'radius': 200}]``
         - If problem list is empty:
             ``{}``
 
@@ -887,9 +890,9 @@ def problems_radius(type_id):
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
                 'problem_type_Id': problem[4],
-                'is_enabled': problem[7],
-                'name': problem[9],
-                'radius': problem[10]})
+                'is_enabled': problem[5],
+                'name': problem[6],
+                'radius': problem[7]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 
@@ -944,7 +947,7 @@ def problems_severity_stats():
                                 'title': problem[5],
                                 'severity': problem[6]})
     sorted_json = sorted(parsed_json,
-                         key=lambda k: (k['severity'], k['date']),
+                         key=lambda k: (int(k['severity']), k['date']),
                          reverse=True)[:10]
     return Response(json.dumps(sorted_json), mimetype='application/json')
 
@@ -1025,7 +1028,7 @@ def get_search_problems_by_filter():
                     mimetype='application/json')
 
 
-@app.route('/api/problem_delete', methods=['DELETE', 'PUT'])
+@app.route('/api/problem_delete', methods=['DELETE'])
 @auto.doc()
 @login_required
 def delete_problem():
@@ -1044,29 +1047,51 @@ def delete_problem():
     data = request.get_json()
     valid = validator.problem_delete(data)
     if valid['status']:
-        if request.method == 'DELETE':
-            folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
-            f_path = os.environ['STATICROOT'] + folder_to_del
-            if os.path.exists(f_path):
-                shutil.rmtree(f_path, ignore_errors=True)
-            db.delete_problem_by_id(data['problem_id'])
-            email_tuple = db.get_user_by_id(data['user_id'])
-            message = generate_email('delete_problem',
-                                     _CONFIG['email.from_address'],
-                                     email_tuple[4], (email_tuple[1],
-                                                      email_tuple[2],
-                                                      data['problem_title'],
-                                                      request.url_root))
-            send_email(_CONFIG['email.server_name'],
-                       _CONFIG['email.user_name'],
-                       _CONFIG['email.server_password'],
-                       _CONFIG['email.from_address'],
-                       email_tuple[4],
-                       message)
-            response = jsonify(msg='Дані видалено успішно!'), 200
-        elif request.method == 'PUT':
-            db.change_problem_to_anon(data['problem_id'])
-            response = jsonify(msg='Дані привязані на анонімного юзера!'), 200
+        folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
+        f_path = os.environ['STATICROOT'] + folder_to_del
+        if os.path.exists(f_path):
+            shutil.rmtree(f_path, ignore_errors=True)
+        db.delete_problem_by_id(data['problem_id'])
+        email_tuple = db.get_user_by_id(data['user_id'])
+        message = generate_email('delete_problem',
+                                 _CONFIG['email.from_address'],
+                                 email_tuple[4], (email_tuple[1],
+                                                  email_tuple[2],
+                                                  data['problem_title'],
+                                                  request.url_root))
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
+                   _CONFIG['email.from_address'],
+                   email_tuple[4],
+                   message)
+        response = jsonify(msg='Дані видалено успішно!'), 200
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
+    return response
+
+
+@app.route('/api/problem_delete', methods=['PUT'])
+@auto.doc()
+@login_required
+def change_problem_to_anon():
+    """The changes prblem to anon user by problem id.
+       :rtype: JSON.
+       :request args: `{problem_id: 5}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    valid = validator.problem_delete(data)
+    if valid['status']:
+        db.change_problem_to_anon(data['problem_id'])
+        response = jsonify(msg='Дані привязані на анонімного юзера!'), 200
     else:
         response = jsonify(msg='Некоректні дані!'), 400
     return response
@@ -1076,7 +1101,7 @@ def delete_problem():
 @auto.doc()
 @login_required
 def problem_confirmation():
-    """The method deletes problem by id.
+    """The method confirms problem by id.
        :rtype: JSON.
        :request args: `{problem_id: 5,
                                     severity: '3',
@@ -1123,7 +1148,7 @@ def problem_confirmation():
 @auto.doc()
 @login_required
 def edit_problem():
-    """The method deletes problem by id.
+    """The method edits problem by id.
        :rtype: JSON.
        :request args: `{problem_id: 5,
                                     title: name,
@@ -1156,7 +1181,7 @@ def edit_problem():
 @auto.doc()
 @login_required
 def delete_photo():
-    """The method deletes min photo and photos by photo id.
+    """The method deletes min photo and photo by photo_id.
        :rtype: JSON.
        :request args: `{photo_id: 5}`.
        :return: confirmation object.

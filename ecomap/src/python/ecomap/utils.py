@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """Module contains usefull functions."""
 import os
-import random
 import string
+import magic
+import random
 import smtplib
 
 from urlparse import urlparse
@@ -103,3 +104,9 @@ def send_email(smtp_name, login, app_key, from_address, to_email, email):
         server.quit()
     except Exception as exc:
         pass
+
+
+def  get_mimetype(data):
+    """Receives mimetype of a file."""
+    with magic.Magic(flags=magic.MAGIC_MIME_TYPE) as magic_data:
+        return magic_data.id_buffer(data)

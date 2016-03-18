@@ -1991,7 +1991,7 @@ def get_problem_photo_by_id(problem_id):
     """Get problem photo by id."""
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT `name` FROM `photo`
+        query = """SELECT * FROM `photo`
                           WHERE `id`=%s;
                       """
         cursor.execute(query, (problem_id,))

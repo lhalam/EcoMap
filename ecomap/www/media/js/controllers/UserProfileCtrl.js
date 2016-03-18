@@ -21,7 +21,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
     $scope.active = function(route) {
       return $state.is(route);
     };
-    if ($scope.user.id) {
+    
       $http({
         url: '/api/user_detailed_info/' + $scope.user.id,
         method: 'GET'
@@ -30,7 +30,7 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
         $scope.old_nick = response.nickname;
         $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/150x150';
       });
-    }
+    
     $scope.password = {
       old_pass: "",
       new_pass: "",

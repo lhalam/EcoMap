@@ -63,7 +63,6 @@ app.factory('MapFactory', ['$window', '$http', '$state', '$cookies', '$auth', fu
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-      console.log(response);
       angular.forEach(response.data, function (marker, key) {
         if (!(~['moderator', 'admin' ].indexOf($cookies.get('role')))){
           if ((!$auth.isAuthenticated() && marker.is_enabled == 0)||

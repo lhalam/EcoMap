@@ -1374,8 +1374,7 @@ def get_problems_by_type(problem_type_id):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude, p.problem_type_id,
-                           p.status, p.created_date, p.is_enabled,
-                           p.severity, pt.name, pt.radius
+                           p.is_enabled, pt.name, pt.radius
                            FROM problem AS p INNER JOIN problem_type AS pt ON
                            pt.id=p.problem_type_id WHERE pt.id=%s;"""
         cursor.execute(query, (problem_type_id,))
@@ -1807,21 +1806,6 @@ def get_problems_title(problem_ids):
         return dict(cursor.fetchall())
 
 
-# @db.retry_query(tries=3, delay=1)
-# def get_problems_title(problem_ids):
-#     """Get dictionary with problem id as key and
-#         problem title as value.
-#        :params: problems_id - list of problem_ids.
-#     """
-#     with db.pool_manager(db.READ_ONLY).manager() as conn:
-#         cursor = conn.cursor()
-#         query = """SELECT id, title from `problem`
-#                 WHERE id IN ({});
-#                 """
-#         cursor.execute(query.format(', '.join(map(str, problem_ids))))
-#         return dict(cursor.fetchall())
-
-
 @db.retry_query(tries=3, delay=1)
 def count_subscriptions_by_problem_id():
     """Count of subsriptions.
@@ -1972,10 +1956,14 @@ def delete_problem_by_id(problem_id):
                           WHERE `problem_id`=%s;
                       """
         conn.execute(query, (problem_id,))
+        query = """DELETE FROM `subscription`
+                          WHERE `problem_id`=%s;
+                      """
+        conn.execute(query, (problem_id,))
 
 
 @db.retry_query(tries=3, delay=1)
-def delete_photo_by_id(problem_id):
+def delete_photo_by_id(photo_id):
     """Delete problem photo.
        :params: problem_id - id of problem.
     """
@@ -1983,18 +1971,18 @@ def delete_photo_by_id(problem_id):
         query = """DELETE FROM `photo`
                           WHERE `id`=%s;
                       """
-        conn.execute(query, (problem_id,))
+        conn.execute(query, (photo_id,))
 
 
 @db.retry_query(tries=3, delay=1)
-def get_problem_photo_by_id(problem_id):
+def get_problem_photo_by_id(photo_id):
     """Get problem photo by id."""
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT * FROM `photo`
                           WHERE `id`=%s;
                       """
-        cursor.execute(query, (problem_id,))
+        cursor.execute(query, (photo_id,))
         return cursor.fetchone()
 
 

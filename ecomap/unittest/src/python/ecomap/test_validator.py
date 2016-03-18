@@ -52,6 +52,13 @@ PROBLEM_POST = {'title': 'problem with rivers',
                 'longitude': '24.0600542',
                 'type': 2}
 
+PROBLEM_PUT = {'problem_id': 2,
+               'title': 'problem with rivers',
+               'content': 'some text',
+               'latitude': '49.8256101',
+               'longitude': '24.0600542',
+               'type': 2}
+
 EMAIL_DATA = {'admin.mail@gmail.com': (1L,
                                        u'admin',
                                        u'admin',
@@ -980,6 +987,85 @@ class TestValidator(unittest2.TestCase):
         PROBLEM_POST['latitude'] = '49.08256101'
         PROBLEM_POST['longitude'] = '24.0600542'
         self.assertEqual(return_data, ERROR_DATA)
+
+    def test_probl_put_return_dict(self):
+        """Testing problem_post function if it returns dictionary."""
+        self.assertIsInstance(validator.problem_put(PROBLEM_PUT), dict)
+
+    def test_probl_put_correct_stat(self):
+        """Testing problem_post function if status is correct."""
+        self.assertDictEqual(validator.problem_put(PROBLEM_PUT), VALID_STATUS)
+
+    def test_probl_put_has_key(self):
+        """Testing problem_post function if data has all keys."""
+        del PROBLEM_PUT['title']
+        return_data = validator.problem_put(PROBLEM_PUT)
+        ERROR_DATA['error'] = [{'title': ERROR_MSG['has_key'] % 'title'}]
+        PROBLEM_PUT['title'] = 'title'
+        self.assertEqual(return_data, ERROR_DATA)
+
+    def  test_probl_put_check_empty(self):
+        """Testing problem_post function if value is not empty."""
+        PROBLEM_PUT['title'] = None
+        return_data = validator.problem_put(PROBLEM_PUT)
+        ERROR_DATA['error'] = [{'title': ERROR_MSG['check_empty'] % 'title'}]
+        PROBLEM_PUT['title'] = 'problem with rivers'
+        self.assertDictEqual(return_data, ERROR_DATA)
+
+    def test_probl_put_check_str(self):
+        """Testing problem_post function if type is invalid."""
+        PROBLEM_PUT['content'] = 125698
+        return_data = validator.problem_put(PROBLEM_PUT)
+        ERROR_DATA['error'] = [{'content': ERROR_MSG['check_string']
+                                           % 'content'}]
+        PROBLEM_PUT['content'] = 'some text'
+        self.assertEqual(return_data, ERROR_DATA)
+
+    def test_probl_put_min_length(self):
+        """Testing problem_post function if value is not too short."""
+        PROBLEM_PUT['title'] = 'a'
+        return_data = validator.problem_put(PROBLEM_PUT)
+        ERROR_DATA['error'] = [{'title': ERROR_MSG['check_minimum_length']
+                                         % 'title'}]
+        PROBLEM_PUT['title'] = 'problem with rivers'
+        self.assertEqual(return_data, ERROR_DATA)
+
+    def test_probl_put_max_length(self):
+        """Testing problem_post function if value is not too long."""
+        PROBLEM_PUT['title'] = 'a' * 260
+        return_data = validator.problem_put(PROBLEM_PUT)
+        ERROR_DATA['error'] = [{'title': ERROR_MSG['check_maximum_length']
+                                         % 'title'}]
+        PROBLEM_PUT['title'] = 'problem with rivers'
+        self.assertEqual(return_data, ERROR_DATA)
+
+    def test_prob_del_return_dict(self):
+        """Testing problem_type if it returns dictionary."""
+        problem_data = {'problem_id': 2}
+        self.assertIsInstance(validator.problem_delete(problem_data),
+                              dict)
+
+    def test_prob_del_correct_stat(self):
+        """Testing problem_type function if status is correct."""
+        problem_data = {'problem_id': 2}
+        self.assertDictEqual(validator.problem_delete(problem_data),
+                             VALID_STATUS)
+
+    def test_prob_del_has_key(self):
+        """Testing problem_type function if data has all keys."""
+        invalid_data = {'wrong_key': 3}
+        ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['has_key']
+                                % 'problem_id'}]
+        self.assertEqual(validator.problem_delete(invalid_data),
+                         ERROR_DATA)
+
+    def test_prob_del_check_empty(self):
+        """Testing problem_type function if value is not empty."""
+        invalid_data = {'problem_id': None}
+        ERROR_DATA['error'] = [{'problem_id': ERROR_MSG['check_empty']
+                                % 'problem_id'}]
+        self.assertEqual(validator.problem_delete(invalid_data),
+                         ERROR_DATA)
 
     def test_role_name_exists_incorrect(self):
         """Testing role_name function if role_name is invalid."""

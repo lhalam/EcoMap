@@ -703,7 +703,7 @@ def problem_put(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['title', 'content', 'latitude', 'longitude', 'type']
+    keys = ['problem_id', 'title', 'content', 'latitude', 'longitude', 'type']
     for keyname in keys:
         if not has_key(data, keyname):
             status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})

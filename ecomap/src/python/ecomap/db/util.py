@@ -807,7 +807,7 @@ def get_all_problems():
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT problem.id, title, latitude, longitude, is_enabled,
-                   problem_type_id, status, created_date, problem_type.radius,
+                   problem_type_id, status, created_date, user_id, problem_type.radius,
                    problem_type.picture
                    FROM `problem` INNER JOIN `problem_type`
                    ON problem.problem_type_id = problem_type.id;

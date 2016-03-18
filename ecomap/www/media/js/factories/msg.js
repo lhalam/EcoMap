@@ -38,6 +38,9 @@ app.factory('msg', function(toaster) {
     },
     restoreError: function(msg) {
       toaster.pop('error', 'Відновлення', 'При відновленні' + msg + ' виникла помилка!')
-    }
+    },
+    sendSuccessMailtoDelete : function(msg, type) {
+      toaster.pop('success', 'Відправлення ' + msg + ' здійснено успішно! Підтвердіть видалення через імейл!');
+    },
   };
 });

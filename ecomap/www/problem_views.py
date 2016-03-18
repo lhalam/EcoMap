@@ -55,8 +55,8 @@ def problems():
                 'problem_id': problem[0], 'title': problem[1],
                 'latitude': problem[2], 'longitude': problem[3],
                 'is_enabled': problem[4], 'problem_type_Id': problem[5],
-                'status': problem[6], 'date': problem[7],
-                'radius': problem[8], 'picture': problem[9]})
+                'status': problem[6], 'date': problem[7], 'user_id': problem[8],
+                'radius': problem[9], 'picture': problem[10]})
     return Response(json.dumps(parsed_json), mimetype='application/json')
 
 

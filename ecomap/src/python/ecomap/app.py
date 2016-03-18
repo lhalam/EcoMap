@@ -29,6 +29,7 @@ app.config['CACHE_TYPE'] = 'memcached'
 app.config['SESSION_TYPE'] = 'memcached'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=14)
 app.config['SESSION_MEMCACHED'] = MemcachedCache(_CONFIG['ecomap.memcached_servers'])
+app.config['CACHE_MEMCACHED_SERVERS'] = _CONFIG['ecomap.memcached_servers']
 app.config['OAUTH_CREDENTIALS'] = {
     'facebook': {
         'id': _CONFIG['oauth.facebook_id'],

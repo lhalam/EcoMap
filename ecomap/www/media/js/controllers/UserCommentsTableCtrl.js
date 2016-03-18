@@ -27,6 +27,17 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       return statuses[status];
     };
 
+    if ($cookies.get('role')=='user' && $cookies.get('id')!=2) {
+      $http({
+        url: '/api/user_detailed_info/' + $cookies.get('id'),
+        method: 'GET'
+      }).success(function(response) {
+        $scope.old_nick = response.nickname;
+        $scope.searchNick = $scope.old_nick;
+        $scope.loadProblems();
+      });
+    }
+
     $scope.loadComments = function() {
       $scope.msg = msg;
       $scope.fromPage = 1;

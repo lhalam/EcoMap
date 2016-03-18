@@ -34,7 +34,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
       }).success(function(response) {
         $scope.old_nick = response.nickname;
         $scope.searchNick = $scope.old_nick;
-        $scope.loadProblems();
+        $scope.loadComments();
       });
     }
 

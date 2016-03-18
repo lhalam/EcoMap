@@ -39,8 +39,11 @@
                   class="form-control input-sm statusSel"
                   ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
           </select>  
-          <input type="submit" value="Змінити" 
-                 class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled"/>
+         <button type="submit" value="Змінити" 
+         class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled">
+         <span ng-if="!waiting">Змінити</span>
+        <span ng-if="waiting"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
+        </button>
         </div>
         <div class="form-inline" ng-show="!selectProblem.is_enabled">
           <label class='statusSelect'>Підтвердження</label>         
@@ -54,24 +57,15 @@
           <textarea ng-model="moder.comment"
                     class="form-control input-sm statusSel"></textarea>
         </div>
-        <div style="display: block">
-          <input type="submit" value="Змінити" 
-                 class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled"/>   
+        <div>
+        <button type="submit" value="Змінити" 
+               class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled">
+            <span ng-if="!waiting">Змінити</span>
+            <span ng-if="waiting"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
+        </button>  
         </div>   
       </form>
     </div>
-    <!-- <div class="row hidden-md hidden-lg hidden-sm">
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 clearfix">
-        <div class="solution unsolved forSmall pull-left" >
-          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-6" ng-hide='hideIconSubsc'>
-        <div class='eye_subscription forSmall pull-right'>
-          <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
-        </div>
-      </div>
-    </div> -->
   </div>
   <uib-tabset justified="true" class="col-xs-12 col-sm-12 tabs">
     <uib-tab heading="Детально">

@@ -221,8 +221,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
-
+    $scope.waiting = false;
     $scope.changeStatus = function(mod){
+      $scope.waiting = true;
       $http({
       url: '/api/problem_confirmation',
       method: 'PUT',
@@ -237,9 +238,11 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'comment': mod.comment 
       }
       }).then(function successCallback(data) {
+        $scope.waiting = false;
         $scope.dataLoader()
         $scope.msg.editSuccess('статусів');
       }, function errorCallback(response) {
+        $scope.waiting = false;
         $scope.msg.editError('статусів');
       })
     }

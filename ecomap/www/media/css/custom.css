@@ -1435,5 +1435,9 @@ a.one_button{
   color: #fff;
   cursor:pointer;
 }
+.change_button{
+  display: inline-block;
+  margin:-3px 12px;
+}
 
 

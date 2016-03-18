@@ -1,4 +1,5 @@
 app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster', '$rootScope', function($scope, $state, $cookies, $http, msg, toaster, $auth, $rootScope) {
+    $scope.redirectUserAfterDelete();
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
     $scope.isSuperAdmin = $scope.user.id=='1' 
@@ -10,11 +11,13 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
       {heading: "Мої підписки", route: "user_profile.subscriptions", active: false, showToUser: true},
       {heading: "Редагування F.A.Q.", route: "user_profile.faq", active: false, showToUser: false}
     ];
+
     $scope.$on("$stateChangeSuccess", function() {
       $scope.tabs.forEach(function(tab) {
         tab.active = $scope.active(tab.route);
       });
     });
+    
     $scope.go = function(route) {
       $state.go(route);
     };

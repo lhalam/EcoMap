@@ -11,7 +11,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.editMode = false;
     $scope.editCommentid = null;
     $scope.showInputForm = $cookies.get('id') ? true: false;
-    $scope.hideSeverityForUser = (~['moder','admin'].indexOf($cookies.get('role'))) ? true : false;
+    $scope.hideSeverityForUser = (~['moderator','admin'].indexOf($cookies.get('role'))) ? true : false;
     $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
     $scope.statuses = {
         'Unsolved': 'Не вирішено',

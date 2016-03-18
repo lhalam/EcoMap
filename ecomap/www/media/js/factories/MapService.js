@@ -63,12 +63,12 @@ app.factory('MapFactory', ['$window', '$http', '$state', '$cookies', '$auth', fu
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-      console.log(response);
       angular.forEach(response.data, function (marker, key) {
-        if ((!$auth.isAuthenticated() && marker.is_enabled == 0) || 
-          ($cookies.get('role') == 'user' && marker.is_enabled == 0)) 
+        if (!(~['moderator', 'admin' ].indexOf($cookies.get('role')))){
+          if ((!$auth.isAuthenticated() && marker.is_enabled == 0)||
+     ($cookies.get('id')!= marker.user_id && marker.is_enabled == 0))
           return;
-        
+      }
         var pos = new google.maps.LatLng(marker.latitude, marker.longitude);
         var new_marker = new google.maps.Marker({
           position: pos,
@@ -78,6 +78,7 @@ app.factory('MapFactory', ['$window', '$http', '$state', '$cookies', '$auth', fu
           problemStatus: marker.status,
           doCluster: true,
           date: marker.date,
+          user_id: marker.user_id,
           icon: '/image/markers/' + marker.picture,
           radius: marker.radius
         });

@@ -30,7 +30,6 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
         $scope.old_nick = response.nickname;
         $scope.user.data.avatar = $scope.user.data.avatar || 'http://placehold.it/150x150';
       });
-    
     $scope.password = {
       old_pass: "",
       new_pass: "",
@@ -78,13 +77,12 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
           'user_id': data.id
         }
       }).then(function successCallback(response) {
-            $scope.msg.sendSuccess('імейлу');
+            $scope.msg.sendSuccessMailtoDelete('імейлу');
             $scope.waiting = false;
         }, function errorCallback() {
             $scope.waiting = false;
             $scope.msg.sendError('імейлу')
-        })
-       
+        })  
     }};
     $scope.cls_edit_nick = "fa fa-pencil";
     $scope.editMode = true;
@@ -123,15 +121,11 @@ app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg
             })
       };
     };
-
-
     $scope.changeErroClass = function(){
       if ($scope.hasError){
         $scope.hasError = !$scope.hasError;
       }
-
     }
-
     $scope.redirect = function(state){
       $state.go(state);
     };

@@ -11,6 +11,12 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
                             {title: 'Підписок', count: ''},
                             {title: 'Коментарів', count: ''},
                             {title: 'Фотографій', count: ''}];
+    
+
+    $scope.chartObject.options = {};
+    $scope.piechar = document.getElementById('piechar');
+    $scope.small = parseInt(getComputedStyle(piechar).width);
+
     $scope.loadStatisticPieChart = function() {
       $scope.$watch('period', function(newValue){
           $scope.chartObject.data["rows"] = [];
@@ -29,7 +35,20 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
           }, function errorCallback(response) {})
       })
     }
-    $scope.loadStatisticPieChart()
+     $scope.$watch(function(){
+       return window.innerWidth;
+      }, function(value) {
+         if(value<600){
+                      $scope.old = $scope.small;
+                        $scope.chartObject.options = {
+                          legend: 'none'
+                        }
+                      }else{
+                        $scope.small = $scope.old;
+                        $scope.chartObject.options = {};
+                      };
+      });
+    $scope.loadStatisticPieChart();
     $scope.loadCountSubs = function() {
         $http({
             method: 'GET',
@@ -71,18 +90,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
     };
-    // $scope.loadProblems = function() {
-    // $scope.problems = [];
-    // $http({
-    //   method: 'GET',
-    //   url: '/api/problems'
-    // }).then(function successCallback(response) {
-    //   for (var i = 0; i < response.data.length; i++){
-    //       $scope.problems.push(response.data[i]);
-    //     }
-    //   // console.log($scope.problems);
-    //   }, function errorCallback() {})
-    // };
 
     $scope.loadProblemType = function() {
       $scope.problemTypes =  [];
@@ -108,7 +115,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
       method: 'GET',
       url: '/api/problems'
     }).then(function successCallback(response) {
-      console.log(response);
         $scope.problems = [];
         $scope.start_date = response.data[0]['date']*1000.0;
       for (var i = 0; i < response.data.length; i++){
@@ -126,7 +132,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     var container = document.getElementById('visualization');
     var groups = new vis.DataSet(groups_content);
     var items = new vis.DataSet(items_content);
-    console.log( new Date($scope.start_date ));
     //   // Configuration for the Timeline
     var date = new Date();
     date.setDate(date.getDate() + 3);

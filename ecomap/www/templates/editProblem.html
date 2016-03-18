@@ -100,7 +100,7 @@
         <div class="photo_box" ng-repeat="photo in selectPhotos" >  
         <!-- <i class="fa fa-times delete_photo" ng-click="deletePhoto(photo.id)"></i>  -->
 
-          <img src="{{getMinPhoto(photo.url)}}" 
+          <img ng-src="{{getMinPhoto(photo.url)}}" 
                alt="{{photo.description}}" 
                height="100" width="100"
                class="img-responsive img-rounded"/>

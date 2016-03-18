@@ -33,10 +33,15 @@ def load_users():
 
 @app.after_request
 def clear_cookie(responce):
+    """Function-decorator deletes cookie if user id from
+       cookie doesn`t exist in database.
+       Launches after each requests
+    """
     if not db.get_user_by_id(current_user.get_id()):
         for i in ['id', 'role', 'remember_token']:
             responce.delete_cookie(i)
     return responce
+
 
 @app.before_request
 def check_access():

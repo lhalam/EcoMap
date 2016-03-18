@@ -107,8 +107,10 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         // }
       })
     };
-
+    $scope.idProblem = 0;
     $scope.deleteProblem = function(id, title, user_id) {
+      $scope.idProblem = id;
+      console.log($scope.idProblem)
       if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
         $http({
           method: 'DELETE',
@@ -123,8 +125,10 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
           }
         }).then(function successCallback(data) {
           $scope.loadProblems();
+          $scope.idProblem = 0;
           $scope.msg.deleteSuccess('проблема');
         }, function errorCallback(response) {
+          $scope.idProblem = 0;
           $scope.msg.deleteError('проблема', arguments[0]['data']['msg']);
         })
       }
@@ -142,8 +146,10 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
         }
         }).then(function successCallback(data){
           $scope.loadProblems();
+          $scope.idProblem = 0;
           toaster.pop('success','проблема', 'Проблема успішно перенесена на анонімного користувача.');
         }, function errorCallback(response) {
+          $scope.idProblem = 0;
           $scope.msg.deleteError('проблема', arguments[0]['data']['msg']);
         })
         }

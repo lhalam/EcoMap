@@ -2,7 +2,6 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
   function($scope, $state, $http, $rootScope, $location, msg, toaster) {
     $scope.restore = {};
     $scope.msg = msg;
-    console.log("sdddddddddd");
     $rootScope.isFetching=false;
     $scope.sendEmail = function(restore){
         if(!$scope.restore.email){

@@ -1,5 +1,5 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory',
-  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth) {
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
     $scope.photos = [];    
@@ -148,7 +148,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
 
     $scope.colBs = 'col-lg-8';
     $scope.hideIconSubsc = true;
-    if ($cookies.get('role')=='admin' || $cookies.get('role')=='user') {
+    if ($auth.isAuthenticated()) {
       $scope.colBs = 'col-lg-4';
       $scope.hideIconSubsc = false;
     }

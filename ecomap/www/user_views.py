@@ -45,6 +45,38 @@ def change_password():
     return response
 
 
+@app.route('/api/change_nickname', methods=['POST'])
+@auto.doc()
+@login_required
+def change_nickname():
+    """Function, used to change user nickname.
+
+    :rtype: JSON
+    :request agrs: `{id: "6", nickname: "newnickname"}`
+    :return:
+
+        :statuscode 400: request is invalid 
+        :statuscode 200: nickname was successfully changed
+
+    """
+    response = jsonify(), 400
+
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        valid = validator.change_nickname(data)
+        user = ecomap_user.get_user_by_id(data['id'])
+        if valid['status']:
+            if user:
+                user.change_nickname(data['nickname'])
+                response = jsonify(), 200
+            else:
+                response = jsonify(), 400    
+        else:
+            response = Response(json.dumps(valid),
+                                mimetype='application/json'), 400        
+    return response
+
+
 @app.route('/api/user_detailed_info/<int:user_id>')
 @auto.doc()
 @login_required
@@ -57,7 +89,7 @@ def get_user_info(user_id):
         - If user exists and data provided:
             ``{"avatar": "/uploads/user_profile/userid_6/profile_id6.png",
             "email": "email@email.com", "name": "Firstname", "role": "admin",
-            "surname": "Lastname"}``
+            "surname": "Lastname", "nickname": "nick"}``
         - If there is no user with given email:
             ``{status:'There is no user with given email'}``
 
@@ -71,6 +103,7 @@ def get_user_info(user_id):
         if user:
             return jsonify(name=user.first_name,
                            surname=user.last_name,
+                           nickname=user.nickname,
                            email=user.email,
                            role=user.role,
                            avatar=user.avatar)

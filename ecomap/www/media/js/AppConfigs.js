@@ -1,6 +1,5 @@
-app.config(['$stateProvider', '$urlRouterProvider', '$authProvider', 
- function($stateProvider, $urlRouterProvider, $authProvider) {
-
+app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
+ function($stateProvider, $urlRouterProvider, $authProvider ) {
   $stateProvider
   .state('error404', {
     url: '/error404',
@@ -33,12 +32,16 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     url: '/comments',
     templateUrl: '/templates/profileComments.html'
   })
+  .state('user_profile.subscriptions', {
+    url: '/subscriptions',
+    templateUrl: '/templates/profileSubscriptions.html'
+  })
   .state('user_profile.faq', {
     url: '/faq',
     templateUrl: '/templates/profileFaqEdit.html',
     resolve: {
       admin: function(grant) {
-        return grant.only({test: 'admin', state: 'error403'});
+        return grant.only({test: 'authenticated', state: 'error403'});
       }
     }
   })
@@ -47,10 +50,10 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
     templateUrl: '/templates/map.html',
     controller: 'MapCtrl'
   })
-  .state("admin", {
+  .state('admin', {
     abtract: true,
-    url:"/admin",
-    templateUrl:"/templates/admin.html",
+    url: '/admin',
+    templateUrl: '/templates/admin.html',
     controller: 'AdminCtrl',
     resolve: {
       admin: function(grant) {
@@ -58,25 +61,35 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state("admin.resources", {
-    url: "/resources",
-    templateUrl: "/templates/resourcesAdmin.html",
+  .state('admin.resources', {
+    url: '/resources',
+    templateUrl: '/templates/resourcesAdmin.html',
     controller: 'ResourceCtrl'
   })
-  .state("admin.permissions", {
-    url: "/permissions",
-    templateUrl: "/templates/permissionAdmin.html",
+  .state('admin.permissions', {
+    url: '/permissions',
+    templateUrl: '/templates/permissionAdmin.html',
     controller: 'PermisionCtrl'
   })
-  .state("admin.roles", {
-    url: "/roles",
-    templateUrl: "/templates/rolesAdmin.html",
+  .state('admin.roles', {
+    url: '/roles',
+    templateUrl: '/templates/rolesAdmin.html',
     controller: 'RoleCtrl'
   })
-  .state("admin.users", {
-    url: "/users",
-    templateUrl: "/templates/userAdmin.html",
+  .state('admin.users', {
+    url: '/users',
+    templateUrl: '/templates/userAdmin.html',
     controller: 'UserCtrl'
+  })
+  .state('admin.problems', {
+    url: '/problems',
+    templateUrl: '/templates/problemsAdmin.html',
+    controller: 'ProblemCtrl'
+  })
+  .state('admin.tempdata', {
+    url: '/tempdata',
+    templateUrl: '/templates/tempdataAdmin.html',
+    controller: 'TempDataCtrl'
   })
   .state('faq', {
     url: '/faq/:faqAlias',
@@ -93,24 +106,14 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state('editFaq', {
-    url: '/editFaq/:alias',
-    templateUrl: '/templates/editFaq.html',
-    controller: 'EditFaqCtrl',
-    resolve: {
-      admin: function(grant) {
-        return grant.only({test: 'admin', state: 'error403'});
-      }
-    }
-  })
-  .state('addProblem', {
-    url: '/addProblem',
+  .state('editProblem', {
+    url: '/editProblem/:id',
     views:{
-      "sidebar":{
-        "templateUrl":"/templates/addProblem.html",
-        "controller":"AddProblemCtrl"
+      'sidebar': {
+        'templateUrl': '/templates/editProblem.html',
+        'controller': 'EditProblemCtrl'
       },
-      "":{
+      '': {
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
@@ -121,18 +124,55 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       }
     }
   })
-  .state("detailedProblem",{
-    url:"/detailedProblem/:id",
+  .state('editFaq', {
+    url: '/editFaq/:alias',
+    templateUrl: '/templates/editFaq.html',
+    controller: 'EditFaqCtrl',
+    resolve: {
+      admin: function(grant) {
+        return grant.only({test: 'admin', state: 'error403'});
+      }
+    }
+  })
+  .state('statistic', {
+    url: '/statistic',
+    templateUrl: '/templates/statistic.html'
+  })
+  .state('addProblem', {
+    url: '/addProblem',
     views:{
-      "sidebar":{
-        "templateUrl":"/templates/detailedProblem.html",
-        "controller":"DetailedProblemCtrl"
+      'sidebar': {
+        'templateUrl': '/templates/addProblem.html',
+        'controller': 'AddProblemCtrl'
       },
-      "":{
+      '': {
         'templateUrl': '/templates/map.html',
         'controller': 'MapCtrl'
       }
-    }  
+    },
+    resolve: {
+      admin: function(grant) {
+        return grant.only({test: 'authenticated', state: 'error403'});
+      }
+    }
+  })
+  .state('detailedProblem', {
+    url: '/detailedProblem/:id',
+    views: {
+      'sidebar': {
+        'templateUrl': '/templates/detailedProblem.html',
+        'controller': 'DetailedProblemCtrl'
+      },
+      '': {
+        'templateUrl': '/templates/map.html',
+        'controller': 'MapCtrl'
+      }, 
+    resolve: {
+      admin: function(grant) {
+        return grant.only({test: 'authenticated', state: 'error403'});
+      }
+    }
+    }
     })
     .state('login', {
       url: '/login',
@@ -153,24 +193,22 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       url: '/addUserByAdmin',
       templateUrl: '/templates/RegisterUserByAdmin.html',
       controller: 'AddUserByAdmin'
-    }) 
+    })
     .state('userDeleteConfirmation', {
       url: '/userConfirm?hash_sum',
       controller: 'userDeleteConfirmation'
-    })     
-
+    })
     .state('register', {
       url: '/register',
       templateUrl: '/templates/register.html',
       controller: 'RegisterCtrl'
-    });    
+    });
+
     $urlRouterProvider.otherwise('map');
-
-
     $authProvider.loginUrl = '/api/login';
     $authProvider.signupUrl = '/api/register';
     $authProvider.facebook({
-      clientId: '1525737571082521',
+      clientId: '1000437473361749',
       url: '/api/authorize/facebook',
       name: 'facebook',
       authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
@@ -181,6 +219,5 @@ app.config(['$stateProvider', '$urlRouterProvider', '$authProvider',
       display: 'popup',
       type: '2.0',
       popupOptions: { width: 580, height: 400 }
-    }); 
-
+    });
 }]);

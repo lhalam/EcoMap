@@ -8,9 +8,17 @@ app.run(['grant', '$auth', '$cookies', '$log',
       return result;
     });
 
-    grant.addTest('authenticated', function(){
+    grant.addTest('moderator', function() {
       var result = null;
-      if($auth.isAuthenticated()){
+      if ($auth.isAuthenticated() && $cookies.get('role') == 'moderator') {
+        result = true;
+      }
+      return result;
+    });
+
+    grant.addTest('authenticated', function() {
+      var result = null;
+      if ($auth.isAuthenticated()) {
         result = true;
       }
       return result;

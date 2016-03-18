@@ -40,7 +40,7 @@ img-crop canvas {
 
 
 .profile {
-    margin: 0;
+    margin: 0px 30px 0px 0px;
     padding: 0;
     text-align: center;
     position: relative;
@@ -59,7 +59,7 @@ img-crop canvas {
 }
 
 .profile span.text-content {
-    margin: auto;
+  margin: auto;
   background: rgba(0,0,0,0.5);
   color: white;
   cursor: pointer;
@@ -83,7 +83,8 @@ img-crop canvas {
 }
 
 .photo-btn{
-    margin: 10px 0;
+    margin-bottom: 10px;
+    margin-top: 10px;
     width: 49.5%;
 }
 
@@ -143,7 +144,7 @@ span.image-err{
     line-height: 1.3em;
 }
 
-.thumb {
+.thumb, .thumbPhoto {
     overflow: hidden;
     z-index: 2;
     width: 150px;
@@ -159,6 +160,24 @@ span.image-err{
     -webkit-transition: all .2s ease-in-out;
     -o-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
+}
+.thumb.edit_thumbs{
+  width:100px;
+  height: 100px;
+}
+.thumbPhoto{
+  overflow: hidden;
+    z-index: 2;
+    width: 70px;
+    height: 70px;
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
 .thumb-descr {
@@ -179,6 +198,10 @@ span.image-err{
     -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
     -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
     transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.thumb-descr.edit_thumbs{
+  width:150px;
+  height: 100px;
 }
 
 

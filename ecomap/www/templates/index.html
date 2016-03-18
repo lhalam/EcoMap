@@ -17,14 +17,16 @@
   <link rel="stylesheet" href="/css/ng-img-crop.css">
   <link rel="stylesheet" type="text/css" href="/css/image_crop.css">
   <link rel="stylesheet" href="/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/vis.min.css">
 
   <!-- Non-angularJS scripts -->
   <script src="/js/libs/jquery.min.js"></script>
   <script src="/js/libs/bootstrap.min.js"></script>
-  <script async defer
+  <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9-Wwj3Nk7crgNakQ424rCJCykh0YZYfs&libraries=geometry">
   </script>
   <script src="/js/libs/markerclusterer_compiled.js"></script>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
   <!-- AngularJS modules -->
   <script src="/js/libs/angular.min.js"></script>
@@ -46,6 +48,8 @@
   <script src="/js/libs/ng-img-crop.js"></script>
   <script src="/js/libs/ng-file-upload.min.js"></script>
   <script src="/js/libs/ng-file-upload-shim.min.js"></script>
+  <script src="/js/libs/ng-google-chart.js"></script>
+  <script src="/js/libs/vis.js"></script>
 
   <!-- AngularJS app -->
   <script src="/js/App.js"></script>
@@ -55,6 +59,8 @@
   <!-- AngularJS directives -->
   <script src="/js/directives/ModalWindow.js"></script>
   <script src="/js/directives/ValidatorsDirective.js"></script>
+  <script src="/js/directives/ngEnter.js"></script>
+  <script src="/js/directives/tooltip.js"></script>
 
   <!-- AngularJS factories -->
   <script src="/js/factories/msg.js"></script>
@@ -79,23 +85,31 @@
     <script src='/js/controllers/ChangePhotoCtrl.js'></script>
     <script src='/js/controllers/AddProblemCtrl.js'></script>
     <script src='/js/controllers/UserProblemTableCtrl.js'></script>
+    <script src='/js/controllers/UserSubscriptionsTableCtrl.js'></script>
+    <script src='/js/controllers/AdminTempDataCtrl.js'></script>
     <script src='/js/controllers/AdminResourceCtrl.js'></script>
     <script src='/js/controllers/AdminPermissionCtrl.js'></script>
     <script src='/js/controllers/AdminRoleCtrl.js'></script>
-    <script src='/js/controllers/AdminUserCtrl.js'></script> 
+    <script src='/js/controllers/AdminUserCtrl.js'></script>
+    <script src='/js/controllers/AdminProblemCtrl.js'></script>
+    <script src='/js/controllers/AdminUserCtrl.js'></script>
     <script src='/js/controllers/DetailedProblemCtrl.js'></script>
     <script src='/js/controllers/RestorePasswordCtrl.js'></script>
     <script src='/js/controllers/userDeleteConfirmation.js'></script>
-
+    <script src='/js/controllers/UserCommentsTableCtrl.js'></script>
+    <script src='/js/controllers/StatisticCtrl.js'></script>
+    <script src='/js/controllers/EditProblemCtrl.js'></script>
 
 </head>
 <body ng-controller="MainCtrl">
   <div class="wrapper flex-container flex-column">
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default navbar-static-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type = "button" class = "navbar-toggle"
-          data-toggle = "collapse" data-target = "#navMenu" aria-expanded="true">
+          data-toggle = "collapse" data-target = "#navMenu" aria-expanded="true"
+          ng-init="navCollapsed = true"
+                    ng-click="navCollapsed = !navCollapsed">
           <span class = "sr-only">Toggle navigation</span>
           <span class = "icon-bar"></span>
           <span class = "icon-bar"></span>
@@ -103,9 +117,9 @@
         </button>
         <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
       </div>
-      <div class="navbar-collapse collapse" id="navMenu">
+      <div class="navbar-collapse collapse" id="navMenu" ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true">
         <ul class="nav navbar-nav">
-          <li id="inform_probl_btn" ng-if="isAuthenticated()"><a href="/#/addProblem">повідомити про проблему</a></li>
+          <li ng-if="isAuthenticated()"><a href="/#/addProblem">повідомити про проблему</a></li>
           <li class="dropdown" >
             <a class="dropdown-toggle"  data-toggle="dropdown" ng-show="faqTitles">ресурси <span class="caret"></span></a>
             <ul class="dropdown-menu" >
@@ -114,14 +128,14 @@
               </li>
             </ul>
           </li>
-          <li><a href="/#/map">статистика</a></li>
+          <li><a href="/#/statistic">статистика</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li id="loginField" ng-if="!isAuthenticated()">
             <a href="/#/login">Увійти</a>
           </li>
           <li ng-if="isAuthenticated()">
-            <a href="/#/user_profile/info" ng-bind="getUsername()" ></a>
+            <a href="/#/user_profile/info" ng-bind="UserCredentials"></a>
           </li>
           <li ng-if="isAuthenticated()" ng-controller="LogoutCtrl">
             <a href="" ng-click="Logout()">Вихід</a>
@@ -133,10 +147,14 @@
       </div>
     </div>
   </nav>
+  <div id="fetching" ng-show="isFetching==true">
+    <img src="/image/swipebox/712.gif">
+  </div>
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
-  <div class="flex-container flex-row flex-item-1">
+  <div class="flex-container flex-row flex-item-1 main-flex">
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
-    <div ui-view="sidebar" class="flex-item-1 flex-container flex-column" ng-show="checkState('detailedProblem') || checkState('addProblem')"></div>
+    <div ui-view="sidebar"  class="sidebar flex-item-1 flex-item-5 flex-container flex-column" ng-class="{flex6: showSidebarProblem, sidebar: !showSidebarProblem}"
+     ng-show="checkState('detailedProblem') || checkState('addProblem') || checkState('editProblem')"></div>
   </div>
 </div>
 </body>

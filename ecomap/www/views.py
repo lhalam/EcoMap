@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 This module holds all views controls for
 ecomap project.
@@ -6,7 +6,7 @@ ecomap project.
 from flask import abort, render_template, session, url_for, request, Response, g
 from flask_login import current_user
 
-from ecomap.app import app, logger, auto
+from ecomap.app import app, logger, auto, _CONFIG
 from authorize_views import *
 from admin_views import *
 from user_views import *
@@ -14,6 +14,7 @@ from problem_views import *
 from ecomap.db import util as db
 from ecomap.permission import permission_control, check_permissions
 from ecomap.utils import parse_url
+
 
 
 @app.before_request
@@ -27,7 +28,19 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is (%s), role(%s)' % (g.user, g.user.role))
+    logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
+
+
+@app.after_request
+def clear_cookie(responce):
+    """Function-decorator deletes cookie if user id from
+       cookie doesn`t exist in database.
+       Launches after each requests
+    """
+    if not db.get_user_by_id(current_user.get_id()):
+        for i in ['id', 'role', 'remember_token']:
+            responce.delete_cookie(i)
+    return responce
 
 
 @app.before_request
@@ -60,6 +73,7 @@ def check_access():
 
 @app.route('/', methods=['GET'])
 @auto.doc()
+@app.cache.cached(timeout=_CONFIG['ecomap.static_cache_timeout'])
 def index():
     """Controller starts main application page.
     Shows initial data of application, renders template with built-in Angular
@@ -68,6 +82,7 @@ def index():
     :return: renders html template with angular app.
     """
     return render_template('index.html')
+
 
 
 @app.route('/api/getTitles', methods=['GET'])

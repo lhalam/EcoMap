@@ -1,4 +1,4 @@
-app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
+app.controller('ResourceCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError',
   function($scope, $http, toaster, msg, msgError) {
     $scope.loadPagination = function() {
       $scope.msg = msg
@@ -8,8 +8,8 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
       $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
         var stepCount = $scope.selectCount['selected']
         $http({
-          method: "GET",
-          url: "/api/resources",
+          method: 'GET',
+          url: '/api/resources',
           params: {
             per_page: $scope.selectCount['selected'],
             offset: $scope.selectCount['selected'] * newValue - stepCount,
@@ -49,11 +49,11 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
         return;
       }
       $http({
-        method: "PUT",
-        url: "/api/resources",
+        method: 'PUT',
+        url: '/api/resources',
         data: {
-          "resource_name": editResObj['name'],
-          "resource_id": editResObj['id']
+          'resource_name': editResObj['name'],
+          'resource_id': editResObj['id']
         }
       }).then(function successCallback(data) {
         $scope.loadPagination()
@@ -65,13 +65,13 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
     };
     $scope.deleteResource = function(id) {
       $http({
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json;charset=utf-8"
+          'Content-Type': 'application/json;charset=utf-8'
         },
-        url: "/api/resources",
+        url: '/api/resources',
         data: {
-          "resource_id": id
+          'resource_id': id
         }
       }).then(function successCallback(data) {
         $scope.loadPagination();
@@ -86,8 +86,8 @@ app.controller("ResourceCtrl", ['$scope', '$http', 'toaster', 'msg', 'msgError',
         return;
       }
       $http({
-        method: "POST",
-        url: "/api/resources",
+        method: 'POST',
+        url: '/api/resources',
         data: {
           'resource_name': $scope.newResource.name
         }

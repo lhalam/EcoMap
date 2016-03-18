@@ -1,18 +1,36 @@
-app.controller('MainCtrl', ['$scope', '$http', '$auth', '$cookies', '$state',
-  function($scope, $http, $auth, $cookies, $state) {
+app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
+    $rootScope.isFetching=false;
+
+
     $scope.isAuthenticated = function() {
-      return $auth.isAuthenticated();
+      var authenticated;
+      if (!$cookies.get('id')) {
+        authenticated =  false;
+      }
+      else {
+        authenticated = $auth.isAuthenticated();
+      }
+      return authenticated;
     };
-    $scope.getUsername = function() {
-      if ($cookies.get('name') && $cookies.get('surname')) {
-        return $cookies.get('name') + " " + $cookies.get('surname');
+
+    $scope.redirectUserAfterDelete = function() {
+      if(!$scope.isAuthenticated()) {
+        $state.go('map');
+      }
+    }
+    
+    $scope.isAdmin = function() {
+      var role = $cookies.get('role');
+      if (role == 'admin') {
+        return true;
       } else {
-        return null;
+        return false;
       }
     };
-    $scope.isAdmin = function() {
-      var role = $cookies.get("role");
-      if (role == 'admin') {
+    
+    $scope.isModer = function() {
+      var role = $cookies.get('role');
+      if (role == 'moderator') {
         return true;
       } else {
         return false;
@@ -26,7 +44,16 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$cookies', '$state',
       url: '/api/getTitles'
     }).success(function(resp) {
       $scope.faqTitles = resp;
-      
     });
+    
+    if ($cookies.get("id")) {
+      $http({
+        method: 'GET',
+        url: '/api/user_detailed_info/' + $cookies.get("id")
+      }).success(function(responce) {
+        $rootScope.Useravatar = responce.avatar;
+        $rootScope.UserCredentials = responce.name + ' ' + responce.surname;
+      });
+    }  
   }
 ]);

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Module contains routes for user authorization,
    registering and logout.
 """
@@ -19,13 +20,13 @@ from ecomap.config import Config
 
 _CONFIG = Config().get_config()
 
+COOKIE_MAX_AGE = app.config['REMEMBER_COOKIE_DURATION']
 
 @app.route('/api/logout', methods=['POST', 'GET'])
 @auto.doc()
 @login_required
 def logout():
     """Method for user's log out.
-
     :rtype: JSON
     :return:
         - if logging out was successful:
@@ -36,17 +37,17 @@ def logout():
     """
     return jsonify(result=logout_user())
 
- 
+
 @app.route('/api/register', methods=['POST'])
 @auto.doc()
 def register():
     """Method for registration new user in db.
     Method checks if user is not exists and handle
     registration processes.
-
     :rtype: JSON
     :request args: `{'first_name': 'Ivan',
                      'last_name': 'Sirko',
+                     'nickname': 'Bulka',
                      'email': 'email@test.com',
                      'password': 'passw'}`
     :return:
@@ -70,6 +71,7 @@ def register():
         if valid['status']:
             ecomap_user.register(data['first_name'],
                                  data['last_name'],
+                                 data['nickname'],
                                  data['email'],
                                  data['password'])
             msg = 'added %s %s' % (data['first_name'],
@@ -87,11 +89,23 @@ def email_exist():
     """Function for AJAX call from frontend.
     Validates unique email identifier before registering a new user
     :return: json with status 200 or 400
-
     """
     if request.method == 'POST' and request.get_json():
         data = request.get_json()
         user = ecomap_user.get_user_by_email(data['email'])
+        return jsonify(isValid=bool(user))
+
+
+@app.route('/api/nickname_exist', methods=['POST'])
+@auto.doc()
+def nickname_exist():
+    """Function for AJAX call from frontend.
+    Validates unique nickname identifier before registering a new user
+    :return: json with status 200 or 400
+    """
+    if request.method == 'POST' and request.get_json():
+        data = request.get_json()
+        user = db.get_user_by_nick_name(data['nickname'])
         return jsonify(isValid=bool(user))
 
 
@@ -136,6 +150,13 @@ def login():
                                    role=user.role, iat="???",
                                    token=user.get_auth_token(),
                                    email=user.email)
+                
+                response.set_cookie('id',
+                                    bytes(user.uid),
+                                    max_age=COOKIE_MAX_AGE)
+                response.set_cookie('role',
+                                    bytes(user.role),
+                                    max_age=COOKIE_MAX_AGE)
             if not user:
                 logger.warning('if not user')
                 response = jsonify(error='There is no user with given email.',
@@ -185,24 +206,32 @@ def oauth_login(provider):
     access_token = dict(parse_qsl(resource.text))
     resource = requests.get(graph_api_url, params=access_token)
     profile = json.loads(resource.text)
+    nickname = '{}{}'.format(profile['last_name'], int(time.time()))
     logger.info(profile['picture']['data']['url'])
-
     user = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
+                                         nickname,
                                          profile['email'],
                                          provider,
                                          profile['id'])
 
-    db.insert_user_avatar(user.uid, profile['picture']['data']['url'])
+    if not db.get_user_avatar(user.uid)[0]:
+        db.insert_user_avatar(user.uid, profile['picture']['data']['url'])
 
     login_user(user, remember=True)
 
-    response = jsonify(id=user.uid,
-                       name=user.first_name,
-                       surname=user.last_name,
-                       role=user.role, iat="???",
+    response = jsonify(iat="???",
                        token=user.get_auth_token(),
-                       email=user.email)
+                       email=user.email,
+                       name=user.first_name,
+                       surname=user.last_name)
+
+    response.set_cookie('id',
+                        bytes(user.uid),
+                        max_age=COOKIE_MAX_AGE)
+    response.set_cookie('role',
+                        bytes(user.role),
+                        max_age=COOKIE_MAX_AGE)
 
     return response
 
@@ -262,7 +291,6 @@ def restore_password_page(hashed):
 def restore_password():
     """Updates user password.
 
-
     """
     data = request.get_json()
     valid = validator.change_password(data)
@@ -308,7 +336,6 @@ def delete_user_page(hashed):
         if creation_time:
             elapsed = time.time() - creation_time[0]
             if elapsed <= _CONFIG['hash_options.lifetime']:
-                
                 page = render_template('index.html')
     return page
 
@@ -324,10 +351,12 @@ def delete_user():
     if valid['status']:
         user_id = db.get_user_id_by_hash(data['hash_sum'])
         logger.warning(user_id)
-        tuple_of_problems = db.get_problem_id_for_del(user_id[0])
+        tuple_of_problems = db.get_problem_id_for_del(user_id)
         problem_list = []
         for tuple_with_problem_id in tuple_of_problems:
             problem_list.append(tuple_with_problem_id[0])
+        if db.get_user_comments_count(user_id)[0]:
+            db.change_comments_to_anon(user_id)
         if problem_list:
             for problem_id in problem_list:
                 db.change_problem_to_anon(problem_id)

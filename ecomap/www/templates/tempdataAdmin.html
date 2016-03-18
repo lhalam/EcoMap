@@ -1,0 +1,41 @@
+<div class="row" ng-controller="TempDataCtrl">
+  <div class="col-md-12">
+    <table class="table table-stripped">
+      <thead>
+        <tr>
+          <td>Ім'я</td>
+          <td>Призвіще</td>
+          <td>Нікнейм</td>
+          <td>Дата створення</td>
+          <td>Дія над даними</td>
+          <td> 
+          <button ng-hide="Tempdata.length == 0" class="btn btn-danger edit_btn btn-border" ng-click="deleteAllTempData()"> <i class="fa">видалити всі</i></button>
+          <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
+          </select>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="temp in Tempdata">
+          <td>{{temp.first_name}}</td>
+          <td>{{temp.last_name}}</td>
+          <td>{{temp.nickname}}</td>
+          <td>{{temp.creation_date}}</td>
+          <td>{{temp.type}}</td>
+          <td> 
+            <button class="btn btn-danger edit_btn btn-border"
+                    ng-click="deleteTempData(temp.id)">видалити</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 class="text-center" ng-show="Tempdata.length == 0">Тимчасові дані відсутні.</h3>
+    <div class="row" ng-hide="Tempdata.length == 0">
+      <div class="col-md-8 col-md-offset-4">
+        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+      </div>
+    </div>   
+  </div>
+</div>
+
+

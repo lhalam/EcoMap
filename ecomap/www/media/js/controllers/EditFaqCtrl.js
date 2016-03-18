@@ -1,5 +1,6 @@
 app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$state',
   function($scope, $stateParams, $http, toaster, $state) {
+    $scope.redirectUserAfterDelete();
     $scope.page = {};
     $scope.editPage = function(page) {
       $http({

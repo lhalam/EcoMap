@@ -1,70 +1,200 @@
 <script src="/js/libs/jquery.swipebox.min.js"></script>
 <link rel="stylesheet" href="/css/swipebox.min.css">
 
-<div class="flex-item-1 flex-container flex-column problemBlock">
+<div class="flex-item-5 flex-container flex-column problemBlock">
   <i class="fa fa-times fa-2x close" ng-click="close()"></i>
-  <h3 class="detailedTitle">{{selectProblem.title}}</h3>
+  <h3 class="detailedTitle show_problem" >{{selectProblem.title}}</h3>
   <div class="general">
     <div class="row">
-    <div class="col-md-5 ">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
         <div class="rate">
-          <uib-rating max="5" ng-model="selectProblem.severity" readonly="true" state-on="'fa fa-star'" state-off="'fa fa-star-o'"></uib-rating>
+           <div ng-model="selectProblem.severity" data-toggle="tooltip" data-placement="top" title="Важливість" tooltip class="severityLevel">{{selectProblem.severity}} із 10
+           </div>
         </div>
       </div>
-      <div class="col-md-5 col-md-offset-2">
+      <div class="col-lg-4 col-md-4 col-sm-4 col-md-4 col-xs-4 clearfix">
         <div class="solution unsolved" >
-          <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved' }"></span></strong>
+            <strong><span ng-bind="getStatus(selectProblem.status)" ng-class="{ 'solved': 'selectProblem.status' == 'solved'}"></span></strong>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" ng-hide='hideIconSubsc'>
+        <div class='eye_subscription'>
+            <span ng-class="cls_eye_subs" ng-click="chgEyeSubsc()"></span>
         </div>
       </div>
     </div>
-
-
-    <div class="clear"></div>
-
-  </div>
-  <uib-tabset justified="true" class="tabs">
-  <uib-tab heading="Детально">
-  <div class="row problem-type">
-    <div class="col-md-12"><strong>Тип проблеми:</strong></div>
-    <div class="col-md-12 ">{{getProblemType(selectProblem.problem_type_id)}}
+    <div ng-show='hideSeverityForUser==true'>              
+      <form class='moderEditOption' ng-submit="changeStatus(moder)">
+        <div class="form-inline">
+        <label class='statusSelect'>Важливість</label>                 
+        <select required ng-model="moder.severity"
+                class="form-control input-sm statusSel"
+                ng-options='severity for severity in severities'
+                >
+        </select>    
+        </div>
+        <div class="form-inline">
+          <label class='statusSelect'>Статус</label>         
+          <select required ng-model="moder.status"
+                  class="form-control input-sm statusSel"
+                  ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
+          </select>  
+         <button type="submit" value="Змінити" 
+         class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled">
+         <span ng-if="!waiting">Змінити</span>
+        <span ng-if="waiting" class="text-center"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
+        </button>
+        </div>
+        <div class="form-inline" ng-show="!selectProblem.is_enabled">
+          <label class='statusSelect'>Підтвердження</label>         
+          <select required ng-model="moder.enabled"
+                  class="form-control input-sm statusSel"
+                  ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
+          </select> 
+        </div>
+        <div class="form-inline" ng-if="!selectProblem.is_enabled">
+          <label class='statusSelect'>Комментар</label>         
+          <textarea ng-model="moder.comment"
+                    class="form-control input-sm statusSel"></textarea>
+        </div>
+        <div>
+        <button type="submit" value="Змінити" 
+               class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled">
+            <span ng-if="!waiting">Змінити</span>
+            <span ng-if="waiting"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
+        </button>  
+        </div>   
+      </form>
     </div>
   </div>
-  <div class="row description">
-    <div class="col-md-12"><strong>Опис проблеми:</strong></div>
-    <div class="col-md-12 ">{{selectProblem.content}}
-    </div>
-  </div>
-  <div class="row proposal">
-    <div class="col-md-12"><strong>Пропозиція шодо вирішення:</strong></div>
-    <div class="col-md-12 ">{{selectProblem.proposal}}
-    </div>
-  </div>
-  <div class="row photos">
-    <div class="col-md-12"><strong>Фото:</strong></div>     
-    <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}" ng-repeat="photo in photos">
-      <img src="{{getMinPhoto(photo.url)}}" alt="{{photo.description}}" height="100" width="100">
-    </a>
-  </div>
-</uib-tab>
-<uib-tab heading="Коментарі">
-<form>
-  <textarea ng-model="comment.text" class="comment-input" name='comment' placeholder='Ваш коментар' rows='4' cols='80'></textarea>
-  <input class='btn btn-success' type='button' value='Додати коментар' ng-click="post_comment(comment)">
-</form>
-<div ng-repeat='comment in comments'>
-  <div class="col-sm-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <strong>{{comment.name}}</strong> <span class="text-muted">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+  <uib-tabset justified="true" class="col-xs-12 col-sm-12 tabs">
+    <uib-tab heading="Детально">
+      <div class="row problem-type">
+        <div class="col-md-12"><strong>Тип проблеми:</strong></div>
+        <div class="col-md-12 ">{{selectProblem.name}}</div>
       </div>
-      <div class="panel-body comment-block">
-        {{comment.content}}
+      <div class="row description">
+        <div class="col-md-12"><strong>Опис проблеми:</strong></div>
+        <div class="col-md-12 ">{{selectProblem.content}}</div>
       </div>
-    </div>
-  </div>
-</div>
-</uib-tab>
-</uib-tabset>
+      <div class="row proposal">
+        <div class="col-md-12"><strong>Пропозиція шодо вирішення:</strong></div>
+        <div class="col-md-12 ">{{selectProblem.proposal}}</div>
+      </div>
+      <div class="row photos">
+        <div class="col-md-12"><strong>Фото:</strong></div>     
+        <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"
+           ng-repeat="photo in photos">
+          <img ng-src="{{getMinPhoto(photo.url)}}" 
+               alt="{{photo.description}}" 
+               height="100" width="100"
+               class="img-responsive"/>
+        </a>
+      </div>
+    </uib-tab>
+    <uib-tab heading="Коментарі">
+      <div class="row" ng-class="styleInput">
+        <form name="newComment" ng-submit="post_comment(comment)"
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12" ng-show="showInputForm" ng-class="{ 'has-error': newComment.comment.$invalid}">
+          <textarea ng-model="comment.text" class="comment-input" ng-class="{'form-control': focused}" name='comment' placeholder='Ваш коментар' rows='4' cols='80' type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" ng-disabled="editMode" required></textarea>
+          <div class="checkbox pull-right">
+            <label class="changeUser" ng-show="!editMode">
+              <input type="checkbox" 
+                     ng-model="comment.changeUser" 
+                     ng-true-value="true" 
+                     ng-false-value="false"/>Анонімно
+            </label>
+          </div>
+          <input class='btn btn-success' type='submit' value='Додати коментар'/>
+        </form>
+      </div>
+      <div ng-repeat='comment in comments'>
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading clearfix comment-header">
+                <img ng-if="comment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ comment.avatar }}">
+                <img ng-if="!comment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                <strong class="pull-left comment-nickname">{{comment.nickname}}</strong>
+                <span class="text-muted pull-right comment-date" ng-hide="comment.updated_date">{{comment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                <span class="text-muted pull-right comment-date"ng-show="comment.updated_date">Редаговано · {{comment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
+              </div>
+              <div class="panel-body comment-block" ng-show="!editMode || editCommentid != comment.id" ng-bind="comment.content">{{comment.content}}</div>
+              <div class="clearfix comment-reply" ng-show="!editMode || editCommentid != comment.id">
+                <div class="pull-left">
+                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="showInputForm">відповісти</a>
+                  <span role="button" ng-show="comment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(comment)" tooltip></span>
+                </div>
+                <div class="pull-right">
+                  <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
+                </div> 
+              </div>
+
+              <div ng-form name="editComment" ng-show="editMode && editCommentid == comment.id" ng-class="{ 'has-error': editComment.newcomment.$invalid}">
+                <textarea name="newcomment" ng-class="{'form-control': editMode}" type="text" ng-model="comment.content" ng-maxlength="255" value="{{comment.content}}" ng-enter="changeComment(comment)" class="comment-input" ng-esc="cancelComment(comment)" required></textarea>
+              </div>
+              <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == comment.id">
+                <span>Натисніть ESC, щоб </span>
+                <a role="button" class="editComment" ng-click="cancelComment(comment)">скасувати.</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
+          <div ng-repeat='subcomment in subcomments' class="row">
+              <div class="col-lg-offset-3 col-lg-9 col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9">
+                <div class="panel panel-default">
+                  <div class="panel-heading clearfix">
+                    <img ng-if="subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left"  ng-src="{{ subcomment.avatar }}">
+                    <img ng-if="!subcomment.avatar" class="img-responsive img-rounded small-avatar pull-left" src="/image/defaultAvatar.jpg">
+                    <strong class="pull-left comment-nickname">{{subcomment.nickname}}</strong>
+                  </div>
+                   <div class="clearfix comment-reply subcomment-reply" ng-show="!editMode || editCommentid != subcomment.id">
+                    <div class="pull-left">
+                      <span role="button" ng-show="subcomment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="left" title="Редагувати" ng-click="showCommentInput(subcomment)" tooltip></span>
+                    </div>
+                  </div>
+                  <div class="panel-body comment-block" ng-show="!editMode || editCommentid != subcomment.id" ng-bind="subcomment.content">
+                    {{subcomment.content}}
+                  </div>
+                  <div ng-hide="editMode && editCommentid == subcomment.id">
+                    <div class="clearfix comment-reply cancel-comment" ng-show="subcomment.updated_date">
+                      <span>Редаговано · {{subcomment.updated_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                    </div>
+                    <div class="clearfix comment-reply cancel-comment" ng-show="!subcomment.updated_date">
+                      <span>{{subcomment.created_date | date : "dd/MM/yyyy HH:mm "}}</span>
+                    </div>
+                  </div>
+
+                  <div ng-form name="changeSubcomment" ng-show="editMode && editCommentid == subcomment.id" ng-class="{ 'has-error': changeSubcomment.newsubcomment.$invalid}">
+                    <textarea name="newsubcomment" ng-class="{'form-control': editMode}" type="text" ng-model="subcomment.content" ng-maxlength="255" value="{{subcomment.content}}" ng-enter="changeComment(subcomment)" class="comment-input" ng-esc="cancelComment(subcomment)" style="margin:0px auto;" required></textarea>
+                  </div>
+                  <div class="clearfix comment-reply cancel-comment" ng-show="editMode && editCommentid == subcomment.id">
+                    <span>Натисніть ESC, щоб </span>
+                    <a role="button" class="editComment" ng-click="cancelComment(subcomment)">скасувати.</a>
+                  </div>
+                </div>
+              </div>  
+          </div>
+          <div class="row" ng-hide="editMode || 
+          !showInputForm">
+          <form name="addSubcomment" ng-class="{ 'has-error': addSubcomment.subcomment.$invalid || hasError }" class="col-lg-9 col-md-9 col-sm-9 col-xs-9 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
+            <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38' ng-class="{'form-control': focused}" ng-maxlength="255" type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" required></textarea>
+            <div class="subcomment checkbox">
+            <label class="changeUser">
+              <input type="checkbox" 
+                     ng-model="comment.changeUser" 
+                     ng-true-value="true" 
+                     ng-false-value="false">Анонімно
+            </label>
+            </div>
+            <input class='btn btn-success col-xs-9' type='submit' value='Додати відповідь'>
+          </form>
+          </div>
+        </div>
+      </div>
+    </uib-tab>
+  </uib-tabset>
 </div>
 
 <script type="text/javascript">

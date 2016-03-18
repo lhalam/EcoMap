@@ -1,6 +1,14 @@
-app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory',
-  function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory) {
-    $scope.pattern = {
+app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory', '$window',
+  function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory, $window) {
+    $rootScope.showSidebarProblem = false;
+    $rootScope.toogleMap = function(){
+      $rootScope.showSidebarProblem = !$rootScope.showSidebarProblem;
+      if ($rootScope.showSidebarProblem ) $scope.changeToogleMap = 'проблема';
+      else $scope.changeToogleMap = 'карта';
+      MapFactory.turnResizeOn();
+      MapFactory.mapInstance.setZoom(7);
+    }
+     $scope.pattern = {
       'coords': /^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$/
     };
     MapFactory.getInst().addListener('click', function(event) {
@@ -17,37 +25,35 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.$apply();
       })
     $scope.newProblem = {
-      "title": "",
-      "type": "",
-      "latitude": "",
-      "longitude": "",
-      "content": "",
-      "proposal": ""
+      'title': '',
+      'type': '',
+      'latitude': '',
+      'longitude': '',
+      'content': '',
+      'proposal': ''
     };
+      $scope.loadProblemType = function() {
+      $scope.problemTypes = [];
+      $http({
+        method: 'GET',
+        url: '/api/problem_type',
+      }).then(function successCallback(data) {
+         for (var i = 0; i < data.data.length; i++){
+          $scope.problemTypes.push(data.data[i]);
+          $scope.problemTypes[i]['picture'] = '/image/markers/' + $scope.problemTypes[i]['picture'];
+          $scope.problemTypes[i]['selected'] = false;
+        }
+         $scope.chosen = $scope.problemTypes[0];
+         $scope.newProblem.type = $scope.chosen['id'];
+         $('.selected-item-box').click(function(){
+         $('.select-wrapper .list').slideToggle();
+         });
+      }, function errorCallback(response) {})
+    };
+
+    $scope.loadProblemType();
     $scope.validationStatus = 0;
     $scope.createdProblemId = 0;
-    $scope.problemTypes = [{
-      name: 'Проблеми лісів',
-      id: 1
-    }, {
-      name: 'Сміттєзвалища',
-      id: 2
-    }, {
-      name: 'Незаконна забудова',
-      id: 3
-    }, {
-      name: 'Проблеми водойм',
-      id: 4
-    }, {
-      name: 'Загрози біорізноманіттю',
-      id: 5
-    }, {
-      name: 'Браконьєрство',
-      id: 6
-    }, {
-      name: 'Інші проблеми',
-      id: 7
-    }];
     $scope.createMarker = function(position) {
       $scope.options = {
         scrollwheel: true
@@ -64,12 +70,12 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         options: {
           draggable: true,
           labelContent: 'ваше місцезнаходження',
-          labelAnchor: "65 0",
-          labelClass: "marker-labels",
+          labelAnchor: '65 0',
+          labelClass: 'marker-labels',
           icon: 'http://www.sccmod.org/wp-content/uploads/2014/11/mod-map-marker1.png'
         },
       })
-      $scope.marker.addListener("drag", function(event) {
+      $scope.marker.addListener('drag', function(event) {
           $scope.newProblem.latitude = this.getPosition().lat();
           $scope.newProblem.longitude = this.getPosition().lng();
           $scope.$apply();
@@ -107,7 +113,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
         $scope.newProblem.longitude = position.coords.longitude;
         var mapCenter = new google.maps.LatLng($scope.newProblem.latitude, $scope.newProblem.longitude);
         if (width < 1000) {
-          MapFactory.setCenter(mapCenter, 10);          
+          MapFactory.setCenter(mapCenter, 10);
         } else {
           MapFactory.setCenter(mapCenter, 14);
         }
@@ -121,6 +127,48 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     };
     /*End of map & markers section*/
     /*Problem posting section*/
+    $scope.calcDistance  = function (fromLat, fromLng, toLat, toLng) {
+      return google.maps.geometry.spherical.computeDistanceBetween(
+        new google.maps.LatLng(fromLat, fromLng), new google.maps.LatLng(toLat, toLng));
+   }
+    $scope.$watch('newProblem.type+newProblem.latitude+newProblem.longitude', function(newValue, oldValue){
+      if ($scope.newProblem['type']){
+      $scope.loadProblem($scope.newProblem['type']);}
+    });
+      $scope.loadProblem = function(id){
+        $scope.allProblems = [];
+        $http({
+          method: 'GET',
+          url: '/api/problems_radius/' + id,
+      }).then(function successCallback(response) {
+          for (var i = 0; i < response.data.length; i++){
+          $scope.allProblems.push(response.data[i]);
+        }
+        $scope.radiusFunc();
+      }, function errorCallback(response) {})
+    }
+$scope.problemsList =[]
+
+    $scope.radiusFunc = function(){
+      var problemsRefs = '';
+      var problemsList = [];
+      for (var i = 0; i<$scope.allProblems.length; i++){
+          if ($scope.calcDistance($scope.allProblems[i]['latitude'], $scope.allProblems[i]['longitude'], $scope.newProblem['latitude'],
+          $scope.newProblem['longitude']) < $scope.allProblems[i]['radius'] && $scope.allProblems[i]['is_enabled'] != 0){
+            var ref = '<li><a href="/#/detailedProblem/' + $scope.allProblems[i]['problem_id'] + '" target=_blank><strong>' + $scope.allProblems[i]['title']+ '</strong></a></li>';
+            problemsRefs = problemsRefs.concat(ref);
+            problemsList.splice(0, 2, $scope.allProblems[i]['name'], $scope.allProblems[i]['radius']);
+            }    
+      }
+      if(problemsRefs){
+         toaster.pop({type: 'info',
+              timeout: 10000,
+              title: 'Проблема даного типу вже існує!' , 
+              bodyOutputType: 'trustedHtml',
+              body: 'Проблеми типу '+ problemsList[0].toLowerCase()+' в радіусі '+problemsList[1] +' вже існує.</br> Переглянути проблеми:</br><ul>' + problemsRefs + '</ul>',
+              });
+      }
+    }
     $scope.addProblemTab = true;
     $scope.addPhotosTab = false;
     $scope.goToPhotos = function(form) {
@@ -141,14 +189,14 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       }
       Upload.upload({
         url: '/api/problem_post',
-        method: "POST",
+        method: 'POST',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'
         },
         data: newProblem
       }).then(function successCallback(response) {
-        toaster.pop('success', 'Додавання проблеми', 'Проблему було успішно додано!');
+        toaster.pop('info', 'Додавання проблеми', 'Проблема упішно додана та проходить модерацію. Очікуйте повідомлення.');
         $scope.createdProblemId = response.data.problem_id;
         $scope.arrayUpload(photos);
         $rootScope.mapParams = {
@@ -158,8 +206,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
           },
           zoom: 14
         };
-      }, function errorCallback() {
-        toaster.pop('error', 'Помилка при додаванні', 'При спробі' + ' додавання проблеми виникла помилка!');
+      }, function errorCallback(response) {
+        console.log(response);
+        toaster.pop('error', 'Помилка при додаванні', 'При спробі додавання проблеми виникла помилка!');
       })
     };
     /*End of problem posting section*/
@@ -190,7 +239,7 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
     $scope.uploadPic = function(file) {
       file.upload = Upload.upload({
         url: '/api/photo/' + $scope.createdProblemId,
-        method: "POST",
+        method: 'POST',
         cache: false,
         headers: {
           'Cache-Control': 'no-cache'
@@ -217,5 +266,24 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       var maps = instances[0].map;
       google.maps.event.trigger(maps, 'resize');
     });
+
+  $scope.getSelectedItemOnly = function(){
+
+   for(var i = 0 ; i < $scope.problemTypes.length;  i++){
+    if ($scope.problemTypes[i]['selected']==true)
+      $scope.chosen =  $scope.problemTypes[i];
+   }
+  };
+  $scope.select = function(id){
+     for(var i = 0 ; i < $scope.problemTypes.length;  i++){
+    if ($scope.problemTypes[i]['id']==id)
+      $scope.problemTypes[i]['selected']=true;
+    else{
+      $scope.problemTypes[i]['selected']=false;
+    }
+   }
+   $scope.getSelectedItemOnly();
+    $('.select-wrapper .list').slideUp();
   }
+}
 ]);

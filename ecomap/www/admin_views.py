@@ -1,13 +1,24 @@
+# -*- coding: utf-8 -*-
 """Module contains routes, used for admin page."""
+import os
+import re
 import json
+import uuid
+import StringIO
 
-from flask import request, jsonify, Response, session
+from PIL import Image
 from flask_login import login_required
+from flask import request, jsonify, Response, session
 
-from ecomap import validator
+from ecomap import validator, utils
 from ecomap.app import app, logger, auto
 from ecomap.db import util as db
 from ecomap.permission import permission_control
+
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif']
+MARKERS_PATH = '/media/image/markers'
+MARKER_WIDTH = 50
+IMAGE_PATTERN = re.compile('image/(\w+)')
 
 
 @app.route("/api/resources", methods=['POST'])
@@ -813,12 +824,14 @@ def get_all_users_info():
         ``[[{"role_name": "admin",
         "first_name": "username",
         "last_name": "UserSurname",
+        "nickname": "admin_nickname",
         "id": 1,
         "email": "email@name.ru"},
         ....
         {"role_name": "user",
         "first_name": "Username",
         "last_name": "UserSurname",
+        "nickname": "user_nickname"
         "id": 5,
         "email": "email@gmail.com"}],
         [{"total_users": 2}]]``
@@ -836,12 +849,249 @@ def get_all_users_info():
 
     if query:
         for user_data in query:
-            users.append({'id': user_data[0], 'first_name': user_data[1],
+            users.append({'id': user_data[0],
+                          'first_name': user_data[1],
                           'last_name': user_data[2],
-                          'email': user_data[3],
-                          'role_name': user_data[4]})
+                          'nickname': user_data[3],
+                          'email': user_data[4],
+                          'role_name': user_data[5]})
     if count:
         total_count = {'total_users': count[0]}
 
     return Response(json.dumps([users, [total_count]]),
                     mimetype='application/json')
+
+
+@app.route('/api/problem_type', methods=['GET'])
+@auto.doc()
+def get_problem_type():
+    '''The method retrieves all probleme types.
+       :rtype: JSON.
+       :return: json object with problem types.
+       :JSON sample:
+       ``[{"id": 1,
+        "picture": "1.png",
+        "name": "first problem type",
+        "radius": 10,
+        "email": "email@name.ru"},
+        ....
+        {"id": 7,
+        "picture": "7.png",
+        "name": "sevens problem type",
+        "radius": 20]``.
+    '''
+    problem_type_tuple = db.get_problem_type()
+    problem_type_list = []
+    if problem_type_tuple:
+        for problem in problem_type_tuple:
+            problem_type_list.append({'id': problem[0],
+                                     'picture': problem[1],
+                                      'name': problem[2],
+                                      'radius': problem[3]
+                                      })
+    response = Response(json.dumps(problem_type_list),
+                        mimetype='application/json')
+    return response
+
+
+@app.route('/api/problem_type', methods=['DELETE'])
+@auto.doc()
+@login_required
+def delete_problem_type():
+    """The method deletes problem type.
+       :rtype: JSON.
+       :request args: `{problem_type_id: 5}`.
+       :return: confirmation object.
+       :JSON sample:
+       ``{'msg': 'Problem type was deleted successfully!'}``
+       or
+       ``{'msg': 'Cannot delete'}``.
+
+       :statuscode 400: if request is invalid.
+       :statuscode 200: if no errors.
+    """
+    data = request.get_json()
+    valid = validator.problem_type_delete(data)
+    if valid['status']:
+        file_name = db.get_problem_type_picture(data['problem_type_id'])
+        f_path = os.environ['STATICROOT'] + MARKERS_PATH
+        if not db.get_problems_by_type(data['problem_type_id']):
+            if os.path.exists(os.path.join(f_path, file_name[0])):
+                os.remove(os.path.join(f_path, file_name[0]))
+            db.delete_problem_type(data['problem_type_id'])
+            response = jsonify(msg='Дані видалено успішно!'), 200
+        else:
+            response = jsonify(msg='Так як дані прив\'язані!'), 400
+    else:
+        response = jsonify(msg='Некоректні дані!'), 400
+    return response
+
+
+@app.route('/api/problem_type', methods=['POST'])
+@auto.doc()
+@login_required
+def add_problem_type():
+    """Function which add problem type.
+
+    :rtype: JSON
+    :request args: `{problem_type: "new_name",
+    problem_type_radius:10, problem_type_id:'new_image.png'}`.
+    :return: confirmation object.
+    :JSON sample:``{'msg': 'Incorrect data'}``
+    or ``{'msg': 'success'}``.
+
+    :statuscode 400: if request is invalid.
+    :statuscode 200: if no errors.
+
+    """
+    data = request.form
+    marker = request.files['file'].read()
+    extension = request.files['file'].filename.rsplit('.', 1)[1]
+    valid = validator.problem_type_post(data)
+    if valid['status'] and IMAGE_PATTERN.match(utils.get_mimetype(marker)):
+        if db.get_problem_type_by_name(data['problem_type_name']):
+            response = jsonify(msg='Дане ім’я вже зарезервоване!'), 400
+        else:
+            file_name = save_file(marker, extension)
+            db.add_problem_type(file_name, data['problem_type_name'],
+                                data['problem_type_radius'])
+            response = jsonify(msg='asdasd'), 200
+    else:
+        response = jsonify(msg='Так як дані невірні.'), 400
+
+    return response
+
+
+def save_file(file_to_save, extension):
+    """Method to save a file from a form."""
+    f_path = os.environ['STATICROOT'] + MARKERS_PATH
+    unique_name = str(uuid.uuid4())
+    basewidth = MARKER_WIDTH
+    img = Image.open(StringIO.StringIO(file_to_save))
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = int(img.size[1]*wpercent)
+    img = img.resize((basewidth, hsize), Image.ANTIALIAS)
+    f_name = '%s.%s' % (unique_name, extension)
+    img.save(os.path.join(f_path, f_name))
+    response = f_name
+
+    return response
+
+
+@app.route('/api/problem_type', methods=['PUT'])
+@auto.doc()
+@login_required
+def edit_problem_type():
+    """Function which edits problem type's name, name and radius by it id.
+
+    :rtype: JSON
+   :request args: `{problem_type: 'new_name', problem_type_id:' 5',
+    problem_type_radius:10, problem_type_id:'new_image.png'}`.
+    :return: confirmation object.
+    :JSON sample:``{'msg': 'Incorrect data'}``
+    or ``{'msg': 'success'}``.
+
+    :statuscode 400: if request is invalid.
+    :statuscode 200: if no errors.
+
+    """
+    data = request.form
+    valid = validator.problem_type_put(data)
+    f_path = os.environ['STATICROOT'] + MARKERS_PATH
+    if valid['status']:
+        old_name = db.get_problem_type_picture(data['problem_type_id'])
+        if request.files:
+            marker = request.files['file'].read()
+            extension = request.files['file'].filename.rsplit('.', 1)[1]
+            if IMAGE_PATTERN.match(utils.get_mimetype(marker)):
+                file_name = save_file(marker, extension)
+                if os.path.exists(os.path.join(f_path, old_name[0])):
+                    os.remove(os.path.join(f_path, old_name[0]))
+                db.update_problem_type(data['problem_type_id'], file_name,
+                                       data['problem_type_name'],
+                                       data['problem_type_radius'])
+                response = jsonify(msg='Тип проблеми успішно оноволено!'), 200
+            else:
+                response = jsonify(msg='Некоректний тип файлу!'), 400
+        else:
+            db.update_problem_type(data['problem_type_id'], old_name[0],
+                                   data['problem_type_name'],
+                                   data['problem_type_radius'])
+            response = jsonify(msg='Тип проблеми оновлено!'), 200
+    else:
+        response = jsonify(msg='Так як дані невірні!'), 400
+
+    return response
+
+
+@app.route('/api/tempdata', methods=['GET'])
+@auto.doc()
+@login_required
+def get_tempdata():
+    '''The method retrieves all tempdata.
+       :rtype: JSON.
+       :return: json object with tempdata.
+       :JSON sample:
+       ``[{"id": 1,
+        "first_name": "Ivan",
+        "last_name": "Ivanenko",
+        "nickname": Ivan89,
+        "creation_date": 14334353432,
+        "type": 'password','delete'},
+        ....
+        {"id": 1,
+        "first_name": "Ivan",
+        "last_name": "Ivanenko",
+        "nickname": Ivan89,
+        "creation_date": 14334353432,
+        "type": 'password','delete'}]``.
+    '''
+    offset = request.args.get('offset') or 0
+    per_page = request.args.get('per_page') or 5
+
+    count = db.count_all_user_operations()
+    tempdata_tuple = db.get_all_user_operations(offset, per_page)
+    tempdata_list = []
+    total_count = {}
+    if tempdata_tuple:
+        for tempdata in tempdata_tuple:
+            tempdata_list.append({'id': tempdata[0],
+                                  'first_name': tempdata[1],
+                                  'last_name': tempdata[2],
+                                  'nickname': tempdata[3],
+                                  'creation_date': tempdata[4],
+                                  'type': tempdata[5]})
+    if count:
+        total_count = {'total_tempdata_count': count[0]}
+    response = Response(json.dumps([tempdata_list, [total_count]]),
+                        mimetype='application/json')
+    return response
+
+
+@app.route("/api/tempdata", methods=['DELETE'])
+@auto.doc()
+@login_required
+def tempdata_delete():
+    """Function which deletes tempdata from database by it id.
+
+    :rtype: JSON
+    :request args: `{user_operation_id: 5}`
+    :return:
+
+        - If all ok:
+            ``{'status': 'success', 'deleted_tempdata': 'user_operation_id'}``
+
+    :statuscode 400: if role has assigned permissions or request invalid
+    :statuscode 200: if no errors
+
+    """
+    data = request.get_json()
+
+    if data:
+        db.delete_user_operation(data['user_operation_id'])
+        response = jsonify(msg='success',
+                           deleted_tempdata=data['user_operation_id'])
+    else:
+        db.delete_all_users_operations()
+        response = jsonify(msg='success')
+    return response

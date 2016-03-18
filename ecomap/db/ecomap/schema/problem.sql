@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `problem` (
  `title` varchar(255) NOT NULL,
  `content` varchar(255) NOT NULL,
  `proposal` varchar(255) NOT NULL,        # User can propose a solution
- `severity` enum('1', '2', '3', '4', '5') NOT NULL DEFAULT '1',
+ `severity` enum('1', '2', '3', '4', '5', '6', '7', '8', '9', '10') NOT NULL DEFAULT '1',
  `status` enum('Solved', 'Unsolved') 
         NOT NULL DEFAULT 'Unsolved',    # not resolved or resolved
  `latitude` float NOT NULL,           # coordinats of

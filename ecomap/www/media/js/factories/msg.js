@@ -30,5 +30,17 @@ app.factory('msg', function(toaster) {
     addCommentError: function(msg, type) {
       toaster.pop('error', 'Додавання', 'При додаванні ' + msg + ' виникла помилка!');
     },
+    addCommentAnonimError: function(msg, type) {
+      toaster.pop('error', 'Додавання', 'Виникла помилка при додаванні '+ msg +' необхідно зареєструватися або залогінитись!');
+    },
+    editNicknameError: function(msg, type) {
+      toaster.pop('error', 'Редагування', 'Виникла помилка при редагуванні '+ msg +' даний псевдонім вже зайнятий');
+    },
+    restoreError: function(msg) {
+      toaster.pop('error', 'Відновлення', 'При відновленні' + msg + ' виникла помилка!')
+    },
+    sendSuccessMailtoDelete : function(msg, type) {
+      toaster.pop('success', 'Відправлення ' + msg + ' здійснено успішно! Підтвердіть видалення через імейл!');
+    },
   };
 });

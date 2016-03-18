@@ -4,8 +4,10 @@
       <div class="form-group" ng-class="{ 'has-error': (addRoleForm.roleName.$touched || addRoleSub) && addRoleForm.roleName.$invalid }">
         <div class="row">
           <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-          <div class="col-md-11"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
-          <div class="col-md-1"><button type="submit" class="btn btn-primary btn-border" ng-click="addRoleSub=true">додати</button></div>
+        </div>
+        <div class="row">
+          <div class="col-md-11 col-sm-11 col-xs-10"> <input type="text" class="form-control" name="roleName" ng-model="role.name" ng-maxlength="255" required></div>
+          <div class="col-md-1 col-sm-1 col-xs-2"><button type="submit" class="btn btn-primary btn-border" ng-click="addRoleSub=true">додати</button></div>
         </div>
 
         <div class="help-block" ng-messages="addRoleForm.roleName.$error" ng-show="addRoleForm.roleName.$touched || addRoleSub">
@@ -20,8 +22,8 @@
       <div class="form-group" ng-class="{ 'has-error': (editRoleForm.roleName.$touched || editRoleSub) && editRoleForm.roleName.$invalid }">
         <div class="row">
           <div class="col-md-12"><label for="" class="control-label" >Назва ролі</label></div>
-          <div class="col-md-11"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
-          <div class="col-md-1"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSubFunc()">Змінити</button></div>
+          <div class="col-md-11 col-sm-11 col-xs-10"><input type="text" class="form-control" name="roleName" ng-model="editRoleObj['name']" ng-maxlength="255" required></div>
+          <div class="col-md-1 col-sm-1 col-xs-2"> <button type="submit" class="btn btn-primary btn-border" ng-click="editRoleSubFunc()">Змінити</button></div>
         </div>
         <div class="help-block" ng-messages="editRoleForm.roleName.$error" ng-show="editRoleForm.roleName.$touched || editRoleSub">
           <div ng-messages-include="/templates/error_msgs.html"></div>
@@ -94,8 +96,8 @@
               </thead>
               <tbody ng-if="listToSend.length !== 0">
                 <tr ng-repeat="perm in actualPermInRole | filter : searchWordActua" >
-                  <td>{{perm.action}}</td>
-                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.action | dictFilter}}</td>
+                  <td>{{perm.modifier | dictFilter}}</td>
                   <td>{{perm.description}}</td>
                   <td><button class="btn btn-danger btn-border"  ng-click="deletePermFormRole(perm)">Видалити</button></td>
                 </tr>
@@ -117,15 +119,15 @@
                 <tr>
                   <td></td>
                   <td>Назва методу</td>
-                  <td>Modifier</td>
+                  <td>Модифікатор доступу</td>
                   <td>Опис</td>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="perm in Permisions |filter: searchWord " ng-click="selectPerm($event,perm)" ng-show="checkInActual(perm.resource_id)">
                   <td> <input type="checkbox" ng-checked="isChecked(perm)"></td>
-                  <td>{{perm.action}}</td>
-                  <td>{{perm.modifier}}</td>
+                  <td>{{perm.action | dictFilter}}</td>
+                  <td>{{perm.modifier | dictFilter}}</td>
                   <td>{{perm.description}}</td>
                 </tr>
 

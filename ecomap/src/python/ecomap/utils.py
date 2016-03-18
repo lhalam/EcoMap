@@ -1,38 +1,27 @@
 # -*- coding: utf-8 -*-
 """Module contains usefull functions."""
-import logging
-import logging.config
 import os
-import random
 import string
+import magic
+import random
 import smtplib
 
 from urlparse import urlparse
 from email.header import Header
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-CONF_PATH = os.path.join(os.environ['CONFROOT'], 'log.conf')
 
+HTML_TEMPLATE_ROOT = os.path.join(os.environ['CONFROOT'], 'html_templates')
 
 def random_password(length):
     """Generates randow string. Contains lower- and uppercase letters.
-       :params: length - length of string
-       :return: string"""
-    return ''.join(random.choice(string.ascii_letters) for i in range(length))
-
-
-def get_logger():
-    """function for configuring default logger object
-    from standard logging library
-        Returns:
-            configured logger object.
-        Usage:
-            import this method to your
-            module and call it.
-            then define a new logger object as usual
+       :param length: length of string
+       :return: string
     """
-    return logging.config.fileConfig(CONF_PATH)
+
+    return ''.join(random.choice(string.ascii_letters + string.digits
+                                + string.punctuation) for i in range(length))
 
 
 class Singleton(type):
@@ -60,17 +49,17 @@ def parse_url(url_to_parse, get_arg=None, get_path=None):
     return '?'.join((url.path, url.query)) if url.query else url.path
 
 
-def generate_email(email_type, from_email, to_email, args,
+def generate_email(email_type, from_address, to_email, args,
                    custom_template=None, template_str=None, header=None):
     """Sends email."""
     msg = MIMEMultipart('alternative')
-    complete_email = os.path.join(os.environ['CONFROOT'],
+    complete_email = os.path.join(HTML_TEMPLATE_ROOT,
                                   'email_template.html')
     if custom_template:
         email_body = custom_template
         args = ''
     else:
-        email_body = os.path.join(os.environ['CONFROOT'],
+        email_body = os.path.join(HTML_TEMPLATE_ROOT,
                                   '%s.html' % email_type)
     html = None
     html_body = None
@@ -91,7 +80,7 @@ def generate_email(email_type, from_email, to_email, args,
         msg['Subject'] = Header('%s' % header, 'utf-8')
     else:
         msg['Subject'] = Header('%s' % email_type, 'utf-8')
-    msg['From'] = from_email
+    msg['From'] = from_address
     msg['To'] = to_email
     htmltext = MIMEText(html_formatted, 'html', 'utf-8')
     msg.attach(htmltext)
@@ -99,15 +88,25 @@ def generate_email(email_type, from_email, to_email, args,
     return msg
 
 
-def send_email(login, app_key, from_email, to_email, email):
+def send_email(smtp_name, login, app_key, from_address, to_email, email):
     """Sends email.
-       :params: login - email server login
-                app_key - email server key
-                sender - email of sender
-                receiver - email of receiver
-                email - body of email
+       :param smtp_name: smtp server name
+       :param login: email server login
+       :param app_key: email server key
+       :param sender: email of sender
+       :param receiver: email of receiver
+       :param email: body of email
     """
-    server = smtplib.SMTP_SSL('smtp.gmail.com')
-    server.login(login, app_key)
-    server.sendmail(from_email, to_email, email.as_string())
-    server.quit()
+    try:
+        server = smtplib.SMTP_SSL(smtp_name)
+        server.login(login, app_key)
+        server.sendmail(from_address, to_email, email.as_string())
+        server.quit()
+    except Exception as exc:
+        pass
+
+
+def  get_mimetype(data):
+    """Receives mimetype of a file."""
+    with magic.Magic(flags=magic.MAGIC_MIME_TYPE) as magic_data:
+        return magic_data.id_buffer(data)

@@ -2,6 +2,7 @@
 import hashlib
 import time
 
+from flask import request
 from flask_login import UserMixin, LoginManager, AnonymousUserMixin
 from itsdangerous import URLSafeTimedSerializer
 
@@ -35,11 +36,12 @@ class User(UserMixin):
 
     """Class which describes User entity."""
 
-    def __init__(self, uid, first_name, last_name, email, password, role,
-                 avatar=None):
+    def __init__(self, uid, first_name, last_name, nickname, email, password,
+                 role, avatar=None):
         self.uid = uid
         self.first_name = first_name
         self.last_name = last_name
+        self.nickname = nickname
         self.email = email
         self.password = password
         self.role = role
@@ -59,10 +61,8 @@ class User(UserMixin):
     def verify_password(self, password):
         """This method compares passwords from db and passed password
         from client side.
-
             :params
             password - passed password from the client
-
             :return True if passwords are equa, otherwise it will
             return False
         """
@@ -72,6 +72,10 @@ class User(UserMixin):
         """Method which changes user's password."""
         new_pass_salted = hash_pass(new_pass)
         util.change_user_password(self.uid, new_pass_salted)
+
+    def change_nickname(self, new_nickname):
+        """Method which changes user's nickname."""
+        util.change_user_nickname(self.uid, new_nickname)
 
     def is_active(self):
         """Overloaded method from UserMixin.
@@ -91,7 +95,6 @@ class User(UserMixin):
 def hash_pass(password):
     """This function adds some salt(secret_key)
     to the password.
-
         :returns hash sum from password + salt
     """
     salted_password = password + app.config['SECRET_KEY']
@@ -101,8 +104,7 @@ def hash_pass(password):
 def get_user_by_email(email):
     """This function gets user data from db by user email
     and creates User instance if data was retrieved.
-
-        :returns User instance or None if user doesn't
+    :returns User instance or None if user doesn't
         exist.
     """
     user = None
@@ -113,14 +115,13 @@ def get_user_by_email(email):
     if user:
         user_role = util.get_user_role_by_email(email)
         return User(user[0], user[1], user[2],
-                    user[3], user[4], user_role[0], user[5])
+                    user[3], user[4], user[5], user_role[0], user[6])
     return None
 
 
 def get_user_by_id(uid):
     """This function gets user data from db by user id
     and creates User instance if data was retrieved.
-
         :returns User instance or None if user doesn't
         exist.
     """
@@ -130,7 +131,7 @@ def get_user_by_id(uid):
     if user:
         user_role = util.get_user_role_by_id(uid)
         return User(user[0], user[1], user[2],
-                    user[3], user[4], user_role[0], user[5])
+                    user[3], user[4], user[5], user_role[0], user[6])
 
     return None
 
@@ -138,7 +139,6 @@ def get_user_by_id(uid):
 def get_user_by_oauth_id(uid):
     """This function gets user data from db by oauth id
     and creates User instance if data was retrieved.
-
         :returns User instance or None if user doesn't
         exist.
     """
@@ -148,12 +148,12 @@ def get_user_by_oauth_id(uid):
     if user:
         user_role = util.get_user_role_by_id(user[0])
         return User(user[0], user[1], user[2],
-                    user[3], user[4], user_role[0])
+                    user[3], user[4], user[5], user_role[0])
 
     return None
 
 
-def register(first_name, last_name, email, password):
+def register(first_name, last_name, nickname, email, password):
     """This function registrates user.
     It will insert user's data via insert_user function
     from util.
@@ -163,20 +163,22 @@ def register(first_name, last_name, email, password):
     salted_pass = hash_pass(password)
     role_id = util.get_role_id('user')
     register_user_id = util.insert_user(first_name, last_name,
-                                        email, salted_pass)
+                                        nickname, email, salted_pass)
     if register_user_id:
         util.add_users_role(register_user_id, role_id[0])
-    message = generate_email('registration', _CONFIG['email.from_email'],
-                             email, (first_name, last_name, email, password))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
-               _CONFIG['email.from_email'],
+    message = generate_email('registration', _CONFIG['email.from_address'],
+                             email, (first_name, last_name, email,
+                             password, request.url_root))
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
+               _CONFIG['email.from_address'],
                email,
                message)
     return get_user_by_id(register_user_id)
 
 
-def facebook_register(first_name, last_name, email, provider, uid):
+def facebook_register(first_name, last_name, nickname, email, provider, uid):
     """This function registres user through facebook.
     It will insert user's data via insert_user function
     from util.
@@ -190,19 +192,21 @@ def facebook_register(first_name, last_name, email, provider, uid):
         salted_pass = hash_pass(password)
         role_id = util.get_role_id('user')
         register_user_id = util.facebook_insert(first_name,
-                                                last_name, email,
+                                                last_name,
+                                                nickname, email,
                                                 salted_pass,
                                                 provider, uid)
         if register_user_id:
             util.add_users_role(register_user_id, role_id[0])
             user = get_user_by_oauth_id(uid)
 
-        message = generate_email('registration', _CONFIG['email.from_email'],
-                                 email,
-                                 (first_name, last_name, email, password))
-        send_email(_CONFIG['email.user_name'],
-                   _CONFIG['email.app_password'],
-                   _CONFIG['email.from_email'],
+        message = generate_email('registration', _CONFIG['email.from_address'],
+                                 email, (first_name, last_name,
+                                 email, password, request.url_root))
+        send_email(_CONFIG['email.server_name'],
+                   _CONFIG['email.user_name'],
+                   _CONFIG['email.server_password'],
+                   _CONFIG['email.from_address'],
                    email,
                    message)
     else:
@@ -226,7 +230,6 @@ def load_token(token):
     """This metod is callback, which is used in
     the Login Manager inner logic for retrieving
     data from token.
-
         :returns User instance or None if token
         is invalid.
     """
@@ -248,12 +251,14 @@ def restore_password(user):
 
     util.insert_into_restore_password(hex_hash, user.uid, create_time)
     message = generate_email('restore_password',
-                             _CONFIG['email.from_email'],
+                             _CONFIG['email.from_address'],
                              user.email,
-                             (user.first_name, user.last_name, hex_hash))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
-               _CONFIG['email.from_email'],
+                             (user.first_name, user.last_name,
+                              request.url_root, hex_hash))
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
+               _CONFIG['email.from_address'],
                user.email,
                message)
 
@@ -265,11 +270,13 @@ def delete_user(user):
     hex_hash = hashed.hexdigest()
     util.insert_into_hash_delete(hex_hash, user.uid, create_time)
     message = generate_email('delete_user',
-                             _CONFIG['email.from_email'],
+                             _CONFIG['email.from_address'],
                              user.email,
-                             (user.first_name, user.last_name, hex_hash))
-    send_email(_CONFIG['email.user_name'],
-               _CONFIG['email.app_password'],
-               _CONFIG['email.from_email'],
+                             (user.first_name, user.last_name,
+                              request.url_root, hex_hash))
+    send_email(_CONFIG['email.server_name'],
+               _CONFIG['email.user_name'],
+               _CONFIG['email.server_password'],
+               _CONFIG['email.from_address'],
                user.email,
                message)

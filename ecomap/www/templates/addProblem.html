@@ -1,4 +1,7 @@
-<div class="flex-item-1 flex-container flex-column addProblemBlock">
+<div class="map-toogle hideMe" ng-init="changeToogleMap='карта'" ng-click="toogleMap()">
+  {{changeToogleMap}}
+</div>
+<div class="flex-item-1 flex-container flex-column addProblemBlock" ng-if="showSidebarProblem==false">
   <uib-tabset justified="true">
   <uib-tab heading="Опис" active="addProblemTab" >
   <form name="addProblemForm"
@@ -39,16 +42,35 @@
         <div ng-messages-include="/templates/error_msgs.html"></div>
       </div>
     </div>
-    <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
-      <label for="problem_type_id"  class="control-label">Тип проблеми</label>
-      <select name="problem_type_id" id="problem_type_id" ng-model="newProblem.type"
-        class="form-control" required>
-        <option ng-repeat="type in problemTypes" value="{{ type.id }}">{{ type.name }}</option>
-      </select>
-      <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="addProblemForm.problem_type_id.$touched || submitted">
-        <div ng-messages-include="/templates/error_msgs.html"></div>
+     <div class="form-group" ng-class="{ 'has-error': (addProblemForm.problem_type_id.$touched || submitted) && addProblemForm.problem_type_id.$invalid}">
+     <div class="dropdown">
+      <div class="select-wrapper">
+      <label for="problem_type_id" class="control-label">Тип проблеми</label>
+        <div class="selected-item-box" id="problem_type_id">
+        <span class="dropdown-icon"></span>
+            <ul class="items-list">
+                <li>
+                    <img ng-src="{{chosen.picture}}"/> {{chosen.name}}
+                </li>
+            </ul>
+          </div>
+          <div class="list" >
+            <ul class="items-list">
+              <li ng-repeat="type in problemTypes" class="problemTypeItem" ng-click="newProblem.type=type.id; select(type.id)">
+                <img ng-src="{{type.picture}}" title="{{type.name}}" alt="{{type.name}}" />
+                  <span>{{type.name}}</span>
+              </li>
+            </ul>
+        </div>
       </div>
     </div>
+     <div class="help-block" ng-messages="addProblemForm.problem_type_id.$error" ng-show="true">
+        <div ng-messages-include="/templates/error_msgs.html"></div>
+      </div>
+  </div>
+
+
+
     <div class="form-group " ng-class="{ 'has-error': (addProblemForm.content.$touched || submitted) && addProblemForm.content.$invalid}">
       <label for="problemContent" class="control-label">Опис проблеми</label>
       <textarea name="content"  id="problemContent" cols="30" rows="5" class="form-control"

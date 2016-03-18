@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-hide="isFetching==true">
   <div class="row">
     <div class="col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4">
       <form role="form" ng-submit="Register(newUser)" name="registerForm" id="registerForm" novalidate>
@@ -7,7 +7,7 @@
           <div class="panel-content register">
             <div class="form-group" ng-class="{ 'has-error': (registerForm.email.$touched || submitted) && registerForm.email.$invalid }">
               <label for="email" class="control-label">Електронна адреса</label>
-              <input type="email"  ng-model="newUser.email" name="email" ng-maxlength="100" ng-change="checkIfExists()" class="form-control" id="email" placeholder="Електронна адреса" required available-email/>
+              <input type="email"  ng-model="newUser.email" name="email" ng-maxlength="100" ng-change="checkIfExists()" class="form-control" id="email" placeholder="Електронна адреса" ng-pattern= "/^[a-zA-Z0-9._]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/" required available-email/>
               <div class="help-block" ng-messages="registerForm.email.$error" ng-show="registerForm.email.$touched || submitted">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
@@ -15,7 +15,7 @@
 
             <div class="form-group" ng-class="{ 'has-error': (registerForm.name.$touched || submitted) && registerForm.name.$invalid }">
               <label for="name" class="control-label">Ім'я</label>
-              <input type="text"  ng-model="newUser.first_name" name="name" ng-maxlength="100" class="form-control" id="name" placeholder="Ім'я" data-error="Необхідно ввести ім'я!" required/>
+              <input type="text"  ng-model="newUser.first_name" name="name" ng-maxlength="20" class="form-control" id="name" placeholder="Ім'я" data-error="Необхідно ввести ім'я!" required/>
               <div class="help-block" ng-messages="registerForm.name.$error" ng-show="registerForm.name.$touched || submitted">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
@@ -23,8 +23,16 @@
 
             <div class="form-group" ng-class="{ 'has-error': (registerForm.surname.$touched || submitted) && registerForm.surname.$invalid }">
               <label for="surname" class="control-label">Прізвище</label>
-              <input type="text"  ng-model="newUser.last_name" name="surname" ng-maxlength="100" class="form-control" id="surname" placeholder="Прізвище" data-error="Необхідно ввести прізвище!" required/>
+              <input type="text"  ng-model="newUser.last_name" name="surname" ng-maxlength="20" class="form-control" id="surname" placeholder="Прізвище" data-error="Необхідно ввести прізвище!" required/>
               <div class="help-block" ng-messages="registerForm.surname.$error" ng-show="registerForm.surname.$touched || submitted">
+                <div ng-messages-include="/templates/error_msgs.html"></div>
+              </div>
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error': (registerForm.nickname.$touched || submitted) && registerForm.nickname.$invalid }">
+              <label for="nickname" class="control-label">Псевдонім</label>
+              <input type="text"  ng-model="newUser.nickname" name="nickname" ng-maxlength="25" class="form-control" id="nickname" placeholder="Псевдонім" required available-nickname/>
+              <div class="help-block" ng-messages="registerForm.nickname.$error" ng-show="registerForm.nickname.$touched || submitted">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>

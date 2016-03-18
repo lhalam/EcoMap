@@ -18,16 +18,20 @@ COORDINATES_PATTER = re.compile(r'^[-]{0,1}[0-9]{0,3}[.]{1}[0-9]{0,20}$')
 
 # Dictionary, contains all mininum and maximum lengths for keys.
 LENGTHS = {'email': [5, 100],
-           'first_name': [2, 255],
-           'last_name': [2, 255],
+           'first_name': [2, 20],
+           'last_name': [2, 20],
+           'nickname': [1, 25],
            'password': [6, 100],
            'pass_confirm': [6, 100],
            'resource_name': [2, 100],
            'role_name': [2, 255],
            'description': [2, 255],
            'title': [2, 255],
-           'content': [2, 255],
+           'content': [1, 255],
+           'problem_id': [1, 255],
            'problem_type_id': [1, 255],
+           'problem_type_name': [2, 50],
+           'problem_type_radius': [1, 10],
            'user_id': [1, 255],
            'type': [1, 255],
            'latitude': [-90.0, 90.0],
@@ -42,6 +46,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
              'check_empty': '%s value is empty.',
              'check_enum_value': 'invalid %s value.',
              'check_email_exist': 'email allready exists.',
+             'check_nickname_exist': 'nickname already exists.',
              'name_exists': '"%s" name allready exists.',
              'check_coordinates': '%s is not coordinates.',
              'check_coordinates_length': '%s is out of range.'}
@@ -49,7 +54,7 @@ ERROR_MSG = {'has_key': 'not contain %s key.',
 
 def user_registration(data):
     """Validates user registration form. Checks: email, password,
-       confirm password, first name, last name.
+       confirm password, first name, last name, nickname.
        :params: data - json object
        :return: dictionary with status key and error keys. By
                 default status is True, and error is empty.
@@ -57,7 +62,8 @@ def user_registration(data):
                 and error keynamename saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['email', 'first_name', 'last_name', 'password', 'pass_confirm']
+    keys = ['email', 'first_name', 'last_name',
+            'nickname', 'password', 'pass_confirm']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -81,6 +87,9 @@ def user_registration(data):
             elif check_email_exist(data[keyname]):
                 status['error'].append({keyname:
                                         ERROR_MSG['check_email_exist']})
+        elif keyname is 'nickname' and check_nickname_exist(data[keyname]):
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_nickname_exist']})
 
     if status['error']:
         status['status'] = False
@@ -97,7 +106,7 @@ def check_post_comment(data):
                 and error keyname saves error ERROR_MSG
     """
     status = {'status': True, 'error': []}
-    keys = ['problem_id', 'content']
+    keys = ['problem_id', 'parent_id', 'content']
 
     for keyname in keys:
         if not has_key(data, keyname):
@@ -108,10 +117,6 @@ def check_post_comment(data):
         elif keyname is 'content':
             if not check_string(data[keyname]):
                 status['error'].append({keyname: ERROR_MSG['check_string']
-                                        % keyname})
-            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
-                status['error'].append({keyname:
-                                        ERROR_MSG['check_minimum_length']
                                         % keyname})
             elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
                 status['error'].append({keyname:
@@ -431,7 +436,7 @@ def permission_put(data):
                                     % keyname})
         elif keyname in ['action', 'modifier']:
             if not check_enum_value(data[keyname], ENUM[keyname]):
-                status['error'].append({keyname: ERROR_MSG['is_in_enum']
+                status['error'].append({keyname: ERROR_MSG['check_enum_value']
                                         % keyname})
         elif keyname is 'description':
             if not check_string(data[keyname]):
@@ -589,6 +594,62 @@ def change_password(data):
     return status
 
 
+def change_nickname(data):
+    """Validates change user nickname form. Checks old nickname,
+       new nickname and id of user.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'nickname'
+
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+    elif not check_string(data[keyname]):
+        status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
+    elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+        status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+                                % keyname})
+    elif check_nickname_exist(data[keyname]):
+        status['error'].append({keyname:
+                                    ERROR_MSG['check_nickname_exist']}) 
+
+    if status['error']:
+        status['status'] = False
+
+    return status    
+
+
+def change_comment(data):
+    """Validates change comment content. C
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'content'
+
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty'] % keyname})
+    elif not check_string(data[keyname]):
+        status['error'].append({keyname: ERROR_MSG['check_string'] % keyname})
+    elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+        status['error'].append({keyname: ERROR_MSG['check_maximum_length']
+                                % keyname})
+    if status['error']:
+        status['status'] = False
+
+    return status
+
 def problem_post(data):
     """Validates problem post form.
        :params: data - json object
@@ -627,6 +688,174 @@ def problem_post(data):
                                         ERROR_MSG['check_coordinates_length']
                                         % data[keyname]})
 
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
+def problem_put(data):
+    """Validates problem edit form.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_id', 'title', 'content', 'latitude', 'longitude', 'type']
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname:
+                                    ERROR_MSG['check_empty'] % keyname})
+        elif keyname in ['title', 'content']:
+            if not check_string(data[keyname]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_string'] % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
+def problem_delete(data):
+    """Validates problem delete form. Checks: id of problem.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'problem_id'
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty']
+                                % keyname})
+    if status['error']:
+        status['status'] = False
+    return status
+
+
+def problem_confirmation(data):
+    """Validates problem confirmation form. Checks: id of problem,
+        severity, status and is_enabled.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_id', 'severity', 'status', 'is_enabled']
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+    if status['error']:
+        status['status'] = False
+    return status
+
+
+def problem_type_post(data):
+    """Validates permission put form. Checks: problem type id, name, radius.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_type_name', 'problem_type_radius']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        elif keyname is 'problem_type_name':
+            if not check_string(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_string']
+                                        % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
+
+    if status['error']:
+        status['status'] = False
+
+    return status
+
+
+def problem_type_delete(data):
+    """Validates problem type delete form. Checks: id of problem type.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keyname = 'problem_type_id'
+    if not has_key(data, keyname):
+        status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+    elif not data[keyname]:
+        status['error'].append({keyname: ERROR_MSG['check_empty']
+                                % keyname})
+    if status['error']:
+        status['status'] = False
+    return status
+
+
+def problem_type_put(data):
+    """Validates permission put form. Checks: problem type id, name, radius.
+       :params: data - json object
+       :return: dictionary with status keyname and error keys. By
+                default status is True, and error is empty.
+                If validation failed, status changes to False
+                and error keyname saves error ERROR_MSG
+    """
+    status = {'status': True, 'error': []}
+    keys = ['problem_type_id', 'problem_type_name', 'problem_type_radius']
+
+    for keyname in keys:
+        if not has_key(data, keyname):
+            status['error'].append({keyname: ERROR_MSG['has_key'] % keyname})
+        elif not data[keyname]:
+            status['error'].append({keyname: ERROR_MSG['check_empty']
+                                    % keyname})
+        if keyname is 'problem_type_name':
+            if not check_string(data[keyname]):
+                status['error'].append({keyname: ERROR_MSG['check_string']
+                                        % keyname})
+            elif not check_minimum_length(data[keyname], LENGTHS[keyname][0]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_minimum_length']
+                                        % keyname})
+            elif not check_maximum_length(data[keyname], LENGTHS[keyname][1]):
+                status['error'].append({keyname:
+                                        ERROR_MSG['check_maximum_length']
+                                        % keyname})
     if status['error']:
         status['status'] = False
 
@@ -694,28 +923,38 @@ def check_email_exist(email):
     """Validator function which checks if email is allready in database.
        :params: dictionary - dictionary
                 keyname - key (email)
-       :return: True - if email is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_user_by_email(email)
+    return bool(db.get_user_by_email(email))
+
+
+def check_nickname_exist(nickname):
+    """Validator function which checks if nickname is allready in database.
+       :params: dictionary - dictionary
+                keyname - key (nickname)
+       :return: True - if it is in database
+                False - if name is free not in database
+    """
+    return bool(db.get_user_by_nick_name(nickname))
 
 
 def role_name_exists(role_name):
     """Validator function which checks if role name is allready in database.
        :params: role_name - string to check
-       :return: True - if name is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_role_by_name(role_name)
+    return bool(db.get_role_by_name(role_name))
 
 
 def resource_name_exists(resource_name):
     """Validator function which checks if resource name is allready in database.
        :params: resource_name - string to check
-       :return: True - if resource is free not in database
-                False - if it is in database
+       :return: True - if it is in database
+                False - if name is free not in database
     """
-    return db.get_resource_id(resource_name)
+    return bool(db.get_resource_id(resource_name))
 
 
 def validate_image_file(img_file):

@@ -14,8 +14,6 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     
 
     $scope.chartObject.options = {};
-    $scope.piechar = document.getElementById('piechar');
-    $scope.small = parseInt(getComputedStyle(piechar).width);
 
     $scope.loadStatisticPieChart = function() {
       $scope.$watch('period', function(newValue){
@@ -39,12 +37,10 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
        return window.innerWidth;
       }, function(value) {
          if(value<600){
-                      $scope.old = $scope.small;
                         $scope.chartObject.options = {
                           legend: 'none'
                         }
                       }else{
-                        $scope.small = $scope.old;
                         $scope.chartObject.options = {};
                       };
       });

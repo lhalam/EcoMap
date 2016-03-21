@@ -21,8 +21,7 @@ from ecomap.app import app, logger, auto, _CONFIG
 
 
 ANONYMUS_USER_ID = 2
-UPLOADS_PROBLEM_PATH = '/uploads/problems/'
-UPLOADS_PROBLEM_ID_PATH = '/uploads/problems/%s'
+UPLOADS_PROBLEM_PATH = '/uploads/problems/%s'
 MIN_SIZE = 'min.png'
 
 
@@ -1037,7 +1036,7 @@ def delete_problem():
        :request args: `{problem_id: 5}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
+       ``{'msg': 'Problem was deleted successfully!'}``
        or
        ``{'msg': 'Cannot delete'}``.
 
@@ -1047,7 +1046,7 @@ def delete_problem():
     data = request.get_json()
     valid = validator.problem_delete(data)
     if valid['status']:
-        folder_to_del = UPLOADS_PROBLEM_PATH + str(data['problem_id'])
+        folder_to_del = UPLOADS_PROBLEM_PATH % data['problem_id']
         f_path = os.environ['STATICROOT'] + folder_to_del
         if os.path.exists(f_path):
             shutil.rmtree(f_path, ignore_errors=True)
@@ -1080,9 +1079,9 @@ def change_problem_to_anon():
        :request args: `{problem_id: 5}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
+       ``{'msg': 'Success!'}``
        or
-       ``{'msg': 'Cannot delete'}``.
+       ``{'msg': 'error'}``.
 
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
@@ -1109,9 +1108,9 @@ def problem_confirmation():
                                     is_enabled: 0}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
+       ``{'msg': 'Success!'}``
        or
-       ``{'msg': 'Cannot delete'}``.
+       ``{'msg': 'error!'}``.
 
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
@@ -1156,9 +1155,9 @@ def edit_problem():
                                     proposal: 'message 2'}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
+       ``{'msg': 'Success!'}``
        or
-       ``{'msg': 'Cannot delete'}``.
+       ``{'msg': 'Error'}``.
 
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
@@ -1186,16 +1185,16 @@ def delete_photo():
        :request args: `{photo_id: 5}`.
        :return: confirmation object.
        :JSON sample:
-       ``{'msg': 'Problem type was deleted successfully!'}``
+       ``{'msg': 'Success!'}``
        or
-       ``{'msg': 'Cannot delete'}``.
+       ``{'msg': 'Error'}``.
 
        :statuscode 400: if request is invalid.
        :statuscode 200: if no errors.
     """
     data = request.get_json()
     photo_origin_path = db.get_problem_photo_by_id(data['photo_id'])
-    uploads_path = UPLOADS_PROBLEM_ID_PATH % photo_origin_path[3]
+    uploads_path = UPLOADS_PROBLEM_PATH % photo_origin_path[3]
     # min photo path
     photo_min_path = os.environ['STATICROOT'] + uploads_path
     # original photo

@@ -4,7 +4,7 @@
 */
 CREATE TABLE IF NOT EXISTS `problem` (
  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
- `title` varchar(255) NOT NULL,
+ `title` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
  `content` varchar(255) NOT NULL,
  `proposal` varchar(255) NOT NULL,        # User can propose a solution
  `severity` enum('1', '2', '3', '4', '5', '6', '7', '8', '9', '10') NOT NULL DEFAULT '1',

@@ -1,6 +1,6 @@
 <div ng-controller="UserProblemTableCtrl">
   <div class="row">
-    <h3 class="col-md-10 title">Проблеми {{user.data.surname}} {{user.data.name}}</h3>
+    <h3 class="col-md-10 title">Проблеми {{user.data.surname}} {{user.data.name}}<i class="fa fa-reddit-alien"></i></h3>
   </div>
   <div class="row">
     <div class="col-md-5 col-sm-5 col-xs-5">
@@ -29,32 +29,32 @@
     <thead>
       <tr>
         <td ng-click="sortFilter('is_enabled')" 
-            ng-show='showTable == true'><strong></strong></td>
+            ng-show='showTable == true'><i ng-class="{enabled_true: !filterTable.order_is_enabled, enabled_false: filterTable.order_is_enabled || filterTable.param=='is_enabled'}" class=" fa fa-adjust"></i></td>
         <td ng-click="sortFilter('last_name')"
             ng-show='showTable == true'><strong>Користувач</strong>
-          <span ng-show="filterTable.order_last_name" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_last_name" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_last_name && filterTable.param=='last_name'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_last_name && filterTable.param=='last_name'" class="fa fa-caret-up"></span>
         </td>
         <td ng-click="sortFilter('nickname')"
             ng-show='showTable == true || nickname == true'><strong>Псевдонім</strong>
-          <span ng-show="filterTable.order_nickname" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_nickname" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_nickname && filterTable.param=='nickname'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_nickname && filterTable.param=='nickname'" class="fa fa-caret-up"></span>
         </td>
         <td ng-click="sortFilter('title')"><strong>Заголовок</strong>
-          <span ng-show="filterTable.order_title" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_title" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_title && filterTable.param=='title'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_title && filterTable.param=='title'" class="fa fa-caret-up"></span>
         </td>
         <td><strong ng-click="sortFilter('name')">Тип проблеми</strong>
-          <span ng-show="filterTable.order_name" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_name" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_name && filterTable.param=='name'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_name && filterTable.param=='name'" class="fa fa-caret-up"></span>
         </td>
         <td ng-click="sortFilter('status')"><strong>Статус</strong>
-          <span ng-show="filterTable.order_status" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_status" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_status && filterTable.param=='status'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_status && filterTable.param=='status'" class="fa fa-caret-up"></span>
         </td>
         <td ng-click="sortFilter('created_date')"><strong>Дата створення</strong>
-          <span ng-show="filterTable.order_created_date" class="fa fa-caret-down"></span>
-          <span ng-show="!filterTable.order_created_date" class="fa fa-caret-up"></span>
+          <span ng-show="!filterTable.order_created_date && filterTable.param=='created_date'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_created_date && filterTable.param=='created_date'" class="fa fa-caret-up"></span>
         </td>
         <td><strong>Детальне інфо</strong> 
         </td>

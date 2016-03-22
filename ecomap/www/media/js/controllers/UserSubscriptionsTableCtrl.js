@@ -13,7 +13,18 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
     $scope.selectCount = {
       'selected': '5'
     }
-
+    $scope.filterTable = {
+      'param': '',
+      'order': 1
+    }
+    $scope.filterClick = false;
+    $scope.sortFilter = function(filtr){
+          $scope.filterClick = true;
+          $scope.filterTable.param = filtr;
+          var par = "order_"+$scope.filterTable.param;
+          $scope.filterTable[par] = $scope.filterTable[par]?0:1;
+          $scope.loadProblems();
+    }
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -42,6 +53,8 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
               url: '/api/nickname_subscriptions',
               params: {
                 nickname: $scope.searchNick, 
+                filtr: $scope.filterTable.param || 'date_subscriptions',
+                order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
                 per_page: $scope.selectCount['selected'],
                 offset: $scope.selectCount['selected'] * newValue - stepCount
               }
@@ -57,11 +70,14 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
             method: 'GET',
             url: '/api/usersSubscriptions',
             params: {
+              filtr: $scope.filterTable.param || 'date_subscriptions',
+              order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
             }
           }).then(function successCallback(response) {
             $scope.subscriptions = response.data[0];
+            console.log($scope.subscriptions)
             $scope.problemsLength = response.data[1][0]['total_problem_count'];
             $scope.count = response.data[1][0]['total_problem_count'];
             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
@@ -72,6 +88,8 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
           method: 'GET',
           url: 'api/usersSubscriptions/' + user_id,
           params: {
+            filtr: $scope.filterTable.param || 'date_subscriptions',
+            order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
             per_page: $scope.selectCount['selected'],
             offset: $scope.selectCount['selected'] * newValue - stepCount,
           }

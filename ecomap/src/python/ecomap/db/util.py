@@ -1559,7 +1559,7 @@ def count_all_subscriptions():
 
 
 @db.retry_query(tries=3, delay=1)
-def get_subscriptions(user_id, offset, per_page):
+def get_subscriptions(user_id, filtr, order, offset, per_page):
     """Function retrieves all user's subscriptions from db.
     :param id: id of problem (int)
     :param title: title of problem ('problem with rivers')
@@ -1576,14 +1576,15 @@ def get_subscriptions(user_id, offset, per_page):
                    FROM  `subscription` as sub
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
                    INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
-                   WHERE sub.user_id=%s LIMIT %s,%s;
+                   WHERE sub.user_id={}
+                   ORDER BY {} {} LIMIT {}, {};
                 """
-        cursor.execute(query, (user_id, offset, per_page))
+        cursor.execute(query.format(user_id, filtr, order, offset, per_page))
         return cursor.fetchall()
 
 
 @db.retry_query(tries=3, delay=1)
-def get_all_subscriptions(offset, per_page):
+def get_all_subscriptions(filtr, order, offset, per_page):
     """Function retrieves all user's subscriptions from db.
     :param id: id of problem (int)
     :param title: title of problem ('problem with rivers')
@@ -1596,19 +1597,20 @@ def get_all_subscriptions(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT pr.id, pr.title, pr.problem_type_id, pr.status,
-                   pr.created_date, sub.date_subscriptions, pt.name,
+                   pr.created_date, sub.date_subscriptions, name,
                    u.last_name, u.first_name, u.nickname
                    FROM  `subscription` as sub
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
                    INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
-                   INNER JOIN `user` AS u ON sub.user_id=u.id LIMIT %s,%s;
+                   INNER JOIN `user` AS u ON sub.user_id=u.id
+                   ORDER BY {} {} LIMIT {}, {};
                 """
-        cursor.execute(query, (offset, per_page))
+        cursor.execute(query.format(filtr, order, offset, per_page))
         return cursor.fetchall()
 
 
 @db.retry_query(tries=3, delay=1)
-def get_subscriptions_by_nickname(nickname, offset, per_page):
+def get_subscriptions_by_nickname(filtr, order, nickname, offset, per_page):
     """Function retrieves all user's subscriptions from db by nickname.
     :param nickname: nickname of problem.
     :param title: title of problem ('problem with rivers').
@@ -1629,9 +1631,10 @@ def get_subscriptions_by_nickname(nickname, offset, per_page):
                    INNER JOIN `problem` as pr ON sub.problem_id=pr.id
                    INNER JOIN `problem_type` AS pt ON pr.problem_type_id=pt.id
                    INNER JOIN `user` AS u ON sub.user_id=u.id
-                   WHERE u.nickname LIKE '%{}%' LIMIT {},{};
+                   WHERE u.nickname LIKE '%{}%'
+                   ORDER BY {} {} LIMIT {}, {};
                 """
-        cursor.execute(query.format(nickname, offset, per_page))
+        cursor.execute(query.format(nickname, filtr, order, offset, per_page))
         return cursor.fetchall()
 
 

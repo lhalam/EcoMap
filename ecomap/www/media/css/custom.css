@@ -1454,5 +1454,11 @@ a.one_button{
 .table-stripped thead td{
   cursor: pointer;
 }
+.enabled_false{
+  color: #ff0000;
+}
+.enabled_true{
+  color: #8eb01e;
+}
 
 

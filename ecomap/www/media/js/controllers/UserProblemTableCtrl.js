@@ -37,8 +37,11 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       });
     }
     $scope.searchNick = ($cookies.get('role')=='user')?$scope.old_nick:null;
+    $scope.filterClick = false;
     $scope.sortFilter = function(filtr){
+          $scope.filterClick = true;
           $scope.filterTable.param = filtr;
+          console.log($scope.filterTable['status'])
           var par = "order_"+$scope.filterTable.param;
           $scope.filterTable[par] = $scope.filterTable[par]?0:1;
           $scope.loadProblems();
@@ -60,7 +63,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               url: '/api/search_usersProblem',
               params: {
                 nickname: $scope.searchNick, 
-                filtr: $scope.filterTable.param || undefined,
+                filtr: $scope.filterTable.param || 'is_enabled',
                 order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
                 per_page: $scope.selectCount['selected'],
                 offset: $scope.selectCount['selected'] * newValue - stepCount
@@ -72,11 +75,12 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
         } else {
+          console.log($scope.filterTable.param)
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',
             params: {
-              filtr: $scope.filterTable.param || undefined,
+              filtr: $scope.filterTable.param || 'is_enabled',
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount

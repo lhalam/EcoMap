@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll',
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
+=======
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth) {
+    
+>>>>>>> 2a7ae81a8e7a206349088dbc7269bd0f2f3c04af
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
     $scope.photos = [];    
@@ -28,6 +34,16 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
+<<<<<<< HEAD
+=======
+        $rootScope.metadata = function(){
+          metaTags = {
+            'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
+            'description': $scope.selectProblem.title
+          }
+          return metaTags;
+        }
+>>>>>>> 2a7ae81a8e7a206349088dbc7269bd0f2f3c04af
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,
@@ -38,6 +54,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
         $scope.comments = response.data[3];
+        
         MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
         if($scope.isSubscripted === false) {
           $scope.cls_eye_subs = "fa fa-eye-slash";

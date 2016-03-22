@@ -1211,6 +1211,9 @@ select.form-comments{
 .topProblems {
   display: inline-block;
   margin: 15px 0px;
+  width: 100%;
+  padding-left: 3%;
+  padding-right: 3%;
 }
 .statistic h2{
   font-size: 34px;
@@ -1218,16 +1221,16 @@ select.form-comments{
   height: 50px;
 }
 
- @media screen and (max-width: 360px){
+ @media screen and (min-width: 320px) and (max-width: 445px){
     .statistic h2 {
-      height: 91px;
+      height: 90px;
     }
   }
-   @media screen and (min-width: 1024px) and (max-width: 1024px) {
-    .statistic h2 {
-      height: 91px;
-    }
+@media screen and (min-width: 995px) and (max-width: 1300px){
+  .statistic h2{
+    height: 90px;
   }
+}
 .topItem{
   margin-bottom: 0px;
   padding-left: 0px;

@@ -110,7 +110,8 @@ Website's url - <a href="http://ecomap.org">ecomap.org</a></p>
     <li>Now you have working Database!</li>
 </ol>
 <h2>Database scheme</h2>
-<img src="https://raw.githubusercontent.com/lhalam/EcoMap/dev/ecomap_db.png">
+
+<img src="https://raw.githubusercontent.com/lhalam/EcoMap/STAGE/ecomap_db.png">
 
 <h2>Ecomap application runs on Apache Web Server v2.4</h2>
 <p>

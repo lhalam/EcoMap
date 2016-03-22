@@ -25,7 +25,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-        console.log($scope.selectProblem.is_enabled)
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,

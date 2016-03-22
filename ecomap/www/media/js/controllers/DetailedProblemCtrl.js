@@ -1,5 +1,5 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth',
-  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll',
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
     $scope.photos = [];    
@@ -19,6 +19,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
     $scope.severities = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     $scope.user_id = $cookies.get('id');
+    if ($location.hash()) {
+        $anchorScroll();
+    };
     $scope.dataLoader = function(){
       $http({
         'method': 'GET',

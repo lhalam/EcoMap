@@ -1226,7 +1226,7 @@ select.form-comments{
       height: 90px;
     }
   }
-@media screen and (min-width: 995px) and (max-width: 1298px){
+@media screen and (min-width: 995px) and (max-width: 1300px){
   .statistic h2{
     height: 90px;
   }

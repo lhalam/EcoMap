@@ -33,7 +33,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           return metaTags;
         }
-
+        $scope.problemUrl = window.location.href;       
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,
@@ -44,6 +44,18 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
         $scope.comments = response.data[3];
+        $rootScope.metadata = function(){
+          metaTags = {
+            'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
+            'description': $scope.selectProblem.title,
+            'url': window.location.href,
+            'image': ""
+          }
+          if($scope.photos[0]){
+            metaTags.image = 'http://' + window.location.hostname + $scope.photos[0].url
+          }
+          return metaTags;
+        }
         
         MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
         if($scope.isSubscripted === false) {

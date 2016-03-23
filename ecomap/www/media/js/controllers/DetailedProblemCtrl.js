@@ -244,11 +244,14 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     };
     $scope.waiting = false;
     angular.element(document).ready(function () {
-        setTimeout(function() {
+      var aaa = setInterval(function() {
           if($location.hash()) {
             $anchorScroll();
           }
-        }, 0);
+      }, 250);
+      setTimeout(function() {
+        clearInterval(aaa);
+      },1000);
     });
     
     $scope.changeStatus = function(mod){

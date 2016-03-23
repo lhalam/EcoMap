@@ -250,7 +250,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
       }, 200);
       setTimeout(function() {
-        clearInterval(aaa);
+        clearInterval(interval_id);
       },1000);
     });
     

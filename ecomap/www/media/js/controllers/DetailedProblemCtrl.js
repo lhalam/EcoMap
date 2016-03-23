@@ -33,7 +33,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           return metaTags;
         }
-        $scope.problemUrl = window.location.href;       
+        $scope.problemUrl = encodeURIComponent(window.location.href);
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,

@@ -10,6 +10,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.showSubComments = false;
     $scope.editMode = false;
     $scope.editCommentid = null;
+    $scope.showCommentTab = $location.hash() ? true: false;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.hideSeverityForUser = (~['moderator','admin'].indexOf($cookies.get('role'))) ? true : false;
     $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
@@ -19,16 +20,12 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
     $scope.severities = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
     $scope.user_id = $cookies.get('id');
-    if ($location.hash()) {
-        $anchorScroll();
-    };
     $scope.dataLoader = function(){
       $http({
         'method': 'GET',
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-
         $rootScope.metadata = function(){
           metaTags = {
             'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
@@ -234,6 +231,14 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     };
     $scope.waiting = false;
+    angular.element(document).ready(function () {
+        setTimeout(function() {
+          if($location.hash()) {
+            $anchorScroll();
+          }
+        }, 0);
+    });
+    
     $scope.changeStatus = function(mod){
       $scope.waiting = true;
       $http({

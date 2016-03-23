@@ -75,12 +75,12 @@
         <div class="col-md-12 ">{{selectProblem.name}}</div>
       </div>
       <div class="shared_button">
-          <a href="https://www.facebook.com/sharer/sharer.php?u=ecomap.new/#/detailedProblem/{{selectProblem.problem_id}}" 
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{problemUrl}}" 
              class="share_button"
              onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">
              <i class="fa fa-facebook-square fa-2x"></i>
           </a>
-          <a href="https://plus.google.com/share?url=ecomap.new&title={{selectProblem.title}}&content={{selectProblem.content}}" 
+          <a href="https://plus.google.com/share?url={{problemUrl}}&title={{selectProblem.title}}&content={{selectProblem.content}}" 
              onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" 
              class="share_button">
           <i class="fa fa-google-plus-square fa-2x"></i>

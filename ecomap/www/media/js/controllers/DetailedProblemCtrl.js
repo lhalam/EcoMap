@@ -28,7 +28,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-
+        $scope.problemUrl = window.location.href;
+        console.log($scope.problemUrl )
         $rootScope.metadata = function(){
           metaTags = {
             'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,

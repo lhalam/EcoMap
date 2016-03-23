@@ -25,3 +25,16 @@ app.directive('ngEsc', function () {
         });
     };
 });
+
+app.directive('ngContent', [
+    function() {
+      return {
+        link: function($scope, $el, $attrs) {
+                $scope.$watch($attrs.ngContent, function(value) {
+                  $el.attr('content', value);
+                });
+              }
+      };
+    }
+  ])
+;

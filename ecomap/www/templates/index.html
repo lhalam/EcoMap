@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="app" >
+<html lang="en" ng-app="app"  ng-controller="MainCtrl">
 <head>
   <title>Ecomap.org</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name='title' ng-content='metadata().title'>
+  <meta name='description' ng-content='metadata().description'>
   <link rel="icon" type="image/icon" href="/image/favicon.ico">
 
   <!-- Styles -->
@@ -50,6 +52,7 @@
   <script src="/js/libs/ng-file-upload-shim.min.js"></script>
   <script src="/js/libs/ng-google-chart.js"></script>
   <script src="/js/libs/vis.js"></script>
+ <!--  <script src="/js/libs/angular-metatags.min.js"></script> -->
 
   <!-- AngularJS app -->
   <script src="/js/App.js"></script>
@@ -101,7 +104,7 @@
     <script src='/js/controllers/EditProblemCtrl.js'></script>
 
 </head>
-<body ng-controller="MainCtrl">
+<body>
   <div class="wrapper flex-container flex-column">
     <nav class="navbar navbar-default navbar-static-top">
       <div class="container-fluid">

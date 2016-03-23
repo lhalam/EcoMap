@@ -1460,5 +1460,32 @@ a.one_button{
 .enabled_true{
   color: #8eb01e;
 }
+a.share_button:hover{
+  color: #4B66A1;
+}
+a.share_button, .share_button:link, .share_button:active{
+  color: #333333;
+  text-decoration: none;
+}
+.share_button:last-of-type{
+  margin-left: 5px;
+}
+.share_button:last-of-type:hover{
+  color: #d3191a;
+  margin-left: 5px;
+  text-decoration: none;
+}
+.problem_tab{
+  position: relative;
+}
+.shared_button{
+  position:absolute;
+  top:3px;
+  right:5px;
+}
+.social{
+  float:left;
+}
+
 
 

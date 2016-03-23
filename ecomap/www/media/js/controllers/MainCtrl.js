@@ -4,7 +4,9 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",
-        'description': 'Екологічні проблеми України'
+        'description': 'Екологічні проблеми України',
+        'url': window.location.href,
+        'image': ''
       }
       return metaTags;
     }

@@ -86,11 +86,13 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
 
     $scope.post_comment = function(comment) {
       if (comment) {
+         var commentContent = comment.text;
+         comment.text = '';
           $http({
             method: 'POST',
             url: '/api/problem/add_comment',
             data: {
-              content: comment.text,
+              content: commentContent,
               problem_id: $state.params['id'],
               parent_id: '0',
               anonim: comment.changeUser
@@ -242,6 +244,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+
     $scope.waiting = false;
     angular.element(document).ready(function () {
       var interval_id = setInterval(function() {

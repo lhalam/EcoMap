@@ -155,8 +155,8 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     }
 
     $scope.triggerDetailModal = function(problem_id, comment_id) {
-        var url = '/#/detailedProblem/'.concat(problem_id,'#',comment_id);
-        window.open(url);
+        var url = '/#/detailedProblem/'.concat(problem_id,'#comment-',comment_id);
+        window.open(url, '_blank');
     }
   }
 ]);

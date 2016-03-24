@@ -1,4 +1,4 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll',
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll', 
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
@@ -84,14 +84,15 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
-
     $scope.post_comment = function(comment) {
       if (comment) {
+         var commentContent = comment.text;
+         comment.text = '';
           $http({
             method: 'POST',
             url: '/api/problem/add_comment',
             data: {
-              content: comment.text,
+              content: commentContent,
               problem_id: $state.params['id'],
               parent_id: '0',
               anonim: comment.changeUser
@@ -243,6 +244,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+
     $scope.waiting = false;
     angular.element(document).ready(function () {
       var interval_id = setInterval(function() {

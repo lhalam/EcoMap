@@ -1488,5 +1488,6 @@ a.share_button, .share_button:link, .share_button:active{
   float:left;
 }
 
-
-
+.comment-padding{
+  margin-bottom: 20px;
+}

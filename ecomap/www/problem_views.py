@@ -913,19 +913,16 @@ def statistic_problems():
         "count": 12}]``
     """
     period = int(request.args.get('date')) or 0
-    count = db.count_problem_types()[0]
     if period:
         date_format = ('', '%Y-%m-%d', '%U', '%Y-%m', '%Y')[period]
         posted_date = datetime.datetime.now().strftime(date_format)
-        statics = [{'type': db.count_type(problem_types, date_format,
-                                          posted_date)[1],
-                    'count': db.count_type(problem_types, date_format,
-                                           posted_date)[0]}
-                   for problem_types in range(1, count+1)]
+        statics = [{'type': statistic[1],
+                    'count': statistic[0]}
+                   for statistic in db.count_type(date_format, posted_date)]
     else:
-        statics = [{'type': db.count_all_type(problem_types)[1],
-                    'count': db.count_all_type(problem_types)[0]}
-                   for problem_types in range(1, count+1)]
+        statics = [{'type': statistic[1],
+                    'count': statistic[0]}
+                   for statistic in db.count_all_type()]
     return Response(json.dumps(statics), mimetype='application/json')
 
 

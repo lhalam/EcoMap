@@ -1838,24 +1838,24 @@ def count_subscriptions_by_problem_id():
 
 
 @db.retry_query(tries=3, delay=1)
-def count_all_type():
+def count_all_type(problem_type_id):
     """Count all problems of some type of problem.
     :params problem_type_id: id of problem type.
     :return: tuple with problem_type name and count problems with this type.
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(*), problem_type.name from `problem`
+        query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
                                 INNER JOIN `problem_type`
                                 ON problem.problem_type_id = problem_type.id
-                GROUP BY problem_type.name;
-                """
+                WHERE problem_type_id = {};
+                """).format(problem_type_id)
         cursor.execute(query)
-        return cursor.fetchall()
+        return cursor.fetchone()
 
 
 @db.retry_query(tries=3, delay=1)
-def count_type(date_format, posted_date):
+def count_type(problem_type_id, date_format, posted_date):
     """Count problems of some type of problem.
     :params problem_type_id: id of problem type.
     :params date_format: format of data (day: %Y-%m-%d, year: %Y and other).
@@ -1865,14 +1865,14 @@ def count_type(date_format, posted_date):
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = ("""SELECT COUNT(*), problem_type.name from `problem`
-                    INNER JOIN `problem_type`
-                    ON problem.problem_type_id = problem_type.id
-                    WHERE FROM_UNIXTIME(created_date, '{}') = '{}'
-                    GROUP BY problem_type.name;
-                 """).format(date_format, posted_date)
+        query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
+                                INNER JOIN `problem_type`
+                                ON problem.problem_type_id = problem_type.id
+                WHERE problem_type_id = '{}' AND
+                FROM_UNIXTIME(created_date, '{}') = '{}';
+                """).format(problem_type_id, date_format, posted_date)
         cursor.execute(query)
-        return cursor.fetchall()
+        return cursor.fetchone()
 
 
 @db.retry_query(tries=3, delay=1)

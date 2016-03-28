@@ -245,17 +245,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     };
 
     $scope.waiting = false;
-    angular.element(document).ready(function () {
-      var interval_id = setInterval(function() {
-          if($location.hash()) {
-            $anchorScroll();
-          }
-      }, 200);
-      setTimeout(function() {
-        clearInterval(interval_id);
-      },1000);
-    });
-    
+
     $scope.changeStatus = function(mod){
       $scope.waiting = true;
       $http({

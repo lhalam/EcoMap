@@ -10,7 +10,7 @@
           <td>e-mail</td>
           <td>Роль</td>
           <td>
-            <select ng-model="selectCount.selected" class="form-control" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
+            <select ng-model="selectCount.selected" class="form-control pull-right" data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" ng-change="loadPagination()">
             </select>
           </td>
         </tr>
@@ -33,7 +33,7 @@
     </table>
     <div class="row">
       <div class="col-md-8 col-md-offset-4">
-        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+        <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" class="pagination" max-size="3" boundary-links="true" rotate="false"></uib-pagination >
       </div>
     </div>
   </div>

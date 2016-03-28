@@ -42,5 +42,8 @@ app.factory('msg', function(toaster) {
     sendSuccessMailtoDelete : function(msg, type) {
       toaster.pop('success', 'Відправлення ' + msg + ' здійснено успішно! Підтвердіть видалення через імейл!');
     },
+    registerSuccess: function() {
+      toaster.pop('success', 'Профіль створено успішно', 'Дані про реєстрацію відправлені на Вашу електронну пошту.')
+    }
   };
 });

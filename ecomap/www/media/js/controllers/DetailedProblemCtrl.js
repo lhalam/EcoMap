@@ -26,13 +26,6 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-        $rootScope.metadata = function(){
-          metaTags = {
-            'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
-            'description': $scope.selectProblem.title
-          }
-          return metaTags;
-        }
         $scope.detailedInfoProblemUrl = window.location.href;
         $scope.problemUrl = encodeURIComponent(window.location.href);
         $scope.moder = {
@@ -48,9 +41,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         $rootScope.metadata = function(){
           metaTags = {
             'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
-            'description': $scope.selectProblem.title,
+            'description': $scope.selectProblem.title/*,
             'url': window.location.href,
-            'image': ""
+            'image': ""*/
           }
           if($scope.photos[0]){
             metaTags.image = 'http://' + window.location.hostname + $scope.photos[0].url

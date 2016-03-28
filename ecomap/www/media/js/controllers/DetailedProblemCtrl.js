@@ -250,6 +250,10 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       },1000);
     });
 
+    $scope.makeLink = function(comment_id) {
+      $location.hash("comment-" + comment_id);
+    }
+
     $scope.changeStatus = function(mod){
       $scope.waiting = true;
       $http({

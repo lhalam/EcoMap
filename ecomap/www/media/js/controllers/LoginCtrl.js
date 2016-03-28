@@ -1,6 +1,7 @@
-app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth', '$state',
-  function($scope, $http, $rootScope, $cookies, $auth, $state) {
+app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth', '$state', 'msg', 'toaster',
+  function($scope, $http, $rootScope, $cookies, $auth, $state, msg, toaster) {
     $scope.invalidPasswordEmail = false;
+    $scope.msg = msg;
     $scope.getInvalidPasswordEmail = function() {
       return $scope.invalidPasswordEmail;
     };
@@ -31,8 +32,11 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
         $rootScope.isFetching=false;
       }, 20000);
       $auth.authenticate(provider).then(function successCallback(responce) {
-        $rootScope.UserCredentials = responce.data.name + ' ' + responce.data.surname ;
+        $rootScope.UserCredentials = responce.data.name + ' ' + responce.data.surname;
         $state.go('map');
+        if (!responce.data.registered) {
+          $scope.msg.registerSuccess();
+        }
         $rootScope.isFetching=false;
       })
     };

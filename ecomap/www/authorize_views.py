@@ -208,7 +208,7 @@ def oauth_login(provider):
     profile = json.loads(resource.text)
     nickname = '{}{}'.format(profile['last_name'], int(time.time()))
     logger.info(profile['picture']['data']['url'])
-    user = ecomap_user.facebook_register(profile['first_name'],
+    user, is_registered = ecomap_user.facebook_register(profile['first_name'],
                                          profile['last_name'],
                                          nickname,
                                          profile['email'],
@@ -224,7 +224,8 @@ def oauth_login(provider):
                        token=user.get_auth_token(),
                        email=user.email,
                        name=user.first_name,
-                       surname=user.last_name)
+                       surname=user.last_name,
+                       registered=is_registered)
 
     response.set_cookie('id',
                         bytes(user.uid),

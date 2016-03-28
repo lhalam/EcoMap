@@ -185,9 +185,12 @@ def facebook_register(first_name, last_name, nickname, email, provider, uid):
         :returns True if transaction finished successfully.
     """
     user = get_user_by_oauth_id(uid)
+    is_registered = True
     if not user:
         user = get_user_by_email(email)
+        is_registered = True
     if not user:
+        is_registered = False
         password = random_password(10)
         salted_pass = hash_pass(password)
         role_id = util.get_role_id('user')
@@ -199,7 +202,6 @@ def facebook_register(first_name, last_name, nickname, email, provider, uid):
         if register_user_id:
             util.add_users_role(register_user_id, role_id[0])
             user = get_user_by_oauth_id(uid)
-
         message = generate_email('registration', _CONFIG['email.from_address'],
                                  email, (first_name, last_name,
                                  email, password, request.url_root))
@@ -211,7 +213,7 @@ def facebook_register(first_name, last_name, nickname, email, provider, uid):
                    message)
     else:
         util.add_oauth_to_user(user.uid, provider, uid)
-    return user
+    return user, is_registered
 
 
 @LOGIN_MANAGER.user_loader

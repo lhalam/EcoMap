@@ -28,48 +28,42 @@
   <table class="table table-stripped UserProblemTable" ng-show="problemsLength">
     <thead>
       <tr>
-        <td ng-click="sortType = 'last_name';sortReverse = !sortReverse"
-            ng-show="showTable==true"><strong>Користувач</strong>
-          <span ng-show="sortType == 'last_name' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'last_name' && sortReverse" class="fa fa-caret-up">
-          </span>
+        <td ng-click="sortFilter('last_name')"
+            ng-show='showTable == true'><strong>Користувач</strong>
+          <span ng-show="!filterTable.order_last_name && filterTable.param=='last_name'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_last_name && filterTable.param=='last_name'" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'nickname';sortReverse = !sortReverse"
-            ng-show="nickname==true || showTable==true"><strong>Псевдонім</strong>
-          <span ng-show="sortType == 'nickname' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'nickname' && sortReverse" class="fa fa-caret-up">
-          </span>
+        <td ng-click="sortFilter('nickname')"
+            ng-show='showTable == true || nickname == true'><strong>Псевдонім</strong>
+          <span ng-show="!filterTable.order_nickname && filterTable.param=='nickname'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_nickname && filterTable.param=='nickname'" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'title';sortReverse = !sortReverse"><strong>Заголовок</strong>
-          <span ng-show="sortType == 'title' && !sortReverse" class="fa fa-caret-down">
-          </span>
-          <span ng-show="sortType == 'title' && sortReverse" class="fa fa-caret-up">
-          </span>
+        <td ng-click="sortFilter('title')"><strong>Заголовок</strong>
+          <span ng-show="!filterTable.order_title && filterTable.param=='title'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_title && filterTable.param=='title'" class="fa fa-caret-up"></span>
         </td>
-        <td><strong ng-click="sortType = 'type';sortReverse = !sortReverse">Тип проблеми</strong>
-          <span ng-show="sortType == 'type' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'type' && sortReverse" class="fa fa-caret-up"></span>
+        <td><strong ng-click="sortFilter('name')">Тип проблеми</strong>
+          <span ng-show="!filterTable.order_name && filterTable.param=='name'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_name && filterTable.param=='name'" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'status';sortReverse = !sortReverse"><strong>Статус</strong>
-          <span ng-show="sortType == 'status' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'status' && sortReverse" class="fa fa-caret-up"></span>
+        <td ng-click="sortFilter('status')"><strong>Статус</strong>
+          <span ng-show="!filterTable.order_status && filterTable.param=='status'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_status && filterTable.param=='status'" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'date';sortReverse = !sortReverse"><strong>Дата створення</strong>
-          <span ng-show="sortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
+        <td ng-click="sortFilter('created_date')"><strong>Дата створення</strong>
+          <span ng-show="!filterTable.order_date && filterTable.param=='date'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_date && filterTable.param=='date'" class="fa fa-caret-up"></span>
         </td>
-        <td ng-click="sortType = 'date';sortReverse = !sortReverse"><strong>Дата підписки</strong>
-          <span ng-show="sortType == 'date' && !sortReverse" class="fa fa-caret-down"></span>
-          <span ng-show="sortType == 'date' && sortReverse" class="fa fa-caret-up"></span>
+        <td ng-click="sortFilter('date_subscriptions')"><strong>Дата підписки</strong>
+          <span ng-show="!filterTable.order_date_subscriptions && filterTable.param=='date_subscriptions'" class="fa fa-caret-down"></span>
+          <span ng-show="filterTable.order_date_subscriptions && filterTable.param=='date_subscriptions'" class="fa fa-caret-up"></span>
         </td>
         <td><strong>Детальне інфо</strong> 
         </td>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="subscription in subscriptions | orderBy:sortType:sortReverse">
+      <tr ng-repeat="subscription in subscriptions">
         <td ng-model="subscription.last_name" class="problem-title" ng-show="showTable==true">{{subscription.first_name}} {{subscription.last_name}}</td>
         <td ng-model="subscription.nickname" class="problem-title" ng-show="showTable==true || nickname==true">{{subscription.nickname}}</td>
         <td ng-model="subscription.title" class="problem-title">{{subscription.title}}</td>
@@ -89,7 +83,7 @@
   <h3 class="text-center" ng-hide="count > 0">Підписки відсутні.</h3>
   <div class="row" ng-hide="count == 0">
     <div class="col-md-8 col-md-offset-4">
-      <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination" boundary-links="true"></uib-pagination >
+      <uib-pagination ng-change="change(bigCurrentPage)" total-items="bigTotalItems" ng-model="bigCurrentPage" class="pagination" max-size="3" boundary-links="true" rotate="false"></uib-pagination >
     </div>
   </div>
 </div>

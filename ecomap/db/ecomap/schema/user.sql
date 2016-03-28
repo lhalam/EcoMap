@@ -5,8 +5,8 @@
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
-  `nickname` varchar(255) NOT NULL,
+  `last_name` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
+  `nickname` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
   `email` varchar(100) NOT NULL,
   `avatar` varchar(255),
   `password` varchar(100) NOT NULL,

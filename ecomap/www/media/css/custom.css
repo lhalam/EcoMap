@@ -939,10 +939,11 @@ table .form-control{
   background-color: #fff;
   transition:1s;
 }
+
 .comment-input, .wrapping{
   width: 100%;
   word-wrap : break-word;
-  padding: 0px;
+  padding: 0px 5px;
   display: inline;
 }
 
@@ -1226,7 +1227,7 @@ select.form-comments{
       height: 90px;
     }
   }
-@media screen and (min-width: 995px) and (max-width: 1298px){
+@media screen and (min-width: 995px) and (max-width: 1300px){
   .statistic h2{
     height: 90px;
   }
@@ -1454,5 +1455,39 @@ a.one_button{
 .table-stripped thead td{
   cursor: pointer;
 }
+.enabled_false{
+  color: #ff0000;
+}
+.enabled_true{
+  color: #8eb01e;
+}
+a.share_button:hover{
+  color: #4B66A1;
+}
+a.share_button, .share_button:link, .share_button:active{
+  color: #333333;
+  text-decoration: none;
+}
+.share_button:last-of-type{
+  margin-left: 5px;
+}
+.share_button:last-of-type:hover{
+  color: #d3191a;
+  margin-left: 5px;
+  text-decoration: none;
+}
+.problem_tab{
+  position: relative;
+}
+.shared_button{
+  position:absolute;
+  top:3px;
+  right:5px;
+}
+.social{
+  float:left;
+}
 
-
+.comment-padding{
+  margin-bottom: 20px;
+}

@@ -1,5 +1,15 @@
-app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$window','toaster',
-  function($scope, $http, $state, $cookies, $window, toaster) {
+app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$window','toaster', '$rootScope',
+  function($scope, $http, $state, $cookies, $window, toaster, $rootScope) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Статистика екологічних проблем Украни",
+        'description': 'Топ найважливіших екологічних проблем України'/*,
+        'url': window.location.href,
+        'image': ''*/
+      }
+      return metaTags;
+    }
+
     $scope.period = 0;
     $scope.chartObject = {};
     $scope.chartObject.type = "PieChart";

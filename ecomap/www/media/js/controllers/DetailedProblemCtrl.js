@@ -1,8 +1,8 @@
-app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth',
-  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth) {
+app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll', 
+  function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
-    $scope.photos = [];    
+    $scope.photos = [];
     $scope.comments = [];
     $scope.msg = msg;
     $scope.comment={}
@@ -10,6 +10,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.showSubComments = false;
     $scope.editMode = false;
     $scope.editCommentid = null;
+    $scope.showCommentTab = $location.hash() ? true: false;
     $scope.showInputForm = $cookies.get('id') ? true: false;
     $scope.hideSeverityForUser = (~['moderator','admin'].indexOf($cookies.get('role'))) ? true : false;
     $scope.enableds = {'0': 'Не підтверджено', '1': 'Підтверджено'};
@@ -25,7 +26,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'url': '/api/problem_detailed_info/' + $state.params['id']
       }).then(function successCallback(response) {
         $scope.selectProblem = response.data[0][0];
-        console.log($scope.selectProblem.is_enabled)
+        $scope.detailedInfoProblemUrl = window.location.href;
+        $scope.problemUrl = encodeURIComponent(window.location.href);
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
           'status': $scope.selectProblem.status,
@@ -36,6 +38,19 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         $scope.isSubscripted = response.data[0][0]['is_subscripted'];
         $scope.photos = response.data[2];
         $scope.comments = response.data[3];
+        $rootScope.metadata = function(){
+          metaTags = {
+            'title': "Екологічні проблеми України типу: " + $scope.selectProblem.name,
+            'description': $scope.selectProblem.title/*,
+            'url': window.location.href,
+            'image': ""*/
+          }
+          if($scope.photos[0]){
+            metaTags.image = 'http://' + window.location.hostname + $scope.photos[0].url
+          }
+          return metaTags;
+        }
+
         MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
         if($scope.isSubscripted === false) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
@@ -48,7 +63,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
     }
     $scope.dataLoader()
-    
+
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -62,14 +77,15 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       var min_url = parts[0] + '.min.' + parts[1];
       return min_url;
     };
-
     $scope.post_comment = function(comment) {
       if (comment) {
+         var commentContent = comment.text;
+         comment.text = '';
           $http({
             method: 'POST',
             url: '/api/problem/add_comment',
             data: {
-              content: comment.text,
+              content: commentContent,
               problem_id: $state.params['id'],
               parent_id: '0',
               anonim: comment.changeUser
@@ -193,7 +209,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           $scope.editMode = false;
           $scope.oldContent = null;
-        
+
     };
 
     $scope.chgEyeSubsc = function(){
@@ -221,7 +237,23 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         })
       }
     };
+
     $scope.waiting = false;
+    angular.element(document).ready(function () {
+      var interval_id = setInterval(function() {
+          if($location.hash()) {
+            $anchorScroll();
+          }
+      }, 200);
+      setTimeout(function() {
+        clearInterval(interval_id);
+      },1000);
+    });
+
+    $scope.makeLink = function(comment_id) {
+      $location.hash("comment-" + comment_id);
+    }
+
     $scope.changeStatus = function(mod){
       $scope.waiting = true;
       $http({
@@ -234,8 +266,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'problem_id': $state.params['id'],
         'severity': mod.severity,
         'status': mod.status,
-        'is_enabled': mod.enabled, 
-        'comment': mod.comment 
+        'is_enabled': mod.enabled,
+        'comment': mod.comment
       }
       }).then(function successCallback(data) {
         $scope.waiting = false;

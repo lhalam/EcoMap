@@ -151,6 +151,7 @@
                 <div class="pull-left">
                   <a role="button" ng-click="getSubComments(comment.id)" ng-show="showInputForm">відповісти</a>
                   <span role="button" ng-show="comment.user_id == user_id && !editMode" class="fa fa-pencil comment-update" data-toggle="tooltip" data-placement="top" title="Редагувати" ng-click="showCommentInput(comment)" tooltip></span>
+                  <span role="button" class="fa fa-link  fa-flip-vertical comment-update" data-toggle="tooltip" data-placement="top" title="Посилання &#010 на коментар" ng-click="makeLink(comment.id)" tooltip></span>
                 </div>
                 <div class="pull-right">
                   <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>

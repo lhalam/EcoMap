@@ -23,47 +23,47 @@
         </div>
       </div>
     </div>
-    <div ng-show='hideSeverityForUser==true'>              
+    <div ng-show='hideSeverityForUser==true'>
       <form class='moderEditOption' ng-submit="changeStatus(moder)">
         <div class="form-inline">
-        <label class='statusSelect'>Важливість</label>                 
+        <label class='statusSelect'>Важливість</label>
         <select required ng-model="moder.severity"
                 class="form-control input-sm statusSel"
                 ng-options='severity for severity in severities'
                 >
-        </select>    
+        </select>
         </div>
         <div class="form-inline">
-          <label class='statusSelect'>Статус</label>         
+          <label class='statusSelect'>Статус</label>
           <select required ng-model="moder.status"
                   class="form-control input-sm statusSel"
-                  ng-options='status_key as status_value for (status_key, status_value) in statuses'> 
-          </select>  
-         <button type="submit" value="Змінити" 
+                  ng-options='status_key as status_value for (status_key, status_value) in statuses'>
+          </select>
+         <button type="submit" value="Змінити"
          class="btn btn-primary btn-sm btn-sev" ng-hide="!selectProblem.is_enabled">
          <span ng-if="!waiting">Змінити</span>
         <span ng-if="waiting" class="text-center"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
         </button>
         </div>
         <div class="form-inline" ng-show="!selectProblem.is_enabled">
-          <label class='statusSelect'>Підтвердження</label>         
+          <label class='statusSelect'>Підтвердження</label>
           <select required ng-model="moder.enabled"
                   class="form-control input-sm statusSel"
                   ng-options='enabled_key as enabled_value for (enabled_key, enabled_value) in enableds' ng-value="enabled_value">
-          </select> 
+          </select>
         </div>
         <div class="form-inline" ng-if="!selectProblem.is_enabled">
-          <label class='statusSelect'>Комментар</label>         
+          <label class='statusSelect'>Комментар</label>
           <textarea ng-model="moder.comment"
                     class="form-control input-sm statusSel"></textarea>
         </div>
         <div>
-        <button type="submit" value="Змінити" 
+        <button type="submit" value="Змінити"
                class="btn btn-primary btn-sm btn-sev" ng-hide="selectProblem.is_enabled">
             <span ng-if="!waiting">Змінити</span>
             <span ng-if="waiting"><img src="/image/swipebox/712_blue.gif" class="change_button"></span>
-        </button>  
-        </div>   
+        </button>
+        </div>
       </form>
     </div>
   </div>
@@ -75,16 +75,29 @@
         <div class="col-md-12 ">{{selectProblem.name}}</div>
       </div>
       <div class="shared_button">
-          <a href="https://www.facebook.com/sharer/sharer.php?app_id=1000437473361749&sdk=joey&u={{problemUrl}}&display=popup"
-             class="share_button"
-             onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">
-             <i class="fa fa-facebook-square fa-2x"></i>
-          </a>
-          <a href="https://plus.google.com/share?url={{problemUrl}}&title={{selectProblem.title}}&content={{selectProblem.content}}"
-             onclick="javascript:window.open(this.href,'', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" 
-             class="share_button">
-          <i class="fa fa-google-plus-square fa-2x"></i>
-          </a>
+             <a href=""
+              socialshare
+              socialshare-provider="facebook"
+              socialshare-type="feed"
+              socialshare-text="{{selectProblem.title}}"
+              socialshare-description="{{selectProblem.content}}"
+              socialshare-url="{{detailedInfoProblemUrl}}"
+              socialshare-media="http://www.heremytattoo.com/wp-content/uploads/2013/07/panda-bear-tattoo.jpg"
+              socialshare-caption="Екологічна карта України"
+              socialshare-via="1000437473361749" class="share_button">
+              <i class="fa fa-facebook-square fa-2x"></i>
+              </a>
+          <a href=""
+              socialshare
+              socialshare-provider="google+"
+              socialshare-text="{{selectProblem.title}}"
+              socialshare-description="{{selectProblem.content}}"
+              socialshare-url="{{detailedInfoProblemUrl}}"
+              socialshare-media="http://www.heremytattoo.com/wp-content/uploads/2013/07/panda-bear-tattoo.jpg"
+              socialshare-caption="Екологічна карта України"
+               class="share_button">
+              <i class="fa fa-google-plus-square fa-2x"></i>
+              </a>
       </div>
       <div class="row description">
         <div class="col-md-12"><strong>Опис проблеми:</strong></div>
@@ -95,11 +108,11 @@
         <div class="col-md-12 ">{{selectProblem.proposal}}</div>
       </div>
       <div class="row photos">
-        <div class="col-md-12"><strong>Фото:</strong></div>     
+        <div class="col-md-12"><strong>Фото:</strong></div>
         <a href="{{photo.url}}" class="swipebox" title="{{selectProblem.title}}"
            ng-repeat="photo in photos">
-          <img ng-src="{{getMinPhoto(photo.url)}}" 
-               alt="{{photo.description}}" 
+          <img ng-src="{{getMinPhoto(photo.url)}}"
+               alt="{{photo.description}}"
                height="100" width="100"
                class="img-responsive"/>
         </a>
@@ -113,9 +126,9 @@
           <textarea ng-model="comment.text" class="comment-input" ng-class="{'form-control': focused}" name='comment' placeholder='Ваш коментар' rows='4' cols='80' type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" ng-disabled="editMode" required></textarea>
           <div class="checkbox pull-right">
             <label class="changeUser" ng-show="!editMode">
-              <input type="checkbox" 
-                     ng-model="comment.changeUser" 
-                     ng-true-value="true" 
+              <input type="checkbox"
+                     ng-model="comment.changeUser"
+                     ng-true-value="true"
                      ng-false-value="false"/>Анонімно
             </label>
           </div>
@@ -141,7 +154,7 @@
                 </div>
                 <div class="pull-right">
                   <a role="button" ng-click="getSubComments(comment.id)" ng-show="comment.sub_count"><i class="fa fa-share"></i> {{comment.sub_count | answerFilter}}</a>
-                </div> 
+                </div>
               </div>
 
               <div ng-form name="editComment" ng-show="editMode && editCommentid == comment.id" ng-class="{ 'has-error': editComment.newcomment.$invalid}">
@@ -154,7 +167,7 @@
             </div>
           </div>
         </div>
-        <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">  
+        <div ng-if="comment.id===subcomment_parent" ng-show="showSubComments">
           <div ng-repeat='subcomment in subcomments' class="row">
               <div class="col-lg-offset-3 col-lg-9 col-md-offset-3 col-md-9 col-sm-offset-3 col-sm-9 col-xs-offset-3 col-xs-9">
                 <div class="panel panel-default">
@@ -188,17 +201,17 @@
                     <a role="button" class="editComment" ng-click="cancelComment(subcomment)">скасувати.</a>
                   </div>
                 </div>
-              </div>  
+              </div>
           </div>
-          <div class="row" ng-hide="editMode || 
+          <div class="row" ng-hide="editMode ||
           !showInputForm">
           <form name="addSubcomment" ng-class="{ 'has-error': addSubcomment.subcomment.$invalid || hasError }" class="col-lg-9 col-md-9 col-sm-9 col-xs-9 subcomment-form" ng-submit="post_subcomment(subcomment, comment)">
             <textarea class="comment-input" name='subcomment' ng-model="subcomment.text" placeholder='Ваша відповідь' rows='2' cols='38' ng-class="{'form-control': focused}" ng-maxlength="255" type="text" ng-maxlength="255" ng-init="focused = false" ng-focus="focused = true" ng-blur="focused = false" required></textarea>
             <div class="subcomment checkbox">
             <label class="changeUser">
-              <input type="checkbox" 
-                     ng-model="comment.changeUser" 
-                     ng-true-value="true" 
+              <input type="checkbox"
+                     ng-model="comment.changeUser"
+                     ng-true-value="true"
                      ng-false-value="false">Анонімно
             </label>
             </div>

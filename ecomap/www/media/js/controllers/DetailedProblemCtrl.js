@@ -2,7 +2,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
     $rootScope.showSidebarProblem = false;
-    $scope.photos = [];    
+    $scope.photos = [];
     $scope.comments = [];
     $scope.msg = msg;
     $scope.comment={}
@@ -33,6 +33,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           return metaTags;
         }
+        $scope.detailedInfoProblemUrl = window.location.href;
         $scope.problemUrl = encodeURIComponent(window.location.href);
         $scope.moder = {
           'severity': $scope.selectProblem.severity,
@@ -56,7 +57,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           return metaTags;
         }
-        
+
         MapFactory.setCenter(new google.maps.LatLng($scope.selectProblem.latitude, $scope.selectProblem.longitude), 15);
         if($scope.isSubscripted === false) {
           $scope.cls_eye_subs = "fa fa-eye-slash";
@@ -69,7 +70,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       };
     }
     $scope.dataLoader()
-    
+
     $scope.getStatus = function(status) {
       var statuses = {
         'Unsolved': 'Не вирішено',
@@ -215,7 +216,7 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
           }
           $scope.editMode = false;
           $scope.oldContent = null;
-        
+
     };
 
     $scope.chgEyeSubsc = function(){
@@ -245,6 +246,16 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     };
 
     $scope.waiting = false;
+    angular.element(document).ready(function () {
+      var interval_id = setInterval(function() {
+          if($location.hash()) {
+            $anchorScroll();
+          }
+      }, 200);
+      setTimeout(function() {
+        clearInterval(interval_id);
+      },1000);
+    });
 
     $scope.changeStatus = function(mod){
       $scope.waiting = true;
@@ -258,8 +269,8 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
         'problem_id': $state.params['id'],
         'severity': mod.severity,
         'status': mod.status,
-        'is_enabled': mod.enabled, 
-        'comment': mod.comment 
+        'is_enabled': mod.enabled,
+        'comment': mod.comment
       }
       }).then(function successCallback(data) {
         $scope.waiting = false;

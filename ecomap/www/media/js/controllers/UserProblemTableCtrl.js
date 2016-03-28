@@ -4,6 +4,8 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
     $scope.user_id = $cookies.get('id');
+    $scope.showRole = ($cookies.get('role')=='admin' || $cookies.get('role')=='moderator')?1:0;
+    console.log($scope.showRole)
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -66,16 +68,17 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
                 filtr: $scope.filterTable.param || 'is_enabled',
                 order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
                 per_page: $scope.selectCount['selected'],
-                offset: $scope.selectCount['selected'] * newValue - stepCount
+                offset: $scope.selectCount['selected'] * newValue - stepCount,
+                showRole: $scope.showRole
               }
             }).then(function successCallback(response) {
              $scope.problems = response.data[0];
              $scope.problemsLength = response.data[1][0]['total_problem_count'];
              $scope.count = response.data[1][0]['total_problem_count'];
              $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
+
            })
         } else {
-          console.log($scope.filterTable.param)
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',
@@ -83,7 +86,8 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               filtr: $scope.filterTable.param || 'is_enabled',
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
-              offset: $scope.selectCount['selected'] * newValue - stepCount
+              offset: $scope.selectCount['selected'] * newValue - stepCount,
+              showRole: $scope.showRole
             }
           }).then(function successCallback(response) {
             $scope.problems = response.data[0];

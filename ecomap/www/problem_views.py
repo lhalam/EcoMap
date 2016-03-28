@@ -274,8 +274,14 @@ def get_all_users_problems():
     order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
+    show_role = int(request.args.get('showRole')) or 0
     order_desc = 'desc' if order else 'asc'
-    problem_tuple = db.get_user_by_filter(order_desc, filtr, offset, per_page)
+    if show_role:
+        problem_tuple = db.get_user_by_filter(order_desc, filtr, offset,
+                                              per_page)
+    else:
+        problem_tuple = db.get_user_enabled_by_filter(order_desc, filtr,
+                                                      offset, per_page)
     count = db.count_problems()
     problems_list = [{'id': problem[0],
                       'title': problem[1],
@@ -682,10 +688,16 @@ def get_search_users_problems():
     nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
+    show_role = int(request.args.get('showRole')) or 0
     order_desc = 'desc' if order else 'asc'
-    problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
-                                                   order_desc, offset,
-                                                   per_page)
+    if show_role:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+    else:
+        problem_tuple = db.get_filter_user_nickname(nickname, filtr,
+                                                    order_desc, offset,
+                                                    per_page)
     count = db.count_user_by_nickname(nickname)
     problems_list = [{'id': problem[0],
                       'title': problem[1],

@@ -1,54 +1,22 @@
-app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactory','$auth',
-  function($scope, $http, $rootScope, $state, MapFactory, $auth) {
+app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactory',
+  function($scope, $http, $rootScope, $state, MapFactory) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Екологічні проблеми України'/*,
+        'url': window.location.href,
+        'image': ''*/
+      }
+      return metaTags;
+    }
     MapFactory.initMap();
     MapFactory.turnResizeOn();
-    $scope.auth = $auth.isAuthenticated();
     $scope.markers = MapFactory.loadProblems();
-    $scope.siteMapTrigger = false;
-    $scope.toogleSiteMap = function() {
-      $scope.siteMapTrigger = !$scope.siteMapTrigger;
-      $scope.filterTrigger = false;
-
-    }
-    $scope.triggerStat = function() {
-      var url = '/#/statistic';
-      window.open(url, '_blank');
-    };
-    $scope.triggerLogin = function() {
-      var url = '/#/login';
-      window.open(url, '_blank');
-    };
-    $scope.triggerRegister = function() {
-      var url = '/#/register';
-      window.open(url, '_blank');
-    };
-    $scope.triggerAddProblem = function() {
-      var url = '/#/addProblem';
-      window.open(url, '_blank');
-    };
-    $scope.triggerUserProblem = function() {
-      var url = '/#/user_profile/problems';
-      window.open(url, '_blank');
-    };
-    $scope.triggerUserInfo = function() {
-      var url = '/#/user_profile/info';
-      window.open(url, '_blank');
-    };
-    $scope.triggerUserComments = function() {
-      var url = '/#/user_profile/comments';
-      window.open(url, '_blank');
-    };
-    $scope.triggerUserSubscriptions = function() {
-      var url = '/#/user_profile/subscriptions';
-      window.open(url, '_blank');
-    };
 
     $scope.filterTrigger = false;
     $scope.toogleFilter = function() {
       $scope.filterTrigger = !$scope.filterTrigger;
-      $scope.siteMapTrigger = false;
     }
-
      $scope.loadProblemType = function() {
       $scope.Types = {};
       $http({

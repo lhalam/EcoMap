@@ -128,7 +128,7 @@
           <span class = "icon-bar"></span>
           <span class = "icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ></a>
+        <a class="navbar-brand" href="/#/map"><img src="/image/logo.png" ng-click="twentyClicks()" ></a>
       </div>
       <div class="navbar-collapse collapse" id="navMenu" ng-class="!navCollapsed && 'in'" ng-click="navCollapsed=true">
         <ul class="nav navbar-nav">
@@ -160,6 +160,9 @@
       </div>
     </div>
   </nav>
+  <div id="dpanda" ng-show="dPandaShow" ng-click="dPandaShow = false">
+    <img src="/image/swipebox/dpanda.gif-c200">
+  </div>
   <div id="fetching" ng-show="isFetching==true">
     <img src="/image/swipebox/712.gif">
   </div>

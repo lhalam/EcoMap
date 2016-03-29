@@ -87,6 +87,18 @@ html, body, .wrapper {
   margin-top: 20%;
 }
 
+#dpanda{
+  width:100%;
+  height:100%;
+  position: absolute;
+  z-index: 1000;
+}
+#dpanda img{
+  display: block;
+  margin-left: 45%;
+  margin-top: 15%;
+}
+
 /*problems filter */
 
 .toogle {

@@ -642,7 +642,7 @@ input[type="checkbox"] {
 
 .problemBlock .close{
   position: absolute;
-  right: 5px;
+  right: 20px;
 }
 
 .severity {
@@ -690,9 +690,9 @@ input[type="checkbox"] {
 .flex-column {
   flex-direction: column;
 }
-/*.main-flex{
-  height: 100%;
-}*/
+.main-flex{
+  overflow: hidden;  
+}
 .flex-row {
   flex-direction: row;
 }
@@ -862,7 +862,22 @@ input[type="checkbox"] {
   right: -51px;
   bottom: 70px;
 }
- .map-toogle{
+.filter-mapsite-toogle{
+  z-index:9999;
+  cursor: pointer;
+  position: absolute;
+  background-color: #fff;
+  padding-left: 5px;
+  height: 25px;
+  width: 80px;
+  border:2px solid #bbb;
+  border-bottom: none;
+  border-radius: 5px 5px 0px 0;
+  transform: rotate(90deg);
+  right: -51px;
+  bottom: 200px;
+}
+.map-toogle{
   z-index: 9999;
   cursor: pointer;
   position: absolute;

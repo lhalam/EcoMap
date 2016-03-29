@@ -3,6 +3,7 @@
 from ecomap.db import db_pool as db
 
 ANONYMOUS_ID = "2"
+ENABLED = 1
 
 
 @db.retry_query(tries=3, delay=1)
@@ -1895,9 +1896,9 @@ def get_all_problems_severity_for_stats():
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT id, title, problem_type_id, status, created_date, title,
-                           severity FROM problem;
+                           severity FROM problem WHERE is_enabled=%s;
                       """
-        cursor.execute(query)
+        cursor.execute(query, (ENABLED,))
         return cursor.fetchall()
 
 

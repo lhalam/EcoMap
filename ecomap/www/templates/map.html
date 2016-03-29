@@ -35,8 +35,26 @@
   <div class="filter-toogle" ng-click="toogleFilter()">
     фільтрація
   </div>
+  <div class="filter-mapsite-toogle" ng-click="toogleSiteMap()">
+    карта сайту
+  </div>
+  <div class="filter-controllers animate-show" ng-show="siteMapTrigger">
+    <p class="heading">
+    Карта сайту:
+    </p>
+    <ul class="status">
+      <li><a href='' ng-click='triggerStat()'>Статистика</a></li>
+      <li><a href='' ng-click='triggerLogin()'>Логін</a></li> 
+      <li><a href='' ng-click='triggerRegister()'>Реєстрація</a></li> 
+      <li ng-show="auth"><a href='' ng-click='triggerAddProblem()'>Повідомити про проблему</a></li>
+      <li ng-show="auth"><a href='' ng-click='triggerUserProblem()'>Ecomap проблеми</a></li>
+      <li ng-show="auth"><a href='' ng-click='triggerUserInfo()'>Профіль користувача</a></li>
+      <li ng-show="auth"><a href='' ng-click='triggerUserComments()'>Мої коментарі</a></li>
+      <li ng-show="auth"><a href='' ng-click='triggerUserSubscriptions()'>Мої підписки</a></li>
+  </div>
 </aside>
 <div class="map-container flex-item-1 flex-container flex-row">
   <div id="map" class="flex-item-1 flex-container flex-column" >
   </div>
 </div>
+

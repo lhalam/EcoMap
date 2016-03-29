@@ -642,7 +642,7 @@ input[type="checkbox"] {
 
 .problemBlock .close{
   position: absolute;
-  right: 5px;
+  right: 20px;
 }
 
 .severity {
@@ -690,9 +690,9 @@ input[type="checkbox"] {
 .flex-column {
   flex-direction: column;
 }
-/*.main-flex{
-  height: 100%;
-}*/
+.main-flex{
+  overflow: hidden;  
+}
 .flex-row {
   flex-direction: row;
 }

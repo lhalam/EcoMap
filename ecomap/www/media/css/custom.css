@@ -54,6 +54,9 @@ html, body, .wrapper {
   cursor: pointer;
 }
 
+.fa-remove:before, .fa-close:before, .fa-times:before {
+  float: right;
+}
 
 /*Modal dialog styles*/
 
@@ -640,11 +643,13 @@ input[type="checkbox"] {
   background-color: #fff;
 }
 
-.problemBlock .close{
+/*.problemBlock{
   position: absolute;
   right: 20px;
+}*/
+.close{
+  margin-bottom: -25px;
 }
-
 .severity {
   position: absolute;
   top: 0.1em;

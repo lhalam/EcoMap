@@ -66,6 +66,8 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
       $scope.faqTitles = resp;
     });
     
+    if($rootScope.hidden == true) hiddenClass = 'hiddenClass';
+
     if ($cookies.get("id")) {
       $http({
         method: 'GET',

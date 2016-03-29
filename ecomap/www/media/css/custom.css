@@ -707,7 +707,7 @@ input[type="checkbox"] {
 .flex-column {
   flex-direction: column;
 }
-.main-flex{
+.hiddenClass{
   overflow: hidden;  
 }
 .flex-row {

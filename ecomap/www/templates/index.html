@@ -160,7 +160,7 @@
     <img src="/image/swipebox/712.gif">
   </div>
   <toaster-container toaster-options="{'close-button': true}"></toaster-container>
-  <div class="flex-container flex-row flex-item-1 main-flex">
+  <div class="flex-container flex-row flex-item-1 main-flex" ng-class='hiddenClass'>
     <div ui-view class="map-div flex-container flex-row flex-item-2"></div>
     <div ui-view="sidebar"  class="sidebar flex-item-1 flex-item-5 flex-container flex-column" ng-class="{flex6: showSidebarProblem, sidebar: !showSidebarProblem}"
      ng-show="checkState('detailedProblem') || checkState('addProblem') || checkState('editProblem')"></div>

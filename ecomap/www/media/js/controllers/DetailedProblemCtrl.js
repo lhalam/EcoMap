@@ -1,6 +1,7 @@
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll', 
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
+    $rootScope.hidden = true;
     $rootScope.showSidebarProblem = false;
     $scope.photos = [];
     $scope.comments = [];

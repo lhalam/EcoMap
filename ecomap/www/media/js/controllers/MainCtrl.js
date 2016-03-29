@@ -1,6 +1,5 @@
 app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
     $rootScope.isFetching=false;
-
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",

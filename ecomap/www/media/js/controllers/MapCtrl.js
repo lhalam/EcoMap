@@ -1,5 +1,14 @@
 app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactory','$auth',
   function($scope, $http, $rootScope, $state, MapFactory, $auth) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Екологічні проблеми України'/*,
+        'url': window.location.href,
+        'image': ''*/
+      }
+      return metaTags;
+    }
     MapFactory.initMap();
     MapFactory.turnResizeOn();
     $scope.auth = $auth.isAuthenticated();

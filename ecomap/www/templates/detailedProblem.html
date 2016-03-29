@@ -135,7 +135,7 @@
           <input class='btn btn-success' type='submit' value='Додати коментар'/>
         </form>
       </div>
-      <div ng-repeat='comment in comments'>
+      <div ng-repeat='comment in comments' ng-view>
         <div id='comment-{{comment.id}}' class="row">
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="panel panel-default">

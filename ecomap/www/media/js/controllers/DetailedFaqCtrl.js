@@ -1,5 +1,6 @@
 app.controller('DetailedFaqCtrl', ['$scope', '$stateParams', '$state', '$http', '$rootScope',
   function($scope, $stateParams, $state, $http, $rootScope) {
+    $rootScope.hidden = false;
     $http({
       url: '/api/resources/' + $stateParams.faqAlias,
       method: 'GET'

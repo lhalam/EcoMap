@@ -54,6 +54,9 @@ html, body, .wrapper {
   cursor: pointer;
 }
 
+.fa-remove:before, .fa-close:before, .fa-times:before {
+  float: right;
+}
 
 /*Modal dialog styles*/
 
@@ -82,6 +85,18 @@ html, body, .wrapper {
   display: block;
   margin-left: 45%;
   margin-top: 20%;
+}
+
+#dpanda{
+  width:100%;
+  height:100%;
+  position: absolute;
+  z-index: 1000;
+}
+#dpanda img{
+  display: block;
+  margin-left: 45%;
+  margin-top: 15%;
 }
 
 /*problems filter */
@@ -640,11 +655,13 @@ input[type="checkbox"] {
   background-color: #fff;
 }
 
-.problemBlock .close{
+/*.problemBlock{
   position: absolute;
-  right: 5px;
+  right: 20px;
+}*/
+.close{
+  margin-bottom: -25px;
 }
-
 .severity {
   position: absolute;
   top: 0.1em;
@@ -690,9 +707,9 @@ input[type="checkbox"] {
 .flex-column {
   flex-direction: column;
 }
-/*.main-flex{
-  height: 100%;
-}*/
+.hiddenClass{
+  overflow: hidden;  
+}
 .flex-row {
   flex-direction: row;
 }
@@ -862,7 +879,7 @@ input[type="checkbox"] {
   right: -51px;
   bottom: 70px;
 }
- .map-toogle{
+.map-toogle{
   z-index: 9999;
   cursor: pointer;
   position: absolute;

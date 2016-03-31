@@ -3,7 +3,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Статистика екологічних проблем Украни",
-        'description': 'Топ найважливіших екологічних проблем України'/*,
+        'description': 'Статистика екологічних проблем Украни'/*,
         'url': window.location.href,
         'image': ''*/
       }

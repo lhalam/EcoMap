@@ -1,6 +1,7 @@
 app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$state', '$http', 'toaster', 'msg', 'MapFactory', '$auth', '$location', '$anchorScroll', 
   function($scope, $cookies, $rootScope, $state, $http, toaster, msg, MapFactory, $auth, $location, $anchorScroll) {
     /*$scope.editProblem = false;*/
+    $rootScope.hidden = true;
     $rootScope.showSidebarProblem = false;
     $scope.photos = [];
     $scope.comments = [];
@@ -238,17 +239,14 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     };
 
-    $scope.waiting = false;
-    angular.element(document).ready(function () {
-      var interval_id = setInterval(function() {
-          if($location.hash()) {
-            $anchorScroll();
-          }
-      }, 200);
-      setTimeout(function() {
-        clearInterval(interval_id);
-      },1000);
+    $scope.$on('$viewContentLoaded', function() {
+      $anchorScroll();
     });
+
+    $scope.waiting = false;
+    $scope.makeLink = function(comment_id) {
+      $location.hash("comment-" + comment_id);
+    }
 
     $scope.changeStatus = function(mod){
       $scope.waiting = true;

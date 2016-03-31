@@ -1,13 +1,22 @@
 app.controller('MapCtrl', ['$scope', '$http', '$rootScope', '$state', 'MapFactory',
   function($scope, $http, $rootScope, $state, MapFactory) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Екологічні проблеми України'/*,
+        'url': window.location.href,
+        'image': ''*/
+      }
+      return metaTags;
+    }
     MapFactory.initMap();
     MapFactory.turnResizeOn();
     $scope.markers = MapFactory.loadProblems();
+
     $scope.filterTrigger = false;
     $scope.toogleFilter = function() {
       $scope.filterTrigger = !$scope.filterTrigger;
     }
-
      $scope.loadProblemType = function() {
       $scope.Types = {};
       $http({

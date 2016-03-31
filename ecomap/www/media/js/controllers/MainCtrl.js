@@ -1,5 +1,7 @@
 app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies', '$state', 'MapFactory', '$timeout', function($scope, $http, $auth, $rootScope, $cookies, $state, MapFactory, $timeout) {
     $rootScope.isFetching=false;
+    $scope.countClicks = 0;
+    $scope.dPandaShow = false;
 
     $rootScope.metadata = function(){
       metaTags = {
@@ -45,6 +47,15 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
         return false;
       }
     };
+
+    $scope.twentyClicks = function(){
+      $scope.countClicks++
+      if ($scope.countClicks==20) {
+        $scope.dPandaShow = true;
+        $scope.countClicks = 0;
+      };
+    };
+
     $scope.checkState = function(state) {
       return $state.is(state);
     };
@@ -55,6 +66,8 @@ app.controller('MainCtrl', ['$scope', '$http', '$auth', '$rootScope', '$cookies'
       $scope.faqTitles = resp;
     });
     
+    if($rootScope.hidden == true) hiddenClass = 'hiddenClass';
+
     if ($cookies.get("id")) {
       $http({
         method: 'GET',

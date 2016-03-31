@@ -36,10 +36,9 @@
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="password" class="control-label">Пароль</label>
-              <div class="form-group" ng-class="{ 'has-error': (registerForm.password.$touched || submitted) && registerForm.password.$invalid }">
+ 
+            <div class="form-group" ng-class="{ 'has-error': (registerForm.password.$touched || submitted) && registerForm.password.$invalid || (registerForm.pass_confirm.$touched || submitted) && registerForm.pass_confirm.$invalid}">
+                <label for="password" class="control-label">Пароль</label>
                 <input type="password" ng-model="newUser.password" name="password" ng-minlength="6" ng-maxlength="40" class="form-control" id="password" placeholder="Пароль" required/>
                 <div class="help-block" ng-messages="registerForm.password.$error" ng-show="registerForm.password.$touched || submitted">
                   <div ng-messages-include="/templates/error_msgs.html"></div>

@@ -181,7 +181,7 @@ def get_sitemap():
 
     """
     if request.method == 'GET':
-        resourses = db.get_pages_titles()
+        resources = db.get_pages_titles()
         all_problems = db.get_all_problems()
         problems = []
         for each_problem in all_problems:
@@ -196,7 +196,7 @@ def get_sitemap():
         loader=FileSystemLoader(os.path.join(base_dir, 'templates')))
         url_root = request.url_root
         sitemap_xml = env.get_template("XML_Ecomap.xml").render(
-        problems=problems, resourses=resourses, url_root=url_root)
+        problems=problems, resources=resources, url_root=url_root)
         response = make_response(sitemap_xml)
         response.headers['Content-Type'] = "application/xml"
     return response

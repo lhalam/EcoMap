@@ -33,9 +33,9 @@
 	</url>
 	{% endfor %}
 
-	{% for resourse in resourses %}
+	{% for resource in resources %}
 	<url>
-		<loc>{{url_root}}#/faq/{{resourse[2]}}</loc>
+		<loc>{{url_root}}#/faq/{{resource[2]}}</loc>
 		<changefreq>monthly</changefreq>
 		<priority>0.5</priority>
 	</url>

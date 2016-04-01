@@ -1,6 +1,13 @@
 app.controller('RegisterCtrl', ['$scope', '$http', '$cookies', '$rootScope', '$auth', '$state', 'msg', 'toaster',
   function($scope, $http, $cookies, $rootScope,$auth, $state, msg, toaster) {
     $scope.newUser = {};
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Реєстрація'
+      }
+      return metaTags;
+    }
     $scope.msg = msg;
     $scope.Register = function(user) {
       $scope.submitted = true;

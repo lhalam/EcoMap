@@ -24,6 +24,7 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
 
     $scope.newPass = {};
     $scope.updatePass = function(pass){
+      console.log('in update pass');
       hash_sum = window.location.href.split('/')[5];
       if(!pass.pass || !pass.confirmPass){
           return;
@@ -40,8 +41,9 @@ app.controller('RestorePasswordCtrl', ['$scope', '$state', '$http', '$rootScope'
       .then(function successCallback(response){
         //$state.go('login');
         window.location.href = '/#/login';
+
       }, function errorCallback(){
-      })
+      });
     }
   }
 ]);

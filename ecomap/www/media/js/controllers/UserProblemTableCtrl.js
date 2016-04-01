@@ -1,11 +1,18 @@
-app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster',
-  function($scope, $http, $state, $cookies, $window, toaster) {
+app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster', '$rootScope',
+  function($scope, $http, $state, $cookies, $window, toaster, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
     $scope.user_id = $cookies.get('id');
     $scope.showRole = ($cookies.get('role')=='admin' || $cookies.get('role')=='moderator')?1:0;
     console.log($scope.showRole)
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача'
+      }
+      return metaTags;
+    }
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',

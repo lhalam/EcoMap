@@ -1,5 +1,5 @@
-app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http', 'toaster', '$timeout', '$stateParams', '$auth',
-  function($scope, $state, $cookies, $http, toaster, $timeout, $stateParams, $auth) {
+app.controller('userDeleteConfirmation', ['$scope', '$state','$cookies', '$http', 'toaster', '$timeout', '$stateParams', '$auth', '$rootScope',
+  function($scope, $state, $cookies, $http, toaster, $timeout, $stateParams, $auth, $rootScope) {
     $scope.hashParam = $stateParams.hash_sum
     $scope.user = {}; 
     $scope.user.id = $cookies.get('id');

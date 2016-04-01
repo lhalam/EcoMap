@@ -38,7 +38,7 @@
       <form  ng-submit="addProblemSubmit(newProblemType)"
              class="form1" name="newProblemTypeForm" novalidate>
         <div class="form-group"
-             ng-class="{'has-error':(newProblemTypeForm.problem_type.$touched || addProblemSub)&& newProblemTypeForm.problem_type.$invalid && $scope.showNew}">
+             ng-class="{'has-error':(newProblemTypeForm.problem_type.$touched || addProblemSub)&& newProblemTypeForm.problem_type.$invalid}">
           <div class="row">
             <div class="col-md-12">
               <label for="" class="control-label" >Тип проблеми: </label >
@@ -50,14 +50,14 @@
                        required>
               <div class="help-block"
                    ng-messages="newProblemTypeForm.problem_type.$error"
-                   ng-show="newProblemTypeForm.problem_type.$touched && $scope.showNew|| addProblemSub && $scope.showNew">
+                   ng-show="newProblemTypeForm.problem_type.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="form-group"
-              ng-class="{'has-error':(newProblemTypeForm.radius.$touched ||addProblemSub)&& newProblemTypeForm.radius.$invalid && $scope.showNew }">
+              ng-class="{'has-error':(newProblemTypeForm.radius.$touched ||addProblemSub)&& newProblemTypeForm.radius.$invalid }">
           <div class="row">
             <div class="col-md-12">
             <label for="" class="control-label">Радіус: </label >
@@ -71,7 +71,7 @@
                      required>
               <div class="help-block"
                    ng-messages="newProblemTypeForm.radius.$error"
-                   ng-show="newProblemTypeForm.radius.$touched && $scope.showNew|| addProblemSub && $scope.showNew">
+                   ng-show="newProblemTypeForm.radius.$touched || addProblemSub">
                 <div ng-messages-include="/templates/error_msgs.html"></div>
               </div>
             </div>

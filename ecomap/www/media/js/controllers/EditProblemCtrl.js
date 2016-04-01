@@ -1,6 +1,14 @@
 app.controller('EditProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Upload', '$timeout', 'uiGmapIsReady', '$rootScope', 'MapFactory', '$window',
   function($scope, $state, $http, toaster, Upload, $timeout, uiGmapIsReady, $rootScope, MapFactory, $window) {
     $rootScope.showSidebarProblem = false;
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Редагування проблеми'
+      }
+      return metaTags;
+    }
+    $rootScope.hidden = true;
     $rootScope.toogleMap = function(){
       $rootScope.showSidebarProblem = !$rootScope.showSidebarProblem;
       if ($rootScope.showSidebarProblem ) $scope.changeToogleMap = 'проблема';

@@ -1,5 +1,5 @@
-app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window',
-  function($scope, $http, $state, $cookies, $window) {
+app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', '$rootScope',
+  function($scope, $http, $state, $cookies, $window, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
@@ -8,6 +8,13 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $scope.ShowAdminInfo = false;
     $scope.showSubComments = false;
     $scope.searchNick = ($cookies.get('role')=='user')?$scope.old_nick:null;
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача'
+      }
+      return metaTags;
+    }
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',

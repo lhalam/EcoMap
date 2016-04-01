@@ -5,7 +5,13 @@ app.controller('LoginCtrl', ['$scope', '$http', '$rootScope','$cookies', '$auth'
     $scope.getInvalidPasswordEmail = function() {
       return $scope.invalidPasswordEmail;
     };
-
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Вхід на сайт'
+      }
+      return metaTags;
+    }
     $scope.changeInvalidPasswordEmail = function() {
       $scope.invalidPasswordEmail = false;
     };

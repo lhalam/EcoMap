@@ -738,6 +738,7 @@ def all_users_comments():
         "problem_id": 12,
         "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
+        "updated_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
         'last_name': 'Kozak',
@@ -759,10 +760,11 @@ def all_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name': comment[7],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id' : comment[5],
+                             'nickname': comment[6],
+                             'first_name': comment[7],
+                             'last_name': comment[8],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -829,6 +831,7 @@ def search_users_comments():
         "problem_id": 12,
         "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
+        "updated_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
         'last_name': 'Kozak',
@@ -850,10 +853,11 @@ def search_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name': comment[7],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id' : comment[5],
+                             'nickname': comment[6],
+                             'first_name': comment[7],
+                             'last_name': comment[8],
                              'sub_count': subcomments_count[0]})
     if comments_count:
         total_count = {'total_comments_count': comments_count[0]}

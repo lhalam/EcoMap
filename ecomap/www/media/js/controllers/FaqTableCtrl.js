@@ -1,5 +1,12 @@
-app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster',
-  function($scope, $http, toaster) {
+app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', '$rootScope',
+  function($scope, $http, toaster, $rootScope) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача - редагування F.A.Q.'
+      }
+      return metaTags;
+    }
     $scope.loadData = function() {
       $http({
         url: '/api/getTitles',

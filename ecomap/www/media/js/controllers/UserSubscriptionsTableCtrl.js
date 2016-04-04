@@ -7,7 +7,7 @@ app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$coo
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",
-        'description': 'Профіль користувача'
+        'description': 'Профіль користувача - підписки'
       }
       return metaTags;
     }

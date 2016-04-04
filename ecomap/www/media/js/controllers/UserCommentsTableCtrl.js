@@ -11,7 +11,7 @@ app.controller('UserCommentsTableCtrl', ['$scope', '$http', '$state', '$cookies'
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",
-        'description': 'Профіль користувача'
+        'description': 'Профіль користувача - коментарі'
       }
       return metaTags;
     }

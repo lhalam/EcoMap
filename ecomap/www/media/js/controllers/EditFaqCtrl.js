@@ -1,7 +1,14 @@
-app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$state',
-  function($scope, $stateParams, $http, toaster, $state) {
+app.controller('EditFaqCtrl', ['$scope', '$stateParams', '$http', 'toaster', '$state', '$rootScope',
+  function($scope, $stateParams, $http, toaster, $state, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.page = {};
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Редагування інструкції'
+      }
+      return metaTags;
+    }
     $scope.editPage = function(page) {
       $http({
         method: 'PUT',

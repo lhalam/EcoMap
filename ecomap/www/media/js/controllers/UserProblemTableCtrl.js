@@ -8,7 +8,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",
-        'description': 'Профіль користувача'
+        'description': 'Профіль користувача - ecomap проблеми'
       }
       return metaTags;
     }

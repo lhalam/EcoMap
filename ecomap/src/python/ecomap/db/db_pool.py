@@ -17,7 +17,7 @@ from ecomap.config import Config
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
-TIME_TO_SLEEP = 0.25
+TIME_TO_SLEEP = 0.001
 READ_ONLY = 'ro'
 READ_WRITE = 'rw'
 DB_POOL = {READ_ONLY: None, READ_WRITE: None}

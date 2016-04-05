@@ -17,6 +17,7 @@ from ecomap.config import Config
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
+TIME_TO_SLEEP = 0.25
 READ_ONLY = 'ro'
 READ_WRITE = 'rw'
 DB_POOL = {READ_ONLY: None, READ_WRITE: None}
@@ -51,8 +52,7 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                     if mtries:
                         time.sleep(mdelay)
                     else:
-                        raise DBPoolError('Error message: Got error: '
-                                      'wrong sql or database pool is out of '
+                        raise DBPoolError('wrong sql or database pool is out of '
                                       'connections.')
                         
                 mtries -= 1
@@ -99,10 +99,9 @@ class DBPool(object):
         """Method _get_conn gets connection from the pool or calls.
         method _create_conn if pool is empty.
         return: opened connection mysql_object.
-        raises: PoolSizeError if all connections are busy.
         """
         connection = None
-        while not(connection):
+        while not connection:
             if self._connection_pool:
                 connection = self._connection_pool.pop()
                 self.log.info('Popped connection %s from the pool.',
@@ -110,9 +109,10 @@ class DBPool(object):
             elif self.connection_pointer < self._pool_size:
                 connection = self._create_conn()
                 self.connection_pointer += 1
-            else:
-                raise DBPoolError('Out of connections.')
-            return connection
+            time.sleep(TIME_TO_SLEEP)
+            self.log.info('Wait for new/free connection. Sleep %s.' % TIME_TO_SLEEP )    
+        return connection
+
 
     @contextmanager
     def manager(self):

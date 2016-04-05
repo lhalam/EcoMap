@@ -74,21 +74,6 @@ def get_user_by_nickname(nickname, offset, per_page):
         return cursor.fetchall()
 
 
-def count_user_by_nickname(nickname):
-    """Count of problems created by user with special nickname.
-    :return: count of problems.
-    """
-    with db.pool_manager(db.READ_ONLY).manager() as conn:
-        cursor = conn.cursor()
-        query = """SELECT count(p.id)
-                   FROM `problem` AS p
-                   INNER JOIN `user` AS u ON p.user_id = u.id
-                   WHERE u.nickname LIKE '%{}%';
-                """
-        cursor.execute(query.format(nickname))
-        return cursor.fetchone()
-
-
 @db.retry_query(tries=3, delay=1)
 def get_user_by_oauth_id(user_id):
     """Return user, found by id.
@@ -1666,8 +1651,8 @@ def get_all_users_comments(offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.id, us.nickname, us.first_name,
-                   us.last_name FROM  `comment` as cm
+                   cm.created_date, cm.updated_date, us.id, us.nickname, 
+                   us.first_name, us.last_name FROM  `comment` as cm
                    LEFT JOIN `user` as us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 LIMIT {},{};
                 """
@@ -1751,8 +1736,8 @@ def get_comments_by_nickname(nickname, offset, per_page):
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
         query = """SELECT  cm.id, cm.content, cm.problem_id,
-                   cm.created_date, us.id, us.nickname, us.first_name,
-                   us.last_name FROM  `comment` as cm
+                   cm.created_date, cm.updated_date, us.id, us.nickname,
+                   us.first_name, us.last_name FROM  `comment` as cm
                    INNER JOIN `user` AS us ON cm.user_id=us.id
                    WHERE cm.parent_id=0 AND us.nickname LIKE '%{}%'
                    LIMIT {},{};
@@ -2056,6 +2041,7 @@ def edit_problem(problem_id, title, content, proposal, latitude, longitude,
                              longitude, problem_type, upd_date, problem_id))
 
 
+@db.retry_query(tries=3, delay=1)
 def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
     """Search problems by special filter.
     :order:  order asc or desc.
@@ -2068,9 +2054,10 @@ def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
         cursor = conn.cursor()
         query = """SELECT p.id, p.title, p.latitude, p.longitude,
                    p.problem_type_id, p.status, p.created_date, p.is_enabled,
-                   p.severity, p.user_id, pt.name
+                   p.severity, p.user_id, pt.name, u.nickname
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
+                   INNER JOIN `user` AS u ON p.user_id = u.id
                    WHERE `user_id`={}
                    ORDER BY {} {} LIMIT {},{};
                 """
@@ -2078,6 +2065,7 @@ def get_user_problem_by_filter(user_id, order, filtr, offset, per_page):
         return cursor.fetchall()
 
 
+@db.retry_query(tries=3, delay=1)
 def get_user_by_filter(order, filtr, offset, per_page):
     """Search problems by special filter.
     :order:  order asc or desc.
@@ -2100,7 +2088,8 @@ def get_user_by_filter(order, filtr, offset, per_page):
         return cursor.fetchall()
 
 
-def get_user_enabled_by_filter(order, filtr, offset, per_page):
+@db.retry_query(tries=3, delay=1)
+def get_user_enabled_by_filter(order, filtr, offset, per_page, user_id):
     """Search problems by special filter.
     :order:  order asc or desc.
     :filtr: name of filter column.
@@ -2116,13 +2105,14 @@ def get_user_enabled_by_filter(order, filtr, offset, per_page):
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    INNER JOIN `user` AS u ON p.user_id = u.id
-                   WHERE p.is_enabled = 1
+                   WHERE p.is_enabled = 1 OR p.user_id= {}
                    ORDER BY {} {} LIMIT {},{};
                 """
-        cursor.execute(query.format(filtr, order, offset, per_page))
+        cursor.execute(query.format(user_id, filtr, order, offset, per_page))
         return cursor.fetchall()
 
 
+@db.retry_query(tries=3, delay=1)
 def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
     """Search problems by special filter and nickname.
     :nickname: nickname of user.
@@ -2147,7 +2137,8 @@ def get_filter_user_by_nickname(nickname, filtr, order, offset, per_page):
         return cursor.fetchall()
 
 
-def get_filter_user_nickname(nickname, filtr, order, offset, per_page):
+@db.retry_query(tries=3, delay=1)
+def get_filter_user_nickname(u_id, nickname, filtr, order, offset, per_page):
     """Search problems by special filter and nickname.
     :nickname: nickname of user.
     :order:  order asc or desc.
@@ -2165,8 +2156,59 @@ def get_filter_user_nickname(nickname, filtr, order, offset, per_page):
                    FROM `problem` AS p
                    INNER JOIN `problem_type` AS pt ON p.problem_type_id=pt.id
                    INNER JOIN `user` AS u ON p.user_id = u.id
-                   WHERE u.nickname LIKE '%{}%' and p.is_enabled = 1
+                   WHERE u.nickname LIKE '%{}%' and
+                   (p.is_enabled = 1 OR p.user_id= {})
                    ORDER BY {} {} LIMIT {},{};
                 """
-        cursor.execute(query.format(nickname, filtr, order, offset, per_page))
+        cursor.execute(query.format(nickname, u_id, filtr, order, offset,
+                                    per_page))
         return cursor.fetchall()
+
+
+@db.retry_query(tries=3, delay=1)
+def count_user_by_nickname_for_user(nickname, user_id):
+    """Count of problems created by user with special nickname
+    which are enabled or created by current user.
+    :return: count of problems.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(p.id)
+                   FROM `problem` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%' and
+                   (p.is_enabled = 1 OR p.user_id= {});
+                """
+        cursor.execute(query.format(nickname, user_id))
+        return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
+def count_user_by_nickname(nickname):
+    """Count of problems created by user with special nickname.
+    :return: count of problems.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT count(p.id)
+                   FROM `problem` AS p
+                   INNER JOIN `user` AS u ON p.user_id = u.id
+                   WHERE u.nickname LIKE '%{}%';
+                """
+        cursor.execute(query.format(nickname))
+        return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
+def count_enabled(user_id):
+    """Count all problems from db which are enabled or created
+    by current user.
+    :return: count.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `problem` AS p
+                   WHERE p.is_enabled = 1 OR p.user_id= {};
+                """
+        cursor.execute(query.format(user_id))
+        return cursor.fetchone()

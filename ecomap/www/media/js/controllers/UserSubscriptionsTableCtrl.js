@@ -1,9 +1,16 @@
-app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$cookies', '$window',
-  function($scope, $state, $http, $cookies, $window) {
+app.controller('UserSubscriptionsTableCtrl', ['$scope', '$state', '$http', '$cookies', '$window', '$rootScope',
+  function($scope, $state, $http, $cookies, $window, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.sortType = 'id'; // set the default sort type
     $scope.sortReverse = false;  // set the default sort order
     $scope.searchFish = '';
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача - підписки'
+      }
+      return metaTags;
+    }
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',

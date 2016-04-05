@@ -1,5 +1,5 @@
-var app = angular.module('app',['ngAnimate', 'ngCookies', 'ngMessages',
+var app = angular.module('app', ['ngAnimate', 'ngCookies', 'ngMessages',
                                 'ui.router', 'ui.bootstrap', 'satellizer',
                                 'toaster', 'textAngular', 'ngFileUpload', 'ngImgCrop',
                                 'uiGmapgoogle-maps', 'angularResizable',
-                                'ui.router.grant', 'googlechart','720kb.socialshare']);
+                                'ui.router.grant', 'googlechart', '720kb.socialshare']);

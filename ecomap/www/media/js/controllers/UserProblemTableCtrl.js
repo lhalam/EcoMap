@@ -1,11 +1,17 @@
-app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster',
-  function($scope, $http, $state, $cookies, $window, toaster) {
+app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies', '$window', 'toaster', '$rootScope',
+  function($scope, $http, $state, $cookies, $window, toaster, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.showTable = ($cookies.get('role')=='user')?false:true;
     $scope.nickname = ($cookies.get('role')=='user')?false:true;
     $scope.user_id = $cookies.get('id');
     $scope.showRole = ($cookies.get('role')=='admin' || $cookies.get('role')=='moderator')?1:0;
-    console.log($scope.showRole)
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача - ecomap проблеми'
+      }
+      return metaTags;
+    }
     $scope.selectCountObj = {
       '1': '5',
       '2': '10',
@@ -55,14 +61,14 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       $scope.bigCurrentPage = 1;
       $scope.problemsLength = $scope.selectCount['selected'];
       $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-      $scope.$watch('bigCurrentPage', function(newValue, oldValue) {
+      $scope.$watch('bigCurrentPage', function(newValue) {
         var stepCount = $scope.selectCount['selected']
-        if ($scope.searchNick){
+        if($scope.searchNick){
             $scope.showTable = ($cookies.get('role')!=='user');
             $scope.nickname = true;
             $http({
               method: 'GET',
-              url: '/api/search_usersProblem',
+              url: 'api/usersProblem/' + $cookies.get('id'),
               params: {
                 nickname: $scope.searchNick, 
                 filtr: $scope.filterTable.param || 'is_enabled',
@@ -72,13 +78,13 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
                 showRole: $scope.showRole
               }
             }).then(function successCallback(response) {
-             $scope.problems = response.data[0];
-             $scope.problemsLength = response.data[1][0]['total_problem_count'];
-             $scope.count = response.data[1][0]['total_problem_count'];
-             $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
-
+              $scope.bigCurrentPage = newValue;
+               $scope.problems = response.data[0];
+               $scope.problemsLength = response.data[1][0]['total_problem_count'];
+               $scope.count = response.data[1][0]['total_problem_count'];
+               $scope.bigTotalItems = $scope.problemsLength / $scope.selectCount['selected'] * 10;
            })
-        } else {
+        }else {
           $http({
             method: 'GET',
             url: 'api/all_usersProblem',
@@ -87,7 +93,8 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
               order: $scope.filterTable["order_"+$scope.filterTable.param] || 0,
               per_page: $scope.selectCount['selected'],
               offset: $scope.selectCount['selected'] * newValue - stepCount,
-              showRole: $scope.showRole
+              showRole: $scope.showRole,
+              user_id: $cookies.get('id')
             }
           }).then(function successCallback(response) {
             $scope.problems = response.data[0];

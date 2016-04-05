@@ -1,5 +1,12 @@
-app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout',
-  function($scope, $state, $http, toaster, $timeout) {
+app.controller('AddFaqCtrl', ['$scope', '$state', '$http', 'toaster', '$timeout', '$rootScope',
+  function($scope, $state, $http, toaster, $timeout, $rootScope) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Створення інструкції'
+      }
+      return metaTags;
+    }
     $scope.page = {
       'description': '',
       'meta_keywords': '',

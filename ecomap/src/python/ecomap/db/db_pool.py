@@ -111,7 +111,7 @@ class DBPool(object):
                 self.connection_pointer += 1
             time.sleep(POOL_DELAY)
             self.log.info('Wait for new/free connection.'
-						  'Sleep %s.', POOL_DELAY)
+            			  'Sleep %s.', POOL_DELAY)
         return connection
 
 

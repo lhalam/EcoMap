@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset>
 	<url>
+		<loc>{{url_root}}</loc>
+		<changefreq>monthly</changefreq>
+		<priority>1.0</priority>
+	</url>
+
+	<url>
 		<loc>{{url_root}}#/map</loc>
 		<changefreq>monthly</changefreq>
 		<priority>1.0</priority>
@@ -37,6 +43,15 @@
 	<url>
 		<loc>{{url_root}}#/faq/{{resource[2]}}</loc>
 		<changefreq>monthly</changefreq>
+		<priority>0.5</priority>
+	</url>
+	{% endfor %}
+
+	{% for comment in comments %}
+	<url>
+		<loc>{{url_root}}#/detailedProblem/{{comment[0]['problem_id']}}#comment-{{comment[0]['id']}}</loc>
+		<changefreq>monthly</changefreq>
+		<lastmod>{{comment[0]['created_date']}}</lastmod>
 		<priority>0.5</priority>
 	</url>
 	{% endfor %}

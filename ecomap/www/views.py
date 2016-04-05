@@ -183,10 +183,18 @@ def get_sitemap():
     if request.method == 'GET':
         resources = db.get_pages_titles()
         all_problems = db.get_all_problems()
+        all_comments = db.get_all_comments()
+        comments=[]
+        for each_comment in all_comments:
+            comment = [{'id': each_comment[0],
+            'created_date':datetime.date.fromtimestamp(each_comment[1]),
+            'problem_id': each_comment[2]
+            }]
+            comments.append(comment)
         problems = []
         for each_problem in all_problems:
             problem = [{'id': each_problem[0],
-                'created_date': datetime.date.fromtimestamp(each_problem[7])}]
+            'created_date': datetime.date.fromtimestamp(each_problem[7])}]
             problems.append(problem)
         base_dir = os.environ['CONFROOT']
          # Configure jinja for internal templates
@@ -196,7 +204,8 @@ def get_sitemap():
         loader=FileSystemLoader(os.path.join(base_dir, 'templates')))
         url_root = request.url_root
         sitemap_xml = env.get_template("XML_Ecomap.xml").render(
-        problems=problems, resources=resources, url_root=url_root)
+        problems=problems, comments=comments, resources=resources, 
+        url_root=url_root)
         response = make_response(sitemap_xml)
         response.headers['Content-Type'] = "application/xml"
     return response

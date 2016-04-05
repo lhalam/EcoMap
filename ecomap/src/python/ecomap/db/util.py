@@ -2212,3 +2212,18 @@ def count_enabled(user_id):
                 """
         cursor.execute(query.format(user_id))
         return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
+def get_all_comments():
+    """Get all comments of all users.
+       :return: tuples with comments info
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT `id`, `created_date`, `problem_id`
+                   FROM comment
+                   WHERE parent_id=0;
+                """
+        cursor.execute(query,)
+        return cursor.fetchall()

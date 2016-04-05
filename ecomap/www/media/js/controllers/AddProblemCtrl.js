@@ -156,6 +156,9 @@ app.controller('AddProblemCtrl', ['$scope', '$state', '$http', 'toaster', 'Uploa
       }, function errorCallback(response) {})
     }
 $scope.problemsList =[]
+$scope.close = function() {
+        $state.go('map')
+      };
 
     $scope.radiusFunc = function(){
       var problemsRefs = '';

@@ -17,7 +17,7 @@ from ecomap.config import Config
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
-TIME_TO_SLEEP = 0.001
+POOL_DELAY = 0.001
 READ_ONLY = 'ro'
 READ_WRITE = 'rw'
 DB_POOL = {READ_ONLY: None, READ_WRITE: None}
@@ -109,8 +109,9 @@ class DBPool(object):
             elif self.connection_pointer < self._pool_size:
                 connection = self._create_conn()
                 self.connection_pointer += 1
-            time.sleep(TIME_TO_SLEEP)
-            self.log.info('Wait for new/free connection. Sleep %s.' % TIME_TO_SLEEP )    
+            time.sleep(POOL_DELAY)
+            self.log.info('Wait for new/free connection.'
+						  'Sleep %s.', POOL_DELAY)
         return connection
 
 

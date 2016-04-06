@@ -4,11 +4,10 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
     $scope.msg = msg;
     $scope.msgError = msgError;
     $scope.newProblemType = {};
-    $scope.showNew = false;
+    $scope.newProblemTypeForm = {};
 
     $scope.addProblemTypeModal = false;
     $scope.showAddPpoblemTypeModal = function() {
-      $scope.showNew = true;
       $scope.addProblemTypeModal = true;
     };
 
@@ -19,7 +18,6 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         return true
       }
     };
-
     $scope.addProblemSubmit = function(newProblemType) {
       Upload.upload({
       url: '/api/problem_type',
@@ -37,10 +35,8 @@ app.controller('ProblemCtrl', ['$scope', '$http', 'toaster', 'msg', 'msgError', 
         $scope.loadProblemType();
         $scope.addProblemTypeModal = false;
         $scope.msg.createSuccess('типу проблеми');
-        $scope.newProblemType = {};
       }, function errorCallback(response) {
         $scope.addProblemTypeModal = false;
-        $scope.newProblemType = {};
         $scope.msg.createError('типу проблеми', arguments[0]['data']['msg']);
       });
     };

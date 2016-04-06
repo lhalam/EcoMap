@@ -1,5 +1,12 @@
 app.controller('AdminCtrl', ['$scope', '$http', 'toaster', '$rootScope',
   '$state', function($scope, $http, toaster, $rootScope, $state) {
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Адміністрування'
+      }
+      return metaTags;
+    }
     $scope.meth_obj = {
       '1': 'GET',
       '2': 'PUT',

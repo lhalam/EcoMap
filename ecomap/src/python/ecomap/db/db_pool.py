@@ -17,15 +17,11 @@ from ecomap.config import Config
 _CONFIG = Config().get_config()
 DEFAULT_DELAY = 1
 DEFAULT_TRIES = 3
+POOL_DELAY = 0.001
 READ_ONLY = 'ro'
 READ_WRITE = 'rw'
 DB_POOL = {READ_ONLY: None, READ_WRITE: None}
 DB_POOL_LOCK = {READ_ONLY: threading.RLock(), READ_WRITE: threading.RLock()}
-
-
-class MySQLPoolSizeError(MySQLdb.DatabaseError):
-    """Out of connections error."""
-    pass
 
 
 class DBPoolError(MySQLdb.Error):
@@ -47,23 +43,19 @@ def retry_query(tries=DEFAULT_TRIES, delay=DEFAULT_DELAY):
                     *kwargs: dictionary of different arguments
             """
             mtries, mdelay = tries, delay
-            while True:
-                mtries -= 1
-
+            while mtries:
+                
                 try:
                     return func(*args, **kwargs)
-                except MySQLPoolSizeError:
-                    logging.getLogger('retry').warn('Out of free connections.',
-                                                    exc_info=True)
-                except MySQLdb.Error:
+                except Exception:
                     logging.getLogger('retry').warn('Error', exc_info=True)
-
-                if mtries:
-                    time.sleep(mdelay)
-                else:
-                    raise DBPoolError('Error message: Got error: '
-                                      'wrong sql or database pool is out of '
+                    if mtries:
+                        time.sleep(mdelay)
+                    else:
+                        raise DBPoolError('wrong sql or database pool is out of '
                                       'connections.')
+                        
+                mtries -= 1
         return inner
     return retry_wrapper
 
@@ -107,18 +99,21 @@ class DBPool(object):
         """Method _get_conn gets connection from the pool or calls.
         method _create_conn if pool is empty.
         return: opened connection mysql_object.
-        raises: PoolSizeError if all connections are busy.
         """
-        if self._connection_pool:
-            connection = self._connection_pool.pop()
-            self.log.info('Popped connection %s from the pool.',
+        connection = None
+        while not connection:
+            if self._connection_pool:
+                connection = self._connection_pool.pop()
+                self.log.info('Popped connection %s from the pool.',
                           connection['connection'])
-        elif self.connection_pointer < self._pool_size:
-            connection = self._create_conn()
-            self.connection_pointer += 1
-        else:
-            raise MySQLPoolSizeError('Out of connections.')
+            elif self.connection_pointer < self._pool_size:
+                connection = self._create_conn()
+                self.connection_pointer += 1
+            time.sleep(POOL_DELAY)
+            self.log.info('Wait for new/free connection.'
+            			  'Sleep %s.', POOL_DELAY)
         return connection
+
 
     @contextmanager
     def manager(self):

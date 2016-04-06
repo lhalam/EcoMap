@@ -1,9 +1,16 @@
-app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster', '$rootScope', function($scope, $state, $cookies, $http, msg, toaster, $auth, $rootScope) {
+app.controller('UserProfileCtrl', ['$scope', '$state', '$cookies', '$http', 'msg', 'toaster', '$auth', '$rootScope', function($scope, $state, $cookies, $http, msg, toaster, $auth, $rootScope) {
     $scope.redirectUserAfterDelete();
     $scope.user = {};
     $scope.user.id = $cookies.get("id");
     $scope.isSuperAdmin = $scope.user.id=='1' 
     $scope.msg = msg;
+    $rootScope.metadata = function(){
+      metaTags = {
+        'title': "Екологічні проблеми України",
+        'description': 'Профіль користувача'
+      }
+      return metaTags;
+    }
     $scope.tabs = [
       {heading: "Профіль користувача", route: "user_profile.info", active: false, showToUser: true},
       {heading: "Ecomap проблеми", route: "user_profile.problems", active: false, showToUser: true},

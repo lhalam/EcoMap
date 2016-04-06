@@ -3,18 +3,22 @@
 This module holds all views controls for
 ecomap project.
 """
-from flask import abort, render_template, session, url_for, request, Response, g
-from flask_login import current_user
+import os
+import datetime
 
-from ecomap.app import app, logger, auto, _CONFIG
-from authorize_views import *
+from flask_login import current_user
+from jinja2 import Environment, FileSystemLoader
+from flask import abort, render_template, session, request, \
+                    make_response, Response, g
+
 from admin_views import *
 from user_views import *
 from problem_views import *
+from authorize_views import *
 from ecomap.db import util as db
-from ecomap.permission import permission_control, check_permissions
 from ecomap.utils import parse_url
-
+from ecomap.app import app, logger, auto, _CONFIG
+from ecomap.permission import permission_control, check_permissions
 
 
 @app.before_request
@@ -28,7 +32,8 @@ def load_users():
     else:
         anon = ecomap_user.Anonymous()
         g.user = anon
-    logger.info('Current user is (%s), role(%s)' % (unicode(g.user), g.user.role))    
+    logger.info('Current user is (%s), role(%s)' % (unicode(g.user),
+                                                    g.user.role))
 
 
 @app.after_request
@@ -159,6 +164,51 @@ def documentation():
     :return: rendered html with documentation api list.
     """
     return auto.html()
+
+@app.route('/sitemap', methods=['GET'])
+@auto.doc()
+def get_sitemap():
+    """This method generates XML for EcoMap application.
+
+    :return: list of dicts with id, alias, created_date
+    :rtype: XML
+    :XML sample:
+        <url>
+            <loc>http://ecomap.new/#/map</loc>
+            <changefreq>monthly</changefreq>
+            <priority>1.0</priority>
+        </url>
+
+    """
+    if request.method == 'GET':
+        resources = db.get_pages_titles()
+        all_problems = db.get_all_problems()
+        all_comments = db.get_all_comments()
+        comments=[]
+        for each_comment in all_comments:
+            comment = [{'id': each_comment[0],
+            'created_date':datetime.date.fromtimestamp(each_comment[1]),
+            'problem_id': each_comment[2]
+            }]
+            comments.append(comment)
+        problems = []
+        for each_problem in all_problems:
+            problem = [{'id': each_problem[0],
+            'created_date': datetime.date.fromtimestamp(each_problem[7])}]
+            problems.append(problem)
+        base_dir = os.environ['CONFROOT']
+         # Configure jinja for internal templates
+        env = Environment(
+        autoescape=True, 
+        extensions=['jinja2.ext.i18n'],
+        loader=FileSystemLoader(os.path.join(base_dir, 'templates')))
+        url_root = request.url_root
+        sitemap_xml = env.get_template("XML_Ecomap.xml").render(
+        problems=problems, comments=comments, resources=resources, 
+        url_root=url_root)
+        response = make_response(sitemap_xml)
+        response.headers['Content-Type'] = "application/xml"
+    return response
 
 
 if __name__ == '__main__':

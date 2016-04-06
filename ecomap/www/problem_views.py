@@ -219,25 +219,31 @@ def get_user_problems(user_id):
     """
     filtr = request.args.get('filtr') or None
     order = int(request.args.get('order')) or 0
+    nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
-    if filtr:
-        order_desc = 'asc' if order else 'desc'
-        problem_tuple = db.get_user_problem_by_filter(user_id, order_desc,
-                                                      filtr, offset, per_page)
+    show_role = int(request.args.get('showRole')) or 0
+    order_desc = 'asc' if order else 'desc'
+    if show_role:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+        count = db.count_user_by_nickname(nickname)
     else:
-        problem_tuple = db.get_user_problems(user_id, offset, per_page)
-    count = db.count_user_problems(user_id)
+        problem_tuple = db.get_filter_user_nickname(user_id, nickname, filtr,
+                                                    order_desc, offset,
+                                                    per_page)
+        count = db.count_user_by_nickname_for_user(nickname, user_id)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
-                      'latitude': problem[2],
-                      'logitude': problem[3],
-                      'problem_type_id': problem[4],
-                      'status': problem[5],
-                      'date': problem[6] * 1000,
-                      'severity': problem[8],
-                      'is_enabled': problem[7],
-                      'user_id': problem[9],
+                      'status': problem[2],
+                      'date': problem[3] * 1000,
+                      'is_enabled': problem[4],
+                      'severity': problem[5],
+                      'nickname': problem[6],
+                      'user_id': problem[7],
+                      'last_name': problem[8],
+                      'first_name': problem[9],
                       'name': problem[10]}
                      for problem in problem_tuple] if problem_tuple else []
     logger.info(problem_tuple)
@@ -274,9 +280,17 @@ def get_all_users_problems():
     order = int(request.args.get('order')) or 0
     offset = request.args.get('offset') or 0
     per_page = request.args.get('per_page') or 5
+    show_role = int(request.args.get('showRole')) or 0
     order_desc = 'desc' if order else 'asc'
-    problem_tuple = db.get_user_by_filter(order_desc, filtr, offset, per_page)
-    count = db.count_problems()
+    user_id = int(request.args.get('user_id'))
+    if show_role:
+        problem_tuple = db.get_user_by_filter(order_desc, filtr, offset,
+                                              per_page)
+    else:
+        problem_tuple = db.get_user_enabled_by_filter(order_desc, filtr,
+                                                      offset, per_page,
+                                                      user_id)
+    count = db.count_problems() if show_role else db.count_enabled(user_id)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
                       'latitude': problem[2],
@@ -682,10 +696,16 @@ def get_search_users_problems():
     nickname = request.args.get('nickname').encode('utf-8')
     offset = int(request.args.get('offset')) or 0
     per_page = int(request.args.get('per_page')) or 5
+    show_role = int(request.args.get('showRole')) or 0
     order_desc = 'desc' if order else 'asc'
-    problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
-                                                   order_desc, offset,
-                                                   per_page)
+    if show_role:
+        problem_tuple = db.get_filter_user_by_nickname(nickname, filtr,
+                                                       order_desc, offset,
+                                                       per_page)
+    else:
+        problem_tuple = db.get_filter_user_nickname(nickname, filtr,
+                                                    order_desc, offset,
+                                                    per_page)
     count = db.count_user_by_nickname(nickname)
     problems_list = [{'id': problem[0],
                       'title': problem[1],
@@ -718,6 +738,7 @@ def all_users_comments():
         "problem_id": 12,
         "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
+        "updated_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
         'last_name': 'Kozak',
@@ -739,10 +760,11 @@ def all_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name': comment[7],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id' : comment[5],
+                             'nickname': comment[6],
+                             'first_name': comment[7],
+                             'last_name': comment[8],
                              'sub_count': subcomments_count[0]})
     if count:
         total_count = {'total_comments_count': count[0]}
@@ -809,6 +831,7 @@ def search_users_comments():
         "problem_id": 12,
         "problem_title": "Forest Problem",
         "created_date": "2015-02-24T14:27:22.000Z",
+        "updated_date": "2015-02-24T14:27:22.000Z",
         "nickname": 'Pomidor',
         "first_name": 'Ivan',
         'last_name': 'Kozak',
@@ -830,10 +853,11 @@ def search_users_comments():
                              'problem_id': comment[2],
                              'problem_title': problems_title.get(comment[2]),
                              'created_date': comment[3] * 1000,
-                             'user_id' : comment[4],
-                             'nickname': comment[5],
-                             'first_name': comment[6],
-                             'last_name': comment[7],
+                             'updated_date': comment[4] * 1000 if comment[4] else None,
+                             'user_id' : comment[5],
+                             'nickname': comment[6],
+                             'first_name': comment[7],
+                             'last_name': comment[8],
                              'sub_count': subcomments_count[0]})
     if comments_count:
         total_count = {'total_comments_count': comments_count[0]}

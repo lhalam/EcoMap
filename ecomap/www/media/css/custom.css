@@ -470,6 +470,9 @@ form {
   background-color: #335190;
 }
 
+i.fa.fa-facebook-square.fa-2x:hover{
+  color:#337ab7;
+}
 .btn.btn-default.btn-border {
   border-color: #ffffff;
   color: #fff;
@@ -708,7 +711,7 @@ input[type="checkbox"] {
   flex-direction: column;
 }
 .hiddenClass{
-  overflow: hidden;  
+  overflow: hidden;
 }
 .flex-row {
   flex-direction: row;

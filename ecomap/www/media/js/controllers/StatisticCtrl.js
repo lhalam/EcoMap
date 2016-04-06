@@ -21,7 +21,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
                             {title: 'Підписок', count: ''},
                             {title: 'Коментарів', count: ''},
                             {title: 'Фотографій', count: ''}];
-    
+
 
     $scope.chartObject.options = {};
 
@@ -149,7 +149,7 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
         zoomMax:1000*60*60*24*31*12,
         orientation: 'top',
         showCurrentTime:false,
-        locale: 'nl'
+        locale: 'uk'
       };
 
   // Create a Timeline

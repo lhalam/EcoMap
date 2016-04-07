@@ -1162,6 +1162,20 @@ def count_problems():
 
 
 @db.retry_query(tries=3, delay=1)
+def count_enable_problems():
+    """Count all problems from db.
+    :return: count.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(id) FROM `problem`
+                    WHERE is_enabled=1;
+                """
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
 def count_user_problems(user_id):
     """Count of user's problem.
     :return: count
@@ -1545,6 +1559,23 @@ def count_all_subscriptions():
 
 
 @db.retry_query(tries=3, delay=1)
+def count_enabled_subscriptions():
+    """Function counts user's subscriptions.
+    :param user_id: id of user (int)
+    :return: count.
+    """
+    with db.pool_manager(db.READ_ONLY).manager() as conn:
+        cursor = conn.cursor()
+        query = """SELECT COUNT(subscription.id) FROM `subscription`
+                   INNER JOIN `problem`
+                   ON subscription.problem_id=problem.id
+                   WHERE problem.is_enabled=1;
+                """
+        cursor.execute(query)
+        return cursor.fetchone()
+
+
+@db.retry_query(tries=3, delay=1)
 def get_subscriptions(user_id, filtr, order, offset, per_page):
     """Function retrieves all user's subscriptions from db.
     :param id: id of problem (int)
@@ -1894,7 +1925,10 @@ def count_photo():
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(photo.id) FROM `photo`;"""
+        query = """SELECT COUNT(photo.id) FROM `photo`
+                   INNER JOIN `problem`
+                   ON photo.problem_id=problem.id where is_enabled=1;
+                """
         cursor.execute(query)
         return cursor.fetchone()
 
@@ -1906,7 +1940,9 @@ def count_comment():
     """
     with db.pool_manager(db.READ_ONLY).manager() as conn:
         cursor = conn.cursor()
-        query = """SELECT COUNT(id) FROM `comment`;"""
+        query = """SELECT COUNT(comment.id) FROM `comment`
+        INNER JOIN `problem` ON comment.problem_id = problem.id
+        WHERE is_enabled=1;"""
         cursor.execute(query)
         return cursor.fetchone()
 

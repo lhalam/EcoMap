@@ -1865,7 +1865,7 @@ def count_all_type(problem_type_id):
         query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
                                 INNER JOIN `problem_type`
                                 ON problem.problem_type_id = problem_type.id
-                WHERE problem_type_id = {};
+                WHERE problem_type_id = '{}' AND problem.is_enabled=1;
                 """).format(problem_type_id)
         cursor.execute(query)
         return cursor.fetchone()
@@ -1885,7 +1885,7 @@ def count_type(problem_type_id, date_format, posted_date):
         query = ("""SELECT COUNT(problem.id), problem_type.name from `problem`
                                 INNER JOIN `problem_type`
                                 ON problem.problem_type_id = problem_type.id
-                WHERE problem_type_id = '{}' AND
+                WHERE problem_type_id = '{}' AND is_enabled=1 AND
                 FROM_UNIXTIME(created_date, '{}') = '{}';
                 """).format(problem_type_id, date_format, posted_date)
         cursor.execute(query)

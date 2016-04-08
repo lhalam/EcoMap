@@ -1969,9 +1969,9 @@ def get_problems_comments_stats():
         query = """SELECT p.id, p.title, COUNT(c.problem_id) AS comments_count
                    FROM comment AS c INNER JOIN problem AS p
                    ON c.problem_id = p.id WHERE c.parent_id=0
-                   GROUP BY c.problem_id
+                   AND p.is_enabled=%s GROUP BY c.problem_id
                    ORDER BY comments_count DESC LIMIT 10;"""
-        cursor.execute(query)
+        cursor.execute(query,(ENABLED, ))
         return cursor.fetchall()
 
 

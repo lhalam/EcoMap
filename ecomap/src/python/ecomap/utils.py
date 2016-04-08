@@ -106,7 +106,7 @@ def send_email(smtp_name, login, app_key, from_address, to_email, email):
         pass
 
 
-def  get_mimetype(data):
+def get_mimetype(data):
     """Receives mimetype of a file."""
     with magic.Magic(flags=magic.MAGIC_MIME_TYPE) as magic_data:
         return magic_data.id_buffer(data)

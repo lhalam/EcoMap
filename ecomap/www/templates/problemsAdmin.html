@@ -104,7 +104,8 @@
             <div class="col-lg-2 col-md-2 col-sm-4 col-xs-2">
               <button type="sumbit"
                       class="btn add_button btn-primary btn-border pull-right"
-                      ng-click="addProblemSub=true">додати</button>
+                      ng-click="addProblemSub=true"
+                      ng-disabled="!newProblemType.radius || !newProblemType.name || !newProblemType.picFile">додати</button>
             </div>
           </div>
         </div>
@@ -181,7 +182,8 @@
             <div class="col-md-2 col-sm-4 col-xs-2">
               <button type="sumbit"
                       class="btn add_button btn-primary btn-border pull-right"
-                      ng-click="editProblemSub=true">додати</button>
+                      ng-click="editProblemSub=true"
+                      ng-disabled="!editProblemTypeObj.radius || !editProblemTypeObj.name">додати</button>
             </div>
           </div>
         </div>

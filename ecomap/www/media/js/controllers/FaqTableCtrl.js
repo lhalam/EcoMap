@@ -3,7 +3,7 @@ app.controller('FaqTableCtrl', ['$scope', '$http', 'toaster', '$rootScope',
     $rootScope.metadata = function(){
       metaTags = {
         'title': "Екологічні проблеми України",
-        'description': 'Профіль користувача - редагування F.A.Q.'
+        'description': 'Профіль користувача'
       }
       return metaTags;
     }

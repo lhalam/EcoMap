@@ -239,9 +239,15 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
       }
     };
 
-    $scope.$on('$viewContentLoaded', function() {
-      $anchorScroll();
-    });
+    angular.element(document).ready(function () {
+       var interval_id = setInterval(function() {
+           if($location.hash()) {
+             $anchorScroll();
+           }
+       }, 200);
+       setTimeout(function() {
+         clearInterval(interval_id);
+       },1000)});
 
     $scope.waiting = false;
     $scope.makeLink = function(comment_id) {

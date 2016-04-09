@@ -81,7 +81,9 @@ app.controller('DetailedProblemCtrl', ['$scope', '$cookies', '$rootScope', '$sta
     $scope.post_comment = function(comment) {
       if (comment) {
          var commentContent = comment.text;
-         comment.text = '';
+          if(comment.text) {
+            comment.text = '';
+          } 
           $http({
             method: 'POST',
             url: '/api/problem/add_comment',

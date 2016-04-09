@@ -1,6 +1,6 @@
 <div ng-controller="UserProblemTableCtrl">
   <div class="row">
-    <h3 class="col-md-10 title">Проблеми {{user.data.surname}} {{user.data.name}}<i class="fa fa-reddit-alien"></i></h3>
+    <h3 class="col-md-10">Проблеми {{user.data.surname}} {{user.data.name}}</h3>
   </div>
   <div class="row">
     <div class="col-md-5 col-sm-5 col-xs-5">
@@ -15,7 +15,7 @@
       </div>
       </form>
     </div>
-    <div class="col-lg-offset-5 col-lg-2 col-md-offset-5 col-sm-offset-5 col-sm-2 col-xs-offset-4 col-xs-2">
+    <div class="col-lg-offset-5 col-lg-1 col-md-offset-5 col-sm-offset-5 col-sm-2 col-xs-offset-4 col-xs-2">
         <select ng-model="selectCount.selected" 
                 class="form-control form-problems" 
                 data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 

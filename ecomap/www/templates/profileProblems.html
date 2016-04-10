@@ -80,12 +80,10 @@
         <td><a href="" ng-click="triggerDetailModal(problem.id)">переглянути</a></td>
         <td>
           <a href="" ng-href="{{linkEditProblem}}" 
-             ng-click="triggerEditModal(problem.id, user_id, problem.user_id)" 
-             class="one_button"
+             ng-click="triggerEditModal(problem.id)" class="one_button"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled'>редагувати
           </a>
-          <a href="" class="del" 
-             ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
+          <a href="" class="del" ng-click="deleteProblem(problem.id, problem.title, problem.user_id)"
              ng-show='showTable || user_id==problem.user_id && !problem.is_enabled' >
              <span ng-hide="idProblem==problem.id">видалити</span>
              <span ng-show="idProblem==problem.id"><img src="/image/swipebox/712_red.gif" class="del_pr_button"></span>

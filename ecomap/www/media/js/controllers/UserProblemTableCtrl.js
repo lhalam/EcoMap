@@ -160,16 +160,11 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
       var url = '/#/detailedProblem/' + problem_id;
       window.open(url, '_blank');
     }
-    $scope.triggerEditModal = function(problem_id, user_id, problem_user_id) {
+    $scope.triggerEditModal = function(problem_id) {
       if($cookies.get('role')=='user'){
         $scope.linkEditProblem = '/#/editProblem/' + problem_id;
       } else if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
-        if(user_id == problem_user_id) {
-          $scope.linkEditProblem = '/#/editProblem/' + problem_id;
-        }else{
-          var url = '/#/detailedProblem/' + problem_id;
-          window.open(url, '_blank');
-        }
+        $scope.linkEditProblem = '/#/detailedProblem/' + problem_id;
       }     
     };
 

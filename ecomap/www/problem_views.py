@@ -990,9 +990,11 @@ def statistic_all():
     subscriptions, statistics[2] - count of all comments,
     tatistics[3] - count of all photos
     """
-    statistics = [db.count_problems()[0], db.count_all_subscriptions()[0],
+    statistics = [db.count_enable_problems()[0],
+                  db.count_enabled_subscriptions()[0],
                   db.count_comment()[0], db.count_photo()[0]]
     return Response(json.dumps(statistics), mimetype='application/json')
+
 
 @app.route('/api/problems_comments_stats', methods=['GET'])
 def problems_comments_stats():

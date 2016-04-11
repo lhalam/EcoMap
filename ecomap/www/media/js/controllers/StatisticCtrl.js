@@ -124,13 +124,15 @@ app.controller('StatisticCtrl', ['$scope', '$http', '$state', '$cookies', '$wind
         $scope.problems = [];
         $scope.start_date = response.data[0]['date']*1000.0;
       for (var i = 0; i < response.data.length; i++){
-        response.data[i]['date']*=1000.0;
-        var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']),
-          group:response.data[i]['problem_type_Id']};
-          $scope.problems.push(item);
-          if ($scope.start_date>response.data[i]['date'])
-            $scope.start_date = response.data[i]['date'];
-        }
+          if (response.data[i]['is_enabled']==1) {
+            response.data[i]['date']*=1000.0;
+            var item = {id:response.data[i]['problem_id'], content:'', start: new Date(response.data[i]['date']),
+              group:response.data[i]['problem_type_Id']};
+              $scope.problems.push(item);
+              if ($scope.start_date>response.data[i]['date'])
+                $scope.start_date = response.data[i]['date'];
+            }
+          }
         $scope.createPlot($scope.groups_list, $scope.problems);
       }, function errorCallback() {})
     };

@@ -107,6 +107,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
     };
     $scope.idProblem = 0;
     $scope.deleteProblem = function(id, title, user_id) {
+      if (confirm("Ви бажаєте видалити проблему?")){
       $scope.idProblem = id;
       if($cookies.get('role')=='admin' || $cookies.get('role')=='moderator'){
         $http({
@@ -150,6 +151,7 @@ app.controller('UserProblemTableCtrl', ['$scope', '$http', '$state', '$cookies',
           $scope.msg.deleteError('проблема', arguments[0]['data']['msg']);
         })
         }
+      }
       };
 
     $scope.loadProblems();

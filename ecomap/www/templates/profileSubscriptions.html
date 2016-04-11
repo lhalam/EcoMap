@@ -1,16 +1,25 @@
 <div ng-controller="UserSubscriptionsTableCtrl">
   <div class="row">
-    <h3 class="col-md-10">Підписки  {{user.data.surname}} {{user.data.name}}</h3>
+    <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+      <h3 class="col-md-10">Підписки  {{user.data.surname}} {{user.data.name}}</h3>
+    </div>
+    <div class="col-lg-offset-5 col-lg-1 col-md-offset-5 col-md-1 col-sm-offset-4 col-sm-2 col-xs-offset-4 col-xs-2" ng-show="!showTable">
+        <select ng-model="selectCount.selected" 
+                class="form-control form-problems form-subs" 
+                data-ng-options="select_count as select_count for (select_id,select_count) in selectCountObj" 
+                ng-change="loadProblems()">
+        </select>
+    </div>
   </div>
-  <div class="row">
+  <div class="row" ng-show="showTable">
     <div class="col-md-5 col-sm-6 col-xs-6">
       <form class="form-inline form-search" name="search">
       <div class="input-group" >
         <input type="text" ng-model="searchNick" 
                class="form-control"
-               ng-init="showSearch" 
+               ng-init="showSearch"
+               maxlength="25" 
                ng-change="loadProblems()"
-               ng-show="showTable"
                placeholder="Пошук по нікнейму" />
         <div class="input-group-addon" ng-show="showTable"><i class="fa fa-search search"></i></div>
       </div>

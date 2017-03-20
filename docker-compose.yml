@@ -1,10 +1,17 @@
-ecomap_db:
-  image: mariadb
-  environment:
-    MYSQL_ROOT_PASSWORD: megasecret
-ecomap:
-  build: .
-  links:
-    - ecomap_db:mysql
-  ports:
-    - 80:80
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+    links:
+      - mysql:mysql
+  mysql:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=megasecret
+      - MYSQL_DATABASE=ecomap

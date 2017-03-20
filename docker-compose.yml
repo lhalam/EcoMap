@@ -1,0 +1,18 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+    links:
+      - mysql:mysql
+  mysql:
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=megasecret
+      - MYSQL_DATABASE=ecomap
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init_connect='SET collation_connection = utf8_unicode_ci'

@@ -6,7 +6,10 @@ echo "Product directory: $PRODROOT"
 DBSCRIPTROOT=${PRODROOT}/db/ecomap
 cd $DBSCRIPTROOT
 
-sleep 120
+while ! mysqladmin ping -h mysql --silent; do
+    echo "Waiting 5 seconds for mysql"
+    sleep 5
+done
 
 mysql -h mysql -u root -pmegasecret < DEPLOY.sql
 

@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN echo "[client]" >> /etc/mysql/conf.d/mysql.cnf
 RUN echo "protocol=tcp" >> /etc/mysql/conf.d/mysql.cnf
+RUN echo "default-character-set = utf8" >> /etc/mysql/conf.d/mysql.cnf
 
 COPY ecomap /opt/ecomap
 COPY requirements.txt /tmp/

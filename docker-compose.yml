@@ -15,3 +15,4 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=megasecret
       - MYSQL_DATABASE=ecomap
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init_connect='SET collation_connection = utf8_unicode_ci'

@@ -1,3 +1,0 @@
-base_url: http://localhost
-email: admin@ecomap.com
-password: secre!

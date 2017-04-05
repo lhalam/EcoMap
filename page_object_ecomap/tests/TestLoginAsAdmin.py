@@ -31,7 +31,7 @@ class TestLoginAsAdmin(unittest.TestCase, TestBase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.driver.quit()
+        TestBase.tearDownClass(cls)
 
 
 if __name__ == '__main__':

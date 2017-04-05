@@ -36,5 +36,5 @@ class LoginPageLocator:
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
-    USER_PROFILE_LINK = (By.ID, "navmenu")
+    USER_PROFILE_LINK = (By.ID, "navMenu")
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")

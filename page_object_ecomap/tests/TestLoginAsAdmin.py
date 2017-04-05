@@ -1,14 +1,15 @@
 from page_object_ecomap.tests.TestBase import TestBase
 import unittest
 from page_object_ecomap.framework.Locators import *
-from page_object_ecomap.framework.Pages import HomeUserPage
+from page_object_ecomap.framework.Pages import *
 
 
 
-class TestLoginAsAdmin(unittest.TestCase, TestBase):
+class TestLoginAsAdmin(TestBase):
     @classmethod
     def setUpClass(cls):
-        TestBase.setUpClass(cls)
+        super(TestLoginAsAdmin, cls).setUpClass()
+        cls.login_page = LoginPage(cls.driver)
         cls.home_user_page = HomeUserPage(cls.driver)
 
     def test_log_in_as_admin(self):
@@ -28,10 +29,6 @@ class TestLoginAsAdmin(unittest.TestCase, TestBase):
         self.assertEqual(self.home_page.get_current_url(), self.home_user_page.get_expected_url())
         self.assertTrue(self.home_page.is_element_present(*HomeUserPageLocator.LOGOUT_LINK))
         self.assertTrue(self.home_page.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK))
-
-    @classmethod
-    def tearDownClass(cls):
-        TestBase.tearDownClass(cls)
 
 
 if __name__ == '__main__':

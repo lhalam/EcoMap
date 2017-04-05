@@ -9,6 +9,7 @@ class NavigationLocator:
     NAV_BTN = (By.XPATH, "//button[@data-target='#navMenu']")
     RESOURCE = (By.XPATH, "//a[@ng-show='faqTitles']")
     STATISTIC = (By.XPATH, "//a[contains(@href, 'statistic')]")
+    ADD_PROBLEM = (By.XPATH, '//*[@href="/#/addProblem"]')
 
 
 class MapLocator:
@@ -36,3 +37,14 @@ class LoginPageLocator:
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
+
+
+class AddProblemPageLocator:
+    URL = '/#/addProblem'
+
+
+class Location_Locator(object):
+    FIND_ME = (By.XPATH, "//*[@class = 'form-group col-lg-6']")
+    LATITUDE = (By.XPATH, '//*[@id="latitude"]')
+    LONGITUDE = (By.XPATH, '//*[@id="longitude"]')
+    LOCATION_WIDGET = (By.XPATH, '//*[@class ="gmnoprint"]')

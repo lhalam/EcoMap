@@ -1,10 +1,5 @@
 import unittest
 from page_object_ecomap.tests.TestBase import TestBase
-import os
-from selenium import webdriver
-from page_object_ecomap.framework.Pages import *
-from page_object_ecomap.tests.TestData import TestData
-from PIL import Image
 
 
 class TestLogin(unittest.TestCase, TestBase):

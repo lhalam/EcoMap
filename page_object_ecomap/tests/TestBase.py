@@ -4,7 +4,7 @@ from selenium import webdriver
 from page_object_ecomap.framework.Pages import *
 from page_object_ecomap.tests.TestData import TestData
 
-class TestBase:
+class TestBase(object):
 
     def setUpClass(cls):
         cls.test_data = TestData("test_data_file.txt")

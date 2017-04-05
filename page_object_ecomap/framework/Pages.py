@@ -1,5 +1,6 @@
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class HomePage(BasePage):
@@ -25,6 +26,9 @@ class LoginPage(BasePage):
         self.type(password, *LoginPageLocator.PASSWORD)
         self.click(*LoginPageLocator.SUBMIT)
         return HomeUserPage(self.driver)
+    def wait_until_home_page_is_loaded(self):
+        _driver = self.driver
+        WebDriverWait(self.driver, 30).until(lambda _driver: _driver.find_element(*MapLocator.MAP))
 
     def get_expected_url(self):
         return self.base_url + LoginPageLocator.URL

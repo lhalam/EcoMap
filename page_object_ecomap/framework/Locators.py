@@ -22,6 +22,7 @@ class Filter:
 
 class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     BASE_URL = "http://localhost"
+    URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
 
@@ -35,4 +36,5 @@ class LoginPageLocator:
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
+    USER_PROFILE_LINK = (By.ID, "navmenu")
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")

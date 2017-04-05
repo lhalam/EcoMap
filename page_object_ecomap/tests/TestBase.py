@@ -20,8 +20,6 @@ class TestBase(unittest.TestCase):
         cls.driver.maximize_window()
 
         cls.home_page = HomePage(cls.driver, base_url)
-        cls.login_page = LoginPage(cls.driver)
-        cls.reg_page = Registration(cls.driver)
         cls.home_page.open()
 
 

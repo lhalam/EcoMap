@@ -4,8 +4,12 @@ from selenium import webdriver
 from page_object_ecomap.framework.Pages import *
 from page_object_ecomap.tests.TestData import TestData
 
-class TestBase:
 
+
+class TestBase(unittest.TestCase):
+    driver = None
+
+    @classmethod
     def setUpClass(cls):
         cls.test_data = TestData("test_data_file.txt")
         base_url = cls.test_data.get("base_url")
@@ -17,8 +21,11 @@ class TestBase:
 
         cls.home_page = HomePage(cls.driver, base_url)
         cls.login_page = LoginPage(cls.driver)
+        cls.reg_page = Registration(cls.driver)
         cls.home_page.open()
 
+
+    @classmethod
     def tearDownClass(cls):
-            cls.driver.quit()
+        cls.driver.quit()
 

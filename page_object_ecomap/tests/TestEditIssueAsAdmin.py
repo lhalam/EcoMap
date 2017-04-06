@@ -27,4 +27,5 @@ class TestEditIssueAsAdmin(TestBase.TestBase):
     def test_3_go_to_first_subscription(self):
         self.assertTrue(self.user_profile_subscriptions_page.is_element_present(*UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK))
         self.user_profile_subscriptions_page.click(*UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK)
-        self.first_problem_page = Pages.FirstDetailedProblemPageself.first_problem_page.change_problem_importance(4)
+        self.first_problem_page = Pages.FirstDetailedProblemPage(self.driver)
+        #eself.first_problem_page.change_problem_importance(4)

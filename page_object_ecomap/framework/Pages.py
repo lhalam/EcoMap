@@ -1,5 +1,4 @@
-from selenium.webdriver.support.wait import WebDriverWait
-
+from selenium.common.exceptions import TimeoutException
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
 from math import fabs

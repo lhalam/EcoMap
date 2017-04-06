@@ -22,8 +22,8 @@ class TestBase(unittest.TestCase):
         cls.home_page = HomePage(cls.driver, base_url)
         cls.home_page.open()
 
-
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+
 

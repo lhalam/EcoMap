@@ -1,8 +1,8 @@
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 
+# from page_object_ecomap.framework.Locators import HomePageLocator, LogoLocator
 from page_object_ecomap.framework.Locators import HomePageLocator, LogoLocator
-
 
 class BasePage:
 

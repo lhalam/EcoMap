@@ -24,6 +24,7 @@ class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     BASE_URL = "http://localhost"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
+    USER_PROFILE = (By.XPATH, "//a[@href='/#/user_profile/info']")
 
 
 class LoginPageLocator:
@@ -36,3 +37,14 @@ class LoginPageLocator:
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
+
+
+class UserProfileLocator(LogoLocator, NavigationLocator, MapLocator):
+    URL = "/#/user_profile/info"
+    OLD_PASS = (By.XPATH, "//input[@id='old_pass']")
+    NEW_PASS = (By.XPATH, "//input[@id='new_pass']")
+    NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")
+    SUBMIT = (By.XPATH, "//button[@type='submit']")
+    SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
+
+

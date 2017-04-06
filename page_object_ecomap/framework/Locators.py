@@ -32,7 +32,21 @@ class LoginPageLocator:
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     URL = "/#/login"
 
+class RegisterPageLocator:
+    REG_URL = "/#/register"
+    REG_BLOCK = (By.XPATH, '//*[@id="registerForm"]')
+    EMAIL = (By.XPATH, '//*[@id="email"]')
+    NAME = (By.XPATH, '//*[@id="name"]')
+    SURNAME = (By.XPATH, '//*[@id="surname"]')
+    NICKNAME = (By.XPATH, '//*[@id="nickname"]')
+    PASSWORD = (By.XPATH, '//*[@id="password"]')
+    CONFIRMPASSWORD = (By.XPATH, '//*[@id="pass_confirm"]')
+    SUBMIT_BUTTON = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/button')
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
+    USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
+
+
+

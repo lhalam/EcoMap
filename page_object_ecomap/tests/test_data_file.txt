@@ -1,6 +1,12 @@
-base_url: http://localhost
+base_url: http://localhost/#/map
 email: admin@ecomap.com
 password: secre!
+registration_email: user%s@ukr.net
+registration_name: iamuser
+registration_surname: ecomap
+registration_nickname: eco%s
+registration_password: qwerty
+registration_confirmpassword: qwerty
 change_password_email: qqq@qqq.com
 change_password_password: qqqqqq
 change_password_old_pass: qqqqqq

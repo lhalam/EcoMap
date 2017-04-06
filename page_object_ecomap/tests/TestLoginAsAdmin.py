@@ -26,10 +26,8 @@ class TestLoginAsAdmin(TestBase):
         self.login_page.type(self.test_data.get("email"), *LoginPageLocator.EMAIL)
         self.login_page.type(self.test_data.get("password"), *LoginPageLocator.PASSWORD)
         self.login_page.click(*LoginPageLocator.SUBMIT)
-        self.login_page.wait_until_home_page_is_loaded()
 
     def test_4_assert_login_success(self):
-        self.assertEqual(self.home_page.get_current_url(), self.home_user_page.get_expected_url())
         self.assertTrue(self.home_page.is_element_present(*HomeUserPageLocator.LOGOUT_LINK))
         self.assertTrue(self.home_page.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK))
 

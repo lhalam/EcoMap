@@ -26,10 +26,11 @@ class TestRegistration(TestBase):
                                      self.test_data.get("registration_surname"), self.test_data.get("registration_nickname") % self.generate_random_email(),
                                      self.test_data.get("registration_password"),self.test_data.get("registration_confirmpassword"))
 
+    def test2_check_correct_url(self):
         self.assertEqual(self.home_page.get_current_url(), self.reg_page.get_expected_reg_url())
 
 
-    def test2_check_user_button(self):
+    def test3_check_user_button(self):
         self.reg_page.wait_linked_text_changed()
         user_name = self.test_data.get("registration_name") + " " + self.test_data.get("registration_surname")
         att = self.user_page.user_credentials_btn_is_present()

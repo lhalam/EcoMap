@@ -1,4 +1,4 @@
-base_url: http://localhost
+base_url: http://localhost/#/map
 email: admin@ecomap.com
 password: secre!
 registration_email: user%s@ukr.net

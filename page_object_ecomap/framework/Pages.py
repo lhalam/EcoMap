@@ -1,4 +1,5 @@
-from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.wait import WebDriverWait
+
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
 from math import fabs
@@ -29,6 +30,7 @@ class HomeUserPage(BasePage):
 
     def user_credentials_btn_is_present(self):
         return self.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text
+
 
 
 class LoginPage(BasePage):
@@ -124,3 +126,11 @@ class Registration(BasePage):
     def wait_linked_text_changed(self):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
+
+
+
+
+
+
+
+

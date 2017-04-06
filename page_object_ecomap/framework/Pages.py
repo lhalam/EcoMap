@@ -1,3 +1,4 @@
+from selenium.common.exceptions import TimeoutException
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
 from math import fabs
@@ -41,17 +42,23 @@ class LoginPage(BasePage):
 class AddProblemPage(BasePage):
 
     def check_presence_of_coordinates(self, driver):
-        latitude = driver.find_element(*Location_Locator.LATITUDE).get_attribute("value")
-        longitude = driver.find_element(*Location_Locator.LONGITUDE).get_attribute("value")
-        if latitude == '' or longitude == '':
-            return False
-        return float(latitude), float(longitude)
+        try:
+            latitude = driver.find_element(*Location_Locator.LATITUDE).get_attribute("value")
+            longitude = driver.find_element(*Location_Locator.LONGITUDE).get_attribute("value")
+            if latitude == '' or longitude == '':
+                return False
+            return float(latitude), float(longitude)
+        except TypeError:
+            return None
 
     def click_on_find_me(self):
-        self.driver.find_element(*Location_Locator.FIND_ME).click()
-        latitude, longitude = WebDriverWait(self.driver, 10).until(self.check_presence_of_coordinates)
-        coordinates = [latitude, longitude]
-        return coordinates
+        try:
+            self.driver.find_element(*Location_Locator.FIND_ME).click()
+            latitude, longitude = WebDriverWait(self.driver, 10).until(self.check_presence_of_coordinates)
+            coordinates = [latitude, longitude]
+            return coordinates
+        except TimeoutException:
+            return None
 
     def check_location(self, found_coordinates, actual_coordinates):
         # http://www.movable-type.co.uk/scripts/latlong.html
@@ -62,7 +69,7 @@ class AddProblemPage(BasePage):
                     return True
                 else:
                     return False
-        except IndexError:
+        except (IndexError, TypeError):
             return False
 
     def get_actual_coordinates(self):
@@ -83,8 +90,11 @@ class AddProblemPage(BasePage):
 
     def get_reason_of_fail(self):
         actual_coordinates = self.get_actual_coordinates()
+        coordinates = self.click_on_find_me()
         if actual_coordinates is None:
-            message = "Can't find actual location"
+            message = "Can't find coordinates by outside service"
+        elif coordinates is None:
+            message = "Can't find coordinates by application"
         else:
             message = "Actual coordinates don't equal found coordinates"
         return message

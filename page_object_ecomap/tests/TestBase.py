@@ -1,8 +1,8 @@
 import os
+import unittest
 from selenium import webdriver
 from page_object_ecomap.framework.Pages import *
 from page_object_ecomap.tests.TestData import TestData
-
 
 
 class TestBase(unittest.TestCase):
@@ -21,9 +21,10 @@ class TestBase(unittest.TestCase):
         cls.home_page = HomePage(cls.driver, base_url)
         cls.home_page.open()
 
-
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
+
+
 
 

@@ -2,11 +2,7 @@ from page_object_ecomap.tests.TestBase import TestBase
 import unittest
 
 
-class testLocation(unittest.TestCase, TestBase):
-
-    @classmethod
-    def setUpClass(cls):
-        TestBase.setUpClass(cls)
+class testLocation(TestBase):
 
     def test_location(self):
         # login
@@ -17,7 +13,7 @@ class testLocation(unittest.TestCase, TestBase):
         add_problem = login_page.click_on_add_problem()
         self.assertEqual(add_problem.get_current_url(), add_problem.get_expected_url())
 
-        # get coordinates
+        # get coordinates by application
         coordinates = add_problem.click_on_find_me()
         self.assertTrue(add_problem.is_location_widget_present())
 
@@ -27,10 +23,7 @@ class testLocation(unittest.TestCase, TestBase):
         self.assertTrue(add_problem.check_location(coordinates, actual_coordinates),
                         add_problem.get_reason_of_fail())
 
-    @classmethod
-    def tearDownClass(cls):
-        TestBase.tearDownClass(cls)
-
 if __name__ == '__main__':
     unittest.main()
+
 

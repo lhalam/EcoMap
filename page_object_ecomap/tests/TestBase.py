@@ -1,5 +1,5 @@
-import os
 import unittest
+import os
 from selenium import webdriver
 from page_object_ecomap.framework.Pages import *
 from page_object_ecomap.tests.TestData import TestData
@@ -24,7 +24,4 @@ class TestBase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.driver.quit()
-
-
-
 

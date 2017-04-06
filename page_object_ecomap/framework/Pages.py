@@ -45,30 +45,27 @@ class AddProblemPage(BasePage):
         try:
             latitude = driver.find_element(*Location_Locator.LATITUDE).get_attribute("value")
             longitude = driver.find_element(*Location_Locator.LONGITUDE).get_attribute("value")
-            if latitude == '' or longitude == '':
-                return False
             return float(latitude), float(longitude)
-        except TypeError:
-            return None
+        except (TypeError, ValueError):
+            return False
 
     def click_on_find_me(self):
         try:
             self.driver.find_element(*Location_Locator.FIND_ME).click()
-            latitude, longitude = WebDriverWait(self.driver, 10).until(self.check_presence_of_coordinates)
-            coordinates = [latitude, longitude]
-            return coordinates
+            latitude, longitude = WebDriverWait(self.driver, 5).until(self.check_presence_of_coordinates)
+            found_coordinates = [latitude, longitude]
+            return found_coordinates
         except TimeoutException:
             return None
 
     def check_location(self, found_coordinates, actual_coordinates):
         # http://www.movable-type.co.uk/scripts/latlong.html
         try:
-            if actual_coordinates is not None:
-                if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
-                        and fabs(actual_coordinates[1] - found_coordinates[1]) < 0.1:
-                    return True
-                else:
-                    return False
+            if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
+                    and fabs(actual_coordinates[1] - found_coordinates[1]) < 0.1:
+                return True
+            else:
+                return False
         except (IndexError, TypeError):
             return False
 
@@ -90,10 +87,12 @@ class AddProblemPage(BasePage):
 
     def get_reason_of_fail(self):
         actual_coordinates = self.get_actual_coordinates()
-        coordinates = self.click_on_find_me()
-        if actual_coordinates is None:
+        found_coordinates = self.click_on_find_me()
+        if found_coordinates is None and actual_coordinates is None:
+            message = "Can't find coordinates by application and outside service"
+        elif actual_coordinates is None:
             message = "Can't find coordinates by outside service"
-        elif coordinates is None:
+        elif found_coordinates is None:
             message = "Can't find coordinates by application"
         else:
             message = "Actual coordinates don't equal found coordinates"
@@ -101,4 +100,6 @@ class AddProblemPage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + AddProblemPageLocator.URL
+
+
 

@@ -62,7 +62,7 @@ class Location_Locator(object):
     LOCATION_WIDGET = (By.XPATH, '//*[@class ="gmnoprint"]')
 
 
-class UserProfileLocator(LogoLocator, NavigationLocator, MapLocator):
+class UserProfileLocator(object):
     URL = "/#/user_profile/info"
     OLD_PASS = (By.XPATH, "//input[@id='old_pass']")
     NEW_PASS = (By.XPATH, "//input[@id='new_pass']")

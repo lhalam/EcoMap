@@ -1,3 +1,4 @@
 chromedriver
 .idea/
-*.png
+screen_full.png
+screen_cropped.png

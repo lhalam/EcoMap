@@ -13,7 +13,7 @@ class TestUserChangePassword(TestBase):
         cls.user_profile_page = UserProfilePage(cls.driver)
 
 
-    def user_change_pass(self):
+    def test_user_change_pass(self):
         self.home_page.get_login_page()
 
         self.login_page.login(self.test_data.get("email_for_change_pass"),

@@ -24,7 +24,7 @@ class TestMapLoggedIn(TestMap):
     def setUp(self):
         home_user_page = HomePage(self.driver).get_login_page().login(
             self.test_data.get("email"), self.test_data.get("password"))
-        self.assertTrue(home_user_page.is_element_present(*HomeUserPageLocator.LOGOUT_LINK))
+        self.assertTrue(home_user_page.is_logout_btn_present())
 
 if __name__ == '__main__':
     unittest.main()

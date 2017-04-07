@@ -60,3 +60,9 @@ target/
 
 # upload folder
 ecomap/www/uploads/
+
+# Vagrant files
+.vagrant/
+
+# idea
+.idea/

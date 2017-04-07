@@ -1,0 +1,3 @@
+# For lazy people who set up Windows git with windows style checkout/commit
+# as it breaks scripts that run after setting up container
+*.sh text eol=lf

@@ -34,6 +34,9 @@ class HomeUserPage(BasePage):
     def user_credentials_btn_is_present(self):
         return self.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text
 
+    def is_user_profile_link_present(self):
+        return self.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK)
+
     def click_on_add_problem(self):
         self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
         return AddProblemPage(self.driver)

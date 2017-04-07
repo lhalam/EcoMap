@@ -66,3 +66,5 @@ ecomap/www/uploads/
 
 # idea
 .idea/
+
+execute_selenium_tests.sh

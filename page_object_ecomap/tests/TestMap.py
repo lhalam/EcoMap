@@ -1,7 +1,7 @@
 import unittest
-from page_object_ecomap.tests.TestBase import TestBase
-from page_object_ecomap.framework.Pages import *
-from page_object_ecomap.framework.Screenshot import Screenshot
+from tests.TestBase import TestBase
+from framework.Pages import *
+from framework.Screenshot import Screenshot
 
 
 class TestMap(TestBase):

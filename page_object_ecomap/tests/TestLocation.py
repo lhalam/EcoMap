@@ -18,7 +18,7 @@ class testLocation(TestBase):
 
         # check if "Add problem" tab is present
         self.assertTrue(self.home_user_page.get_current_url(), self.home_user_page.get_expected_url())
-        self.assertTrue(self.home_user_page.is_element_present(*NavigationLocator.ADD_PROBLEM))
+        self.assertTrue(self.home_user_page.is_add_problem_tab_present())
 
         # go to Add problem page
         add_problem = self.home_user_page.click_on_add_problem()
@@ -38,6 +38,7 @@ class testLocation(TestBase):
 
 if __name__ == '__main__':
     unittest.main()
+
 
 
 

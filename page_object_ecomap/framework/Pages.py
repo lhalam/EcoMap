@@ -34,6 +34,9 @@ class HomeUserPage(BasePage):
         self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
         return AddProblemPage(self.driver)
 
+    def is_add_problem_tab_present(self):
+        return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
+
 
 class LoginPage(BasePage):
     def login(self, login_name, password):
@@ -66,7 +69,6 @@ class AddProblemPage(BasePage):
             return None
 
     def check_location(self, found_coordinates, actual_coordinates):
-        # http://www.movable-type.co.uk/scripts/latlong.html
         try:
             if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
                     and fabs(actual_coordinates[1] - found_coordinates[1]) < 0.1:
@@ -125,3 +127,4 @@ class Registration(BasePage):
     def wait_linked_text_changed(self):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
+

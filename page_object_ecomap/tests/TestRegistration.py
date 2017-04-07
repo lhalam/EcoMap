@@ -34,7 +34,7 @@ class TestRegistration(TestBase):
         user_name = self.test_data.get("registration_name") + " " + self.test_data.get("registration_surname")
         att = self.user_page.user_credentials_btn_is_present()
         self.assertEqual(user_name.upper(), att)
-        self.assertTrue(self.user_page.is_element_present(*HomeUserPageLocator.LOGOUT_LINK))
+        self.user_page.is_logout_btn_present()
 
     def generate_random_email(self):
         return str(random.randint(1, 1000))

@@ -10,9 +10,10 @@ class TestRegistration(TestBase):
         super(TestRegistration, cls).setUpClass()
         cls.user_page = HomeUserPage(cls.driver)
         cls.reg_page = Registration(cls.driver)
+        cls.home_page.get_registration_page()
 
-    def test1_registration(self):
-        self.home_page.get_registration_page()
+    def test_1_check_registration_page(self):
+        self.assertEqual(self.reg_page.get_current_url(), self.reg_page.get_expected_reg_url())
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.REG_BLOCK))
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.EMAIL))
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.NAME))
@@ -22,15 +23,13 @@ class TestRegistration(TestBase):
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.CONFIRMPASSWORD))
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.SUBMIT_BUTTON))
 
-        enter_value = self.reg_page.reg(self.test_data.get("registration_email") % self.generate_random_email(), self.test_data.get("registration_name"),
-                                     self.test_data.get("registration_surname"), self.test_data.get("registration_nickname") % self.generate_random_email(),
-                                     self.test_data.get("registration_password"),self.test_data.get("registration_confirmpassword"))
-
-    def test2_check_correct_url(self):
-        self.assertEqual(self.home_page.get_current_url(), self.reg_page.get_expected_reg_url())
-
-
-    def test3_check_user_button(self):
+    def test_2_check_registered_user_page(self):
+        self.reg_page.reg(self.test_data.get("registration_email") % self.generate_random_email(),
+                          self.test_data.get("registration_name"),
+                          self.test_data.get("registration_surname"),
+                          self.test_data.get("registration_nickname") % self.generate_random_email(),
+                          self.test_data.get("registration_password"),
+                          self.test_data.get("registration_confirmpassword"))
         self.reg_page.wait_linked_text_changed()
         user_name = self.test_data.get("registration_name") + " " + self.test_data.get("registration_surname")
         att = self.user_page.user_credentials_btn_is_present()
@@ -38,8 +37,7 @@ class TestRegistration(TestBase):
         self.assertTrue(self.user_page.is_element_present(*HomeUserPageLocator.LOGOUT_LINK))
 
     def generate_random_email(self):
-        return str(random.randint(1, 100000))
-
+        return str(random.randint(1, 1000))
 
 if __name__ == '__main__':
         unittest.main()

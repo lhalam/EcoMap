@@ -30,6 +30,9 @@ class HomeUserPage(BasePage):
     def user_credentials_btn_is_present(self):
         return self.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text
 
+    def click_on_add_problem(self):
+        self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
+        return AddProblemPage(self.driver)
 
 
 class LoginPage(BasePage):
@@ -41,10 +44,6 @@ class LoginPage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + LoginPageLocator.URL
-
-    def click_on_add_problem(self):
-        self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
-        return AddProblemPage(self.driver)
 
 
 class AddProblemPage(BasePage):
@@ -109,6 +108,7 @@ class AddProblemPage(BasePage):
     def get_expected_url(self):
         return self.base_url + AddProblemPageLocator.URL
 
+
 class Registration(BasePage):
     def reg(self, email, name, surname, nickname, password, confirmpassword):
         self.type(email, *RegisterPageLocator.EMAIL)
@@ -125,11 +125,3 @@ class Registration(BasePage):
     def wait_linked_text_changed(self):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
-
-
-
-
-
-
-
-

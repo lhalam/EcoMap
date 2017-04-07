@@ -1,6 +1,6 @@
 import random
 import unittest
-from page_object_ecomap.framework.Locators import RegisterPageLocator, HomeUserPageLocator
+from page_object_ecomap.framework.Locators import RegisterPageLocator
 from page_object_ecomap.tests.TestBase import TestBase, HomeUserPage, Registration
 
 

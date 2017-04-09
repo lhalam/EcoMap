@@ -154,3 +154,12 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + UserProfileLocator.URL
+
+
+class StatisticPage(BasePage):
+    def get_expected_url(self):
+        return self.base_url + StatisticPageLocator.URL
+
+    def get_current_url(self):
+        return self.driver.current_url
+

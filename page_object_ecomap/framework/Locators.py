@@ -70,4 +70,8 @@ class UserProfileLocator(object):
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
 
+class StatisticPageLocator(object):
+    URL = "/#/statistic"
+
+
 

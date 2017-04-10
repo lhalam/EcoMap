@@ -12,6 +12,10 @@ class HomePage(BasePage):
         self.click(*HomePageLocator.LOG_IN)
         return LoginPage(self.driver)
 
+    def get_user_profile_page(self):
+        self.click(*HomePageLocator.USER_PROFILE)
+        return UserProfilePage(self.driver)
+
     def get_expected_url(self):
         return self.base_url
 
@@ -30,6 +34,15 @@ class HomeUserPage(BasePage):
     def user_credentials_btn_is_present(self):
         return self.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text
 
+    def is_user_profile_link_present(self):
+        return self.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK)
+
+    def click_on_add_problem(self):
+        self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
+        return AddProblemPage(self.driver)
+
+    def is_add_problem_tab_present(self):
+        return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
 
 
 class LoginPage(BasePage):
@@ -41,10 +54,6 @@ class LoginPage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + LoginPageLocator.URL
-
-    def click_on_add_problem(self):
-        self.driver.find_element(*NavigationLocator.ADD_PROBLEM).click()
-        return AddProblemPage(self.driver)
 
 
 class AddProblemPage(BasePage):
@@ -67,7 +76,6 @@ class AddProblemPage(BasePage):
             return None
 
     def check_location(self, found_coordinates, actual_coordinates):
-        # http://www.movable-type.co.uk/scripts/latlong.html
         try:
             if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
                     and fabs(actual_coordinates[1] - found_coordinates[1]) < 0.1:
@@ -109,6 +117,7 @@ class AddProblemPage(BasePage):
     def get_expected_url(self):
         return self.base_url + AddProblemPageLocator.URL
 
+
 class Registration(BasePage):
     def reg(self, email, name, surname, nickname, password, confirmpassword):
         self.type(email, *RegisterPageLocator.EMAIL)
@@ -127,9 +136,21 @@ class Registration(BasePage):
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
 
 
+class UserProfilePage(BasePage):
+    def change_pwd(self, old_password, new_password, confirm_password):
+        self.type(old_password, *UserProfileLocator.OLD_PASS)
+        self.type(new_password, *UserProfileLocator.NEW_PASS)
+        self.type(confirm_password, *UserProfileLocator.NEW_PASS_CONFIRM)
+        self.click(*UserProfileLocator.SUBMIT)
+        return HomeUserPage(self.driver)
 
+    def is_success_popup_present(self):
+        _d = self.driver
+        try:
+            WebDriverWait(_d, 5).until(lambda _d: _d.find_element(*UserProfileLocator.SUCCESS_POPUP))
+        except Exception:
+            return False
+        return True
 
-
-
-
-
+    def get_expected_url(self):
+        return self.base_url + UserProfileLocator.URL

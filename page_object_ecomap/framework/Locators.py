@@ -26,6 +26,7 @@ class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
+    USER_PROFILE = (By.XPATH, "//a[@href='/#/user_profile/info']")
 
 
 class LoginPageLocator:
@@ -59,3 +60,14 @@ class Location_Locator(object):
     LATITUDE = (By.XPATH, '//*[@id="latitude"]')
     LONGITUDE = (By.XPATH, '//*[@id="longitude"]')
     LOCATION_WIDGET = (By.XPATH, '//*[@class ="gmnoprint"]')
+
+
+class UserProfileLocator(object):
+    URL = "/#/user_profile/info"
+    OLD_PASS = (By.XPATH, "//input[@id='old_pass']")
+    NEW_PASS = (By.XPATH, "//input[@id='new_pass']")
+    NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")
+    SUBMIT = (By.XPATH, "//button[@type='submit']")
+    SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
+
+

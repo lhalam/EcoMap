@@ -18,5 +18,13 @@ class TestMap(TestBase):
         self.assertLess(grey_percent, 10, 'Map isn''t displayed properly (too much of grey color)')
         self.assertLess(white_percent, 10, 'Map isn''t displayed properly (too much of white color)')
 
+
+class TestMapLoggedIn(TestMap):
+
+    def setUp(self):
+        home_user_page = HomePage(self.driver).get_login_page().login(
+            self.test_data.get("email"), self.test_data.get("password"))
+        self.assertTrue(home_user_page.is_logout_btn_present())
+
 if __name__ == '__main__':
     unittest.main()

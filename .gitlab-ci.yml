@@ -1,0 +1,63 @@
+image: docker:latest
+stages:
+  - unittest
+  - build
+  - selenium
+  - analyze
+
+services:
+  - docker:dind
+
+before_script:
+  - export IMAGE_TAG_MAIN="latest"
+  - export IMAGE_TAG_TESTS=$(echo -en $CI_COMMIT_REF_NAME | tr -c '[:alnum:]_.-' '-')
+  - docker login -u "gitlab-ci-token" -p "$CI_JOB_TOKEN" $CI_REGISTRY
+
+run_unit_tests:
+  stage: unittest
+  script:
+    - docker build -t ecomap-unit ecomap/
+    - docker run ecomap-unit
+  only:
+    - STAGE
+
+build_ecomap:
+  stage: build
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN" .
+    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN"
+  only:
+    - STAGE
+
+build_selenium_tests:
+  stage: build
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS" page_object_ecomap/
+    - docker push "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS"
+
+run_selenium_tests:
+  stage: selenium
+  script:
+    - docker pull mariadb:latest > /dev/null
+    - docker pull selenium/standalone-chrome:latest > /dev/null
+    - docker pull "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN" > /dev/null
+    - docker pull "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS" > /dev/null
+    - docker run --name mariadb -e MYSQL_ROOT_PASSWORD=megasecret -e MYSQL_DATABASE=ecomap -d mariadb:latest mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init_connect='SET collation_connection = utf8_unicode_ci'
+    - docker run --name web --link mariadb:mysql -d "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN"
+    - docker run --name selenium-rc -d --link web:ecomap selenium/standalone-chrome
+    - docker run --name tests -v $CI_PROJECT_DIR/public:/usr/src/app/public --link selenium-rc:remote "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS"
+  artifacts:
+    paths:
+      - public
+    when: always
+
+pages:
+  stage: analyze
+  script:
+    - mv $CI_PROJECT_DIR/public/Test_*.html $CI_PROJECT_DIR/public/index.html
+  artifacts:
+    paths:
+      - public
+  when: always
+  only:
+    - STAGE

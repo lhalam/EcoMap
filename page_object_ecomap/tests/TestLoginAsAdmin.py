@@ -1,6 +1,7 @@
-from page_object_ecomap.tests.TestBase import TestBase
+from tests.TestBase import TestBase
 import unittest
-from page_object_ecomap.framework.Pages import *
+from framework.Locators import *
+from framework.Pages import *
 
 
 class TestLoginAsAdmin(TestBase):

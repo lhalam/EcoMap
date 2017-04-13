@@ -1,6 +1,6 @@
 from selenium.common.exceptions import TimeoutException
-from framework.BasePage import BasePage
-from framework.Locators import *
+from page_object_ecomap.framework.BasePage import BasePage
+from page_object_ecomap.framework.Locators import *
 from math import fabs
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
@@ -101,6 +101,10 @@ class AddProblemPage(BasePage):
     def is_location_widget_present(self):
         return self.is_element_present(*Location_Locator.LOCATION_WIDGET)
 
+    def is_coordinates_present(self):
+        return self.is_element_present(*Location_Locator.LATITUDE) and \
+               self.is_element_present(*Location_Locator.LONGITUDE)
+
     def get_reason_of_fail(self):
         actual_coordinates = self.get_actual_coordinates()
         found_coordinates = self.click_on_find_me()
@@ -116,6 +120,47 @@ class AddProblemPage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + AddProblemPageLocator.URL
+
+    def is_title_field_present(self):
+        return self.is_element_present(*AddProblemPageLocator.TITLE)
+
+    def fill_title(self, title):
+        self.driver.find_element(*AddProblemPageLocator.TITLE).clear()
+        self.type(title, *AddProblemPageLocator.TITLE)
+
+    def is_problems_items_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROBLEMS_LIST) and\
+        self.is_element_present(*AddProblemPageLocator.FOREST_PROBLEM)
+
+    def choose_forest_problem(self):
+        self.driver.find_element(*AddProblemPageLocator.PROBLEMS_LIST).click()
+        self.driver.find_element(*AddProblemPageLocator.FOREST_PROBLEM).click()
+
+    def is_description_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROBLEM_DESCRIPTION)
+
+    def fill_description_of_problem(self, description):
+        self.driver.find_element(*AddProblemPageLocator.PROBLEM_DESCRIPTION).clear()
+        self.type(description, *AddProblemPageLocator.PROBLEM_DESCRIPTION)
+
+    def is_proposal_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROPOSAL)
+
+    def fill_proposal_of_solving(self, proposal):
+        self.driver.find_element(*AddProblemPageLocator.PROPOSAL).clear()
+        self.type(proposal, *AddProblemPageLocator.PROPOSAL)
+
+    def is_next_button_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.NEXT)
+
+    def click_on_next(self):
+        self.driver.find_element(*AddProblemPageLocator.NEXT).click()
+
+    def is_publish_button_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PUBLISH)
+
+    def click_on_publish(self):
+        self.driver.find_element(*AddProblemPageLocator.PUBLISH).click()
 
 
 class Registration(BasePage):

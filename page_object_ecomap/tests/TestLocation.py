@@ -1,6 +1,6 @@
-from tests.TestBase import TestBase
+from page_object_ecomap.tests.TestBase import TestBase
 import unittest
-from framework.Pages import*
+from page_object_ecomap.framework.Pages import*
 
 
 class testLocation(TestBase):

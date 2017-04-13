@@ -180,20 +180,16 @@ class IssuePage(BasePage):
 
     def change_importance(self, value):
         select = Select(self.find_element(*IssueLocator.IMPORTANCE))
-        select.select_by_index(value)
+        select.select_by_index(value - 1)
 
     def change_status(self, isUnsolved):
         select = Select(self.find_element(*IssueLocator.STATUS))
         if isUnsolved:
             select.select_by_visible_text("Не вирішено")
-            #self.type("Не вирішено", *IssueLocator.PROBLEM_STATUS)
         else:
             select.select_by_visible_text("Вирішено")
-            #self.type("Вирішено", *IssueLocator.PROBLEM_STATUS)
 
     def submit_change(self):
         self.click(*IssueLocator.CHANGE_BTN)
         return (self.is_element_present(*IssueLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
-
-    #def get_issue_importance(self):
 

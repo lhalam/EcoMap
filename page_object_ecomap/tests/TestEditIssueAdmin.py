@@ -11,9 +11,9 @@ class TestEditIssueAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         #log in as admin
         user_profile_page = self.home_page.get_user_profile_page()
         subscriptions_page = user_profile_page.get_issues_page()
+        #edit issue
         issue_page = subscriptions_page.edit_first_issue()
-        old_importance = 1
-        issue_page.change_importance(4)
+        issue_page.change_importance(2)
         issue_page.submit_change()
         self.assertTrue(issue_page.submit_change())
 

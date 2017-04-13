@@ -21,6 +21,9 @@ class HomePage(BasePage):
         self.click(*HomePageLocator.REGISTER)
         return Registration(self.driver)
 
+    def is_login_link_present(self):
+        return self.is_element_present(*HomePageLocator.LOG_IN)
+
 
 class HomeUserPage(BasePage):
     def get_expected_url(self):
@@ -45,6 +48,9 @@ class HomeUserPage(BasePage):
     def get_user_profile_page(self):
         self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
         return UserProfilePage(self.driver)
+
+    def logout(self):
+        self.click(*HomeUserPageLocator.LOGOUT_LINK)
 
 
 class LoginPage(BasePage):
@@ -169,6 +175,9 @@ class UserProfilePage(BasePage):
         self.click(*UserProfileNavigationLocator.ISSUES_TAB)
         return UserProfileIssuesPage(self.driver)
 
+    def is_issues_tab_present(self):
+        return self.is_element_present(UserProfileNavigationLocator.ISSUES_TAB)
+
 
 class UserProfileIssuesPage(BasePage):
     '''user profile tab where the list of created issues is located'''
@@ -179,18 +188,21 @@ class UserProfileIssuesPage(BasePage):
         self.click(*UserProfileIssuesLocator.FIRST_ISSUE_EDIT_LINK)
         return IssuePage(self.driver)
 
+    def get_first_issue_status(self):
+        return self.find_element(*UserProfileIssuesLocator.FIRST_ISSUE_STATUS).text
+
 
 class IssuePage(BasePage):
     '''Page where the detailed information about issue is shown.
        There is a map on it and section where you can edit an issue
     '''
     def check_importance_field_is_present(self):
-        if self.is_element_present(IssueLocator.IMPORTANCE):
+        if self.is_element_present(IssueLocator.IMPORTANCE_DROP_DOWN):
             return True
         return False
 
     def check_status_field_is_present(self):
-        if self.is_element_present(IssueLocator.STATUS):
+        if self.is_element_present(IssueLocator.STATUS_DROP_DOWN):
             return True
         return False
 
@@ -200,15 +212,12 @@ class IssuePage(BasePage):
         return False
 
     def change_importance(self, value):
-        select = Select(self.find_element(*IssueLocator.IMPORTANCE))
-        select.select_by_index(value - 1)
+        select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        select.select_by_visible_text(value)
 
-    def change_status(self, is_unsolved):
-        select = Select(self.find_element(*IssueLocator.STATUS))
-        if is_unsolved:
-            select.select_by_visible_text("Не вирішено")
-        else:
-            select.select_by_visible_text("Вирішено")
+    def change_status(self, status):
+        select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        select.select_by_visible_text(status)
 
     def submit_change(self):
         self.click(*IssueLocator.CHANGE_BTN)
@@ -216,7 +225,42 @@ class IssuePage(BasePage):
     def is_success_popup_present(self):
         _d = self.driver
         try:
-            WebDriverWait(_d, 5).until(lambda _d: _d.find_element(*IssueLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
+            WebDriverWait(_d, 10).until(lambda _d: _d.find_element(*IssueLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
         except Exception:
             return False
         return True
+
+    def get_importance(self):
+        my_select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        option = my_select.first_selected_option
+        return option.text
+
+    def get_status(self):
+        my_select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        option = my_select.first_selected_option
+        return option.text
+
+    def get_another_importance_from_options(self, value):
+        my_select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        for i in range(len(my_select.options)):
+            if value != my_select.options[i].text:
+                return my_select.options[i].text
+        return ""
+
+    def get_another_status_from_options(self, old_status):
+        my_select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        for i in range(len(my_select.options)):
+            if old_status != my_select.options[i].text:
+                return my_select.options[i].text
+        return ""
+
+    def get_current_importance_info(self):
+        info = self.find_element(*IssueLocator.IMPORTANCE_INFO).text
+        return info.split(' ', 1)[0]
+
+    def get_current_status_info(self):
+        return self.find_element(*IssueLocator.STATUS_INFO).text
+
+    def get_home_user_page(self):
+        self.click(*IssueLocator.LOGO)
+        return HomeUserPage(self.driver)

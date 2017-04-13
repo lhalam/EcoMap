@@ -12,9 +12,9 @@ class TestLoginAsAdmin(TestBase):
 
     def test_2_log_in_as_admin_and_assert_success(self):
         login_page = self.home_page.get_login_page()
-        self.assertTrue(login_page.is_element_present(*LoginPageLocator.EMAIL))
-        self.assertTrue(login_page.is_element_present(*LoginPageLocator.PASSWORD))
-        self.assertTrue(login_page.is_element_present(*LoginPageLocator.SUBMIT))
+        self.assertTrue(login_page.is_email_field_present())
+        self.assertTrue(login_page.is_password_field_present())
+        self.assertTrue(login_page.is_submit_button_present())
         home_user_page = login_page.login(self.test_data.get("email"), self.test_data.get("password"))
         self.assertTrue(home_user_page.is_logout_btn_present())
         self.assertTrue(home_user_page.is_user_profile_link_present())

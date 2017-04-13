@@ -57,6 +57,14 @@ class LoginPage(BasePage):
     def get_expected_url(self):
         return self.base_url + LoginPageLocator.URL
 
+    def is_email_field_present(self):
+        return self.is_element_present(*LoginPageLocator.EMAIL)
+
+    def is_password_field_present(self):
+        return self.is_element_present(*LoginPageLocator.PASSWORD)
+
+    def is_submit_button_present(self):
+        return self.is_element_present(*LoginPageLocator.SUBMIT)
 
 class AddProblemPage(BasePage):
 

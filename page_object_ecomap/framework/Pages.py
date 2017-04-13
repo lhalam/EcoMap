@@ -12,10 +12,6 @@ class HomePage(BasePage):
         self.click(*HomePageLocator.LOG_IN)
         return LoginPage(self.driver)
 
-    def get_user_profile_page(self):
-        self.click(*HomePageLocator.USER_PROFILE)
-        return UserProfilePage(self.driver)
-
     def get_expected_url(self):
         return self.base_url
 
@@ -43,6 +39,10 @@ class HomeUserPage(BasePage):
 
     def is_add_problem_tab_present(self):
         return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
+
+    def get_user_profile_page(self):
+        self.click(*HomePageLocator.USER_PROFILE)
+        return UserProfilePage(self.driver)
 
 
 class LoginPage(BasePage):

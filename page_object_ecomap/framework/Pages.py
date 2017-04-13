@@ -1,4 +1,6 @@
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.select import Select
+
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
 from math import fabs
@@ -170,3 +172,34 @@ class UserProfileSubscriptionsPage(BasePage):
     def show_first_subscription(self):
         self.click(*UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK)
         return
+
+class IssuePage(BasePage):
+    def check_elements_are_present(self):
+        if (not self.is_element_present(FirstDetailedProblemLocator.PROBLEM_IMPORTANCE)) or \
+                (not self.is_element_present(FirstDetailedProblemLocator.PROBLEM_STATUS)) or \
+                (not self.is_element_present(FirstDetailedProblemLocator.CHANGE_BTN)):
+            return False
+        return True
+
+    def change_problem_importance(self, value):
+        self.type(value, *FirstDetailedProblemLocator.PROBLEM_IMPORTANCE)
+
+    def change_problem_status(self, isUnsolved):
+        select = Select(self.find_element(*FirstDetailedProblemLocator.PROBLEM_IMPORTANCE))
+        select.select_by_value(1)
+        if isUnsolved:
+            select.select_by_visible_text("Не вирішено")
+            #self.type("Не вирішено", *FirstDetailedProblemLocator.PROBLEM_STATUS)
+        else:
+            select.select_by_visible_text("Вирішено")
+            #self.type("Вирішено", *FirstDetailedProblemLocator.PROBLEM_STATUS)
+
+    def submit_change(self):
+        self.click(*FirstDetailedProblemLocator.CHANGE_BTN)
+        return (self.is_element_present(*FirstDetailedProblemLocator.CHANGE_SUCCESSFUL_POP_UP_WND))
+
+    def get_problem_importance(self):
+        self.find_element(*FirstDetailedProblemLocator.PROBLEM_IMPORTANCE).click()
+
+    def is_submit_button_present(self):
+        return self.is_element_present(*LoginPageLocator.SUBMIT)

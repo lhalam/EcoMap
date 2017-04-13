@@ -19,6 +19,9 @@ class HomePage(BasePage):
         self.click(*HomePageLocator.REGISTER)
         return Registration(self.driver)
 
+    def is_login_link_present(self):
+        return self.is_element_present(*HomePageLocator.LOG_IN)
+
 
 class HomeUserPage(BasePage):
     def get_expected_url(self):

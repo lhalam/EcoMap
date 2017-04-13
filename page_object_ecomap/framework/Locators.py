@@ -26,7 +26,6 @@ class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
-    USER_PROFILE = (By.XPATH, "//a[@href='/#/user_profile/info']")
 
 
 class LoginPageLocator:
@@ -97,6 +96,3 @@ class IssueLocator(LogoLocator, NavigationLocator, MapLocator):
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
     POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
 
-
-class FirstIssueLocator(IssueLocator):
-    URL = "/#/detailedProblem/1"

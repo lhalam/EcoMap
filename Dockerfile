@@ -21,10 +21,12 @@ RUN echo "protocol=tcp" >> /etc/mysql/conf.d/mysql.cnf
 RUN echo "default-character-set = utf8" >> /etc/mysql/conf.d/mysql.cnf
 
 COPY ecomap /opt/ecomap
-COPY requirements.txt /tmp/
+# COPY requirements.txt /tmp/
 
 RUN pip install --upgrade pip
-RUN pip install -r /tmp/requirements.txt
+# RUN pip install -r /tmp/requirements.txt
+# Maybe not correct, but will work for current educational project purpose
+RUN pip install -r /opt/ecomap/requirements.txt
 
 ENV PRODROOT=/opt/ecomap
 ENV PYSRCROOT=${PRODROOT}/src/python

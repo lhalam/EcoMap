@@ -210,7 +210,7 @@ class IssuePage(BasePage):
         else:
             select.select_by_visible_text("Вирішено")
 
-    def submit_change_and_report_success(self):
+    def submit_change(self):
         self.click(*IssueLocator.CHANGE_BTN)
 
     def is_success_popup_present(self):

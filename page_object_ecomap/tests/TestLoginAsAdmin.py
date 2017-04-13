@@ -1,6 +1,5 @@
 from tests.TestBase import TestBase
 import unittest
-from framework.Locators import *
 from framework.Pages import *
 
 

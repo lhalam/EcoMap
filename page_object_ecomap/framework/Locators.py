@@ -70,4 +70,25 @@ class UserProfileLocator(object):
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
 
+class UserProfileNavigationLocator:
+    USER_INFO_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[1]/a")
+    MY_SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
 
+
+class UserProfileInfoLocator(UserProfileNavigationLocator):
+    URL = "/#/user_profile/info"
+
+
+class UserProfileSubscriptionsLocator(UserProfileNavigationLocator):
+    URL = "/#/user_profile/subscriptions"
+    HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/div[1]/h3")
+    FIRST_SHOW_SUBSCRIPTION_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[8]/a")
+
+class DetailedProblemLocator(LogoLocator, NavigationLocator, MapLocator):
+    PROBLEM_IMPORTANCE = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[1]/select")
+    PROBLEM_STATUS = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
+    CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
+    CHANGE_SUCCESSFUL_POP_UP_WND = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+
+class FirstDetailedProblemLocator(DetailedProblemLocator):
+    URL = "/#/detailedProblem/1"

@@ -172,6 +172,7 @@ class UserProfileIssuesPage(BasePage):
 
 
 class DetailedIssuePage(BasePage):
+    '''page where the detailed information about issue is shown'''
     def check_importance_field_is_present(self):
         if self.is_element_present(IssueLocator.IMPORTANCE):
             return True

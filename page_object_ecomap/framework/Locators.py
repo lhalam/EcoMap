@@ -71,3 +71,25 @@ class UserProfileLocator(object):
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
 
 
+class UserProfileNavigationLocator:
+    USER_INFO_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[1]/a")
+    ISSUES_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[2]/a")
+    MY_SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
+
+
+class UserProfileInfoLocator(UserProfileNavigationLocator):
+    URL = "/#/user_profile/info"
+
+
+class UserProfileIssuesLocator(UserProfileNavigationLocator):
+    URL = "/#/user_profile/subscriptions"
+    HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/h3")
+    FIRST_ISSUE_EDIT_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[9]/a[1]")
+
+
+class IssueLocator(LogoLocator, NavigationLocator, MapLocator):
+    IMPORTANCE = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[1]/select")
+    STATUS = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
+    CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
+    POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+

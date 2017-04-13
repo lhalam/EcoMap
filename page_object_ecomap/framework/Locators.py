@@ -26,7 +26,6 @@ class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
-    USER_PROFILE = (By.XPATH, "//a[@href='/#/user_profile/info']")
 
 
 class LoginPageLocator:

@@ -7,7 +7,7 @@ class TestLoginAsAdmin(TestBase):
 
     def test_1_assert_home_page_is_open(self):
         self.assertEqual(self.home_page.get_current_url(), self.home_page.get_expected_url())
-        self.assertTrue(self.home_page.is_element_present(*HomePageLocator.LOG_IN))
+        self.assertTrue(self.home_page.is_login_link_present())
 
     def test_2_log_in_as_admin_and_assert_success(self):
         login_page = self.home_page.get_login_page()

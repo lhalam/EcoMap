@@ -154,3 +154,19 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + UserProfileLocator.URL
+
+    def get_my_subscriptions_page(self):
+        self.click(*UserProfileNavigationLocator.MY_SUBSCRIPTIONS_TAB)
+        return UserProfileSubscriptionsPage(self.driver)
+
+
+class UserProfileSubscriptionsPage(BasePage):
+    def get_expected_url(self):
+        return self.base_url + UserProfileSubscriptionsLocator.URL
+
+    def show_subscriptions_number(self, number):
+        SUBSCRIPTION_LINK = UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK
+
+    def show_first_subscription(self):
+        self.click(*UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK)
+        return

@@ -34,6 +34,7 @@ class LoginPageLocator:
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     URL = "/#/login"
 
+
 class RegisterPageLocator:
     REG_URL = "/#/register"
     REG_BLOCK = (By.XPATH, '//*[@id="registerForm"]')
@@ -45,14 +46,17 @@ class RegisterPageLocator:
     CONFIRMPASSWORD = (By.XPATH, '//*[@id="pass_confirm"]')
     SUBMIT_BUTTON = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/button')
 
+
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
     USER_PROFILE_LINK = (By.ID, "navMenu")
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
+
 class AddProblemPageLocator:
     URL = '/#/addProblem'
+
 
 class Location_Locator(object):
     FIND_ME = (By.XPATH, "//*[@class = 'form-group col-lg-6']")

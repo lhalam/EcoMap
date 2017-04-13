@@ -171,7 +171,7 @@ class UserProfileIssuesPage(BasePage):
         return IssuePage(self.driver)
 
 
-class IssuePage(BasePage):
+class DetailedIssuePage(BasePage):
     def check_importance_field_is_present(self):
         if self.is_element_present(IssueLocator.IMPORTANCE):
             return True
@@ -191,9 +191,9 @@ class IssuePage(BasePage):
         select = Select(self.find_element(*IssueLocator.IMPORTANCE))
         select.select_by_index(value - 1)
 
-    def change_status(self, isUnsolved):
+    def change_status(self, is_unsolved):
         select = Select(self.find_element(*IssueLocator.STATUS))
-        if isUnsolved:
+        if is_unsolved:
             select.select_by_visible_text("Не вирішено")
         else:
             select.select_by_visible_text("Вирішено")

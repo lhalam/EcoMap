@@ -43,7 +43,7 @@ class HomeUserPage(BasePage):
         return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
 
     def get_user_profile_page(self):
-        self.click(*HomePageLocator.USER_PROFILE)
+        self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
         return UserProfilePage(self.driver)
 
 
@@ -171,6 +171,7 @@ class UserProfilePage(BasePage):
 
 
 class UserProfileIssuesPage(BasePage):
+    '''user profile tab where the list of created issues is located'''
     def get_expected_url(self):
         return self.base_url + UserProfileIssuesLocator.URL
 
@@ -179,8 +180,10 @@ class UserProfileIssuesPage(BasePage):
         return IssuePage(self.driver)
 
 
-class DetailedIssuePage(BasePage):
-    '''page where the detailed information about issue is shown'''
+class IssuePage(BasePage):
+    '''Page where the detailed information about issue is shown.
+       There is a map on it and section where you can edit an issue
+    '''
     def check_importance_field_is_present(self):
         if self.is_element_present(IssueLocator.IMPORTANCE):
             return True

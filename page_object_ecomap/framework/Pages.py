@@ -157,49 +157,43 @@ class UserProfilePage(BasePage):
     def get_expected_url(self):
         return self.base_url + UserProfileLocator.URL
 
-    def get_my_subscriptions_page(self):
-        self.click(*UserProfileNavigationLocator.MY_SUBSCRIPTIONS_TAB)
-        return UserProfileSubscriptionsPage(self.driver)
+    def get_issues_page(self):
+        self.click(*UserProfileNavigationLocator.ISSUES_TAB)
+        return UserProfileIssuesPage(self.driver)
 
 
-class UserProfileSubscriptionsPage(BasePage):
+class UserProfileIssuesPage(BasePage):
     def get_expected_url(self):
-        return self.base_url + UserProfileSubscriptionsLocator.URL
+        return self.base_url + UserProfileIssuesLocator.URL
 
-    def show_subscriptions_number(self, number):
-        SUBSCRIPTION_LINK = UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK
-
-    def show_first_subscription(self):
-        self.click(*UserProfileSubscriptionsLocator.FIRST_SHOW_SUBSCRIPTION_LINK)
-        return
+    def edit_first_issue(self):
+        self.click(*UserProfileIssuesLocator.FIRST_ISSUE_EDIT_LINK)
+        return IssuePage(self.driver)
 
 class IssuePage(BasePage):
     def check_elements_are_present(self):
-        if (not self.is_element_present(FirstDetailedProblemLocator.PROBLEM_IMPORTANCE)) or \
-                (not self.is_element_present(FirstDetailedProblemLocator.PROBLEM_STATUS)) or \
-                (not self.is_element_present(FirstDetailedProblemLocator.CHANGE_BTN)):
+        if (not self.is_element_present(IssueLocator.IMPORTANCE)) or \
+                (not self.is_element_present(IssueLocator.STATUS)) or \
+                (not self.is_element_present(IssueLocator.CHANGE_BTN)):
             return False
         return True
 
-    def change_problem_importance(self, value):
-        self.type(value, *FirstDetailedProblemLocator.PROBLEM_IMPORTANCE)
+    def change_importance(self, value):
+        select = Select(self.find_element(*IssueLocator.IMPORTANCE))
+        select.select_by_index(value)
 
-    def change_problem_status(self, isUnsolved):
-        select = Select(self.find_element(*FirstDetailedProblemLocator.PROBLEM_IMPORTANCE))
-        select.select_by_value(1)
+    def change_status(self, isUnsolved):
+        select = Select(self.find_element(*IssueLocator.STATUS))
         if isUnsolved:
             select.select_by_visible_text("Не вирішено")
-            #self.type("Не вирішено", *FirstDetailedProblemLocator.PROBLEM_STATUS)
+            #self.type("Не вирішено", *IssueLocator.PROBLEM_STATUS)
         else:
             select.select_by_visible_text("Вирішено")
-            #self.type("Вирішено", *FirstDetailedProblemLocator.PROBLEM_STATUS)
+            #self.type("Вирішено", *IssueLocator.PROBLEM_STATUS)
 
     def submit_change(self):
-        self.click(*FirstDetailedProblemLocator.CHANGE_BTN)
-        return (self.is_element_present(*FirstDetailedProblemLocator.CHANGE_SUCCESSFUL_POP_UP_WND))
+        self.click(*IssueLocator.CHANGE_BTN)
+        return (self.is_element_present(*IssueLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
 
-    def get_problem_importance(self):
-        self.find_element(*FirstDetailedProblemLocator.PROBLEM_IMPORTANCE).click()
+    #def get_issue_importance(self):
 
-    def is_submit_button_present(self):
-        return self.is_element_present(*LoginPageLocator.SUBMIT)

@@ -35,6 +35,7 @@ class LoginPageLocator:
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     URL = "/#/login"
 
+
 class RegisterPageLocator:
     REG_URL = "/#/register"
     REG_BLOCK = (By.XPATH, '//*[@id="registerForm"]')
@@ -46,14 +47,17 @@ class RegisterPageLocator:
     CONFIRMPASSWORD = (By.XPATH, '//*[@id="pass_confirm"]')
     SUBMIT_BUTTON = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/button')
 
+
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = "/#/map"
     USER_PROFILE_LINK = (By.ID, "navMenu")
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
+
 class AddProblemPageLocator:
     URL = '/#/addProblem'
+
 
 class Location_Locator(object):
     FIND_ME = (By.XPATH, "//*[@class = 'form-group col-lg-6']")
@@ -70,8 +74,10 @@ class UserProfileLocator(object):
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
 
+
 class UserProfileNavigationLocator:
     USER_INFO_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[1]/a")
+    ISSUES_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[2]/a")
     MY_SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
 
 
@@ -79,16 +85,18 @@ class UserProfileInfoLocator(UserProfileNavigationLocator):
     URL = "/#/user_profile/info"
 
 
-class UserProfileSubscriptionsLocator(UserProfileNavigationLocator):
+class UserProfileIssuesLocator(UserProfileNavigationLocator):
     URL = "/#/user_profile/subscriptions"
-    HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/div[1]/h3")
-    FIRST_SHOW_SUBSCRIPTION_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[8]/a")
+    HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/h3")
+    FIRST_ISSUE_EDIT_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[9]/a[1]")
 
-class DetailedProblemLocator(LogoLocator, NavigationLocator, MapLocator):
-    PROBLEM_IMPORTANCE = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[1]/select")
-    PROBLEM_STATUS = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
+
+class IssueLocator(LogoLocator, NavigationLocator, MapLocator):
+    IMPORTANCE = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[1]/select")
+    STATUS = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
-    CHANGE_SUCCESSFUL_POP_UP_WND = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+    POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
 
-class FirstDetailedProblemLocator(DetailedProblemLocator):
+
+class FirstIssueLocator(IssueLocator):
     URL = "/#/detailedProblem/1"

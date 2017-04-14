@@ -72,6 +72,7 @@ class LoginPage(BasePage):
     def is_submit_button_present(self):
         return self.is_element_present(*LoginPageLocator.SUBMIT)
 
+
 class AddProblemPage(BasePage):
 
     def check_presence_of_coordinates(self, driver):
@@ -180,7 +181,7 @@ class UserProfilePage(BasePage):
 
 
 class UserProfileIssuesPage(BasePage):
-    '''user profile tab where the list of created issues is located'''
+    """user profile tab where the list of created issues is located"""
     def get_expected_url(self):
         return self.base_url + UserProfileIssuesLocator.URL
 
@@ -196,9 +197,9 @@ class UserProfileIssuesPage(BasePage):
 
 
 class IssuePage(BasePage):
-    '''Page where the detailed information about issue is shown.
+    """Page where the detailed information about issue is shown.
        There is a map on it and section where you can edit an issue
-    '''
+    """
     def is_importance_field_present(self):
         if self.is_element_present(*IssueLocator.IMPORTANCE_DROP_DOWN):
             return True

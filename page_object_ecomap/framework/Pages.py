@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 

@@ -1,6 +1,7 @@
-import random
 import unittest
 from framework.Locators import RegisterPageLocator
+from framework.Utils import generate_random_number
+from framework.Dictionary import DICTIONARY as test_data
 from tests.TestBase import TestBase, HomeUserPage, Registration
 
 
@@ -24,20 +25,19 @@ class TestRegistration(TestBase):
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.SUBMIT_BUTTON))
 
     def test_2_check_registered_user_page(self):
-        self.reg_page.reg(self.test_data.get("registration_email") % self.generate_random_email(),
-                          self.test_data.get("registration_name"),
-                          self.test_data.get("registration_surname"),
-                          self.test_data.get("registration_nickname") % self.generate_random_email(),
-                          self.test_data.get("registration_password"),
-                          self.test_data.get("registration_confirmpassword"))
+        self.reg_page.reg(test_data.get("registration_email") % generate_random_number(),
+                          test_data.get("registration_name"),
+                          test_data.get("registration_surname"),
+                          test_data.get("registration_nickname") % generate_random_number(),
+                          test_data.get("registration_password"),
+                          test_data.get("registration_confirm_password"))
+
         self.reg_page.wait_linked_text_changed()
-        user_name = self.test_data.get("registration_name") + " " + self.test_data.get("registration_surname")
+        user_name = test_data.get("registration_name") + " " + test_data.get("registration_surname")
         att = self.user_page.user_credentials_btn_is_present()
         self.assertEqual(user_name.upper(), att)
         self.assertTrue(self.user_page.is_logout_btn_present())
 
-    def generate_random_email(self):
-        return str(random.randint(1, 1000))
 
 if __name__ == '__main__':
         unittest.main()

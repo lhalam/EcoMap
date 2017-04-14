@@ -1,6 +1,7 @@
 from tests.TestBase import TestBase
 import unittest
 from framework.Pages import*
+from framework.Dictionary import DICTIONARY as test_data
 
 
 class testLocation(TestBase):
@@ -12,7 +13,7 @@ class testLocation(TestBase):
         cls.add_problem = AddProblemPage(cls.driver)
         cls.login_page = LoginPage(cls.driver)
         cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login(cls.test_data.get("email"), cls.test_data.get("password"))
+        cls.home_user_page = cls.login_page.login(test_data.get("email"), test_data.get("password"))
 
     def test_check_location(self):
 

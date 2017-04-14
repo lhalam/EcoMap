@@ -3,17 +3,14 @@ from framework.Pages import HomeUserPage
 
 
 class TestEditIssueAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
-    @classmethod
-    def setUpClass(cls):
-        super(TestEditIssueAdmin, cls).setUpClass()
-        cls.home_user_page = HomeUserPage(cls.driver)
 
     def test_3_check_issue_edit(self):
         # select issue
-        user_profile_page = self.home_user_page.get_user_profile_page()
-        issues_page = user_profile_page.get_issues_page()
-        self.assertTrue(issues_page.is_first_issue_present())
-        issue_page = issues_page.edit_first_issue()
+        home_user_page = HomeUserPage(self.driver)
+        user_profile_page = home_user_page.get_user_profile_page()
+        user_issues_page = user_profile_page.get_issues_page()
+        self.assertTrue(user_issues_page.is_first_issue_present())
+        issue_page = user_issues_page.edit_first_issue()
         # edit issue
         self.assertTrue(issue_page.is_importance_field_present() and
                         issue_page.is_status_field_present() and
@@ -30,8 +27,7 @@ class TestEditIssueAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         self.assertTrue(issue_page.is_success_popup_present())
         self.assertEqual(new_importance, issue_page.get_current_importance_info())
         self.assertEqual(new_status, issue_page.get_current_status_info())
-        self.status = new_status
-        self.home_user_page = issue_page.get_home_user_page()
-        self.assertTrue(self.home_user_page.is_user_profile_link_present())
-        issues_page = self.home_user_page.get_user_profile_page().get_issues_page()
-        self.assertEqual(self.status, issues_page.get_first_issue_status())
+        home_user_page = issue_page.get_home_user_page()
+        self.assertTrue(home_user_page.is_user_profile_link_present())
+        user_issues_page = home_user_page.get_user_profile_page().get_issues_page()
+        self.assertEqual(new_status, user_issues_page.get_first_issue_status())

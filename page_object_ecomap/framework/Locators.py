@@ -64,6 +64,12 @@ class AddProblemPageLocator:
     PROPOSAL = (By.XPATH, '//*[@id="proposal"]')
     NEXT = (By.XPATH, '//*[@name="addProblemForm"]/button')
     PUBLISH = (By.XPATH, '//*[@name="uploadProblemPhoto"]/button')
+    SEARCH = (By.XPATH, '//input[@value="Пошук"]')
+    ADD_PHOTO = (By.XPATH, '//*[@class="fa fa-plus"]')
+    PHOTO_DESCRIPTION = (By.XPATH, '//*[@name="description"]')
+    DUPLICATE_PROBLEM = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+    CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+    CONFIRMATION_MESSAGE2 = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
 
 
 class Location_Locator(object):

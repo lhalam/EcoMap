@@ -2,12 +2,17 @@
 # -*- coding: utf-8 -*-
 
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver import ActionChains
+
 from framework.BasePage import BasePage
 from framework.Locators import *
 from math import fabs
+
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class HomePage(BasePage):
@@ -169,3 +174,120 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return UserProfileLocator.URL
+
+    def wait_until_page_is_loaded(self):
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.presence_of_all_elements_located)
+
+    def get_problems_page(self):
+        """go to user's problems page
+        please use this implementation of click() function on tab
+        because errors occur sometimes with standard click(). To
+        resolve this bug we have to simulate a mouse move action
+        """
+        actions = ActionChains(self.driver)
+        problems_tab = self.find_element(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        actions.move_to_element(problems_tab).perform()
+        problems_tab.click()
+        return UserProfileProblemsPage(self.driver)
+
+    def is_problems_tab_present(self):
+        return self.is_element_present(UserProfileNavigationLocator.PROBLEMS_TAB)
+
+
+class UserProfileProblemsPage(BasePage):
+    """user profile tab where the list of created problems is located"""
+    def get_expected_url(self):
+        return self.base_url + UserProfileProblemsLocator.URL
+
+    def edit_first_problem(self):
+        self.click(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
+        return ProblemPage(self.driver)
+
+    def get_first_problem_status(self):
+        return self.find_element(*UserProfileProblemsLocator.FIRST_PROBLEM_STATUS).text
+
+    def is_first_problem_present(self):
+        return self.is_element_present(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
+
+
+class ProblemPage(BasePage):
+    """Page where the detailed information about problem is shown.
+       There is a map on it and section where you can edit an problem
+    """
+    def is_importance_field_present(self):
+        if self.is_element_present(*ProblemLocator.IMPORTANCE_DROP_DOWN):
+            return True
+        return False
+
+    def is_status_field_present(self):
+        if self.is_element_present(*ProblemLocator.STATUS_DROP_DOWN):
+            return True
+        return False
+
+    def is_change_button_present(self):
+        if self.is_element_present(*ProblemLocator.CHANGE_BTN):
+            return True
+        return False
+
+    def change_importance(self, value):
+        select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
+        select.select_by_visible_text(value)
+
+    def change_status(self, status):
+        select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
+        select.select_by_visible_text(status)
+
+    def submit_change(self):
+        self.click(*ProblemLocator.CHANGE_BTN)
+
+    def is_success_popup_present(self):
+        """has problem edit success pop-up appeared?"""
+        _d = self.driver
+        try:
+            WebDriverWait(_d, 10).until(lambda _d: _d.find_element(*ProblemLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
+        except Exception:
+            return False
+        return True
+
+    def get_importance(self):
+        """get current importance value in importance field """
+        my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
+        option = my_select.first_selected_option
+        return option.text
+
+    def get_status(self):
+        """get current status value in the status field"""
+        my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
+        option = my_select.first_selected_option
+        return option.text
+
+    def get_another_importance_from_options(self, value):
+        """generate new importance from options"""
+        my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
+        for i in range(len(my_select.options)):
+            if value != my_select.options[i].text:
+                return my_select.options[i].text
+        return ""
+
+    def get_another_status_from_options(self, old_status):
+        """generate new status from options"""
+        my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
+        for i in range(len(my_select.options)):
+            if old_status != my_select.options[i].text:
+                return my_select.options[i].text
+        return ""
+
+    def get_current_importance_info(self):
+        """get importance from the label in the problem header"""
+        info = self.find_element(*ProblemLocator.IMPORTANCE_INFO).text
+        return info.split(' ', 1)[0]
+
+    def get_current_status_info(self):
+        """get status from the label in the problem header"""
+        return self.find_element(*ProblemLocator.STATUS_INFO).text
+
+    def get_home_user_page(self):
+        """go to home page"""
+        self.click(*ProblemLocator.LOGO)
+        return HomeUserPage(self.driver)

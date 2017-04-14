@@ -68,3 +68,5 @@ ecomap/www/uploads/
 .idea/
 
 execute_selenium_tests.sh
+screen_full.png
+screen_cropped.png

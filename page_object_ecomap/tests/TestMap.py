@@ -2,7 +2,7 @@ import unittest
 from tests.TestBase import TestBase
 from framework.Pages import *
 from framework.Screenshot import Screenshot
-
+from framework.Dictionary import DICTIONARY as test_data
 
 class TestMap(TestBase):
 
@@ -23,7 +23,7 @@ class TestMapLoggedIn(TestMap):
 
     def setUp(self):
         home_user_page = HomePage(self.driver).get_login_page().login(
-            self.test_data.get("email"), self.test_data.get("password"))
+            test_data.get("email"), test_data.get("password"))
         self.assertTrue(home_user_page.is_logout_btn_present())
 
 if __name__ == '__main__':

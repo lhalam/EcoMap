@@ -22,7 +22,7 @@ class Driver:
             if os.environ.get('SELENIUM_BROWSER') == 'firefox':
                 driver = webdriver.Firefox(executable_path=path)
             if os.environ.get('SELENIUM_BROWSER') == 'phantomjs':
-                driver = webdriver.Firefox(executable_path=path)
+                driver = webdriver.PhantomJS(executable_path=path)
         else:
             if os.environ.get('SELENIUM_CONNECTION') == 'REMOTE':
                 driver = webdriver.Remote(

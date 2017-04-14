@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Path to base folder of tests
-export PYTHONPATH="${PYTHONPATH}:/home/olenakhom/PycharmProjects/EcoMap/page_object_ecomap"
+export PYTHONPATH="${PYTHONPATH}:/path/to/page_object_ecomap"
 
 # Type of driver connection "LOCAL" or "REMOTE"
 export SELENIUM_CONNECTION="LOCAL"
 
 # Local driver location
-export SELENIUM_DRIVER_PATH="/home/olenakhom/PycharmProjects/EcoMap/page_object_ecomap/tests/chromedriver"
+export SELENIUM_DRIVER_PATH="/path/to/chromedriver"
 
 # Selenium RC URL
 export SELENIUM_RC_URL="http://localhost:4444/wd/hub"
@@ -19,4 +19,4 @@ export SELENIUM_BROWSER="chrome"
 export ECOMAP_BASE_URL="http://localhost"
 
 # Run The tests in project folder
-nosetests /home/olenakhom/PycharmProjects/EcoMap/page_object_ecomap/tests/TestDriverWrapper.py
+nosetests /path/to/page_object_ecomap/tests

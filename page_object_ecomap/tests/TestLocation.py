@@ -1,7 +1,7 @@
-from page_object_ecomap.tests.TestBase import TestBase
+from tests.TestBase import TestBase
 import unittest
-from page_object_ecomap.framework.Pages import*
-from page_object_ecomap.framework.Dictionary import DICTIONARY as test_data
+from framework.Pages import*
+from framework.Dictionary import DICTIONARY as test_data
 
 
 class testLocation(TestBase):

@@ -1,3 +1,4 @@
+import random
 import unittest
 from framework.Locators import RegisterPageLocator
 from framework.Utils import generate_random_number
@@ -12,7 +13,6 @@ class TestRegistration(TestBase):
         cls.user_page = HomeUserPage(cls.driver)
         cls.reg_page = Registration(cls.driver)
         cls.home_page.get_registration_page()
-
 
     def test_1_check_registration_page(self):
         self.assertEqual(self.reg_page.get_current_url(), self.reg_page.get_expected_reg_url())

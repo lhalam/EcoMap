@@ -1,8 +1,8 @@
 import unittest
 import os
 from selenium import webdriver
-from page_object_ecomap.framework.Dictionary import DICTIONARY as test_data
-from page_object_ecomap.framework.Pages import *
+from framework.Pages import *
+from framework.Dictionary import DICTIONARY as test_data
 
 
 class TestBase(unittest.TestCase):

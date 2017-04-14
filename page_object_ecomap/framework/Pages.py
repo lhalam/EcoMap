@@ -28,7 +28,7 @@ class HomePage(BasePage):
 
 class HomeUserPage(BasePage):
     def get_expected_url(self):
-        return self.base_url + HomeUserPageLocator.URL
+        return HomeUserPageLocator.URL
 
     def is_logout_btn_present(self):
         return self.is_element_present(*HomeUserPageLocator.LOGOUT_LINK)
@@ -59,7 +59,7 @@ class LoginPage(BasePage):
         return HomeUserPage(self.driver)
 
     def get_expected_url(self):
-        return self.base_url + LoginPageLocator.URL
+        return LoginPageLocator.URL
 
     def is_email_field_present(self):
         return self.is_element_present(*LoginPageLocator.EMAIL)
@@ -130,7 +130,7 @@ class AddProblemPage(BasePage):
         return message
 
     def get_expected_url(self):
-        return self.base_url + AddProblemPageLocator.URL
+        return AddProblemPageLocator.URL
 
 
 class Registration(BasePage):
@@ -144,7 +144,7 @@ class Registration(BasePage):
         self.click(*RegisterPageLocator.SUBMIT_BUTTON)
 
     def get_expected_reg_url(self):
-        return self.base_url + RegisterPageLocator.REG_URL
+        return RegisterPageLocator.REG_URL
 
     def wait_linked_text_changed(self):
         _driver = self.driver
@@ -168,4 +168,4 @@ class UserProfilePage(BasePage):
         return True
 
     def get_expected_url(self):
-        return self.base_url + UserProfileLocator.URL
+        return UserProfileLocator.URL

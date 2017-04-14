@@ -191,23 +191,26 @@ class UserProfileIssuesPage(BasePage):
     def get_first_issue_status(self):
         return self.find_element(*UserProfileIssuesLocator.FIRST_ISSUE_STATUS).text
 
+    def is_first_issue_present(self):
+        return self.is_element_present(*UserProfileIssuesLocator.FIRST_ISSUE_EDIT_LINK)
+
 
 class IssuePage(BasePage):
     '''Page where the detailed information about issue is shown.
        There is a map on it and section where you can edit an issue
     '''
-    def check_importance_field_is_present(self):
-        if self.is_element_present(IssueLocator.IMPORTANCE_DROP_DOWN):
+    def is_importance_field_present(self):
+        if self.is_element_present(*IssueLocator.IMPORTANCE_DROP_DOWN):
             return True
         return False
 
-    def check_status_field_is_present(self):
-        if self.is_element_present(IssueLocator.STATUS_DROP_DOWN):
+    def is_status_field_present(self):
+        if self.is_element_present(*IssueLocator.STATUS_DROP_DOWN):
             return True
         return False
 
-    def check_change_button_is_present(self):
-        if self.is_element_present(IssueLocator.CHANGE_BTN):
+    def is_change_button_present(self):
+        if self.is_element_present(*IssueLocator.CHANGE_BTN):
             return True
         return False
 

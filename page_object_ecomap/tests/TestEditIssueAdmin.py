@@ -13,8 +13,12 @@ class TestEditIssueAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         #select issue
         user_profile_page = self.home_user_page.get_user_profile_page()
         issues_page = user_profile_page.get_issues_page()
+        self.assertTrue(issues_page.is_first_issue_present())
         issue_page = issues_page.edit_first_issue()
         #edit issue
+        self.assertTrue(issue_page.is_importance_field_present() and
+                        issue_page.is_status_field_present() and
+                        issue_page.is_change_button_present())
         old_importance = issue_page.get_importance()
         new_importance = issue_page.get_another_importance_from_options(old_importance)
         issue_page.change_importance(new_importance)

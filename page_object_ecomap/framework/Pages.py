@@ -12,16 +12,15 @@ class HomePage(BasePage):
         self.click(*HomePageLocator.LOG_IN)
         return LoginPage(self.driver)
 
-    def get_user_profile_page(self):
-        self.click(*HomePageLocator.USER_PROFILE)
-        return UserProfilePage(self.driver)
-
     def get_expected_url(self):
         return self.base_url
 
     def get_registration_page(self):
         self.click(*HomePageLocator.REGISTER)
         return Registration(self.driver)
+
+    def is_login_link_present(self):
+        return self.is_element_present(*HomePageLocator.LOG_IN)
 
 
 class HomeUserPage(BasePage):
@@ -44,6 +43,10 @@ class HomeUserPage(BasePage):
     def is_add_problem_tab_present(self):
         return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
 
+    def get_user_profile_page(self):
+        self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
+        return UserProfilePage(self.driver)
+
 
 class LoginPage(BasePage):
     def login(self, login_name, password):
@@ -54,6 +57,15 @@ class LoginPage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + LoginPageLocator.URL
+
+    def is_email_field_present(self):
+        return self.is_element_present(*LoginPageLocator.EMAIL)
+
+    def is_password_field_present(self):
+        return self.is_element_present(*LoginPageLocator.PASSWORD)
+
+    def is_submit_button_present(self):
+        return self.is_element_present(*LoginPageLocator.SUBMIT)
 
 
 class AddProblemPage(BasePage):

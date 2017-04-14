@@ -82,7 +82,7 @@ class UserProfileNavigationLocator:
 
 
 class UserProfileProblemsLocator(UserProfileNavigationLocator):
-    URL = "/#/user_profile/subscriptions"
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/user_profile/subscriptions"
     HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/h3")
     FIRST_PROBLEM_EDIT_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[9]/a[1]")
     FIRST_PROBLEM_STATUS = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[6]')

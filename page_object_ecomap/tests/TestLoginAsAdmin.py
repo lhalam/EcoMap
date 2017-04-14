@@ -1,6 +1,7 @@
-from page_object_ecomap.tests.TestBase import TestBase
+from tests.TestBase import TestBase
 import unittest
-from page_object_ecomap.framework.Pages import *
+from framework.Pages import *
+from framework.Dictionary import DICTIONARY as test_data
 
 
 class TestLoginAsAdmin(TestBase):
@@ -14,7 +15,7 @@ class TestLoginAsAdmin(TestBase):
         self.assertTrue(login_page.is_element_present(*LoginPageLocator.EMAIL))
         self.assertTrue(login_page.is_element_present(*LoginPageLocator.PASSWORD))
         self.assertTrue(login_page.is_element_present(*LoginPageLocator.SUBMIT))
-        home_user_page = login_page.login(self.test_data.get("email"), self.test_data.get("password"))
+        home_user_page = login_page.login(test_data.get("email"), test_data.get("password"))
         self.assertTrue(home_user_page.is_logout_btn_present())
         self.assertTrue(home_user_page.is_user_profile_link_present())
 

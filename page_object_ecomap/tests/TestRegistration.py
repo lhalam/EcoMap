@@ -1,7 +1,8 @@
 import unittest
-from page_object_ecomap.framework.Locators import RegisterPageLocator
-from page_object_ecomap.framework.Utils import generate_random_number
-from page_object_ecomap.tests.TestBase import TestBase, HomeUserPage, Registration
+from framework.Locators import RegisterPageLocator
+from framework.Utils import generate_random_number
+from framework.Dictionary import DICTIONARY as test_data
+from tests.TestBase import TestBase, HomeUserPage, Registration
 
 
 class TestRegistration(TestBase):
@@ -25,15 +26,15 @@ class TestRegistration(TestBase):
         self.assertTrue(self.reg_page.is_element_present(*RegisterPageLocator.SUBMIT_BUTTON))
 
     def test_2_check_registered_user_page(self):
-        self.reg_page.reg(self.test_data.get("registration_email") % generate_random_number(),
-                          self.test_data.get("registration_name"),
-                          self.test_data.get("registration_surname"),
-                          self.test_data.get("registration_nickname") % generate_random_number(),
-                          self.test_data.get("registration_password"),
-                          self.test_data.get("registration_confirm_password"))
+        self.reg_page.reg(test_data.get("registration_email") % generate_random_number(),
+                          test_data.get("registration_name"),
+                          test_data.get("registration_surname"),
+                          test_data.get("registration_nickname") % generate_random_number(),
+                          test_data.get("registration_password"),
+                          test_data.get("registration_confirm_password"))
 
         self.reg_page.wait_linked_text_changed()
-        user_name = self.test_data.get("registration_name") + " " + self.test_data.get("registration_surname")
+        user_name = test_data.get("registration_name") + " " + test_data.get("registration_surname")
         att = self.user_page.user_credentials_btn_is_present()
         self.assertEqual(user_name.upper(), att)
         self.assertTrue(self.user_page.is_logout_btn_present())

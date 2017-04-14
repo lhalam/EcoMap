@@ -78,11 +78,7 @@ class UserProfileLocator(object):
 class UserProfileNavigationLocator:
     USER_INFO_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[1]/a")
     PROBLEMS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[2]/a")
-    MY_SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
-
-
-class UserProfileInfoLocator(UserProfileNavigationLocator):
-    URL = "/#/user_profile/info"
+    SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
 
 
 class UserProfileProblemsLocator(UserProfileNavigationLocator):

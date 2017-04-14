@@ -3,27 +3,28 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
-browsers ={
+browsers = {
     "chrome": DesiredCapabilities.CHROME,
     "firefox": DesiredCapabilities.FIREFOX,
     "phantomjs": DesiredCapabilities.PHANTOMJS
 }
+
 
 class Driver:
 
     @staticmethod
     def get_driver():
         driver = None
-        if (os.environ.get('SELENIUM_CONNECTION') == 'LOCAL'):
+        if os.environ.get('SELENIUM_CONNECTION') == 'LOCAL':
             path = os.environ.get('SELENIUM_DRIVER_PATH')
-            if (os.environ.get('SELENIUM_BROWSER') == 'chrome'):
+            if os.environ.get('SELENIUM_BROWSER') == 'chrome':
                 driver = webdriver.Chrome(executable_path=path)
-            if (os.environ.get('SELENIUM_BROWSER') == 'firefox'):
+            if os.environ.get('SELENIUM_BROWSER') == 'firefox':
                 driver = webdriver.Firefox(executable_path=path)
-            if (os.environ.get('SELENIUM_BROWSER') == 'phantomjs'):
+            if os.environ.get('SELENIUM_BROWSER') == 'phantomjs':
                 driver = webdriver.Firefox(executable_path=path)
         else:
-            if (os.environ.get('SELENIUM_CONNECTION') == 'REMOTE'):
+            if os.environ.get('SELENIUM_CONNECTION') == 'REMOTE':
                 driver = webdriver.Remote(
                     command_executor=os.environ.get('SELENIUM_RC_URL'),
                     desired_capabilities=browsers[os.environ.get('SELENIUM_BROWSER')])

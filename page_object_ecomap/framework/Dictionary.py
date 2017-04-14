@@ -1,7 +1,5 @@
 
 DICTIONARY = {
-        'base_url': 'http://localhost/#/map',
-
         'email': 'admin@ecomap.com',
         'password': 'secre!',
 

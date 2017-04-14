@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+import os
 
 
 class LogoLocator:
@@ -22,8 +23,7 @@ class Filter:
 
 
 class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
-    BASE_URL = "http://localhost"
-    URL = BASE_URL + "/#/map"
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
 
@@ -32,11 +32,11 @@ class LoginPageLocator:
     EMAIL = (By.XPATH, "//input[@type='email']")
     PASSWORD = (By.XPATH, "//input[@type='password']")
     SUBMIT = (By.XPATH, "//button[@type='submit']")
-    URL = "/#/login"
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/login"
 
 
 class RegisterPageLocator:
-    REG_URL = "/#/register"
+    REG_URL = os.environ.get('ECOMAP_BASE_URL') + "/#/register"
     REG_BLOCK = (By.XPATH, '//*[@id="registerForm"]')
     EMAIL = (By.XPATH, '//*[@id="email"]')
     NAME = (By.XPATH, '//*[@id="name"]')
@@ -48,14 +48,14 @@ class RegisterPageLocator:
 
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
-    URL = "/#/map"
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/map"
     USER_PROFILE_LINK = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
 
 class AddProblemPageLocator:
-    URL = '/#/addProblem'
+    URL = os.environ.get('ECOMAP_BASE_URL') + '/#/addProblem'
 
 
 class Location_Locator(object):
@@ -66,7 +66,7 @@ class Location_Locator(object):
 
 
 class UserProfileLocator(object):
-    URL = "/#/user_profile/info"
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/user_profile/info"
     OLD_PASS = (By.XPATH, "//input[@id='old_pass']")
     NEW_PASS = (By.XPATH, "//input[@id='new_pass']")
     NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")

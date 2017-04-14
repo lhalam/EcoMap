@@ -8,6 +8,7 @@ class TestEditProblemAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         # select problem
         home_user_page = HomeUserPage(self.driver)
         user_profile_page = home_user_page.get_user_profile_page()
+        user_profile_page.wait_until_page_is_loaded()
         self.assertTrue(home_user_page.is_user_profile_link_present())
         user_problems_page = user_profile_page.get_problems_page()
         self.assertTrue(user_problems_page.is_first_problem_present())
@@ -28,6 +29,9 @@ class TestEditProblemAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         self.assertTrue(problem_page.is_success_popup_present())
         self.assertEqual(new_importance, problem_page.get_current_importance_info())
         self.assertEqual(new_status, problem_page.get_current_status_info())
+        # verify changes on the user's problems page
         home_user_page = problem_page.get_home_user_page()
-        user_problems_page = home_user_page.get_user_profile_page().get_problems_page()
+        user_profile_page = home_user_page.get_user_profile_page()
+        user_profile_page.wait_until_page_is_loaded()
+        user_problems_page = user_profile_page.get_problems_page()
         self.assertEqual(new_status, user_problems_page.get_first_problem_status())

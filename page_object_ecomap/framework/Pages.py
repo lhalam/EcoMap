@@ -12,6 +12,7 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class HomePage(BasePage):
@@ -173,6 +174,10 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return self.base_url + UserProfileLocator.URL
+
+    def wait_until_page_is_loaded(self):
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.presence_of_all_elements_located)
 
     def get_problems_page(self):
         """go to user's problems page

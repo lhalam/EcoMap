@@ -1,6 +1,5 @@
 from tests.TestBase import TestBase
 import unittest
-from framework.Pages import *
 
 
 class TestLoginAsAdmin(TestBase):

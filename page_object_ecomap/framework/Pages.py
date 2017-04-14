@@ -49,9 +49,6 @@ class HomeUserPage(BasePage):
         self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
         return UserProfilePage(self.driver)
 
-    def logout(self):
-        self.click(*HomeUserPageLocator.LOGOUT_LINK)
-
 
 class LoginPage(BasePage):
     def login(self, login_name, password):

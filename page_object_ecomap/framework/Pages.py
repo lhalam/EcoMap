@@ -234,6 +234,7 @@ class ProblemPage(BasePage):
         self.click(*ProblemLocator.CHANGE_BTN)
 
     def is_success_popup_present(self):
+        """has problem edit success pop-up appeared?"""
         _d = self.driver
         try:
             WebDriverWait(_d, 10).until(lambda _d: _d.find_element(*ProblemLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
@@ -242,16 +243,19 @@ class ProblemPage(BasePage):
         return True
 
     def get_importance(self):
+        """get current importance value in importance field """
         my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
         option = my_select.first_selected_option
         return option.text
 
     def get_status(self):
+        """get current status value in the status field"""
         my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
         option = my_select.first_selected_option
         return option.text
 
     def get_another_importance_from_options(self, value):
+        """generate new importance from options"""
         my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
         for i in range(len(my_select.options)):
             if value != my_select.options[i].text:
@@ -259,6 +263,7 @@ class ProblemPage(BasePage):
         return ""
 
     def get_another_status_from_options(self, old_status):
+        """generate new status from options"""
         my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
         for i in range(len(my_select.options)):
             if old_status != my_select.options[i].text:
@@ -266,12 +271,15 @@ class ProblemPage(BasePage):
         return ""
 
     def get_current_importance_info(self):
+        """get importance from the label in the problem header"""
         info = self.find_element(*ProblemLocator.IMPORTANCE_INFO).text
         return info.split(' ', 1)[0]
 
     def get_current_status_info(self):
+        """get status from the label in the problem header"""
         return self.find_element(*ProblemLocator.STATUS_INFO).text
 
     def get_home_user_page(self):
+        """go to home page"""
         self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)

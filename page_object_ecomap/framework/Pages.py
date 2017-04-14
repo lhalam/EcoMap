@@ -20,7 +20,7 @@ class HomePage(BasePage):
         return LoginPage(self.driver)
 
     def get_expected_url(self):
-        return self.base_url
+        return HomePageLocator.URL
 
     def get_registration_page(self):
         self.click(*HomePageLocator.REGISTER)

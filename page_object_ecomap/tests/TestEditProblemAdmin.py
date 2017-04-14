@@ -9,7 +9,6 @@ class TestEditProblemAdmin(TestLoginAsAdmin.TestLoginAsAdmin):
         home_user_page = HomeUserPage(self.driver)
         user_profile_page = home_user_page.get_user_profile_page()
         self.assertTrue(home_user_page.is_user_profile_link_present())
-
         user_problems_page = user_profile_page.get_problems_page()
         self.assertTrue(user_problems_page.is_first_problem_present())
         problem_page = user_problems_page.edit_first_problem()

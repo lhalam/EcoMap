@@ -1,4 +1,6 @@
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver import ActionChains
+
 from framework.BasePage import BasePage
 from framework.Locators import *
 from math import fabs
@@ -170,7 +172,15 @@ class UserProfilePage(BasePage):
         return self.base_url + UserProfileLocator.URL
 
     def get_problems_page(self):
-        self.click(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        """go to user's problems page
+        please use this implementation of click() function on tab
+        because errors occur sometimes with standard click(). To
+        resolve this bug we have to simulate a mouse move action
+        """
+        actions = ActionChains(self.driver)
+        problems_tab = self.find_element(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        actions.move_to_element(problems_tab).perform()
+        problems_tab.click()
         return UserProfileProblemsPage(self.driver)
 
     def is_problems_tab_present(self):

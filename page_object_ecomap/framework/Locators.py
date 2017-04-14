@@ -72,6 +72,7 @@ class UserProfileLocator(object):
     NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
+    USER_PHOTO = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div[1]/div[1]/div/span')
 
 
 class UserProfileNavigationLocator:

@@ -15,7 +15,7 @@ class TestLoginAsAdmin(TestBase):
         self.assertTrue(login_page.is_email_field_present())
         self.assertTrue(login_page.is_password_field_present())
         self.assertTrue(login_page.is_submit_button_present())
-        home_user_page = login_page.login(test_data.get("email"), self.test_data.get("password"))
+        home_user_page = login_page.login(test_data.get("email"), test_data.get("password"))
         self.assertTrue(home_user_page.is_logout_btn_present())
         self.assertTrue(home_user_page.is_user_profile_link_present())
 

@@ -1,4 +1,3 @@
-import random
 import unittest
 from framework.Locators import RegisterPageLocator
 from framework.Utils import generate_random_number

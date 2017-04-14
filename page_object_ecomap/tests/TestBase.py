@@ -1,8 +1,8 @@
 import unittest
 import os
 from selenium import webdriver
+from page_object_ecomap.framework.Dictionary import DICTIONARY
 from page_object_ecomap.framework.Pages import *
-from page_object_ecomap.tests.TestData import TestData
 
 
 class TestBase(unittest.TestCase):
@@ -10,8 +10,8 @@ class TestBase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.test_data = TestData(os.path.dirname(os.path.abspath(__file__)) + "/test_data_file.txt")
-        base_url = cls.test_data.get("base_url")
+        cls.test_data = DICTIONARY
+        base_url = cls.test_data.get('base_url')
         cls.path = os.path.dirname(os.path.abspath(__file__)) + "/chromedriver"
         cls.driver = webdriver.Chrome(cls.path)
         cls.driver.implicitly_wait(40)

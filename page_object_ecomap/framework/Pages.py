@@ -169,99 +169,99 @@ class UserProfilePage(BasePage):
     def get_expected_url(self):
         return self.base_url + UserProfileLocator.URL
 
-    def get_issues_page(self):
-        self.click(*UserProfileNavigationLocator.ISSUES_TAB)
-        return UserProfileIssuesPage(self.driver)
+    def get_problems_page(self):
+        self.click(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        return UserProfileProblemsPage(self.driver)
 
-    def is_issues_tab_present(self):
-        return self.is_element_present(UserProfileNavigationLocator.ISSUES_TAB)
+    def is_problems_tab_present(self):
+        return self.is_element_present(UserProfileNavigationLocator.PROBLEMS_TAB)
 
 
-class UserProfileIssuesPage(BasePage):
-    """user profile tab where the list of created issues is located"""
+class UserProfileProblemsPage(BasePage):
+    """user profile tab where the list of created problems is located"""
     def get_expected_url(self):
-        return self.base_url + UserProfileIssuesLocator.URL
+        return self.base_url + UserProfileProblemsLocator.URL
 
-    def edit_first_issue(self):
-        self.click(*UserProfileIssuesLocator.FIRST_ISSUE_EDIT_LINK)
-        return IssuePage(self.driver)
+    def edit_first_problem(self):
+        self.click(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
+        return ProblemPage(self.driver)
 
-    def get_first_issue_status(self):
-        return self.find_element(*UserProfileIssuesLocator.FIRST_ISSUE_STATUS).text
+    def get_first_problem_status(self):
+        return self.find_element(*UserProfileProblemsLocator.FIRST_PROBLEM_STATUS).text
 
-    def is_first_issue_present(self):
-        return self.is_element_present(*UserProfileIssuesLocator.FIRST_ISSUE_EDIT_LINK)
+    def is_first_problem_present(self):
+        return self.is_element_present(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
 
 
-class IssuePage(BasePage):
-    """Page where the detailed information about issue is shown.
-       There is a map on it and section where you can edit an issue
+class ProblemPage(BasePage):
+    """Page where the detailed information about problem is shown.
+       There is a map on it and section where you can edit an problem
     """
     def is_importance_field_present(self):
-        if self.is_element_present(*IssueLocator.IMPORTANCE_DROP_DOWN):
+        if self.is_element_present(*ProblemLocator.IMPORTANCE_DROP_DOWN):
             return True
         return False
 
     def is_status_field_present(self):
-        if self.is_element_present(*IssueLocator.STATUS_DROP_DOWN):
+        if self.is_element_present(*ProblemLocator.STATUS_DROP_DOWN):
             return True
         return False
 
     def is_change_button_present(self):
-        if self.is_element_present(*IssueLocator.CHANGE_BTN):
+        if self.is_element_present(*ProblemLocator.CHANGE_BTN):
             return True
         return False
 
     def change_importance(self, value):
-        select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
         select.select_by_visible_text(value)
 
     def change_status(self, status):
-        select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
         select.select_by_visible_text(status)
 
     def submit_change(self):
-        self.click(*IssueLocator.CHANGE_BTN)
+        self.click(*ProblemLocator.CHANGE_BTN)
 
     def is_success_popup_present(self):
         _d = self.driver
         try:
-            WebDriverWait(_d, 10).until(lambda _d: _d.find_element(*IssueLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
+            WebDriverWait(_d, 10).until(lambda _d: _d.find_element(*ProblemLocator.POP_UP_WINDOW_SUCCESSFUL_CHANGE))
         except Exception:
             return False
         return True
 
     def get_importance(self):
-        my_select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
         option = my_select.first_selected_option
         return option.text
 
     def get_status(self):
-        my_select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
         option = my_select.first_selected_option
         return option.text
 
     def get_another_importance_from_options(self, value):
-        my_select = Select(self.find_element(*IssueLocator.IMPORTANCE_DROP_DOWN))
+        my_select = Select(self.find_element(*ProblemLocator.IMPORTANCE_DROP_DOWN))
         for i in range(len(my_select.options)):
             if value != my_select.options[i].text:
                 return my_select.options[i].text
         return ""
 
     def get_another_status_from_options(self, old_status):
-        my_select = Select(self.find_element(*IssueLocator.STATUS_DROP_DOWN))
+        my_select = Select(self.find_element(*ProblemLocator.STATUS_DROP_DOWN))
         for i in range(len(my_select.options)):
             if old_status != my_select.options[i].text:
                 return my_select.options[i].text
         return ""
 
     def get_current_importance_info(self):
-        info = self.find_element(*IssueLocator.IMPORTANCE_INFO).text
+        info = self.find_element(*ProblemLocator.IMPORTANCE_INFO).text
         return info.split(' ', 1)[0]
 
     def get_current_status_info(self):
-        return self.find_element(*IssueLocator.STATUS_INFO).text
+        return self.find_element(*ProblemLocator.STATUS_INFO).text
 
     def get_home_user_page(self):
-        self.click(*IssueLocator.LOGO)
+        self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)

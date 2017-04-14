@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Path to base folder of tests
+export PYTHONPATH=/path/to/page_object_ecomap
+
+# Type of driver connection "LOCAL" or "REMOTE"
+export SELENIUM_CONNECTION="LOCAL"
+
+# Local driver location
+export SELENIUM_DRIVER=/path/to/chromedriver
+
+# Selenium RC URL
+export SELENIUM_RC="http://127.0.0.1:4444/wd/hub"
+
+# Browser type "Chrome", "Firefox"
+export SELENIUM_BROWSER="Chrome"
+
+# Test System URL
+export ECOMAP_BASE_URL="http://127.0.0.1"
+
+# More variables :)
+
+# Run The tests in project folder
+nosetests page_object_ecomap

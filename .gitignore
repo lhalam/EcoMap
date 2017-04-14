@@ -60,3 +60,11 @@ target/
 
 # upload folder
 ecomap/www/uploads/
+
+# Vagrant files
+.vagrant/
+
+# idea
+.idea/
+
+execute_selenium_tests.sh

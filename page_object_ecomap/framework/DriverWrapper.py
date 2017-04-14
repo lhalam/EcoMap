@@ -37,4 +37,3 @@ class Driver:
         driver.set_page_load_timeout(50)
         driver.maximize_window()
         return driver
-

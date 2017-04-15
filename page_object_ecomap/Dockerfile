@@ -1,5 +1,5 @@
 FROM python:3-onbuild
 
-ENV PYTHONPATH=/usr/src/app
+ENV PYTHONPATH=${PYTHONPATH}:/usr/src/app
 
-CMD ["python", "tests/TestLogIn.py"]
+CMD ["nosetests -v --with-html --html-file=public/index.html"]

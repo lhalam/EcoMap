@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Script for run all unittests 
 
-PRODROOT=~/home/workspace/test_ecomap/ecomap
+PRODROOT=$PWD
 PYSRCROOT=${PRODROOT}/src/python
 CONFROOT=${PRODROOT}/etc
 PYTHONPATH=$PYSRCROOT

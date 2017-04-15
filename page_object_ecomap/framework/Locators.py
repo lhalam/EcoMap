@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 import os
 
+BASE_URL = os.environ.get('ECOMAP_BASE_URL')
 
 class LogoLocator:
     LOGO = (By.XPATH, "//img[contains(@src, 'logo.png')]")
@@ -21,9 +22,8 @@ class Filter:
     FILTER_BTN = (By.XPATH, "//div[@class='filter-toogle']")
     # filter form
 
-
 class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
-    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/map"
+    URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
 
@@ -36,7 +36,7 @@ class LoginPageLocator:
 
 
 class RegisterPageLocator:
-    REG_URL = os.environ.get('ECOMAP_BASE_URL') + "/#/register"
+    REG_URL = BASE_URL + "/#/register"
     REG_BLOCK = (By.XPATH, '//*[@id="registerForm"]')
     EMAIL = (By.XPATH, '//*[@id="email"]')
     NAME = (By.XPATH, '//*[@id="name"]')
@@ -48,14 +48,14 @@ class RegisterPageLocator:
 
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
-    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/map"
+    URL = BASE_URL + "/#/map"
     USER_PROFILE_LINK = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
 
 class AddProblemPageLocator:
-    URL = os.environ.get('ECOMAP_BASE_URL') + '/#/addProblem'
+    URL = BASE_URL + '/#/addProblem'
 
 
 class Location_Locator(object):
@@ -66,7 +66,7 @@ class Location_Locator(object):
 
 
 class UserProfileLocator(object):
-    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/user_profile/info"
+    URL = BASE_URL + "/#/user_profile/info"
     OLD_PASS = (By.XPATH, "//input[@id='old_pass']")
     NEW_PASS = (By.XPATH, "//input[@id='new_pass']")
     NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")

@@ -19,15 +19,12 @@ class TestStatistic(TestBase):
         cls.statistic_page = StatisticPage(cls.browser )
 
     def test_1_assert_statistic_page_is_open(self):
-        _d = self.browser
-        wait = WebDriverWait(self.browser, 40)
-        wait.until(lambda _d: _d.find_element_by_css_selector("ul.nav:nth-child(1) > li:nth-child(2) > a:nth-child(1)"))
-        element = self.browser.find_element_by_css_selector("ul.nav:nth-child(1) > li:nth-child(2) > a:nth-child(1)")
-        element.click()
+        self.statistic_page.set_driver(self.browser)
+        self.statistic_page.goToStatisticPage()
         self.assertEqual(self.statistic_page.get_expected_url(), self.statistic_page.get_current_url())
 
     def test_2_assert_valid_stat_in_all_top(self):
-        _d = self.browser
+        '''_d = self.browser
         wait = WebDriverWait(self.browser, 100)
         wait.until(
             EC.presence_of_element_located((By.XPATH, "//ul[1][contains(@class,'all-statistic')]/li[1][text() != '']")))
@@ -52,13 +49,11 @@ class TestStatistic(TestBase):
         if _comments > 0:
             wait.until(lambda _d: _d.find_elements_by_xpath("//ul[@ng-repeat = 'problemcomm in problCommStats']"))
             elements_in_commented = self.browser.find_elements_by_xpath("//ul[@ng-repeat = 'problemcomm in problCommStats']")
-        else: elements_in_commented = []
+        else: elements_in_commented = []'''
 
-        self.assertTrue(_subscriptions == len(elements_in_subscription))
-        self.assertTrue((_problems == len(elements_in_severities)) if _problems <= 10 else
-                        (len(elements_in_severities) == 10))
-        self.assertTrue(((len(elements_in_commented) <= _comments)
-                         and (len(elements_in_commented) <= 10)))
+        self.assertTrue(self.statistic_page.verify_subscription())
+        self.assertTrue(self.statistic_page.verify_severities())
+        self.assertTrue(self.statistic_page.verify_comments())
 
     
     @classmethod

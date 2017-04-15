@@ -27,6 +27,7 @@ class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
     REGISTER = (By.XPATH, "//a[contains(@href,'register')]")
     USER_PROFILE = (By.XPATH, "//a[@href='/#/user_profile/info']")
+    STATISTIC_PAGE_UNREGISTERED = "ul.nav:nth-child(1) > li:nth-child(2) > a:nth-child(1)"
 
 
 class LoginPageLocator:
@@ -72,6 +73,13 @@ class UserProfileLocator(object):
 
 class StatisticPageLocator(object):
     URL = "/#/statistic"
-
-
+    COMMENTS_XPATH = "//ul[3][contains(@class,'all-statistic')]/li[1][text() != '']"
+    COMMENTS_CSS = "ul.all-statistic:nth-child(3) > li:nth-child(1)"
+    COMMENTS_LIST_XPATH = "//ul[@ng-repeat = 'problemcomm in problCommStats']"
+    SUBSCRIPTIONS_XPATH = "//ul[2][contains(@class,'all-statistic')]/li[1][text() != '']"
+    SUBSCRIPTIONS_CSS = "ul.all-statistic:nth-child(2) > li:nth-child(1)"
+    SUBSCRIPTIONS_LIST_XPATH = "//ul[@ng-repeat = 'subscription in subscriptions']"
+    PROBLEMS_XPATH = "//ul[1][contains(@class,'all-statistic')]/li[1][text() != '']"
+    PROBLEMS_CSS = "ul.all-statistic:nth-child(1) > li:nth-child(1)"
+    IN_SEVERITIES_LIST_XPATH = "//ul[@ng-repeat = 'severity in severities']"
 

@@ -5,6 +5,7 @@ from math import fabs
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class HomePage(BasePage):
@@ -157,9 +158,77 @@ class UserProfilePage(BasePage):
 
 
 class StatisticPage(BasePage):
+
+    drv = None
+    _problems = None
+    _subscriptions = None
+    _comments = None
+    _photos = None
+
+    def set_driver(self, webdriver):
+        self.drv = webdriver
+
     def get_expected_url(self):
         return self.base_url + StatisticPageLocator.URL
 
     def get_current_url(self):
         return self.driver.current_url
+
+    def goToStatisticPage(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        wait.until(lambda _d: _d.find_element_by_css_selector(HomePageLocator.STATISTIC_PAGE_UNREGISTERED))
+        element = _d.find_element_by_css_selector(HomePageLocator.STATISTIC_PAGE_UNREGISTERED)
+        element.click()
+
+    def get_subscriptions(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        wait.until(
+            EC.presence_of_element_located((By.XPATH, StatisticPageLocator.SUBSCRIPTIONS_XPATH) ))
+        _subscriptions = int(
+            _d.find_element_by_css_selector(StatisticPageLocator.SUBSCRIPTIONS_CSS).text)
+        return _subscriptions
+
+    def verify_subscription(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        wait.until(lambda _d: _d.find_elements_by_xpath(StatisticPageLocator.SUBSCRIPTIONS_LIST_XPATH))
+        elements_in_subscription = _d.find_elements_by_xpath(StatisticPageLocator.SUBSCRIPTIONS_LIST_XPATH)
+        return True if len(elements_in_subscription) == self.get_subscriptions() else False
+
+    def get_comments(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        wait.until( EC.presence_of_element_located((By.XPATH, StatisticPageLocator.COMMENTS_XPATH)) )
+        _comments = int(
+            _d.find_element_by_css_selector(StatisticPageLocator.COMMENTS_CSS).text)
+        return _comments
+
+    def verify_comments(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        if self.get_comments() > 0:
+            wait.until(lambda _d: _d.find_elements_by_xpath(StatisticPageLocator.COMMENTS_LIST_XPATH))
+            elements_in_commented = _d.find_elements_by_xpath(StatisticPageLocator.COMMENTS_LIST_XPATH)
+        else: elements_in_commented = []
+        return True if ((len(elements_in_commented) <= self.get_comments())
+                         and (len(elements_in_commented) <= 10)) else False
+
+    def get_problems(self):
+        _d = self.drv
+        wait = WebDriverWait(_d , 40)
+        wait.until(
+            EC.presence_of_element_located((By.XPATH, StatisticPageLocator.PROBLEMS_XPATH)))
+        _problems = int(
+            _d.find_element_by_css_selector(StatisticPageLocator.PROBLEMS_CSS).text)
+        return _problems
+
+    def verify_severities(self):
+        _d = self.drv
+        __problems = self.get_problems()
+        wait = WebDriverWait(_d , 40)
+        wait.until(lambda _d: _d.find_elements_by_xpath(StatisticPageLocator.IN_SEVERITIES_LIST_XPATH))
+        elements_in_severities = _d.find_elements_by_xpath(StatisticPageLocator.IN_SEVERITIES_LIST_XPATH)
+        return (__problems == len(elements_in_severities)) if __problems <= 10 else (len(elements_in_severities) == 10)
 

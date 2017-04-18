@@ -87,6 +87,11 @@ class UserProfileProblemsLocator(UserProfileNavigationLocator):
     FIRST_PROBLEM_EDIT_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[9]/a[1]")
     FIRST_PROBLEM_STATUS = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[6]')
 
+class UserProfileSubscriprionLocator(UserProfileNavigationLocator):
+    SUBSCRIPTIONS_INFO = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/h3')
+    TITLE_1 = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/table/tbody/tr/td[3]')
+    COUNT = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/p/span')
+    VIEW = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/table/tbody/tr/td[8]/a')
 
 class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
     IMPORTANCE_INFO = (By.XPATH, '/html/body/div[1]/div[4]/div[2]/div/div[1]/div[1]/div[1]/div/div')
@@ -95,4 +100,14 @@ class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
     STATUS_DROP_DOWN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
     POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+    POP_UP_WINDOW_TITLE = (By.XPATH, '//*[@id="toast-container"]/div/div[1]')
+    DETAILED_TITLE = (By.XPATH, '/html/body/div[1]/div[4]/div[2]/div/h3')
+
+class Statistics:
+    URL = os.environ.get('ECOMAP_BASE_URL') + "/#/statistic"
+    TOP_FIRST_ISSUE = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div[1]/div/div[2]/ul[1]/a/li')
+    EYE = (By.XPATH, '/html/body/div[1]/div[4]/div[2]/div/div[1]/div[1]/div[3]/div/span')
+
+
+
 

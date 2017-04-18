@@ -101,20 +101,20 @@ class AddProblemTestAdmin(TestBase):
     def tearDown(self):
         self.home_page.open()
 
-#
-# class AddProblemTestUser(AddProblemTestAdmin):
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         super(AddProblemTestAdmin, cls).setUpClass()
-#         cls.add_problem = AddProblemPage(cls.driver)
-#         cls.login_page = LoginPage(cls.driver)
-#         cls.home_page.get_login_page()
-#         cls.home_user_page = cls.login_page.login("analatysh@gmail.com", "123123")
-# #
+
+class AddProblemTestUser(AddProblemTestAdmin):
+
+    @classmethod
+    def setUpClass(cls):
+        super(AddProblemTestAdmin, cls).setUpClass()
+        cls.add_problem = AddProblemPage(cls.driver)
+        cls.login_page = LoginPage(cls.driver)
+        cls.home_page.get_login_page()
+        cls.home_user_page = cls.login_page.login("analatysh@gmail.com", "123123")
 
 if __name__ == '__main__':
     unittest.main()
+
 
 
 

@@ -66,10 +66,11 @@ class AddProblemPageLocator:
     PUBLISH = (By.XPATH, '//*[@name="uploadProblemPhoto"]/button')
     SEARCH = (By.XPATH, '//input[@value="Пошук"]')
     ADD_PHOTO = (By.XPATH, '//*[@class="fa fa-plus"]')
-    PHOTO_DESCRIPTION = (By.XPATH, '//*[@name="description"]')
-    DUPLICATE_PROBLEM = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
-    CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
-    CONFIRMATION_MESSAGE2 = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
+    INPUT = (By.XPATH, '//input[@name="file"]')
+    CHECK_UPLOADED_PHOTO = (By.XPATH, '//div[@class="thumb"]/img')
+    PHOTO_DESCRIPTION = (By.XPATH, '//textarea[@name="description"]')
+    CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
+    CONFIRMATION_MESSAGE2 = (By.XPATH, '//*[@id="toast-container"]/div/div[1]')
 
 
 class Location_Locator(object):

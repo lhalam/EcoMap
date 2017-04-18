@@ -1,3 +1,4 @@
+import os
 from selenium.common.exceptions import TimeoutException
 from page_object_ecomap.framework.BasePage import BasePage
 from page_object_ecomap.framework.Locators import *
@@ -5,7 +6,6 @@ from math import fabs
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
-from selenium.webdriver import ActionChains
 
 
 class HomePage(BasePage):
@@ -106,6 +106,9 @@ class AddProblemPage(BasePage):
         return self.is_element_present(*Location_Locator.LATITUDE) and \
                self.is_element_present(*Location_Locator.LONGITUDE)
 
+    def is_find_me_button_present(self):
+        return self.is_element_present(*Location_Locator.FIND_ME)
+
     def fill_coordinates(self, latitude, longitude):
         self.driver.find_element(*Location_Locator.LATITUDE).clear()
         self.type(latitude, *Location_Locator.LATITUDE)
@@ -175,42 +178,42 @@ class AddProblemPage(BasePage):
     def click_on_search(self):
         self.driver.find_element(*AddProblemPageLocator.SEARCH).click()
 
-    def is_upload_photo_element_present(self):
+    def is_add_photo_element_present(self):
         return self.is_element_present(*AddProblemPageLocator.ADD_PHOTO)
 
-    def is_description_of_photo_element_present(self):
+    def is_description_of_photo_present(self):
         return self.is_element_present(*AddProblemPageLocator.PHOTO_DESCRIPTION)
 
     def add_photo_and_description(self, description):
-        actions = ActionChains(self.driver)
-        actions.move_to_element(self.driver.find_element(*AddProblemPageLocator.ADD_PHOTO))
-        actions.click()
-        actions.send_keys("/home/anastasiia/EcoMap/screen_cropped.png")
-        actions.perform()
+        input_field = self.driver.find_element(*AddProblemPageLocator.INPUT)
+        input_field.send_keys(os.getcwd()+"/test_img.png")
         self.driver.find_element(*AddProblemPageLocator.PHOTO_DESCRIPTION).clear()
         self.type(description, *AddProblemPageLocator.PHOTO_DESCRIPTION)
 
+    def is_photo_uploaded(self):
+        return self.is_element_present(*AddProblemPageLocator.CHECK_UPLOADED_PHOTO)
+
     def get_amount_of_messages(self):
-        confirm = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE2)
-        duplicate = self.is_element_present(*AddProblemPageLocator.DUPLICATE_PROBLEM)
-        if confirm is True and duplicate is True:
+        second_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE2)
+        first_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE)
+        if second_message is True and first_message is True:
             return 2
-        elif confirm is True or duplicate is True:
+        elif second_message is True or first_message is True:
             return 1
         else:
             return 0
 
-    def confirmation_message(self):
+    def get_confirmation_message(self):
         amount_of_message = self.get_amount_of_messages()
         if amount_of_message == 2:
-            return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE2).text
-        elif amount_of_message == 1:
             return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
+        elif amount_of_message == 1:
+            return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE2).text
         else:
             return ""
 
-    def duplicate_problem_message(self):
-        return self.driver.find_element(*AddProblemPageLocator.DUPLICATE_PROBLEM).text
+    def close_message(self):
+        self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).click()
 
 
 class Registration(BasePage):

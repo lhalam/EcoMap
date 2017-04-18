@@ -206,34 +206,26 @@ class AddProblemPage(BasePage):
 
     def add_photo_and_description(self, description):
         input_field = self.driver.find_element(*AddProblemPageLocator.INPUT)
-        input_field.send_keys(os.getcwd()+"/test_img.png")
+        #input_field.send_keys(os.getcwd()+"/test_img.png")
+        input_field.send_keys('/home/anastasiia/EcoMap/page_object_ecomap/tests/test_img.png')
         self.driver.find_element(*AddProblemPageLocator.PHOTO_DESCRIPTION).clear()
         self.type(description, *AddProblemPageLocator.PHOTO_DESCRIPTION)
 
     def is_photo_uploaded(self):
         return self.is_element_present(*AddProblemPageLocator.CHECK_UPLOADED_PHOTO)
 
-    def get_amount_of_messages(self):
-        second_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE2)
-        first_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE)
-        if second_message is True and first_message is True:
-            return 2
-        elif second_message is True or first_message is True:
-            return 1
-        else:
-            return 0
+    # def get_amount_of_messages(self):
+    #     second_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE2)
+    #     first_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE)
+    #     if second_message is True and first_message is True:
+    #         return 2
+    #     elif second_message is True or first_message is True:
+    #         return 1
+    #     else:
+    #         return 0
 
     def get_confirmation_message(self):
-        amount_of_message = self.get_amount_of_messages()
-        if amount_of_message == 2:
-            return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
-        elif amount_of_message == 1:
-            return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE2).text
-        else:
-            return ""
-
-    def close_message(self):
-        self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).click()
+        return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
 
 
 class Registration(BasePage):

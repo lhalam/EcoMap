@@ -46,16 +46,16 @@ class RegisterPageLocator:
     CONFIRMPASSWORD = (By.XPATH, '//*[@id="pass_confirm"]')
     SUBMIT_BUTTON = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/button')
 
+
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
     USER_PROFILE_LINK = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
+
 class AddProblemPageLocator:
     URL = BASE_URL + '/#/addProblem'
-
-    URL = '/#/addProblem'
     TITLE = (By.XPATH, '//*[@id="title"]')
     PROBLEMS_LIST = (By.XPATH, '//*[@id="problem_type_id"]/ul/li')
     FOREST_PROBLEM = (By.XPATH, '//*[@id="problem_type_id"]/ul/li[1]')
@@ -69,7 +69,6 @@ class AddProblemPageLocator:
     CHECK_UPLOADED_PHOTO = (By.XPATH, '//div[@class="thumb"]/img')
     PHOTO_DESCRIPTION = (By.XPATH, '//textarea[@name="description"]')
     CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
-    CONFIRMATION_MESSAGE2 = (By.XPATH, '//*[@id="toast-container"]/div/div[1]')
 
 
 class Location_Locator(object):

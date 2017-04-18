@@ -1,7 +1,8 @@
 import string
 import unittest
-from page_object_ecomap.tests.TestBase import TestBase
-from page_object_ecomap.framework.Pages import*
+from tests.TestBase import TestBase
+from framework.Pages import*
+from framework.Dictionary import DICTIONARY as test_data
 import random
 
 
@@ -13,33 +14,33 @@ class AddProblemTestAdmin(TestBase):
         cls.add_problem = AddProblemPage(cls.driver)
         cls.login_page = LoginPage(cls.driver)
         cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login(cls.test_data.get("email"), cls.test_data.get("password"))
-
-    def test_add_problem_without_photo_using_find_me(self):
-        self.go_to_add_problem_page()
-        self.locate_problem_with_find_me()
-        self.fill_necessary_fields()
-        self.publish_problem()
-
+        cls.home_user_page = cls.login_page.login(test_data.get("email"), test_data.get("password"))
+    #
+    # def test_add_problem_without_photo_using_find_me(self):
+    #     self.go_to_add_problem_page()
+    #     self.locate_problem_with_find_me()
+    #     self.fill_necessary_fields()
+    #     self.publish_problem()
+    #
     def test_add_problem_without_photo_using_search(self):
         self.go_to_add_problem_page()
         self.locate_problem_with_search_button()
         self.fill_necessary_fields()
         self.publish_problem()
 
-    def test_add_problem_with_photo_using_find_me(self):
-        self.go_to_add_problem_page()
-        self.locate_problem_with_find_me()
-        self.fill_necessary_fields()
-        self.upload_photo(self.random_word())
-        self.publish_problem()
+    # def test_add_problem_with_photo_using_find_me(self):
+    #     self.go_to_add_problem_page()
+    #     self.locate_problem_with_find_me()
+    #     self.fill_necessary_fields()
+    #     self.upload_photo(self.random_word())
+    #     self.publish_problem()
 
-    def test_add_problem_with_photo_using_search_button(self):
-        self.go_to_add_problem_page()
-        self.locate_problem_with_search_button()
-        self.fill_necessary_fields()
-        self.upload_photo(self.random_word())
-        self.publish_problem()
+    # def test_add_problem_with_photo_using_search_button(self):
+    #     self.go_to_add_problem_page()
+    #     self.locate_problem_with_search_button()
+    #     self.fill_necessary_fields()
+    #     self.upload_photo(self.random_word())
+    #     self.publish_problem()
 
     def go_to_add_problem_page(self):
         # check if "Add problem" tab is present
@@ -93,7 +94,7 @@ class AddProblemTestAdmin(TestBase):
         self.assertTrue(self.add_problem.is_photo_uploaded())
 
     def generate_random_coordinates(self):
-        return str(random.randint(1, 30))
+        return str(random.randint(1, 90))
 
     def random_word(self):
         return ''.join(random.choice(string.ascii_lowercase + string.digits)for _ in range(10))
@@ -102,18 +103,20 @@ class AddProblemTestAdmin(TestBase):
         self.home_page.open()
 
 
-class AddProblemTestUser(AddProblemTestAdmin):
-
-    @classmethod
-    def setUpClass(cls):
-        super(AddProblemTestAdmin, cls).setUpClass()
-        cls.add_problem = AddProblemPage(cls.driver)
-        cls.login_page = LoginPage(cls.driver)
-        cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login("analatysh@gmail.com", "123123")
+# class AddProblemTestUser(AddProblemTestAdmin):
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         super(AddProblemTestAdmin, cls).setUpClass()
+#         cls.add_problem = AddProblemPage(cls.driver)
+#         cls.login_page = LoginPage(cls.driver)
+#         cls.home_page.get_login_page()
+#         cls.home_user_page = cls.login_page.login(test_data.get('user_for_add_problem'), test_data.get('password_for_add_problem_user'))
 
 if __name__ == '__main__':
     unittest.main()
+
+
 
 
 

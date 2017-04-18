@@ -27,6 +27,10 @@ class BasePage:
         element = self.driver.find_element(*locator)
         element.send_keys(text)
 
+    def clear(self, text, *locator):
+        element = self.driver.find_element(*locator)
+        element.clear()
+
     def get_title(self):
         return self.driver.title
 

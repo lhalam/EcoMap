@@ -49,7 +49,7 @@ class RegisterPageLocator:
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
-    USER_PROFILE_LINK = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
+    USER_PROFILE_LINK = (By.XPATH, '//a[@href="/#/user_profile/info"]')
     LOGOUT_LINK = (By.XPATH, "//a[@ng-click='Logout()']")
     USER_CREDENTIALS = (By.XPATH, '//*[@id="navMenu"]/ul[2]/li[1]/a')
 
@@ -72,6 +72,9 @@ class UserProfileLocator(object):
     NEW_PASS_CONFIRM = (By.XPATH, "//input[@id='new_pass_confirm']")
     SUBMIT = (By.XPATH, "//button[@type='submit']")
     SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
+    ERR_MSG_PRESENT = (By.XPATH, '//div[@ng-messages="changePasswordForm.new_pass_confirm.$error"]')
+    ERR_MSG_PASS_NOT_MATCH = By.XPATH, (ERR_MSG_PRESENT.__getitem__(1) + '/p[text()="Паролі не співпадають."]')
+    ERR_MSG_PASS_IS_NECESSARY = (By.XPATH, ERR_MSG_PRESENT.__getitem__(1) + '/p[text()="Це поле є обов\'язковим."]')
     USER_PHOTO = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div[1]/div[1]/div/span')
 
 
@@ -95,4 +98,3 @@ class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
     STATUS_DROP_DOWN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
     POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
-

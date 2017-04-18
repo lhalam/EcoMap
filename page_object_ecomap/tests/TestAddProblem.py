@@ -31,14 +31,14 @@ class AddProblemTestAdmin(TestBase):
         self.go_to_add_problem_page()
         self.locate_problem_with_find_me()
         self.fill_necessary_fields()
-        self.upload_photo("desc")
+        self.upload_photo(self.random_word())
         self.publish_problem()
 
     def test_add_problem_with_photo_using_search_button(self):
         self.go_to_add_problem_page()
         self.locate_problem_with_search_button()
         self.fill_necessary_fields()
-        self.upload_photo("desc")
+        self.upload_photo(self.random_word())
         self.publish_problem()
 
     def go_to_add_problem_page(self):
@@ -101,17 +101,17 @@ class AddProblemTestAdmin(TestBase):
     def tearDown(self):
         self.home_page.open()
 
-
-class AddProblemTestUser(AddProblemTestAdmin):
-
-    @classmethod
-    def setUpClass(cls):
-        super(AddProblemTestAdmin, cls).setUpClass()
-        cls.add_problem = AddProblemPage(cls.driver)
-        cls.login_page = LoginPage(cls.driver)
-        cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login("analatysh@gmail.com", "123123")
 #
+# class AddProblemTestUser(AddProblemTestAdmin):
+#
+#     @classmethod
+#     def setUpClass(cls):
+#         super(AddProblemTestAdmin, cls).setUpClass()
+#         cls.add_problem = AddProblemPage(cls.driver)
+#         cls.login_page = LoginPage(cls.driver)
+#         cls.home_page.get_login_page()
+#         cls.home_user_page = cls.login_page.login("analatysh@gmail.com", "123123")
+# #
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,13 +1,12 @@
-import unittest
-
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
-from page_object_ecomap.framework.Locators import HomePageLocator, LogoLocator
+from framework.Locators import HomePageLocator, LogoLocator
+import os
 
 
 class BasePage:
 
-    def __init__(self, driver, base_url=HomePageLocator.BASE_URL):
+    def __init__(self, driver, base_url=os.environ.get('ECOMAP_BASE_URL')):
         self.driver = driver
         self.base_url = base_url
 

@@ -3,6 +3,7 @@ import os
 
 BASE_URL = os.environ.get('ECOMAP_BASE_URL')
 
+
 class LogoLocator:
     LOGO = (By.XPATH, "//img[contains(@src, 'logo.png')]")
 
@@ -59,6 +60,7 @@ class AddProblemPageLocator:
     TITLE = (By.XPATH, '//*[@id="title"]')
     PROBLEMS_LIST = (By.XPATH, '//*[@id="problem_type_id"]/ul/li')
     FOREST_PROBLEM = (By.XPATH, '//*[@id="problem_type_id"]/ul/li[1]')
+    WATER = (By.XPATH, '//li[4]/span')
     PROBLEM_DESCRIPTION = (By.XPATH, '//*[@id="problemContent"]')
     PROPOSAL = (By.XPATH, '//*[@id="proposal"]')
     NEXT = (By.XPATH, '//*[@name="addProblemForm"]/button')
@@ -69,6 +71,7 @@ class AddProblemPageLocator:
     CHECK_UPLOADED_PHOTO = (By.XPATH, '//div[@class="thumb"]/img')
     PHOTO_DESCRIPTION = (By.XPATH, '//textarea[@name="description"]')
     CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
+    ERROR_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
 
 
 class Location_Locator(object):
@@ -99,6 +102,7 @@ class UserProfileProblemsLocator(UserProfileNavigationLocator):
     HEADER_LABEL = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[1]/h3")
     FIRST_PROBLEM_EDIT_LINK = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[9]/a[1]")
     FIRST_PROBLEM_STATUS = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[2]/div/div[3]/table/tbody/tr[1]/td[6]')
+    TOTAL_AMOUNT_OF_PROBLEMS = (By.XPATH, '//span[@class="ng-binding"]')
 
 
 class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
@@ -108,4 +112,3 @@ class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
     STATUS_DROP_DOWN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
     POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
-

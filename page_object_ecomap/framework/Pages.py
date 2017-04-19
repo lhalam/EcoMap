@@ -4,7 +4,6 @@ import os
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
-
 from framework.BasePage import BasePage
 from framework.Locators import *
 from math import fabs
@@ -78,7 +77,9 @@ class LoginPage(BasePage):
 
 
 class AddProblemPage(BasePage):
+    """This page where user can add new problem"""
 
+    """try to get value of coordinates from fields latitude and longitude"""
     def check_presence_of_coordinates(self, driver):
         try:
             latitude = driver.find_element(*Location_Locator.LATITUDE).get_attribute("value")
@@ -87,6 +88,7 @@ class AddProblemPage(BasePage):
         except (TypeError, ValueError):
             return False
 
+    """click on 'Find me' button and return found coordinates"""
     def click_on_find_me(self):
         try:
             self.driver.find_element(*Location_Locator.FIND_ME).click()
@@ -96,6 +98,8 @@ class AddProblemPage(BasePage):
         except TimeoutException:
             return None
 
+    """Validate that coordinates found by applications equal your actual coordinates
+    or deviates from actual not more then 11 km"""
     def check_location(self, found_coordinates, actual_coordinates):
         try:
             if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
@@ -106,6 +110,7 @@ class AddProblemPage(BasePage):
         except (IndexError, TypeError):
             return False
 
+    """return actual coordinates which is found by outside service"""
     def get_actual_coordinates(self):
         try:
             send_url = 'http://freegeoip.net/json/'
@@ -135,6 +140,7 @@ class AddProblemPage(BasePage):
         self.driver.find_element(*Location_Locator.LONGITUDE).clear()
         self.type(longitude, *Location_Locator.LONGITUDE)
 
+    """Return the reason of why found coordinates don't equal actual coordinates"""
     def get_reason_of_fail(self):
         actual_coordinates = self.get_actual_coordinates()
         found_coordinates = self.click_on_find_me()
@@ -159,8 +165,7 @@ class AddProblemPage(BasePage):
         self.type(title, *AddProblemPageLocator.TITLE)
 
     def is_problems_items_present(self):
-        return self.is_element_present(*AddProblemPageLocator.PROBLEMS_LIST) and\
-        self.is_element_present(*AddProblemPageLocator.FOREST_PROBLEM)
+        return self.is_element_present(*AddProblemPageLocator.PROBLEMS_LIST)
 
     def choose_forest_problem(self):
         self.driver.find_element(*AddProblemPageLocator.PROBLEMS_LIST).click()
@@ -204,27 +209,23 @@ class AddProblemPage(BasePage):
     def is_description_of_photo_present(self):
         return self.is_element_present(*AddProblemPageLocator.PHOTO_DESCRIPTION)
 
+    """Upload photo using path to image from environment variable PYTHONPATH
+    and add description to it"""
     def add_photo_and_description(self, description):
         input_field = self.driver.find_element(*AddProblemPageLocator.INPUT)
-        #input_field.send_keys(os.getcwd()+"/test_img.png")
-        input_field.send_keys('/home/anastasiia/EcoMap/page_object_ecomap/tests/test_img.png')
+        pythonpath = os.environ.get('PYTHONPATH')
+        pythonpath1 = pythonpath.lstrip(':')
+        input_field.send_keys(pythonpath1 + '/tests/test_img.png')
         self.driver.find_element(*AddProblemPageLocator.PHOTO_DESCRIPTION).clear()
         self.type(description, *AddProblemPageLocator.PHOTO_DESCRIPTION)
 
     def is_photo_uploaded(self):
         return self.is_element_present(*AddProblemPageLocator.CHECK_UPLOADED_PHOTO)
 
-    # def get_amount_of_messages(self):
-    #     second_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE2)
-    #     first_message = self.is_element_present(*AddProblemPageLocator.CONFIRMATION_MESSAGE)
-    #     if second_message is True and first_message is True:
-    #         return 2
-    #     elif second_message is True or first_message is True:
-    #         return 1
-    #     else:
-    #         return 0
-
+    """Return top notification after adding new problem"""
     def get_confirmation_message(self):
+        if self.is_element_present(*AddProblemPageLocator.ERROR_MESSAGE):
+            return self.driver.find_element(*AddProblemPageLocator.ERROR_MESSAGE).text
         return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
 
 
@@ -299,6 +300,9 @@ class UserProfileProblemsPage(BasePage):
 
     def is_first_problem_present(self):
         return self.is_element_present(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
+
+    def get_total_amount_of_problems(self):
+        return self.driver.find_element(*UserProfileProblemsLocator.TOTAL_AMOUNT_OF_PROBLEMS).text
 
 
 class ProblemPage(BasePage):

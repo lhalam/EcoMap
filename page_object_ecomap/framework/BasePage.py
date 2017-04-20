@@ -1,7 +1,12 @@
-from selenium.common.exceptions import NoSuchElementException
+from telnetlib import EC
+
+from pexpect import TIMEOUT
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
 from framework.Locators import HomePageLocator, LogoLocator
 import os
+
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class BasePage:
@@ -48,3 +53,9 @@ class BasePage:
         except NoSuchElementException:
             return False
         return True
+
+    def wait_until_element_is_visible(self, element, timeout=TIMEOUT, *locator):
+        try:
+            WebDriverWait(self.driver, timeout).until(EC.visibility_of_element_located((*locator, element)))
+        except TimeoutException:
+            raise AssertionError('It takes more than {} sec to load an element'.format(timeout))

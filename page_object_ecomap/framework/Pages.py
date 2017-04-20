@@ -228,6 +228,28 @@ class AddProblemPage(BasePage):
             return self.driver.find_element(*AddProblemPageLocator.ERROR_MESSAGE).text
         return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
 
+    def get_errors_if_coordinates_is_empty(self):
+        error_messages = []
+        error_messages.append(self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_COORDINATES).text)
+        error_messages.append(self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_COORDINATES).text)
+        return error_messages
+
+    def get_error_if_title_empty(self):
+        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_TITLE).text
+
+    def get_error_if_photo_description_empty(self):
+        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_PROPOSAL).text
+
+    def get_error_if_proposal_empty(self):
+        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_PROPOSAL).text
+
+    def get_errors_if_fields_are_empty(self):
+        errors_messages = []
+        errors_messages.append(self.get_error_if_title_empty())
+        errors_messages.append(self.get_error_if_photo_description_empty())
+        errors_messages.append(self.get_error_if_proposal_empty())
+        return errors_messages
+
 
 class Registration(BasePage):
     def reg(self, email, name, surname, nickname, password, confirmpassword):

@@ -23,6 +23,7 @@ class Filter:
     FILTER_BTN = (By.XPATH, "//div[@class='filter-toogle']")
     # filter form
 
+
 class HomePageLocator(LogoLocator, NavigationLocator, MapLocator):
     URL = BASE_URL + "/#/map"
     LOG_IN = (By.XPATH, "//a[contains(@href,'login')]")
@@ -73,6 +74,11 @@ class AddProblemPageLocator:
     CONFIRMATION_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div[1]/div[2]/div')
     ERROR_MESSAGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
 
+    ERROR_EMPTY_COORDINATES = (By.XPATH, '/html/body/div/div[4]/div[2]/div[2]/div/div/div[1]/form/div[1]/div[2]/div/p')
+    ERROR1_EMPTY_COORDINATES = (By.XPATH, '/html/body/div/div[4]/div[2]/div[2]/div/div/div[1]/form/div[1]/div[3]/div/p')
+    ERROR_EMPTY_TITLE = (By.XPATH, '/html/body/div/div[4]/div[2]/div[2]/div/div/div[1]/form/div[3]/div/p')
+    ERROR_EMPTY_PHOTO_DESCRIPTION = (By.XPATH, '/html/body/div/div[4]/div[2]/div[2]/div/div/div[1]/form/div[5]/div/p')
+    ERROR_EMPTY_PROPOSAL = (By.XPATH, '/html/body/div/div[4]/div[2]/div[2]/div/div/div[1]/form/div[6]/div/p')
 
 class Location_Locator(object):
     FIND_ME = (By.XPATH, "//*[@class = 'form-group col-lg-6']")

@@ -56,6 +56,9 @@ class AddProblem(TestBase):
         self.assertTrue(self.add_problem.is_proposal_filed_present())
         self.add_problem.fill_proposal_of_solving(generate_random_word())
 
+        self.click_on_next()
+
+    def click_on_next(self):
         self.assertTrue(self.add_problem.is_next_button_filed_present())
         self.add_problem.click_on_next()
 
@@ -76,6 +79,17 @@ class AddProblem(TestBase):
     def check_amount_of_problems(self):
         problems_page = self.home_user_page.get_user_profile_page().get_problems_page()
         return int(problems_page.get_total_amount_of_problems())
+
+    def check_error_messages_if_coordinates_is_empty(self):
+        errors = self.add_problem.get_errors_if_coordinates_is_empty()
+        for i in errors:
+            self.assertEqual(i, "Це поле є обов'язковим.")
+            self.assertEqual(i, "Це поле є обов'язковим.")
+
+    def check_error_messages_if_fields_are_empty(self):
+        errors = self.add_problem.get_errors_if_fields_are_empty()
+        for i in errors:
+            self.assertEqual(i, "Це поле є обов'язковим.")
 
     def tearDown(self):
         self.home_user_page.open()

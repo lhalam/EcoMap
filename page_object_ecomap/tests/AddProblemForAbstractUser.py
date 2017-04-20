@@ -1,4 +1,3 @@
-import unittest
 from tests.TestBase import TestBase
 from framework.Pages import*
 from framework.Dictionary import DICTIONARY as test_data
@@ -6,54 +5,22 @@ from framework.Utils import generate_random_word
 from framework.Utils import generate_random_number
 
 
-class AddProblemTestAdmin(TestBase):
+class AddProblem(TestBase):
 
     @classmethod
     def setUpClass(cls):
-        super(AddProblemTestAdmin, cls).setUpClass()
+        super(AddProblem, cls).setUpClass()
         cls.add_problem = AddProblemPage(cls.driver)
-        cls.login_page = LoginPage(cls.driver)
-        cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login(test_data.get("email"), test_data.get("password"))
+        cls.home_page = HomePage(cls.driver)
+        cls.login_page = cls.home_page.get_login_page()
 
-
-    def test_add_problem_without_photo_using_find_me(self):
-        amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
-        self.go_to_add_problem_page()
-        self.locate_problem_with_find_me()
-        self.fill_necessary_fields()
-        self.publish_problem()
-        amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
-        self.assertEqual(amnt_of_prblms_before_adding_prbl+1, amnt_of_prblms_after_adding_prbl)
-
-    def test_add_problem_without_photo_using_search(self):
-        amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
-        self.go_to_add_problem_page()
-        self.locate_problem_with_search_button()
-        self.fill_necessary_fields()
-        self.publish_problem()
-        amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
-        self.assertEqual(amnt_of_prblms_before_adding_prbl + 1, amnt_of_prblms_after_adding_prbl)
-
-    def test_add_problem_with_photo_using_find_me(self):
-        amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
-        self.go_to_add_problem_page()
-        self.locate_problem_with_find_me()
-        self.fill_necessary_fields()
-        self.upload_photo(generate_random_word())
-        self.publish_problem()
-        amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
-        self.assertEqual(amnt_of_prblms_before_adding_prbl + 1, amnt_of_prblms_after_adding_prbl)
-
-    def test_add_problem_with_photo_using_search_button(self):
-        amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
-        self.go_to_add_problem_page()
-        self.locate_problem_with_search_button()
-        self.fill_necessary_fields()
-        self.upload_photo(generate_random_word())
-        self.publish_problem()
-        amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
-        self.assertEqual(amnt_of_prblms_before_adding_prbl + 1, amnt_of_prblms_after_adding_prbl)
+    def login_as(self, user):
+        if user == 'admin':
+            self.home_user_page = self.login_page.login(
+                test_data.get('email'), test_data.get('password'))
+        else:
+            self.home_user_page = self.login_page.login(
+                test_data.get('user_for_add_problem'), test_data.get('password_for_add_problem_user'))
 
     def go_to_add_problem_page(self):
         # check if "Add problem" tab is present
@@ -112,27 +79,5 @@ class AddProblemTestAdmin(TestBase):
 
     def tearDown(self):
         self.home_user_page.open()
-
-
-class AddProblemTestUser(AddProblemTestAdmin):
-
-    @classmethod
-    def setUpClass(cls):
-        super(AddProblemTestAdmin, cls).setUpClass()
-        cls.add_problem = AddProblemPage(cls.driver)
-        cls.login_page = LoginPage(cls.driver)
-        cls.home_page.get_login_page()
-        cls.home_user_page = cls.login_page.login(test_data.get('user_for_add_problem'), test_data.get('password_for_add_problem_user'))
-
-if __name__ == '__main__':
-    unittest.main()
-
-
-
-
-
-
-
-
 
 

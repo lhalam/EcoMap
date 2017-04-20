@@ -2,7 +2,7 @@ import random
 import string
 
 
-def generate_random_number(type_of_data, max_value=1000):
+def generate_random_number(type_of_data='int', max_value=1000):
     if type_of_data == 'int':
         return str(random.randint(1, max_value))
     elif type_of_data == 'float':

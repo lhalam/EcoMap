@@ -385,3 +385,4 @@ class ProblemPage(BasePage):
         """go to home page"""
         self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)
+

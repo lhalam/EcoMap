@@ -11,3 +11,4 @@ def generate_random_number(type_of_data='int', max_value=1000):
 
 def generate_random_word(length_of_word=10):
     return ''.join(random.choice(string.ascii_lowercase + string.digits)for _ in range(length_of_word))
+

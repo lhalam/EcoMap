@@ -45,6 +45,10 @@ class RegisterPageLocator:
     PASSWORD = (By.XPATH, '//*[@id="password"]')
     CONFIRMPASSWORD = (By.XPATH, '//*[@id="pass_confirm"]')
     SUBMIT_BUTTON = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/button')
+    MESSAGE_EMAIL = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/div[1]/div/p')
+    MESSAGE_NAME = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/div[2]/div/p')
+    MESSAGE_SURNAME = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/div[3]/div/p')
+    MESSAGE_NICKNAME = (By.XPATH, '//*[@id="registerForm"]/div[1]/div[2]/div[4]/div/p')
 
 
 class HomeUserPageLocator(LogoLocator, NavigationLocator, MapLocator):

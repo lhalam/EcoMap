@@ -58,6 +58,9 @@ class HomeUserPage(BasePage):
     def get_statistics_page(self):
         return self.click(*NavigationLocator.STATISTIC)
 
+    def logout(self):
+        return self.find_element(*HomeUserPageLocator.LOGOUT_LINK).click()
+
 
 class LoginPage(BasePage):
     def login(self, login_name, password):
@@ -77,6 +80,8 @@ class LoginPage(BasePage):
 
     def is_submit_button_present(self):
         return self.is_element_present(*LoginPageLocator.SUBMIT)
+
+
 
 
 class AddProblemPage(BasePage):
@@ -157,6 +162,19 @@ class Registration(BasePage):
     def wait_linked_text_changed(self):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
+
+    def get_message_for_email_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_EMAIL).text
+
+    def get_message_for_name_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NAME).text
+
+    def get_message_for_surname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_SURNAME).text
+
+    def get_message_for_nickname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NICKNAME).text
+
 
 
 class UserProfilePage(BasePage):

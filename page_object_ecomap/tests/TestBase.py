@@ -1,5 +1,4 @@
 import unittest
-import os
 from framework.Pages import *
 from framework.DriverWrapper import Driver
 

@@ -15,5 +15,9 @@ DICTIONARY = {
         'change_password_new_pass': 'qqqqqq',
         'change_password_repeat_wrong': '654321',
 
-        'new_issue_type': 'Проблеми лісів3'
+        'new_issue_type': 'Проблеми лісів3',
+
+        'user_for_add_problem': 'anonymous@ecomap.com',
+        'password_for_add_problem_user': 'secre!'
 }
+

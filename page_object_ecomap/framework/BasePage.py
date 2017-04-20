@@ -1,6 +1,8 @@
+from telnetlib import EC
+
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
-from framework.Locators import HomePageLocator, LogoLocator
+from framework.Locators import LogoLocator
 import os
 from selenium.webdriver.support import expected_conditions as EC
 

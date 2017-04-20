@@ -1,7 +1,10 @@
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
 from framework.Locators import HomePageLocator, LogoLocator
 import os
+from selenium.webdriver.support import expected_conditions as EC
+
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class BasePage:
@@ -25,9 +28,10 @@ class BasePage:
 
     def type(self, text, *locator):
         element = self.driver.find_element(*locator)
+        element.clear()
         element.send_keys(text)
 
-    def clear(self, text, *locator):
+    def clear(self, *locator):
         element = self.driver.find_element(*locator)
         element.clear()
 
@@ -48,3 +52,10 @@ class BasePage:
         except NoSuchElementException:
             return False
         return True
+
+    def wait_until_element_is_visible(self, locator, timeout=2):
+        try:
+            _d = self.driver
+            WebDriverWait(_d, timeout).until(EC.visibility_of_element_located(locator))
+        except TimeoutException:
+            raise AssertionError('It takes more than {} sec to load an element'.format(timeout))

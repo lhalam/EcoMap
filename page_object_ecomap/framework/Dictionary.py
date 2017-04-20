@@ -13,5 +13,7 @@ DICTIONARY = {
         'change_password_email': 'qqq@qqq.com',
         'change_password_password': 'qqqqqq',
         'change_password_new_pass': 'qqqqqq',
-        'change_password_repeat_wrong': '654321'
+        'change_password_repeat_wrong': '654321',
+
+        'new_issue_type': 'Проблеми лісів3'
 }

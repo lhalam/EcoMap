@@ -158,8 +158,11 @@ class Registration(BasePage):
 
 class UserProfilePage(BasePage):
     def change_pwd(self, old_password, new_password, confirm_password):
+        self.clear(old_password, *UserProfileLocator.OLD_PASS)
         self.type(old_password, *UserProfileLocator.OLD_PASS)
+        self.clear(new_password, *UserProfileLocator.NEW_PASS)
         self.type(new_password, *UserProfileLocator.NEW_PASS)
+        self.clear(confirm_password, *UserProfileLocator.NEW_PASS_CONFIRM)
         self.type(confirm_password, *UserProfileLocator.NEW_PASS_CONFIRM)
         self.click(*UserProfileLocator.SUBMIT)
         return HomeUserPage(self.driver)
@@ -171,6 +174,18 @@ class UserProfilePage(BasePage):
         except Exception:
             return False
         return True
+
+    def is_err_msg_pass_not_match(self):
+        if "ng-active" in self.driver.find_element(*UserProfileLocator.ERR_MSG_PRESENT).get_attribute("class"):
+            if self.driver.find_element(*UserProfileLocator.ERR_MSG_PASS_NOT_MATCH):
+                return True
+        return False
+
+    def is_err_msg_pass_is_necessary(self):
+        if "ng-active" in self.driver.find_element(*UserProfileLocator.ERR_MSG_PRESENT).get_attribute("class"):
+            if self.driver.find_element(*UserProfileLocator.ERR_MSG_PASS_IS_NECESSARY):
+                return True
+        return False
 
     def get_expected_url(self):
         return UserProfileLocator.URL

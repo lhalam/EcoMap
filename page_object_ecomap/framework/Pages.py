@@ -53,6 +53,12 @@ class HomeUserPage(BasePage):
         self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
         return UserProfilePage(self.driver)
 
+    def get_statistics_page(self):
+        return self.click(*NavigationLocator.STATISTIC)
+
+    def logout(self):
+        return self.find_element(*HomeUserPageLocator.LOGOUT_LINK).click()
+
 
 class LoginPage(BasePage):
     def login(self, login_name, password):
@@ -244,6 +250,19 @@ class Registration(BasePage):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
 
+    def get_message_for_email_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_EMAIL).text
+
+    def get_message_for_name_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NAME).text
+
+    def get_message_for_surname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_SURNAME).text
+
+    def get_message_for_nickname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NICKNAME).text
+
+
 
 class UserProfilePage(BasePage):
     def change_pwd(self, old_password, new_password, confirm_password):
@@ -317,6 +336,25 @@ class UserProfileProblemsPage(BasePage):
     def get_total_amount_of_problems(self):
         return self.driver.find_element(*UserProfileProblemsLocator.TOTAL_AMOUNT_OF_PROBLEMS).text
 
+class UserProfileSubscriptionPage(BasePage):
+    def get_expected_url(self):
+        return UserProfileProblemsLocator.URL
+
+    def open_subscription_page(self):
+        return self.click(*UserProfileNavigationLocator.SUBSCRIPTIONS_TAB)
+
+    def get_number_subscription(self):
+        return self.find_element(*UserProfileSubscriprionLocator.SUBSCRIPTIONS_INFO).text
+
+    def get_title_1(self):
+        return self.find_element(*UserProfileSubscriprionLocator.TITLE_1).text
+
+    def get_count(self):
+        return self.find_element(*UserProfileSubscriprionLocator.COUNT).text
+
+    def open_view(self):
+        return self.click(*UserProfileSubscriprionLocator.VIEW)
+
 
 class ProblemPage(BasePage):
     """Page where the detailed information about problem is shown.
@@ -356,6 +394,9 @@ class ProblemPage(BasePage):
         except Exception:
             return False
         return True
+
+    def get_popup_text(self):
+        return self.find_element(*ProblemLocator.POP_UP_WINDOW_TITLE).text
 
     def get_importance(self):
         """get current importance value in importance field """
@@ -398,6 +439,21 @@ class ProblemPage(BasePage):
         """go to home page"""
         self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)
+
+    def tap_subscription(self):
+        return self.find_element(*Statistics.EYE).click()
+
+    def check_title(self):
+        return self.find_element(*ProblemLocator.DETAILED_TITLE).text
+
+
+class StatisticPage(BasePage):
+    def get_current_url(self):
+        return Statistics.URL
+
+    def open_top_first_issue(self):
+        return self.click(*Statistics.TOP_FIRST_ISSUE)
+
 
 class AdministerTabPage(BasePage):
     def get_issue_type_tab(self):

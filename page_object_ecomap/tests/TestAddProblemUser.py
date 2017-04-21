@@ -28,6 +28,7 @@ class AddProblemTestUser(AddProblem):
         amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
         self.assertEqual(amnt_of_prblms_before_adding_prbl + 1, amnt_of_prblms_after_adding_prbl)
 
+    @unittest.expectedFailure
     def test_add_problem_with_photo_using_find_me(self):
         amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
         self.go_to_add_problem_page()
@@ -38,6 +39,7 @@ class AddProblemTestUser(AddProblem):
         amnt_of_prblms_after_adding_prbl = self.check_amount_of_problems()
         self.assertEqual(amnt_of_prblms_before_adding_prbl + 1, amnt_of_prblms_after_adding_prbl)
 
+    @unittest.expectedFailure
     def test_add_problem_with_photo_using_search_button(self):
         amnt_of_prblms_before_adding_prbl = self.check_amount_of_problems()
         self.go_to_add_problem_page()

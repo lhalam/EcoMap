@@ -10,15 +10,15 @@ DICTIONARY = {
         'registration_password': 'qwerty',
         'registration_confirm_password': 'qwerty',
 
-        'email_for_change_pass': 'qqq@qqq.com',
-        'pass_for_change_pass': 'qqqqqq',
         'change_password_email': 'qqq@qqq.com',
         'change_password_password': 'qqqqqq',
-        'change_password_old_pass': 'qqqqqq',
         'change_password_new_pass': 'qqqqqq',
-        'change_password_new_pass_repeat': 'qqqqqq',
         'change_password_repeat_wrong': '654321',
 
+        'new_issue_type': 'Проблеми лісів3',
+
+        'user_for_add_problem': 'anonymous@ecomap.com',
+        'password_for_add_problem_user': 'secre!',
         'admin_nickname': 'admin',
         'anonymous_nickname': 'anonymous',
         'problem_title': 'test comment2',

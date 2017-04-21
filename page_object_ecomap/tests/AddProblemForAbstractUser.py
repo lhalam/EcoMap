@@ -113,16 +113,16 @@ class AddProblem(TestBase):
 
     def fill_necessary_fields_with_long_data(self):
         self.assertTrue(self.add_problem.is_title_field_present())
-        self.add_problem.fill_title(generate_random_word(length_of_word=300))
+        self.add_problem.fill_title(generate_random_word(length_of_word=256))
 
         self.assertTrue(self.add_problem.is_problems_items_present())
         self.add_problem.choose_forest_problem()
 
         self.assertTrue(self.add_problem.is_description_filed_present())
-        self.add_problem.fill_description_of_problem(generate_random_word(length_of_word=300))
+        self.add_problem.fill_description_of_problem(generate_random_word(length_of_word=256))
 
         self.assertTrue(self.add_problem.is_proposal_filed_present())
-        self.add_problem.fill_proposal_of_solving(generate_random_word(length_of_word=300))
+        self.add_problem.fill_proposal_of_solving(generate_random_word(length_of_word=256))
 
         self.click_on_next()
 
@@ -135,6 +135,7 @@ class AddProblem(TestBase):
         errors = self.add_problem.get_errors_if_incorrect_data_in_fields()
         for i in errors:
             self.assertEqual(i, "Занадто довге поле.")
+
 
 
 

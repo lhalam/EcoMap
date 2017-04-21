@@ -17,6 +17,12 @@ DICTIONARY = {
         'change_password_old_pass': 'qqqqqq',
         'change_password_new_pass': 'qqqqqq',
         'change_password_new_pass_repeat': 'qqqqqq',
-        'change_password_repeat_wrong': '654321'
+        'change_password_repeat_wrong': '654321',
+
+        'admin_nickname': 'admin',
+        'anonymous_nickname': 'anonymous',
+        'problem_title': 'test comment2',
+        'comment_text': 'comment text 1',
+        'answer_text': 'answer text 1'
 }
 

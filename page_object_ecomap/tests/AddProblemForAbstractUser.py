@@ -75,6 +75,8 @@ class AddProblem(TestBase):
 
     def check_amount_of_problems(self):
         problems_page = self.home_user_page.get_user_profile_page().get_problems_page()
+        if problems_page.get_total_amount_of_problems() == '':
+            return 0
         return int(problems_page.get_total_amount_of_problems())
 
     def tearDown(self):

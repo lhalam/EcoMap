@@ -1,7 +1,5 @@
-import os
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from framework.BasePage import BasePage
@@ -249,11 +247,8 @@ class Registration(BasePage):
 
 class UserProfilePage(BasePage):
     def change_pwd(self, old_password, new_password, confirm_password):
-        self.clear(old_password, *UserProfileLocator.OLD_PASS)
         self.type(old_password, *UserProfileLocator.OLD_PASS)
-        self.clear(new_password, *UserProfileLocator.NEW_PASS)
         self.type(new_password, *UserProfileLocator.NEW_PASS)
-        self.clear(confirm_password, *UserProfileLocator.NEW_PASS_CONFIRM)
         self.type(confirm_password, *UserProfileLocator.NEW_PASS_CONFIRM)
         self.click(*UserProfileLocator.SUBMIT)
         return HomeUserPage(self.driver)
@@ -280,6 +275,9 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return UserProfileLocator.URL
+
+    def get_admin_tab(self):
+        self.click(*UserProfileNavigationLocator.ADMIN_TAB)
 
     def wait_until_page_is_loaded(self):
         wait = WebDriverWait(self.driver, 10)
@@ -401,3 +399,23 @@ class ProblemPage(BasePage):
         self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)
 
+class AdministerTabPage(BasePage):
+    def get_issue_type_tab(self):
+        self.click(*AdministerTabLocator.ISSUE_TYPE_TAB)
+
+    def click_first_issue_changetype_button(self):
+        self.click(*AdministerTabLocator.FIRST_ISSUE_CHANGE_STATUS_BUTTON)
+
+    def change_issue_type(self, new_type):
+        self.wait_until_element_is_visible(AdministerTabLocator.ISSUE_TYPE_FIELD, timeout=10)
+        self.type(new_type, *AdministerTabLocator.ISSUE_TYPE_FIELD)
+        self.wait_until_element_is_visible(AdministerTabLocator.SUBMIT_BUTTON, timeout=10)
+        self.click(*AdministerTabLocator.SUBMIT_BUTTON)
+
+    def is_success_popup_present(self):
+        _d = self.driver
+        try:
+            WebDriverWait(_d, 5).until(lambda _d: _d.find_element(*AdministerTabLocator.TYPE_CHANGED_SUCCES_POPUP))
+        except Exception:
+            return False
+        return True

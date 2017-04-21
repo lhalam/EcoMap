@@ -98,6 +98,7 @@ class UserProfileNavigationLocator:
     USER_INFO_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[1]/a")
     PROBLEMS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[2]/a")
     SUBSCRIPTIONS_TAB = (By.XPATH, "/html/body/div[1]/div[4]/div[1]/div/div/div/div/div/div[1]/ul/li[4]/a")
+    ADMIN_TAB = (By.XPATH, '//uib-tab-heading[text()[contains(.,"Адміністрування")]]')
 
 
 class UserProfileProblemsLocator(UserProfileNavigationLocator):
@@ -115,3 +116,10 @@ class ProblemLocator(LogoLocator, NavigationLocator, MapLocator):
     STATUS_DROP_DOWN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/select")
     CHANGE_BTN = (By.XPATH, "/html/body/div[1]/div[4]/div[2]/div/div[1]/div[2]/form/div[2]/button")
     POP_UP_WINDOW_SUCCESSFUL_CHANGE = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')
+
+class AdministerTabLocator:
+    ISSUE_TYPE_TAB = (By.XPATH, '//a[text()[contains(.,"Тип проблеми")]]')
+    FIRST_ISSUE_CHANGE_STATUS_BUTTON = (By.XPATH, "/html/body/div/div[4]/div[1]/div/div/div/div[3]/div/div[1]/table/tbody/tr[1]/td[4]/button[2]")
+    ISSUE_TYPE_FIELD = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div[3]/div/div[3]/div/div/div[2]/form/div[1]/div/div/input')
+    SUBMIT_BUTTON = (By.XPATH, '/html/body/div[1]/div[4]/div[1]/div/div/div/div[3]/div/div[3]/div/div/div[2]/form/div[4]/div/div[2]/button')
+    TYPE_CHANGED_SUCCES_POPUP = (By.XPATH, '//*[@id="toast-container"]/div/div[2]/div')

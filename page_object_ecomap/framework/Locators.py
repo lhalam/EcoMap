@@ -5,7 +5,7 @@ import os
 BASE_URL = os.environ.get('ECOMAP_BASE_URL')
 
 class CommonLocator:
-    SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"]/div')
+    SUCCESS_POPUP = (By.XPATH, '//*[@id="toast-container"][1]')
 
 class LogoLocator:
     LOGO = (By.XPATH, "//img[contains(@src, 'logo.png')]")

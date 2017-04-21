@@ -234,21 +234,22 @@ class AddProblemPage(BasePage):
         error_messages.append(self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_COORDINATES).text)
         return error_messages
 
-    def get_error_if_title_empty(self):
-        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_TITLE).text
+    def get_title_error(self):
+        return self.driver.find_element(*AddProblemPageLocator.TITLE_ERROR).text
 
-    def get_error_if_photo_description_empty(self):
-        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_PROPOSAL).text
+    def get_photo_description_error(self):
+        return self.driver.find_element(*AddProblemPageLocator.PROPOSAL_ERROR).text
 
-    def get_error_if_proposal_empty(self):
-        return self.driver.find_element(*AddProblemPageLocator.ERROR_EMPTY_PROPOSAL).text
+    def get_proposal_error(self):
+        return self.driver.find_element(*AddProblemPageLocator.PROPOSAL_ERROR).text
 
-    def get_errors_if_fields_are_empty(self):
+    def get_errors_if_incorrect_data_in_fields(self):
         errors_messages = []
-        errors_messages.append(self.get_error_if_title_empty())
-        errors_messages.append(self.get_error_if_photo_description_empty())
-        errors_messages.append(self.get_error_if_proposal_empty())
+        errors_messages.append(self.get_title_error())
+        errors_messages.append(self.get_photo_description_error())
+        errors_messages.append(self.get_proposal_error())
         return errors_messages
+
 
 
 class Registration(BasePage):

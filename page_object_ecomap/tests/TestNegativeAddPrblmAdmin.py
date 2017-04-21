@@ -20,6 +20,12 @@ class NegativeAddProblemTestAdmin(AddProblem):
         self.click_on_next()
         self.check_error_messages_if_fields_are_empty()
 
+    def test_add_problem_with_too_short_data(self):
+        self.go_to_add_problem_page()
+        self.locate_problem_with_find_me()
+        self.fill_necessary_fields_with_short_data()
+        self.check_error_messages_if_fields_are_too_short()
+
 
 if __name__ == '__main__':
     unittest.main()

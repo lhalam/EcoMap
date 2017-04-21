@@ -244,7 +244,7 @@ class AddProblemPage(BasePage):
         return self.driver.find_element(*AddProblemPageLocator.PROPOSAL_ERROR).text
 
     def get_errors_if_incorrect_data_in_fields(self):
-        errors_messages = []
+        errors_messages = list()
         errors_messages.append(self.get_title_error())
         errors_messages.append(self.get_photo_description_error())
         errors_messages.append(self.get_proposal_error())

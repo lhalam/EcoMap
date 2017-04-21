@@ -18,6 +18,11 @@ DICTIONARY = {
         'new_issue_type': 'Проблеми лісів3',
 
         'user_for_add_problem': 'anonymous@ecomap.com',
-        'password_for_add_problem_user': 'secre!'
+        'password_for_add_problem_user': 'secre!',
+        'admin_nickname': 'admin',
+        'anonymous_nickname': 'anonymous',
+        'problem_title': 'test comment2',
+        'comment_text': 'comment text 1',
+        'answer_text': 'answer text 1'
 }
 

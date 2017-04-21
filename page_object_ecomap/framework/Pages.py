@@ -5,11 +5,12 @@ from selenium.webdriver import ActionChains
 from framework.BasePage import BasePage
 from framework.Locators import *
 from math import fabs
-
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
+from datetime import datetime
+from datetime import timedelta
 from selenium.webdriver.support import expected_conditions as EC
 
 
@@ -50,8 +51,11 @@ class HomeUserPage(BasePage):
         return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
 
     def get_user_profile_page(self):
-        self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
-        return UserProfilePage(self.driver)
+        if self.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK):
+            self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
+            return UserProfilePage(self.driver)
+        else:
+            return None
 
     def get_statistics_page(self):
         return self.click(*NavigationLocator.STATISTIC)
@@ -294,6 +298,152 @@ class UserProfilePage(BasePage):
 
     def get_expected_url(self):
         return UserProfileLocator.URL
+
+    def get_problems_user_profile_page(self):
+        if self.is_element_present(*ProblemsUserProfileLocator.PROBLEMS_TAB):
+            self.click(*ProblemsUserProfileLocator.PROBLEMS_TAB)
+            return ProblemsUserProfilePage(self.driver)
+        else:
+            return None
+
+    def get_comments_user_profile_page(self):
+        if self.is_element_present(*CommentsUserProfileLocator.MY_COMMENTS_TAB):
+            self.click(*CommentsUserProfileLocator.MY_COMMENTS_TAB)
+            return CommentsUserProfilePage(self.driver)
+        else:
+            return None
+
+    def get_admin_tab(self):
+        self.click(*UserProfileNavigationLocator.ADMIN_TAB)
+
+    def wait_until_page_is_loaded(self):
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.presence_of_all_elements_located)
+
+    def get_problems_page(self):
+        """go to user's problems page
+        please use this implementation of click() function on tab
+        because errors occur sometimes with standard click(). To
+        resolve this bug we have to simulate a mouse move action
+        """
+        actions = ActionChains(self.driver)
+        problems_tab = self.find_element(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        actions.move_to_element(problems_tab).perform()
+        problems_tab.click()
+        return UserProfileProblemsPage(self.driver)
+
+    def is_problems_tab_present(self):
+        return self.is_element_present(UserProfileNavigationLocator.PROBLEMS_TAB)
+
+
+class ProblemsUserProfilePage(BasePage):
+
+    def get_expected_url(self):
+        return ProblemsUserProfileLocator.URL
+
+    def get_edit_problem_page(self):
+        if self.is_element_present(*ProblemsUserProfileLocator.EDIT_LINK_BY_PROMLEM_TITLE):
+            self.click(*ProblemsUserProfileLocator.EDIT_LINK_BY_PROMLEM_TITLE)
+            return EditProblemPage(self.driver)
+        else:
+            return None
+
+
+class EditProblemPage(HomeUserPage):
+
+    def add_comment_anonymous(self, text):
+        self.click_on_anonymous_checkbox()
+        self.add_comment(text)
+
+    def add_comment(self, text):
+        self.type_comment(text)
+        self.click_on_add_comment_btn()
+
+    def click_on_comment_tab(self):
+        self.click(*EditProblemLocator.COMMENT_TAB)
+
+    def type_comment(self, text):
+        self.type(text, *EditProblemLocator.COMMENT_TEXTAREA)
+
+    def is_comment_textarea_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_TEXTAREA)
+
+    def is_anonymously_checkbox_visible(self):
+        return self.is_element_visible(*EditProblemLocator.ANONYMOUSLY_CHECKBOX)
+
+    def is_add_comment_btn_visible(self):
+        return self.is_element_visible(*EditProblemLocator.ADD_COMMENT_BTN)
+
+    def click_on_add_comment_btn(self):
+        self.click(*EditProblemLocator.ADD_COMMENT_BTN)
+
+    def get_comment_nickname(self):
+        return self.get_text(*EditProblemLocator.COMMENT_NICKNAME)
+
+    def get_comment_datetime(self):
+        if self.is_element_visible(*EditProblemLocator.COMMENT_DATETIME):
+            element = self.find_element(*EditProblemLocator.COMMENT_DATETIME)
+            return datetime.strptime(element.text, '%d/%m/%Y %H:%M')
+        else:
+            return None
+
+    def get_current_datetime(self):
+        return datetime.strptime(datetime.now().strftime('%d/%m/%Y %H:%M'), '%d/%m/%Y %H:%M')
+
+    def get_comment_text(self):
+        return self.get_text(*EditProblemLocator.COMMENT_TEXT)
+
+    def get_timedelta(self):
+        return timedelta(seconds=10)
+
+    def is_comment_answer_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_ANSWER_LINK)
+
+    def is_success_popup_present(self):
+        return self.is_popup_present(*CommonLocator.SUCCESS_POPUP)
+
+    def is_comment_edit_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_EDIT_LINK)
+
+    def is_comment_edit_link_invisible(self):
+        return self.is_element_invisible(*EditProblemLocator.COMMENT_EDIT_LINK_HIDDEN)
+
+    def is_comment_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_LINK)
+
+    def click_on_anonymous_checkbox(self):
+        self.click(*EditProblemLocator.ANONYMOUSLY_CHECKBOX)
+
+    def click_on_answer_link(self):
+        self.click(*EditProblemLocator.COMMENT_ANSWER_LINK)
+
+    def type_answer(self, text):
+        self.type(text, *EditProblemLocator.ANSWER_TEXTAREA)
+
+    def click_on_add_answer_btn(self):
+        self.click(*EditProblemLocator.ADD_ANSWER_BTN)
+
+    def is_answer_textarea_visible(self):
+        self.is_element_visible(*EditProblemLocator.ANSWER_TEXTAREA)
+
+    def get_answer_text(self):
+        return self.get_text(*EditProblemLocator.ANSWER_TEXT)
+
+    def get_answer_nickname(self):
+        return self.get_text(*EditProblemLocator.ANSWER_NICKNAME)
+
+
+class CommentsUserProfilePage(BasePage):
+    def get_expected_url(self):
+        return CommentsUserProfileLocator.URL
+
+    def click_on_delete_btn(self):
+        self.click(*CommentsUserProfileLocator.DELETE_LINK_BY_COMMENT_TITLE)
+
+    def is_success_popup_present(self):
+        return self.is_popup_present(*CommonLocator.SUCCESS_POPUP)
+
+
 
     def get_admin_tab(self):
         self.click(*UserProfileNavigationLocator.ADMIN_TAB)

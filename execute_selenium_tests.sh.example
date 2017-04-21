@@ -15,6 +15,8 @@ export SELENIUM_RC_URL="http://localhost:4444/wd/hub"
 # Browser type "chrome", "firefox", "phantomjs"
 export SELENIUM_BROWSER="chrome"
 
+export SELENIUM_FIREFOX_PATH="/usr/bin/firefox"
+
 # Test System URL "http://localhost" - for LOCAL connection, "http://ecomap" - for REMOTE connection
 export ECOMAP_BASE_URL="http://localhost"
 

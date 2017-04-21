@@ -20,7 +20,7 @@ class Driver:
             if os.environ.get('SELENIUM_BROWSER') == 'chrome':
                 driver = webdriver.Chrome(executable_path=path)
             if os.environ.get('SELENIUM_BROWSER') == 'firefox':
-                driver = webdriver.Firefox(executable_path=path)
+                driver = webdriver.Firefox(firefox_binary=os.getenv('SELENIUM_FIREFOX_PATH', "/usr/bin/firefox"), executable_path=path)
             if os.environ.get('SELENIUM_BROWSER') == 'phantomjs':
                 driver = webdriver.PhantomJS(executable_path=path)
         else:
@@ -34,5 +34,5 @@ class Driver:
     def add_driver_settings(driver):
         driver.implicitly_wait(40)
         driver.set_page_load_timeout(50)
-        driver.maximize_window()
+        driver.set_window_size(1280, 1024)
         return driver

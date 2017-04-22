@@ -39,13 +39,13 @@ run_selenium_tests:
   stage: selenium
   script:
     - docker pull mariadb:latest > /dev/null
-    - docker pull selenium/standalone-chrome:latest > /dev/null
+    - docker pull "selenium/standalone-$SELENIUM_BROWSER:latest" > /dev/null
     - docker pull "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN" > /dev/null
     - docker pull "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS" > /dev/null
     - docker run --name mariadb -e MYSQL_ROOT_PASSWORD=megasecret -e MYSQL_DATABASE=ecomap -d mariadb:latest mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci --init_connect='SET collation_connection = utf8_unicode_ci'
     - docker run --name web --link mariadb:mysql -d "$CI_REGISTRY_IMAGE:$IMAGE_TAG_MAIN"
-    - docker run --name selenium-rc -d --link web:ecomap selenium/standalone-chrome
-    - docker run --name tests -v $CI_PROJECT_DIR/public:/usr/src/app/public --link selenium-rc:remote "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS"
+    - docker run --name selenium-rc -d --link web:ecomap "selenium/standalone-$SELENIUM_BROWSER"
+    - docker run --name tests -v $CI_PROJECT_DIR/public:/usr/src/app/public -e SELENIUM_CONNECTION -e SELENIUM_RC_URL -e SELENIUM_BROWSER -e ECOMAP_BASE_URL --link selenium-rc:remote "$CI_REGISTRY_IMAGE:$IMAGE_TAG_TESTS"
   artifacts:
     paths:
       - public
@@ -54,7 +54,7 @@ run_selenium_tests:
 pages:
   stage: analyze
   script:
-    - mv $CI_PROJECT_DIR/public/Test_*.html $CI_PROJECT_DIR/public/index.html
+    - echo 'Publishing Report'
   artifacts:
     paths:
       - public

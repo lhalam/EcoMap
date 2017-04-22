@@ -56,6 +56,9 @@ class AddProblem(TestBase):
         self.assertTrue(self.add_problem.is_proposal_filed_present())
         self.add_problem.fill_proposal_of_solving(generate_random_word())
 
+        self.click_on_next()
+
+    def click_on_next(self):
         self.assertTrue(self.add_problem.is_next_button_filed_present())
         self.add_problem.click_on_next()
 
@@ -79,8 +82,60 @@ class AddProblem(TestBase):
             return 0
         return int(problems_page.get_total_amount_of_problems())
 
+    def check_error_messages_if_coordinates_is_empty(self):
+        errors = self.add_problem.get_errors_if_coordinates_is_empty()
+        for i in errors:
+            self.assertEqual(i, "Це поле є обов'язковим.")
+            self.assertEqual(i, "Це поле є обов'язковим.")
+
+    def check_error_messages_if_fields_are_empty(self):
+        errors = self.add_problem.get_errors_if_incorrect_data_in_fields()
+        for i in errors:
+            self.assertEqual(i, "Це поле є обов'язковим.")
+
     def tearDown(self):
         self.home_user_page.open()
+
+    def fill_necessary_fields_with_short_data(self):
+        self.assertTrue(self.add_problem.is_title_field_present())
+        self.add_problem.fill_title(generate_random_word(length_of_word=1))
+
+        self.assertTrue(self.add_problem.is_problems_items_present())
+        self.add_problem.choose_forest_problem()
+
+        self.assertTrue(self.add_problem.is_description_filed_present())
+        self.add_problem.fill_description_of_problem(generate_random_word(length_of_word=1))
+
+        self.assertTrue(self.add_problem.is_proposal_filed_present())
+        self.add_problem.fill_proposal_of_solving(generate_random_word(length_of_word=1))
+
+        self.click_on_next()
+
+    def fill_necessary_fields_with_long_data(self):
+        self.assertTrue(self.add_problem.is_title_field_present())
+        self.add_problem.fill_title(generate_random_word(length_of_word=256))
+
+        self.assertTrue(self.add_problem.is_problems_items_present())
+        self.add_problem.choose_forest_problem()
+
+        self.assertTrue(self.add_problem.is_description_filed_present())
+        self.add_problem.fill_description_of_problem(generate_random_word(length_of_word=256))
+
+        self.assertTrue(self.add_problem.is_proposal_filed_present())
+        self.add_problem.fill_proposal_of_solving(generate_random_word(length_of_word=256))
+
+        self.click_on_next()
+
+    def check_error_messages_if_fields_are_too_short(self):
+        errors = self.add_problem.get_errors_if_incorrect_data_in_fields()
+        for i in errors:
+            self.assertEqual(i, "Занадто коротке поле.")
+
+    def check_error_messages_if_fields_are_too_long(self):
+        errors = self.add_problem.get_errors_if_incorrect_data_in_fields()
+        for i in errors:
+            self.assertEqual(i, "Занадто довге поле.")
+
 
 
 

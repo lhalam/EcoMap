@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
-
 from framework.BasePage import BasePage
 from framework.Locators import *
 from math import fabs
-
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 import requests
 import json
+from datetime import datetime
+from datetime import timedelta
 from selenium.webdriver.support import expected_conditions as EC
 
 
@@ -52,8 +51,17 @@ class HomeUserPage(BasePage):
         return self.is_element_present(*NavigationLocator.ADD_PROBLEM)
 
     def get_user_profile_page(self):
-        self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
-        return UserProfilePage(self.driver)
+        if self.is_element_present(*HomeUserPageLocator.USER_PROFILE_LINK):
+            self.click(*HomeUserPageLocator.USER_PROFILE_LINK)
+            return UserProfilePage(self.driver)
+        else:
+            return None
+
+    def get_statistics_page(self):
+        return self.click(*NavigationLocator.STATISTIC)
+
+    def logout(self):
+        return self.find_element(*HomeUserPageLocator.LOGOUT_LINK).click()
 
 
 class LoginPage(BasePage):
@@ -77,7 +85,9 @@ class LoginPage(BasePage):
 
 
 class AddProblemPage(BasePage):
+    """This page where user can add new problem"""
 
+    """try to get value of coordinates from fields latitude and longitude"""
     def check_presence_of_coordinates(self, driver):
         try:
             latitude = driver.find_element(*Location_Locator.LATITUDE).get_attribute("value")
@@ -86,6 +96,7 @@ class AddProblemPage(BasePage):
         except (TypeError, ValueError):
             return False
 
+    """click on 'Find me' button and return found coordinates"""
     def click_on_find_me(self):
         try:
             self.driver.find_element(*Location_Locator.FIND_ME).click()
@@ -95,6 +106,8 @@ class AddProblemPage(BasePage):
         except TimeoutException:
             return None
 
+    """Validate that coordinates found by applications equal your actual coordinates
+    or deviates from actual not more then 11 km"""
     def check_location(self, found_coordinates, actual_coordinates):
         try:
             if fabs(actual_coordinates[0] - found_coordinates[0]) < 0.1 \
@@ -105,6 +118,7 @@ class AddProblemPage(BasePage):
         except (IndexError, TypeError):
             return False
 
+    """return actual coordinates which is found by outside service"""
     def get_actual_coordinates(self):
         try:
             send_url = 'http://freegeoip.net/json/'
@@ -121,6 +135,20 @@ class AddProblemPage(BasePage):
     def is_location_widget_present(self):
         return self.is_element_present(*Location_Locator.LOCATION_WIDGET)
 
+    def is_coordinates_present(self):
+        return self.is_element_present(*Location_Locator.LATITUDE) and \
+               self.is_element_present(*Location_Locator.LONGITUDE)
+
+    def is_find_me_button_present(self):
+        return self.is_element_present(*Location_Locator.FIND_ME)
+
+    def fill_coordinates(self, latitude, longitude):
+        self.driver.find_element(*Location_Locator.LATITUDE).clear()
+        self.type(latitude, *Location_Locator.LATITUDE)
+        self.driver.find_element(*Location_Locator.LONGITUDE).clear()
+        self.type(longitude, *Location_Locator.LONGITUDE)
+
+    """Return the reason of why found coordinates don't equal actual coordinates"""
     def get_reason_of_fail(self):
         actual_coordinates = self.get_actual_coordinates()
         found_coordinates = self.click_on_find_me()
@@ -136,6 +164,77 @@ class AddProblemPage(BasePage):
 
     def get_expected_url(self):
         return AddProblemPageLocator.URL
+
+    def is_title_field_present(self):
+        return self.is_element_present(*AddProblemPageLocator.TITLE)
+
+    def fill_title(self, title):
+        self.driver.find_element(*AddProblemPageLocator.TITLE).clear()
+        self.type(title, *AddProblemPageLocator.TITLE)
+
+    def is_problems_items_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROBLEMS_LIST)
+
+    def choose_forest_problem(self):
+        self.driver.find_element(*AddProblemPageLocator.PROBLEMS_LIST).click()
+        self.driver.find_element(*AddProblemPageLocator.FOREST_PROBLEM).click()
+
+    def is_description_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROBLEM_DESCRIPTION)
+
+    def fill_description_of_problem(self, description):
+        self.driver.find_element(*AddProblemPageLocator.PROBLEM_DESCRIPTION).clear()
+        self.type(description, *AddProblemPageLocator.PROBLEM_DESCRIPTION)
+
+    def is_proposal_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PROPOSAL)
+
+    def fill_proposal_of_solving(self, proposal):
+        self.driver.find_element(*AddProblemPageLocator.PROPOSAL).clear()
+        self.type(proposal, *AddProblemPageLocator.PROPOSAL)
+
+    def is_next_button_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.NEXT)
+
+    def click_on_next(self):
+        self.driver.find_element(*AddProblemPageLocator.NEXT).click()
+
+    def is_publish_button_filed_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PUBLISH)
+
+    def is_search_button_present(self):
+        return self.is_element_present(*AddProblemPageLocator.SEARCH)
+
+    def click_on_publish(self):
+        self.driver.find_element(*AddProblemPageLocator.PUBLISH).click()
+
+    def click_on_search(self):
+        self.driver.find_element(*AddProblemPageLocator.SEARCH).click()
+
+    def is_add_photo_element_present(self):
+        return self.is_element_present(*AddProblemPageLocator.ADD_PHOTO)
+
+    def is_description_of_photo_present(self):
+        return self.is_element_present(*AddProblemPageLocator.PHOTO_DESCRIPTION)
+
+    """Upload photo using path to image from environment variable PYTHONPATH
+    and add description to it"""
+    def add_photo_and_description(self, description):
+        input_field = self.driver.find_element(*AddProblemPageLocator.INPUT)
+        pythonpath = os.environ.get('PYTHONPATH')
+        pythonpath1 = pythonpath.lstrip(':')
+        input_field.send_keys(pythonpath1 + '/tests/test_img.png')
+        self.driver.find_element(*AddProblemPageLocator.PHOTO_DESCRIPTION).clear()
+        self.type(description, *AddProblemPageLocator.PHOTO_DESCRIPTION)
+
+    def is_photo_uploaded(self):
+        return self.is_element_present(*AddProblemPageLocator.CHECK_UPLOADED_PHOTO)
+
+    """Return top notification after adding new problem"""
+    def get_confirmation_message(self):
+        if self.is_element_present(*AddProblemPageLocator.ERROR_MESSAGE):
+            return self.driver.find_element(*AddProblemPageLocator.ERROR_MESSAGE).text
+        return self.driver.find_element(*AddProblemPageLocator.CONFIRMATION_MESSAGE).text
 
 
 class Registration(BasePage):
@@ -155,6 +254,19 @@ class Registration(BasePage):
         _driver = self.driver
         WebDriverWait(self.driver, 5).until(lambda _driver: _driver.find_element(*HomeUserPageLocator.USER_CREDENTIALS).text != 'УВІЙТИ')
 
+    def get_message_for_email_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_EMAIL).text
+
+    def get_message_for_name_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NAME).text
+
+    def get_message_for_surname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_SURNAME).text
+
+    def get_message_for_nickname_field(self):
+        return self.find_element(*RegisterPageLocator.MESSAGE_NICKNAME).text
+
+
 
 class UserProfilePage(BasePage):
     def change_pwd(self, old_password, new_password, confirm_password):
@@ -172,8 +284,169 @@ class UserProfilePage(BasePage):
             return False
         return True
 
+    def is_err_msg_pass_not_match(self):
+        if "ng-active" in self.driver.find_element(*UserProfileLocator.ERR_MSG_PRESENT).get_attribute("class"):
+            if self.driver.find_element(*UserProfileLocator.ERR_MSG_PASS_NOT_MATCH):
+                return True
+        return False
+
+    def is_err_msg_pass_is_necessary(self):
+        if "ng-active" in self.driver.find_element(*UserProfileLocator.ERR_MSG_PRESENT).get_attribute("class"):
+            if self.driver.find_element(*UserProfileLocator.ERR_MSG_PASS_IS_NECESSARY):
+                return True
+        return False
+
     def get_expected_url(self):
         return UserProfileLocator.URL
+
+    def get_problems_user_profile_page(self):
+        if self.is_element_present(*ProblemsUserProfileLocator.PROBLEMS_TAB):
+            self.click(*ProblemsUserProfileLocator.PROBLEMS_TAB)
+            return ProblemsUserProfilePage(self.driver)
+        else:
+            return None
+
+    def get_comments_user_profile_page(self):
+        if self.is_element_present(*CommentsUserProfileLocator.MY_COMMENTS_TAB):
+            self.click(*CommentsUserProfileLocator.MY_COMMENTS_TAB)
+            return CommentsUserProfilePage(self.driver)
+        else:
+            return None
+
+    def get_admin_tab(self):
+        self.click(*UserProfileNavigationLocator.ADMIN_TAB)
+
+    def wait_until_page_is_loaded(self):
+        wait = WebDriverWait(self.driver, 10)
+        wait.until(EC.presence_of_all_elements_located)
+
+    def get_problems_page(self):
+        """go to user's problems page
+        please use this implementation of click() function on tab
+        because errors occur sometimes with standard click(). To
+        resolve this bug we have to simulate a mouse move action
+        """
+        actions = ActionChains(self.driver)
+        problems_tab = self.find_element(*UserProfileNavigationLocator.PROBLEMS_TAB)
+        actions.move_to_element(problems_tab).perform()
+        problems_tab.click()
+        return UserProfileProblemsPage(self.driver)
+
+    def is_problems_tab_present(self):
+        return self.is_element_present(UserProfileNavigationLocator.PROBLEMS_TAB)
+
+
+class ProblemsUserProfilePage(BasePage):
+
+    def get_expected_url(self):
+        return ProblemsUserProfileLocator.URL
+
+    def get_edit_problem_page(self):
+        if self.is_element_present(*ProblemsUserProfileLocator.EDIT_LINK_BY_PROMLEM_TITLE):
+            self.click(*ProblemsUserProfileLocator.EDIT_LINK_BY_PROMLEM_TITLE)
+            return EditProblemPage(self.driver)
+        else:
+            return None
+
+
+class EditProblemPage(HomeUserPage):
+
+    def add_comment_anonymous(self, text):
+        self.click_on_anonymous_checkbox()
+        self.add_comment(text)
+
+    def add_comment(self, text):
+        self.type_comment(text)
+        self.click_on_add_comment_btn()
+
+    def click_on_comment_tab(self):
+        self.click(*EditProblemLocator.COMMENT_TAB)
+
+    def type_comment(self, text):
+        self.type(text, *EditProblemLocator.COMMENT_TEXTAREA)
+
+    def is_comment_textarea_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_TEXTAREA)
+
+    def is_anonymously_checkbox_visible(self):
+        return self.is_element_visible(*EditProblemLocator.ANONYMOUSLY_CHECKBOX)
+
+    def is_add_comment_btn_visible(self):
+        return self.is_element_visible(*EditProblemLocator.ADD_COMMENT_BTN)
+
+    def click_on_add_comment_btn(self):
+        self.click(*EditProblemLocator.ADD_COMMENT_BTN)
+
+    def get_comment_nickname(self):
+        return self.get_text(*EditProblemLocator.COMMENT_NICKNAME)
+
+    def get_comment_datetime(self):
+        if self.is_element_visible(*EditProblemLocator.COMMENT_DATETIME):
+            element = self.find_element(*EditProblemLocator.COMMENT_DATETIME)
+            return datetime.strptime(element.text, '%d/%m/%Y %H:%M')
+        else:
+            return None
+
+    def get_current_datetime(self):
+        return datetime.strptime(datetime.now().strftime('%d/%m/%Y %H:%M'), '%d/%m/%Y %H:%M')
+
+    def get_comment_text(self):
+        return self.get_text(*EditProblemLocator.COMMENT_TEXT)
+
+    def get_timedelta(self):
+        return timedelta(seconds=10)
+
+    def is_comment_answer_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_ANSWER_LINK)
+
+    def is_success_popup_present(self):
+        return self.is_popup_present(*CommonLocator.SUCCESS_POPUP)
+
+    def is_comment_edit_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_EDIT_LINK)
+
+    def is_comment_edit_link_invisible(self):
+        return self.is_element_invisible(*EditProblemLocator.COMMENT_EDIT_LINK_HIDDEN)
+
+    def is_comment_link_visible(self):
+        return self.is_element_visible(*EditProblemLocator.COMMENT_LINK)
+
+    def click_on_anonymous_checkbox(self):
+        self.click(*EditProblemLocator.ANONYMOUSLY_CHECKBOX)
+
+    def click_on_answer_link(self):
+        self.click(*EditProblemLocator.COMMENT_ANSWER_LINK)
+
+    def type_answer(self, text):
+        self.type(text, *EditProblemLocator.ANSWER_TEXTAREA)
+
+    def click_on_add_answer_btn(self):
+        self.click(*EditProblemLocator.ADD_ANSWER_BTN)
+
+    def is_answer_textarea_visible(self):
+        self.is_element_visible(*EditProblemLocator.ANSWER_TEXTAREA)
+
+    def get_answer_text(self):
+        return self.get_text(*EditProblemLocator.ANSWER_TEXT)
+
+    def get_answer_nickname(self):
+        return self.get_text(*EditProblemLocator.ANSWER_NICKNAME)
+
+
+class CommentsUserProfilePage(BasePage):
+    def get_expected_url(self):
+        return CommentsUserProfileLocator.URL
+
+    def click_on_delete_btn(self):
+        self.click(*CommentsUserProfileLocator.DELETE_LINK_BY_COMMENT_TITLE)
+
+    def is_success_popup_present(self):
+        return self.is_popup_present(*CommonLocator.SUCCESS_POPUP)
+
+
+
+    def get_admin_tab(self):
+        self.click(*UserProfileNavigationLocator.ADMIN_TAB)
 
     def wait_until_page_is_loaded(self):
         wait = WebDriverWait(self.driver, 10)
@@ -209,6 +482,28 @@ class UserProfileProblemsPage(BasePage):
 
     def is_first_problem_present(self):
         return self.is_element_present(*UserProfileProblemsLocator.FIRST_PROBLEM_EDIT_LINK)
+
+    def get_total_amount_of_problems(self):
+        return self.driver.find_element(*UserProfileProblemsLocator.TOTAL_AMOUNT_OF_PROBLEMS).text
+
+class UserProfileSubscriptionPage(BasePage):
+    def get_expected_url(self):
+        return UserProfileProblemsLocator.URL
+
+    def open_subscription_page(self):
+        return self.click(*UserProfileNavigationLocator.SUBSCRIPTIONS_TAB)
+
+    def get_number_subscription(self):
+        return self.find_element(*UserProfileSubscriprionLocator.SUBSCRIPTIONS_INFO).text
+
+    def get_title_1(self):
+        return self.find_element(*UserProfileSubscriprionLocator.TITLE_1).text
+
+    def get_count(self):
+        return self.find_element(*UserProfileSubscriprionLocator.COUNT).text
+
+    def open_view(self):
+        return self.click(*UserProfileSubscriprionLocator.VIEW)
 
 
 class ProblemPage(BasePage):
@@ -249,6 +544,9 @@ class ProblemPage(BasePage):
         except Exception:
             return False
         return True
+
+    def get_popup_text(self):
+        return self.find_element(*ProblemLocator.POP_UP_WINDOW_TITLE).text
 
     def get_importance(self):
         """get current importance value in importance field """
@@ -291,3 +589,39 @@ class ProblemPage(BasePage):
         """go to home page"""
         self.click(*ProblemLocator.LOGO)
         return HomeUserPage(self.driver)
+
+    def tap_subscription(self):
+        return self.find_element(*Statistics.EYE).click()
+
+    def check_title(self):
+        return self.find_element(*ProblemLocator.DETAILED_TITLE).text
+
+
+class StatisticPage(BasePage):
+    def get_current_url(self):
+        return Statistics.URL
+
+    def open_top_first_issue(self):
+        return self.click(*Statistics.TOP_FIRST_ISSUE)
+
+
+class AdministerTabPage(BasePage):
+    def get_issue_type_tab(self):
+        self.click(*AdministerTabLocator.ISSUE_TYPE_TAB)
+
+    def click_first_issue_changetype_button(self):
+        self.click(*AdministerTabLocator.FIRST_ISSUE_CHANGE_STATUS_BUTTON)
+
+    def change_issue_type(self, new_type):
+        self.wait_until_element_is_visible(AdministerTabLocator.ISSUE_TYPE_FIELD, timeout=10)
+        self.type(new_type, *AdministerTabLocator.ISSUE_TYPE_FIELD)
+        self.wait_until_element_is_visible(AdministerTabLocator.SUBMIT_BUTTON, timeout=10)
+        self.click(*AdministerTabLocator.SUBMIT_BUTTON)
+
+    def is_success_popup_present(self):
+        _d = self.driver
+        try:
+            WebDriverWait(_d, 5).until(lambda _d: _d.find_element(*AdministerTabLocator.TYPE_CHANGED_SUCCES_POPUP))
+        except Exception:
+            return False
+        return True

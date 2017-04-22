@@ -514,6 +514,7 @@ class UserProfileSubscriptionPage(BasePage):
         return UserProfileProblemsLocator.URL
 
     def open_subscription_page(self):
+        self.wait_until_invisibility_of_element_located(CommonLocator.SUCCESS_POPUP, timeout=10)
         return self.click(*UserProfileNavigationLocator.SUBSCRIPTIONS_TAB)
 
     def get_number_subscription(self):

@@ -22,7 +22,7 @@
     "url": "https://github.com/lhalam/Lv-164.UI/issues"
   },
   "devDependencies": {
-    "bower": "~1.6.5",
+    "bower": "~1.8.8",
     "grunt": "~0.4.5",
     "grunt-browser-sync": "~2.1.3"
   }

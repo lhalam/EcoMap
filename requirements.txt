@@ -33,7 +33,7 @@ flask-memcache-session==2.0
 funcsigs==0.4
 functools32==3.2.3-2
 html5lib==0.999
-httplib2==0.8
+httplib2==0.18.0
 itsdangerous==0.24
 jsonschema==2.5.1
 linecache2==1.0.0

@@ -1,7 +1,9 @@
-# !/usr/bin/env bash
-# Script run config builder 
+#!/usr/bin/env bash
+# Script run config builder
 
-PRODROOT=~/home/workspace/test_ecomap/ecomap
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PRODROOT=${SCRIPT_DIR%/*}
+echo "Product directory: $PRODROOT"
 PYSRCROOT=${PRODROOT}/src/python
 CONFROOT=${PRODROOT}/etc
 PYTHONPATH=$PYSRCROOT

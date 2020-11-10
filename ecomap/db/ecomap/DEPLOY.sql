@@ -1,0 +1,3 @@
+USE ecomap;
+SOURCE CREATE_DB.sql;
+SOURCE INSERT_DATA.sql;

@@ -5,7 +5,7 @@ Flask-Cache==0.13.1
 Flask-Login==0.3.2
 Flask-Session==0.2.3
 Flask-Triangle==0.5.4
-Jinja2==2.8
+Jinja2==2.11.3
 MarkupSafe==0.23
 MySQL-python==1.2.5
 PAM==0.4.2

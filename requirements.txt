@@ -32,7 +32,7 @@ duplicity==0.6.23
 flask-memcache-session==2.0
 funcsigs==0.4
 functools32==3.2.3-2
-html5lib==0.999
+html5lib==0.99999999
 httplib2==0.8
 itsdangerous==0.24
 jsonschema==2.5.1

@@ -58,7 +58,7 @@ python-debian==0.1.21-nmu2ubuntu2
 python-memcached==1.57
 pytz==2015.7
 pyxdg==0.25
-reportlab==3.0
+reportlab==3.5.55
 requests==2.2.1
 roman==2.0.0
 sessioninstaller==0.0.0
